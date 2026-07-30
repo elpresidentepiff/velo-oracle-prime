@@ -289,6 +289,17 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Auto-ingest RP ratings-sheet PDFs from the inbox (2026-07-30) ─────
+    # The 07:00 run self-blocked at the readiness gate every single automated
+    # morning (2026-07-24/25/30) purely because the six sheets per venue were
+    # copied and ingested by hand. This discovers them by venue+date from the
+    # operator's inbox folder and ingests them. Non-critical by design: if the
+    # sheets are not downloaded yet, the gate below still blocks — this step
+    # only removes the manual copy/ingest work, it does not weaken the gate.
+    run("Auto-ingest RP PDFs from inbox",
+        [PY, "scripts/ops/auto_ingest_pdf_inbox.py", "--date", date, "--execute"],
+        critical=False, results=results)
+
     # ── SCORING READINESS GATE — hard law, added 2026-07-18 ──────────────
     # Nothing past this point runs until (1) the New Build passport feed
     # exists for this date and (2) every GB/IRE venue racing today has RP

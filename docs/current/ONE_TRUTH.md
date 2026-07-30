@@ -124,6 +124,8 @@ Canonical dashboard consumer endpoints (`scripts/ops/new_build_dashboard_server.
 - `GET /api/canonical-learning-events?date=YYYY-MM-DD`
 - `GET /api/canonical-race-truth?date=YYYY-MM-DD&race_id=<race_id>`
 
+**Mid-Price Specialist added to the canonical spine 2026-07-30** (operator-approved): `MIDPRICE_SPECIALIST_SHADOW` rows, whole in-band field per race ranked 1..n (not just the top pick, so rank-depth questions stay answerable), `stake_authorised=false`, `policy_decision=ARCHIVE_CONTEXT_ONLY_NOT_SCORING`. Before this it lived only in `model_comparison_ledger.csv` — the same "generated but never persisted" shape as the Champion gap fixed 2026-07-16. Verified 2026-07-30: 385 rows persisted, canonical total 1,412 across 11 model names.
+
 Builders: `scripts/ops/build_canonical_model_scorecard.py`, `scripts/ops/persist_canonical_model_scorecard.py`, `scripts/ops/build_canonical_learning_events.py`. Law: `docs/current/MODEL_RESULT_REPORTING_LAW.md`. See also `docs/current/VELO_MODEL_SOURCE_MAP.md`.
 
 **Wired into the daily pipeline 2026-07-16.** Before this date, `canonical_model_scorecards` stopped dead at 2026-07-07 (2,511 rows) because the build+persist steps existed but were never called from `run_full_raceday.py` — New Build and Champion Intent were producing genuine daily pre-race scorecards that simply never reached the canonical join, so Multi-Model Sigma reported `n/a` for both every day regardless of real performance (root-caused in the RACE-DAY-15 forensic PR, `SCORECARD_GENERATED_NOT_PERSISTED`). `run_full_raceday.py` now runs `build_canonical_model_scorecard.py --date` then `persist_canonical_model_scorecard.py --date --csv <path> --execute` as its final two steps, every morning, non-critical (won't block the day on failure, but should not silently stay broken either — check `data/reports/canonical_model_scorecard_{date}_audit.json`'s `sources_missing` field daily).
@@ -187,6 +189,21 @@ python scripts/ops/racing_post_account_collector.py init-login \
 Use `--wait-seconds` (not the old blocking `input()` prompt) when invoking through a
 non-interactive pass-through session (e.g. Claude Code's `!` prefix) — `init-login`
 auto-detects a non-TTY stdin and waits a fixed window instead of hanging on `EOFError`.
+
+### PDF sheets are auto-ingested now (added 2026-07-30)
+`scripts/ops/auto_ingest_pdf_inbox.py` runs inside `run_full_raceday.py`
+immediately **before** the scoring readiness gate. It discovers the six RP
+sheets per venue by venue+date from the filename contract
+(`{VENUE}_{YYYYMMDD}_00_00_F_{SHEET}_{TYPE}_{Course}.pdf`), stages them to
+`data/incoming_pdfs/{date}/`, and ingests per venue. Inbox folder:
+`VELO_PDF_INBOX` env var, default
+`/mnt/c/Users/puror/OneDrive/Documents/horses for courses`.
+Root cause it exists: the 07:00 scheduled run self-blocked at the readiness
+gate on **every** automated morning (2026-07-24, 07-25, 07-30) purely because
+the copy+ingest was manual. Non-critical by design — if the sheets are not
+downloaded yet, the gate still blocks exactly as before; this removes the
+manual work, it does not weaken the gate. Report:
+`data/reports/auto_pdf_ingest_{date}.json`.
 
 ### Which models need which data source — stop guessing
 | Model | Needs live RP capture? | Needs passport bank? | Needs PDF ratings sheets? |

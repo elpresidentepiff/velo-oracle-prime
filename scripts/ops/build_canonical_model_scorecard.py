@@ -352,6 +352,52 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                 ),
             )
 
+    # ── Mid-Price Specialist Shadow (midprice_shadow packet) ────────────────
+    # Added 2026-07-30 (operator-approved). Until now this lane existed only in
+    # data/model_comparison_ledger.csv, so it was absent from the canonical
+    # spine ONE_TRUTH names as the operational truth source — the same
+    # "generated but never persisted" shape as the Champion gap fixed on
+    # 2026-07-16. Records the whole in-band field per race (rank 1..n), not
+    # just the top pick, so rank-depth questions stay answerable.
+    midprice_path = ROOT / "data" / "reports" / f"midprice_shadow_{tag}.json"
+    if not midprice_path.exists():
+        audit["sources_missing"]["midprice_specialist_shadow"] = str(midprice_path)
+    else:
+        audit["sources_found"]["midprice_specialist_shadow"] = midprice_path.name
+        mp_packet = json.loads(midprice_path.read_text(encoding="utf-8"))
+        for mp_race in mp_packet.get("races", []):
+            race_id = str(mp_race.get("race_id") or "")
+            result_race = results.get(race_id)
+            band_runners = [r for r in (mp_race.get("all_scored") or []) if r.get("in_band")]
+            for idx, mp_runner in enumerate(band_runners, start=1):
+                horse = mp_runner.get("horse") or ""
+                outcome = _runner_lookup(result_race, horse)
+                prob = mp_runner.get("midprice_prob")
+                _add_row(
+                    race_id=race_id,
+                    course=(result_race or {}).get("course") or mp_race.get("course"),
+                    off_time=(result_race or {}).get("off") or mp_race.get("off"),
+                    model_name="MIDPRICE_SPECIALIST_SHADOW", lane_name="shadow_only",
+                    source_path=str(midprice_path.relative_to(ROOT)),
+                    source_field="midprice_prob", sort_direction="descending",
+                    rank=idx, horse=horse,
+                    horse_id=outcome.get("horse_id"),
+                    score=prob, sp_dec=outcome.get("sp_dec") or mp_runner.get("odds_decimal"),
+                    result_position=outcome.get("position"), win=outcome.get("win"),
+                    frame=outcome.get("frame"),
+                    policy_decision=mp_packet.get("trust_policy") or "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+                    stake_authorised=False,
+                    dashboard_visible=True,
+                    learning_class=("MODEL_HIT_POLICY_BLOCKED" if outcome.get("win") else "MODEL_MISS"),
+                    tie_status="N/A",
+                    notes=(
+                        f"SHADOW_ONLY -- LAB_EXPERIMENT specialist ({mp_packet.get('model_version')}), "
+                        f"market-blind, band {mp_packet.get('mid_price_band')}. "
+                        "velo_scoring_allowed=False. Watch-gate subset is midprice_prob>=0.30 "
+                        "(needs n>=150 before any verdict). Not a promotable claim."
+                    ),
+                )
+
     audit["row_count"] = len(rows)
     return rows, audit
 
