@@ -333,7 +333,26 @@ def capture_urls(
                 for item in existing_captures + captures
                 if item.get("source_url")
             }
-            all_captures = [captures_by_url[u] for u in urls if u in captures_by_url]
+            # Carry over prior captures whose URL is NOT in this batch's list.
+            # Until 2026-07-31 the manifest was rebuilt as "entries for urls in
+            # THIS run only", which merged old+new into captures_by_url above and
+            # then immediately discarded the carried-over ones. Any later partial
+            # capture into an existing --date label therefore destroyed the
+            # earlier receipt: a 1-URL Saratoga run cut 2026-07-30's 37-race
+            # manifest down to 1 entry, so Step 10A built a 1-URL results list and
+            # sigma had nothing to reconcile against. The .html/.json files were
+            # never lost (unique filenames) -- only manifest.json, which is a
+            # single fixed filename and so gets overwritten wholesale.
+            batch_urls = set(urls)
+            ordered_urls: list[str] = []
+            seen_urls: set[str] = set()
+            for item in existing_captures:
+                prior_url = item.get("source_url")
+                if prior_url and prior_url not in batch_urls and prior_url not in seen_urls:
+                    seen_urls.add(prior_url)
+                    ordered_urls.append(prior_url)
+            ordered_urls.extend(u for u in urls if u in captures_by_url)
+            all_captures = [captures_by_url[u] for u in ordered_urls]
             manifest = {
                 "capture_date": capture_date,
                 "generated_at": _utc_now(),

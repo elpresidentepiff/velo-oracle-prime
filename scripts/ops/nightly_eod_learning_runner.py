@@ -141,7 +141,16 @@ class NightlyEODRunner:
             _gate_blocks.append("MISSION_CONTROL_MISSING")
         else:
             try:
-                _lg = json.loads(_mc_path.read_text()).get("learning_gate", "UNKNOWN")
+                # Mission Control writes "learning_gate_status" -- there is no
+                # "learning_gate" key. Fix 3 (38023e6, 2026-07-28) read the
+                # non-existent name, so this always resolved to UNKNOWN and
+                # blocked learning on EVERY day regardless of the real gate
+                # state (confirmed: 2026-07-29 and 2026-07-30 both returned
+                # FAIL_GATE_BLOCKED / LEARNING_GATE:UNKNOWN while sigma=PASS,
+                # council=PASS_TO_LEARNING and learning_gate_status=OPEN).
+                # docs/current/ONE_TRUTH.md flags this exact trap in the
+                # Mission Control row of the subsystem truth board.
+                _lg = json.loads(_mc_path.read_text()).get("learning_gate_status", "UNKNOWN")
                 if _lg != "OPEN":
                     _gate_blocks.append(f"LEARNING_GATE:{_lg}")
             except Exception as _e:
