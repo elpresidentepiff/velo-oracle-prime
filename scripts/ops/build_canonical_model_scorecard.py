@@ -19,12 +19,17 @@ import csv
 import json
 import os
 import re
+import sys
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.velo.verdict_loader import load_verdicts  # noqa: E402
 
 
 def _date_tag(date: str) -> str:
@@ -47,14 +52,22 @@ def _read_jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def _sb_get(path: str) -> list[dict]:
-    """Read-only Supabase REST GET. Returns [] on any failure -- never raises,
-    never writes."""
+def _ensure_env() -> None:
+    """Load .env into os.environ. Kept separate from _sb_get because
+    verdict_loader reads SUPABASE_URL directly at call time and raises if it
+    is unset -- and it is now called before the first _sb_get, so the old
+    lazy load inside _sb_get was no longer early enough."""
     try:
         from dotenv import load_dotenv
         load_dotenv(str(ROOT / ".env"))
     except Exception:
         pass
+
+
+def _sb_get(path: str) -> list[dict]:
+    """Read-only Supabase REST GET. Returns [] on any failure -- never raises,
+    never writes."""
+    _ensure_env()
     url = os.environ.get("SUPABASE_URL")
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
     if not url or not key:
@@ -133,14 +146,28 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
         rows.append(base)
 
     # ── Main VELO Prime + No-RPR shadow (Supabase, read-only) ──────────────
-    verdicts = _sb_get(
-        f"/velo_verdicts?select=race_id,full_analysis,top_rank_horse_id"
-        f"&generated_at=gte.{date}T00:00:00&generated_at=lt.{date}T23:59:59"
-    )
+    # generated_at is WRITE time, not race date. Filtering by a same-day
+    # generated_at window silently returned zero rows whenever a day was not
+    # scored inside its own calendar day -- i.e. the normal evening-before
+    # manual pattern, and any recovery/backfill run. Caught 2026-08-01 while
+    # recovering 2026-07-31: the day scored cleanly (49 races, 49 verified
+    # Supabase writes) yet the canonical scorecard recorded
+    # velo_verdicts=MISSING and persisted no MAIN_VELO_PRIME rows at all.
+    # This is the documented bug class from docs/current/ONE_TRUTH.md; the
+    # shared loader resolves by race_id membership first and reports which
+    # path it used. This script was missed by the 12-script sweep.
+    _ensure_env()
+    try:
+        verdicts, _verdict_method = load_verdicts(
+            date, select="race_id,full_analysis,top_rank_horse_id"
+        )
+    except Exception as _e:
+        verdicts, _verdict_method = [], f"LOAD_ERROR:{_e}"
     if not verdicts:
-        audit["sources_missing"]["velo_verdicts"] = "no rows for date (checked same-day generated_at window)"
+        audit["sources_missing"]["velo_verdicts"] = f"no rows for date (verdict_loader method={_verdict_method})"
     else:
         audit["sources_found"]["velo_verdicts"] = len(verdicts)
+        audit["verdict_load_method"] = _verdict_method
 
     for v in verdicts:
         race_id = str(v.get("race_id") or "")
