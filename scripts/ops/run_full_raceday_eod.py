@@ -270,6 +270,42 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Steps 20C-20E: canonical learning events ───────────────────────────
+    # Wired 2026-08-01. docs/current/ONE_TRUTH.md makes
+    # public.canonical_learning_events the operational truth source for
+    # learning events and requires the dashboard to read it -- but
+    # build_canonical_learning_events.py was never called from any pipeline.
+    # The table's only populated date was 2026-07-06 (324 rows from a one-off
+    # backfill); Jul 16/24/30/31 all returned 0 while 56 days of local
+    # nightly_eod_learning_events_*.jsonl piled up. Identical
+    # "generated but never persisted" shape to the Champion scorecard gap
+    # fixed 2026-07-16 -- the scorecard half got wired, the learning half
+    # never did.
+    #
+    # 20C/20D re-run the canonical scorecard FIRST because the morning
+    # persist writes it pre-race: every row is result-less, so win=False and
+    # learning_class=MODEL_MISS across the board. Re-running here, after
+    # results are in, is what turns it into real learning input (2026-07-31:
+    # 206 wins, MODEL_HIT 33, MODEL_HIT_POLICY_BLOCKED 97). The persist is an
+    # idempotent upsert, so this updates the morning's rows in place.
+    canonical_csv = ROOT / "data" / "reports" / f"canonical_model_scorecard_{date_tag}.csv"
+    run(
+        "Step 20C: Canonical scorecard rebuild (results-aware)",
+        [PY, "scripts/ops/build_canonical_model_scorecard.py", "--date", date],
+        critical=False, results=results,
+    )
+    run(
+        "Step 20D: Canonical scorecard persist (post-results)",
+        [PY, "scripts/ops/persist_canonical_model_scorecard.py",
+         "--date", date, "--csv", str(canonical_csv), "--execute"],
+        critical=False, results=results,
+    )
+    run(
+        "Step 20E: Canonical learning events build + persist",
+        [PY, "scripts/ops/build_canonical_learning_events.py", "--date", date, "--execute"],
+        critical=False, results=results,
+    )
+
     # ── Summary ────────────────────────────────────────────────────────────
     print(f"\n{'='*70}\nRUN_FULL_RACEDAY_EOD SUMMARY — {date}\n{'='*70}")
     n_ok = sum(1 for r in results if r["ok"])

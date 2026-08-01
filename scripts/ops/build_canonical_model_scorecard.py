@@ -392,6 +392,31 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
     else:
         audit["sources_found"]["midprice_specialist_shadow"] = midprice_path.name
         mp_packet = json.loads(midprice_path.read_text(encoding="utf-8"))
+        # midprice_shadow_{date}.json carries only horse NAMES (horse,
+        # midprice_prob, odds_decimal, in_band) -- no horse_id. Taking the id
+        # solely from the results join meant every midprice row was written
+        # with horse_id=NULL by the pre-race morning persist, and Postgres
+        # treats NULLs as distinct in a UNIQUE constraint, so the post-results
+        # persist could never update those rows -- it inserted a second full
+        # copy instead (2026-07-30: 385 -> 770 rows, 397 NULL ids). That also
+        # left the canonical table violating MODEL_RESULT_REPORTING_LAW, which
+        # requires horse_id on every model claim. Resolve real ids from the
+        # same-date racecard cache, which exists morning AND evening, so the
+        # conflict key is stable across both persists. Verified 2026-07-30:
+        # 385/385 midprice horses resolve to a real racecard horse_id.
+        _mp_ids: dict[str, Any] = {}
+        for _card in sorted((ROOT / "data" / "racecard_merged").glob(f"racecard_*_{date}.json")):
+            try:
+                _c = json.loads(_card.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            _races = _c.get("races") or {}
+            for _race in (_races.values() if isinstance(_races, dict) else _races):
+                for _h in (_race.get("horses") or []):
+                    _n = str(_h.get("horse_name") or "").strip().lower()
+                    if _n and _h.get("horse_id") is not None:
+                        _mp_ids.setdefault(_n, _h["horse_id"])
+        audit["midprice_horse_id_lookup_size"] = len(_mp_ids)
         for mp_race in mp_packet.get("races", []):
             race_id = str(mp_race.get("race_id") or "")
             result_race = results.get(race_id)
@@ -408,7 +433,7 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                     source_path=str(midprice_path.relative_to(ROOT)),
                     source_field="midprice_prob", sort_direction="descending",
                     rank=idx, horse=horse,
-                    horse_id=outcome.get("horse_id"),
+                    horse_id=outcome.get("horse_id") or _mp_ids.get(horse.strip().lower()),
                     score=prob, sp_dec=outcome.get("sp_dec") or mp_runner.get("odds_decimal"),
                     result_position=outcome.get("position"), win=outcome.get("win"),
                     frame=outcome.get("frame"),

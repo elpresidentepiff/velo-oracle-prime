@@ -55,7 +55,17 @@ def _get_commit_sha() -> str:
         return "UNKNOWN"
 
 
-def _sb_get(path: str) -> list[dict]:
+def _sb_get(path: str, page_size: int = 1000) -> list[dict]:
+    """Paginated Supabase REST GET.
+
+    PostgREST caps an unranged response at its configured max (1000 here), and
+    returns the truncated page with no error. A single unpaginated request
+    therefore read only the first 1000 of 2026-07-31's 1811 scorecard rows and
+    silently dropped 811 -- skewing the event mix to almost entirely
+    MODEL_MISS_NO_POLICY_LAYER because the rows carrying SHADOW_INTENT_SIGNAL
+    and MODEL_HIT_POLICY_BLOCKED fell past the cut. Page until a short page
+    comes back.
+    """
     try:
         from dotenv import load_dotenv
         load_dotenv(str(ROOT / ".env"))
@@ -65,9 +75,26 @@ def _sb_get(path: str) -> list[dict]:
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
     if not url or not key:
         return []
-    req = urllib.request.Request(url + "/rest/v1" + path, headers={"apikey": key, "Authorization": f"Bearer {key}"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode())
+    out: list[dict] = []
+    offset = 0
+    while True:
+        req = urllib.request.Request(
+            url + "/rest/v1" + path,
+            headers={
+                "apikey": key,
+                "Authorization": f"Bearer {key}",
+                "Range-Unit": "items",
+                "Range": f"{offset}-{offset + page_size - 1}",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=60) as r:
+            chunk = json.loads(r.read().decode())
+        if not isinstance(chunk, list):
+            return chunk
+        out.extend(chunk)
+        if len(chunk) < page_size:
+            return out
+        offset += page_size
 
 
 def _sb_upsert(table: str, rows: list[dict], conflict_cols: str) -> tuple[int, str | None]:
