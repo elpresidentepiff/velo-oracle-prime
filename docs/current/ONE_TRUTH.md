@@ -231,10 +231,23 @@ leave the other three lanes permanently blank for that day.
 happened to be running determined which panels worked. This caused the Champion Intent
 Shadow panel to silently show "No Champion Intent data" for a full session, because the
 frontend's `/api/model-suggestions` call only existed on the server that wasn't running.
-`app/main.py` now has every route `new_build_dashboard_server.py` has (verified via
-route-set diff; `new_build_dashboard_server.py` is kept only because `app/main.py`
-imports its `fetch_canonical_scorecard`/`fetch_canonical_learning_events`/
-`_remap_numeric_race_ids` helpers — do not run it standalone). Launch with:
+`app/main.py` has **almost** every route `new_build_dashboard_server.py` has;
+`new_build_dashboard_server.py` is kept only because `app/main.py` imports its
+`fetch_canonical_scorecard`/`fetch_canonical_learning_events`/`_remap_numeric_race_ids`
+helpers — do not run it standalone.
+
+> **CORRECTION 2026-08-01 — this previously claimed "every route ... verified via
+> route-set diff." Re-running that diff shows three routes exist only in
+> `new_build_dashboard_server.py` and 404 on `app/main.py`:**
+> `/api/deep-race-agent`, `/api/radical-shadow`, `/api/health`.
+> The current `index.html` does not call the first two (those panels are unwired —
+> consistent with the known Tri-Lane/Deep-Agent/Course-Master panel gap), so nothing is
+> visibly broken **today**. But this is exactly the 2026-07-08 failure mode that made the
+> Champion Intent panel silently blank for a full session, and any future panel wired to
+> either route will 404 against the production server. Reproduce with:
+> `comm -13 <(grep -oE '@app\.(get|post)\("/[^"]+' app/main.py | sed 's/.*"//' | sort -u) <(grep -oE '@app\.(get|post)\("/[^"]+' scripts/ops/new_build_dashboard_server.py | sed 's/.*"//' | sort -u)`
+
+Launch with:
 ```
 PYTHONPATH=. python -c "from dotenv import load_dotenv; load_dotenv(); import uvicorn; uvicorn.run('app.main:app', host='0.0.0.0', port=8000)"
 ```
@@ -302,7 +315,40 @@ actual race date instead, via the local RP racecard cache for that date.
 This exact bug was independently hand-copied into **12 separate scripts** across this
 codebase before anyone noticed the pattern — dashboard endpoints, operator cards, sigma
 variants, audit/backtest tools, and the daily truth watchdog whose entire job is proving
-whether a day scored (which it couldn't, correctly, until fixed). All 12 are fixed.
+whether a day scored (which it couldn't, correctly, until fixed).
+
+> **CORRECTION 2026-08-01 — this section previously read "All 12 are fixed." That was
+> false, and it is the most expensive false claim in this document.** The `ed7d4a9`
+> migration fixed the 12 scripts it touched. It did **not** touch several others that
+> carry the identical signature, and readers trusted the sentence instead of grepping.
+> Confirmed by sweep (`grep -rln "generated_at=gte\|generated_at\.startswith"` cross-checked
+> against `grep -c verdict_loader`):
+>
+> | Script | State |
+> |---|---|
+> | `run_results_sigma.py` (Step 12, the MAIN sigma) | **was never migrated** — aborted a whole race day with `Predictions loaded: 0`; fixed `db8622b` |
+> | `build_canonical_model_scorecard.py` | **was never migrated** — persisted zero `MAIN_VELO_PRIME` rows; fixed `007c3a0` |
+> | `prove_supabase_persistence.py` | **STILL BROKEN** — see warning below |
+> | `check_rpdc_integrity.py` | **STILL BROKEN** |
+> | `velo_morning_cockpit.py` | **STILL BROKEN** |
+> | `velo_daily_harness.py` | STILL BROKEN (already DO-NOT-USE for its ROOT bug) |
+> | `audit/velo_ops_check.py`, `audit/velo_signal_tracker.py`, `audit/audit_railway_supabase_run_status.py` | **STILL BROKEN** |
+>
+> `ed7d4a9` migrated `run_multimodel_sigma.py` (Step 12B), **not** `run_results_sigma.py`
+> (Step 12). Two different files, confusingly similar names. Do not read "sigma was
+> migrated" as covering both.
+>
+> **Never trust a "N scripts fixed / all fixed" claim in this file again — run the grep.**
+
+> **WARNING — `prove_supabase_persistence.py` cannot be trusted (found 2026-08-01).**
+> Law 6 below names it as *the* tool for verifying Supabase is the system of record. It
+> filters `velo_verdicts` by a same-day `generated_at` window, so for any day scored
+> outside its own calendar date it reports the database is empty when it is full. Live
+> proof: for 2026-07-31 — a day with 49 verdicts genuinely in Supabase, which sigma
+> loaded, the canonical builder read, and the dashboard serves — it returns
+> `FAIL / NO_VERDICTS_FOR_DATE / COUNT_MISMATCH local=49 supabase=0`. Until it is
+> migrated to `verdict_loader`, a FAIL from this tool is **not** evidence of a
+> persistence gap. Verify with `load_verdicts(date)` or a race_id query instead.
 
 **Use `src/velo/verdict_loader.load_verdicts(date_str, select=...)` for any new code that
 needs "today's verdicts."** It tries race_id membership first, falls back to
@@ -403,7 +449,12 @@ VP ≥ 0.30 is the system's definition of "high confidence". Classifying all VP 
 | 7 | Fix doctrine collapse + state reset | `src/intelligence/velo_prime_ensemble.py`, `data/sentient_state*.json` | **DONE** `de0c2ea` — multiplier 0.516→0.994, doctrines fire on principled conditions |
 
 ## What is DEPRECATED
-Racing API as a data source (decommissioned 2026-05-14; client files deleted) · Sporting Life scraper (`scrape_results_sl.py`) · `velo_race_day_button.py` (do not use as authority) · `scrape_results_atr.py` (does not exist — any doc naming it is stale) · root `Makefile` (Benter v10.1 era) · root `cron.txt` (`/home/ubuntu` paths) · `COMMAND.json`.
+Racing API as a data source (decommissioned 2026-05-14; **correction 2026-08-01: the
+client file was NOT deleted — `app/data/racing_api_client.py` still exists.** Law 2 does
+still hold in substance: the only importer is `archive/legacy/2026-05-19-cleanup/scripts/
+run_live_analysis.py`, which is archived, so there is no live-path import. But "client
+files deleted" was untrue, and a reader checking Law 2 by looking for the file's absence
+would draw the wrong conclusion) · Sporting Life scraper (`scrape_results_sl.py`) · `velo_race_day_button.py` (do not use as authority) · `scrape_results_atr.py` (does not exist — any doc naming it is stale) · root `Makefile` (Benter v10.1 era) · root `cron.txt` (`/home/ubuntu` paths) · `COMMAND.json`.
 
 ## What is EXPERIMENTAL
 International prerace arenas (`scripts/audit_international_*`) · HK/FR feature builders · Intent Layer V1 (patched, rerun required) · sqpe_v18 (NO_LIFT verdict, not wired) · Race Shape v1 (shadow only, form history parser live).
@@ -475,6 +526,57 @@ Railway (`railway.toml`) runs ONE thing: `uvicorn app.main:app --host 0.0.0.0 --
 | EOD/sigma chain | NOT DEPLOYED | Also cannot work remotely — depends on local result capture files. |
 
 **Cost verdict:** You are paying Railway to host a dashboard that reads Supabase. If remote access to the dashboard matters, keep it. If you only use it locally, shut down Railway and run `app.main:app` locally — saves the subscription entirely. Do NOT attempt to wire the scoring cron on Railway: it structurally requires a local browser session that cannot exist in a cloud container.
+
+## DEEP AUDIT 2026-08-01 — why work keeps needing 10 attempts
+
+Operator question: why have so many agents executed badly here? Audited against code,
+not docs. The answer is structural, and it is not mainly about agent competence: **this
+system is built so that doing the right thing produces a false confirmation.**
+
+### Cause 1 — success is unfalsifiable at the step level
+- `run_full_raceday.py`: 12 critical vs **17 non-critical** steps.
+  `run_full_raceday_eod.py`: 4 critical vs **17 non-critical**.
+  A non-critical step failing cannot fail the day, by design — reasonable individually,
+  but it means "the pipeline passed" carries almost no information.
+- **12+ ops scripts print a `FAIL` status and still `exit 0`**, so the orchestrator's
+  `critical=True` check can never catch them: `prove_supabase_persistence.py`,
+  `parse_rp_results_capture.py`, `capture_proof.py`, `verify_hardening_state.py`,
+  `side_effect_sentinel.py`, `task_contract_runner.py`,
+  `velo_daily_run_truth_watchdog.py`, `check_rp_session_health.py`, and others.
+  `build_rp_results_url_list.py` was in this class until `a70cbda`.
+- **Nothing asserted counts until 2026-08-01.** Every single bug found this day was a
+  count mismatch that no code compared: 1 URL vs 37 races · 0 predictions vs 49 verdicts
+  · 1000 scorecard rows vs 1811 · 6 venues ingested vs 7 · 0 canonical learning events vs
+  56 days of local files. Each was individually invisible and collectively fatal.
+
+### Cause 2 — the instruments lie
+`prove_supabase_persistence.py` (named by Law 6 as THE persistence check) reports
+`supabase=0` for a day with 49 rows genuinely persisted. The daily truth watchdog had the
+same defect. `live_sentient_state_touched` is computed from the runner's own failure list
+rather than the live adapter's audit, so it reports `False` while the live adapter writes
+49 updates in the same run — and that field is a documented learning-gate blocker, so
+that gate can never fire. When the verification tools are wrong, diligence does not save
+you; checking harder returns the same false answer.
+
+### Cause 3 — this document asserted completion the code did not have
+`ONE_TRUTH.md` opens with "IF THIS FILE CONFLICTS WITH ANY OTHER DOC, THIS FILE WINS."
+Agents are therefore instructed to trust it. Three of its claims were false as of
+2026-08-01 — "all 12 [generated_at scripts] are fixed", "app/main.py has every route",
+"Racing API client files deleted" — all corrected above. An agent that trusted the first
+one would never grep, and would leave the main sigma broken, which is precisely what
+happened for a week.
+
+### Cause 4 — near-identical names on non-identical things
+`run_results_sigma.py` vs `run_multimodel_sigma.py`; `sentient_state.json` vs
+`sentient_state_shadow.json`; `learning_gate` vs `learning_gate_status`; `NMK` vs
+`NEWMARKET_JULY`; `data/reports/` vs `data/new_build/reports/`. Several of this day's
+failures were a correct action aimed one identifier off target.
+
+### The rule that follows
+**Never accept a PASS as evidence. Require a count, and compare it to an independently
+derived expected count.** Where that is impossible, say the number is unverified. This
+applies to this document as much as to the code: every claim added here from now on
+should carry the command that reproduces it.
 
 ## What is BLOCKED / KNOWN ISSUES (updated 2026-07-28)
 - **Telegram scoring alerts:** DISABLED (`--no-notify`).
