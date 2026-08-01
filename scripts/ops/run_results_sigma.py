@@ -45,6 +45,7 @@ from src.constants import (  # noqa: E402
     validate_outcome,
     validate_tier,
 )
+from src.velo.verdict_loader import load_verdicts  # noqa: E402
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
@@ -526,50 +527,27 @@ def main():
 
     # ── STEP 1: Load today's predictions from Supabase ────────────────────────
     print("\nSTEP 1: Load predictions from velo_verdicts")
-    verdicts_raw = sb_get(
-        f"/velo_verdicts?select={SIGMA_VERDICT_SELECT_COLUMNS}"
-        f"&generated_at=gte.{race_date}T00:00:00"
-        f"&generated_at=lt.{race_date}T23:59:59"
-        f"&order=generated_at"
+    # Resolve by race_id membership via the shared loader, never by a
+    # generated_at window. generated_at is WRITE time, not race date: the three
+    # hand-rolled windows this replaces (same-day, +12h overnight, prev-day
+    # lookback) were the documented bug signature, and their overnight branch
+    # additionally filtered on `date_tag in race_id` — a test that only holds
+    # for the legacy date-tagged id scheme (velo_20260731_...). race_ids have
+    # been raw numeric RP ids ("924006") since ed7d4a9 (2026-07-25), which
+    # contain no date substring, so the branch discarded every row it found and
+    # aborted the whole day with "Predictions loaded: 0" for anything scored
+    # after midnight UTC — every evening-before and recovery run. Caught
+    # 2026-08-01 recovering 2026-07-31: 49 races, 49 verified Supabase writes,
+    # 0 loaded. ed7d4a9 migrated run_multimodel_sigma.py (Step 12B) but not
+    # this file; see docs/current/ONE_TRUTH.md, "generated_at write-date-vs-
+    # race-date bug class". Regression cover: tests/test_verdict_loader.py.
+    verdicts_raw, verdict_load_method = load_verdicts(
+        race_date, select=SIGMA_VERDICT_SELECT_COLUMNS
     )
-    if not verdicts_raw:
-        # Scoring runs past midnight UTC land on race_date+1 — widen by 12h and
-        # filter by race_id prefix so we don't pull in the wrong day's verdicts.
-        from datetime import timedelta
-        race_date_obj = datetime.strptime(race_date, "%Y-%m-%d").date()
-        next_day = (race_date_obj + timedelta(days=1)).strftime("%Y-%m-%d")
-        date_tag = race_date.replace("-", "")  # e.g. "20260529"
-        extended = sb_get(
-            f"/velo_verdicts?select={SIGMA_VERDICT_SELECT_COLUMNS}"
-            f"&generated_at=gte.{next_day}T00:00:00"
-            f"&generated_at=lt.{next_day}T12:00:00"
-            f"&order=generated_at"
-        )
-        verdicts_raw = [v for v in (extended or []) if date_tag in v.get("race_id", "")]
-        if verdicts_raw:
-            print(f"  [INFO] Found {len(verdicts_raw)} verdicts via overnight window (generated_at={next_day})")
+    if verdict_load_method != "race_id":
+        print(f"  [WARN] verdicts resolved via degraded path: {verdict_load_method}")
 
-    # Pre-scored future dates: verdicts generated the day before the race date.
-    # Filter by race_ids in the local backup to ensure we only pull today's races.
-    if not verdicts_raw:
-        prev_day = (race_date_obj - timedelta(days=1)).strftime("%Y-%m-%d")
-        prev_raw = sb_get(
-            f"/velo_verdicts?select={SIGMA_VERDICT_SELECT_COLUMNS}"
-            f"&generated_at=gte.{prev_day}T00:00:00"
-            f"&generated_at=lt.{race_date}T00:00:00"
-            f"&order=generated_at"
-        )
-        if prev_raw:
-            backup_path = ROOT / "data" / f"velo_prime_verdicts_{race_date.replace('-', '_')}.json"
-            if backup_path.exists():
-                backup_ids = {str(r["race_id"]) for r in json.loads(backup_path.read_text())}
-                verdicts_raw = [v for v in prev_raw if str(v.get("race_id", "")) in backup_ids]
-            else:
-                verdicts_raw = [v for v in prev_raw if str(v.get("race_id", "")).isdigit()]
-        if verdicts_raw:
-            print(f"  [INFO] Found {len(verdicts_raw)} verdicts via prev-day lookback (generated_at={prev_day})")
-
-    print(f"  Predictions loaded: {len(verdicts_raw)}")
+    print(f"  Predictions loaded: {len(verdicts_raw)} (method={verdict_load_method})")
     if not verdicts_raw:
         print("  ABORT: no predictions found for this date")
         tg(f"VELO SIGMA ABORT — {race_date}\nNo predictions found in velo_verdicts.")
