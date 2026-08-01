@@ -978,7 +978,30 @@ def print_summary(merged: dict, venue: str, date: str):
     print("=" * 90)
 
 
-def save_output(merged: dict, venue: str, date: str, output_dir: Path):
+def course_name_from_pdfs(directory: Path, venue: str, date: str) -> str | None:
+    """Human-readable course name from a matching PDF filename.
+
+    NMK_20260801_00_00_F_0010_XX_Newmarket.pdf -> "Newmarket"
+
+    The 3-letter sheet code and the venue key Step 5.5 derives from the RP
+    course name come from independent abbreviation schemes, and are not always
+    prefix-related: NMK vs NEWMARKET_JULY shares no common prefix in either
+    direction, so the code alone cannot resolve the card. The trailing course
+    name can. Returns None when no matching PDF is present.
+    """
+    date_compact = date.replace("-", "")
+    for f in sorted(directory.glob("*.pdf")):
+        if venue.upper() not in f.name.upper() or date_compact not in f.name:
+            continue
+        tail = f.stem.split("_")[-1].strip()
+        # Drop a browser's duplicate-download suffix, e.g. "Doncaster (1)".
+        tail = re.sub(r"\s*\(\d+\)$", "", tail)
+        if tail and tail.isalpha():
+            return tail
+    return None
+
+
+def save_output(merged: dict, venue: str, date: str, output_dir: Path, course_name: str | None = None):
     """Save merged data as JSON.
 
     If racecard_merged/racecard_{venue}_{date}.json already exists (built by
@@ -1014,13 +1037,32 @@ def save_output(merged: dict, venue: str, date: str, output_dir: Path):
     # falling back to a brand-new file, check for exactly one existing
     # same-date file whose venue code is a prefix/superstring match.
     if not out_path.exists():
+        def _key(p: Path) -> str:
+            # racecard_NEWMARKET_JULY_2026-08-01.json -> "NEWMARKET_JULY"
+            return p.name[len("racecard_"):-len(f"_{date}.json")].upper()
+
         candidates = [
             p for p in output_dir.glob(f"racecard_*_{date}.json")
-            if p.stem.split("_", 2)[1].upper().startswith(venue.upper())
-            or venue.upper().startswith(p.stem.split("_", 2)[1].upper())
+            if _key(p).startswith(venue.upper()) or venue.upper().startswith(_key(p))
         ]
+        matched_by = "code"
+        # Fall back to the course name carried in the PDF filename. NMK and
+        # NEWMARKET_JULY share no prefix in either direction, so the code-based
+        # match above silently produced a SECOND, unenriched racecard_NMK file
+        # beside the real RP-sourced card -- and the readiness gate, which reads
+        # the real one, then failed the whole day for that venue with every
+        # sheet correctly downloaded and parsed (2026-08-01).
+        if len(candidates) != 1 and course_name:
+            cn = re.sub(r"[^A-Z]", "", course_name.upper())
+            by_course = [
+                p for p in output_dir.glob(f"racecard_*_{date}.json")
+                if cn and (re.sub(r"[^A-Z]", "", _key(p)).startswith(cn)
+                           or cn.startswith(re.sub(r"[^A-Z]", "", _key(p))))
+            ]
+            if len(by_course) == 1:
+                candidates, matched_by = by_course, f"course name {course_name!r}"
         if len(candidates) == 1:
-            print(f"  Venue code {venue!r} has no exact file; resolved to existing {candidates[0].name} by name match.")
+            print(f"  Venue code {venue!r} has no exact file; resolved to existing {candidates[0].name} by {matched_by}.")
             out_path = candidates[0]
 
     existing = None
@@ -1222,7 +1264,10 @@ def main():
     print_summary(merged, venue, date)
 
     # Save
-    out_path = save_output(merged, venue, date, args.output_dir)
+    out_path = save_output(
+        merged, venue, date, args.output_dir,
+        course_name=course_name_from_pdfs(args.dir, venue, date),
+    )
 
     return merged
 
