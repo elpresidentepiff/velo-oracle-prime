@@ -1,33 +1,33 @@
 # Passport Bank Expansion Latest
-Generated: 2026-07-10T22:36:32.317467Z
+Generated: 2026-08-02T19:47:14.845669Z
 
 ## Summary
-- **Queued horses**: 16946
-- **Queued for capture**: 2908
+- **Queued horses**: 22304
+- **Queued for capture**: 4447
 - **Next batch count**: 500
-- **Captured/profiled already**: 7807
-- **Parsed passports**: 7807
-- **Total passports after run**: 7958
+- **Captured/profiled already**: 8049
+- **Parsed passports**: 8049
+- **Total passports after run**: 8177
 - **Duplicates**: 0
 - **Failures / blocked no UID**: 0
 - **No-form-history or captured-without-passport horses**: 0
-- **Upcoming-race coverage rows**: 10693
+- **Upcoming-race coverage rows**: 12471
 - **Big Race Entries coverage rows**: 0
 - **RPR violations**: 0
 
 ## Status Counts
 | Status | Count |
 |---|---:|
-| PASSPORT_EXISTS | 7807 |
-| NEEDS_SOURCE_REVIEW | 6231 |
-| QUEUED_FOR_CAPTURE | 2908 |
+| NEEDS_SOURCE_REVIEW | 9808 |
+| PASSPORT_EXISTS | 8049 |
+| QUEUED_FOR_CAPTURE | 4447 |
 
 ## Source Counts
 | Source | Count |
 |---|---:|
-| upcoming_racecard | 10693 |
-| raw_profile_link_review | 6243 |
-| current_racecard | 10 |
+| upcoming_racecard | 12471 |
+| raw_profile_link_review | 9826 |
+| current_racecard | 7 |
 
 ## Capture Batches
 | Batch | HTML | Sidecars | Manifest |
@@ -35,6 +35,9 @@ Generated: 2026-07-10T22:36:32.317467Z
 | passport-bank-2026-07-08-1 | 500 | 500 | True |
 | passport-bank-2026-07-08-2 | 500 | 500 | True |
 | passport-bank-2026-07-10-1 | 244 | 244 | True |
+| passport-bank-2026-07-11-targeted | 214 | 214 | True |
+| passport-bank-2026-07-11-targeted-v2 | 214 | 214 | True |
+| passport-bank-2026-08-02 | 5 | 5 | True |
 
 ## Parsed Batches
 | Batch | Horse Profiles | Races | Runners |
@@ -42,6 +45,8 @@ Generated: 2026-07-10T22:36:32.317467Z
 | passport-bank-2026-07-08-1 | 500 | 0 | 0 |
 | passport-bank-2026-07-08-2 | 500 | 0 | 0 |
 | passport-bank-2026-07-10-1 | 244 | 0 | 0 |
+| passport-bank-2026-07-11-targeted-v2 | 214 | 0 | 0 |
+| passport-bank-2026-08-02 | 5 | 0 | 0 |
 | passport-bank-batch-001-2026-05-25 | 500 | 0 | 0 |
 | passport-bank-batch-002-2026-05-25 | 283 | 0 | 0 |
 | passport-bank-big-race-entries-2026-05-25 | 0 | 28 | 1008 |
@@ -51,31 +56,31 @@ Generated: 2026-07-10T22:36:32.317467Z
 ## Next Batch Sample
 | RP UID | Horse | Source | Priority | URL |
 |---|---|---|---:|---|
-| 8048359 | Admiral Will Brown | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/8048359/admiral-will-brown/form |
-| 9522179 | Aghadrum Boy | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9522179/aghadrum-boy/form |
-| 9503902 | Al Wathba | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9503902/al-wathba/form |
-| 7935114 | Amber Hamur | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/7935114/amber-hamur/form |
-| 9424782 | Annie Batt | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9424782/annie-batt/form |
-| 7360551 | Arabian Force | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/7360551/arabian-force/form |
-| 3586957 | Arch Enemy | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/3586957/arch-enemy/form |
-| 7613508 | Art Lover | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/7613508/art-lover/form |
-| 4438455 | Autocrat | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/4438455/autocrat/form |
-| 5920303 | Back In Black | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/5920303/back-in-black/form |
-| 5884257 | Beauty By My Side | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/5884257/beauty-by-my-side/form |
-| 3500896 | Beauzon | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/3500896/beauzon/form |
-| 9263895 | Bincimbal | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9263895/bincimbal/form |
-| 9004867 | Brandenburg | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9004867/brandenburg/form |
-| 5113814 | Calafrio | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/5113814/calafrio/form |
-| 9481216 | Call Of The Sea | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9481216/call-of-the-sea/form |
-| 9522193 | Candle Glow | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9522193/candle-glow/form |
-| 9517089 | Channel Islands | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9517089/channel-islands/form |
-| 9517088 | Chertsey | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9517088/chertsey/form |
-| 4839350 | Christian David | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/4839350/christian-david/form |
-| 6238152 | Danger Bay | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/6238152/danger-bay/form |
-| 4891158 | Daonethatgotaway | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/4891158/daonethatgotaway/form |
-| 6074555 | Dash Of Azure | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/6074555/dash-of-azure/form |
-| 8144016 | David Of Athens | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/8144016/david-of-athens/form |
-| 7525344 | Dialin For Dollars | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/7525344/dialin-for-dollars/form |
+| 7935067 | Abdulhamid | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/7935067/abdulhamid/form |
+| 6238173 | Ablon | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/6238173/ablon/form |
+| 6220013 | Abu Shomran (Gb) | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/6220013/abu-shomran-gb/form |
+| 7280723 | Acanto | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/7280723/acanto/form |
+| 9554516 | Activity | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9554516/activity/form |
+| 9490320 | Ad Lib | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9490320/ad-lib/form |
+| 5711170 | Addragoole | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/5711170/addragoole/form |
+| 9531364 | Admired Beauty | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9531364/admired-beauty/form |
+| 9046199 | Adonius | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9046199/adonius/form |
+| 8881261 | Agrippa | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/8881261/agrippa/form |
+| 9535726 | Aibar | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9535726/aibar/form |
+| 6318960 | Akashaa | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/6318960/akashaa/form |
+| 9544210 | Al Samsama | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9544210/al-samsama/form |
+| 4483044 | Al Sayah | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/4483044/al-sayah/form |
+| 7947743 | Al Zanati | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/7947743/al-zanati/form |
+| 9490299 | Alfinthesea | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9490299/alfinthesea/form |
+| 5237856 | Align The Stars | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/5237856/align-the-stars/form |
+| 8881392 | All Angels | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/8881392/all-angels/form |
+| 8432194 | All Moonshine | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/8432194/all-moonshine/form |
+| 9531382 | All Of A Sudden | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9531382/all-of-a-sudden/form |
+| 9522187 | Allez Yeats | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/9522187/allez-yeats/form |
+| 4612862 | Alluring Angel | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/4612862/alluring-angel/form |
+| 7622797 | Almekarem | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/7622797/almekarem/form |
+| 3646482 | Aloof (GB) | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/3646482/aloof-gb/form |
+| 3671732 | Alphonse Le Grande | upcoming_racecard | 10 | https://www.racingpost.com/profile/horse/3671732/alphonse-le-grande/form |
 
 ## Continuation Commands
 - `python scripts/ops/build_rp_passport_bank_queue.py --execute`

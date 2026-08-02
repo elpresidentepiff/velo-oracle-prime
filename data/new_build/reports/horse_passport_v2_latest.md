@@ -1,16 +1,16 @@
 # Horse Passport V2
-Generated: 2026-07-14T09:37:59.847682+00:00
+Generated: 2026-08-02T19:14:46.715688+00:00
 
 ## Summary
-- **Total passports**: 8172
+- **Total passports**: 8177
 - **Existing before run**: 0
-- **Newly appended**: 0
-- **Source horses found (history + profiles)**: 8172
+- **Newly appended**: 5
+- **Source horses found (history + profiles)**: 8177
 - **Build failures**: 0
 - **Existing duplicate rows skipped**: 0
 - **Cash-run candidates**: 89
-- **Setup-run candidates**: 3100
-- **Jockey anomaly candidates** (well-fancied failure rate >= 50%): 2110
+- **Setup-run candidates**: 3102
+- **Jockey anomaly candidates** (well-fancied failure rate >= 50%): 2112
 
 ## Field Coverage
 | Field | Coverage |
@@ -97,4 +97,4 @@ Generated: 2026-07-14T09:37:59.847682+00:00
 - **ts_last6_array**: [115.0, 105.0]
 - **recent_in_running_comments**: []
 - **recent_trainer_intent_tags**: []
-- **built_at**: 2026-07-14T09:37:57.235130Z
+- **built_at**: 2026-08-02T19:14:44.336942Z
