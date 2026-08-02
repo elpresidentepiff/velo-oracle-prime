@@ -37,6 +37,16 @@ EVENT_TYPE_MAP = {
     "TIE_UNRESOLVED": "RANKING_INTEGRITY_BUG",
     "MODEL_HIT": "MODEL_HIT_NO_POLICY_LAYER",
     "MODEL_MISS": "MODEL_MISS_NO_POLICY_LAYER",
+    # Added 2026-08-02. These three classes were produced daily by the scorecard
+    # builder but were absent from this map, so 6,020 of the canonical table's
+    # 16,249 rows (37%) collapsed into a single "UNCLASSIFIED" bucket carrying no
+    # meaning. All remain non-promotable (promotion_eligible is hardcoded False
+    # for every event); naming them only makes the ledger legible.
+    #   SHADOW_INTENT_SIGNAL 4357 · RUNTIME_RACEDAY_MODEL_SUGGESTION 1647
+    #   MODEL_HIT_POLICY_CLEARED 16
+    "SHADOW_INTENT_SIGNAL": "SHADOW_INTENT_CONTEXT_ONLY",
+    "RUNTIME_RACEDAY_MODEL_SUGGESTION": "RUNTIME_SUGGESTION_CONTEXT_ONLY",
+    "MODEL_HIT_POLICY_CLEARED": "MODEL_HIT_POLICY_CLEARED_SHADOW",
 }
 
 CSV_COLUMNS = [
@@ -207,6 +217,14 @@ def build_events(date: str) -> tuple[list[dict], dict]:
         "event_count": len(events),
         "event_type_counts": dict(Counter(e["event_type"] for e in events)),
         "promotion_eligible_count": sum(1 for e in events if e["promotion_eligible"]),
+        # Name any learning_class this map does not cover, instead of letting it
+        # vanish into UNCLASSIFIED. Three classes hid there for weeks (37% of the
+        # table) purely because nothing reported which ones they were; a new
+        # model added to the scorecard builder would have done the same.
+        "unmapped_learning_classes": dict(Counter(
+            r.get("learning_class") for r in scorecard_rows
+            if r.get("learning_class") not in EVENT_TYPE_MAP
+        )),
         "generated_from_commit": commit_sha,
         "target_table": "public.canonical_learning_events",
     }
