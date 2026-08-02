@@ -29,7 +29,10 @@ URL_LIST_ROOT = ROOT / "data" / "racing_post_url_lists"
 # When a new UK/IRE venue appears, add it here.
 UK_IRE_VENUES = {
     "aintree", "ascot", "ayr", "bangor-on-dee", "bath", "beverley", "brighton", "carlisle", "cartmel", "catterick",
-    "chelmsford-city", "cheltenham", "chester", "chepstow", "doncaster",
+    # "chelmsford" added 2026-08-02 alongside "chelmsford-city": RP emits
+    # "chelmsford-aw", which strips to "chelmsford" — 12 races were going to the
+    # international list.
+    "chelmsford", "chelmsford-city", "cheltenham", "chester", "chepstow", "doncaster",
     "epsom", "exeter", "fakenham", "ffos-las", "goodwood", "hamilton",
     "fontwell",
     "haydock", "hereford", "hexham", "huntingdon", "kempton", "kempton-aw", "leicester",
@@ -39,6 +42,9 @@ UK_IRE_VENUES = {
     "taunton", "thirsk", "towcester", "uttoxeter", "warwick", "wetherby",
     "wincanton", "windsor", "wolverhampton", "wolverhampton-aw", "worcester", "yarmouth", "york",
     # Ireland
+    # "down-royal" added 2026-08-02 — absent entirely, 21 races were going to
+    # the international list. No suffix rule can reach it; the name was missing.
+    "down-royal",
     "ballinrobe", "bellewstown", "clonmel", "cork", "curragh", "downpatrick",
     "dundalk", "dundalk-aw", "fairyhouse", "galway", "gowran-park", "kilbeggan", "killarney",
     "laytown", "leopardstown", "limerick", "listowel", "naas", "navan",
@@ -69,6 +75,50 @@ def _race_id_from_url(url: str) -> str | None:
     """Extract the numeric race ID from a RP racecard URL."""
     m = re.search(r"/racecards/\d+/[^/]+/\d{4}-\d{2}-\d{2}/(\d+)", url)
     return m.group(1) if m else None
+
+
+# Suffixes Racing Post appends to a venue slug without changing the venue's
+# jurisdiction. "doncaster-gb" is Doncaster; "southwell-aw" is Southwell's
+# all-weather track. Matching the bare name against UK_IRE_VENUES therefore has
+# to tolerate them.
+_JURISDICTION_NEUTRAL_SUFFIXES = ("-gb", "-aw", "-uk", "-ire", "-ie")
+
+
+def _is_uk_ire_slug(slug: str) -> bool:
+    """True when this RP venue slug is a UK/IRE course.
+
+    Why this is not `slug in UK_IRE_VENUES`
+    ---------------------------------------
+    RP emits the same course under several slugs, and the allowlist only ever
+    held whichever spelling someone happened to hit first. Measured 2026-08-02
+    across every url list on disk, these UK/IRE courses were being routed to the
+    INTERNATIONAL list because their actual slug was absent:
+
+        down-royal      21 races   (absent entirely)
+        chelmsford-aw   12 races   (list had "chelmsford-city")
+        doncaster-gb     2 races   (list had "doncaster")
+        goodwood-gb      1 race    (list had "goodwood")
+        chepstow-gb      1 race    (list had "chepstow")
+
+    37 UK/IRE races total. They were still captured -- Step 3.5 takes the
+    international list -- but Step 3.5 is critical=False while Step 3 is
+    critical=True, so a UK/IRE course on that path fails SILENTLY and the day
+    continues without it.
+
+    The allowlist had already been patched this way at least twice before
+    (newmarket-july, newton-abbot, newcastle-aw, wolverhampton-aw, dundalk-aw,
+    southwell-aw all appear in old international lists and are present now), one
+    slug at a time, without anyone closing the class. Stripping the neutral
+    suffix closes it: any future "<known-course>-gb" or "-aw" variant resolves
+    without another edit.
+    """
+    s = slug.lower()
+    if s in UK_IRE_VENUES:
+        return True
+    for suffix in _JURISDICTION_NEUTRAL_SUFFIXES:
+        if s.endswith(suffix) and s[: -len(suffix)] in UK_IRE_VENUES:
+            return True
+    return False
 
 
 def _venue_slug_from_url(url: str) -> str | None:
@@ -141,12 +191,13 @@ def build_racecard_urls(*, capture_date: str, target_date: str, output: Path, ex
             seen_race_ids.add(race_id)
         deduped[url] = urls[url]
 
-    # Split into UK/IRE and international.
+    # Split into UK/IRE and international. See _is_uk_ire_slug for why this is
+    # not a plain set membership test.
     uk_ire_urls: list[str] = []
     intl_urls: list[str] = []
     for url in sorted(deduped):
         slug = _venue_slug_from_url(url)
-        if slug and slug.lower() in UK_IRE_VENUES:
+        if slug and _is_uk_ire_slug(slug):
             uk_ire_urls.append(url)
         else:
             intl_urls.append(url)
