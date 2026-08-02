@@ -105,8 +105,29 @@ def build_proof(date_str: str) -> dict:
         return proof
 
     sb = SupabaseReader(url, key)
-    day_filter = f"generated_at=gte.{date_str}T00:00:00&generated_at=lt.{date_str}T23:59:59"
+    # Select this date's races by race_id, never by a generated_at window.
+    # generated_at is WRITE time: this tool is named by ONE_TRUTH Law 6 as THE
+    # proof that Supabase is the system of record, and with the old day_filter
+    # it reported "NO_VERDICTS_FOR_DATE / local=49 supabase=0" for 2026-07-31 --
+    # a day whose 49 verdicts were genuinely in Supabase and were being read
+    # successfully by sigma, the canonical builder and the dashboard at the same
+    # moment. A verification tool returning a confident false negative is worse
+    # than no tool, because it sends the reader hunting a persistence gap that
+    # does not exist.
+    sys.path.insert(0, str(ROOT)) if str(ROOT) not in sys.path else None
+    from src.velo.verdict_loader import race_id_filter
+    day_filter = race_id_filter(date_str, ROOT)
     c = proof["checks"]
+    if day_filter is None:
+        # No local racecard cache -> race_id membership cannot be established.
+        # Say so instead of emitting a confident zero from a generated_at window.
+        proof["status"] = "UNVERIFIED_NO_RACECARD_CACHE"
+        proof["gaps"].append(
+            f"RACE_ID_SET_UNKNOWN: no data/racecards_{date_str.replace('-', '_')}_standard.json "
+            "-- cannot prove persistence by race_id; refusing to report a count."
+        )
+        return proof
+    c["race_id_selection"] = "race_id_membership"
 
     c["verdict_count"] = sb.count("velo_verdicts", day_filter)
     c["null_decision_tier"] = sb.count("velo_verdicts", f"{day_filter}&decision_tier=is.null")

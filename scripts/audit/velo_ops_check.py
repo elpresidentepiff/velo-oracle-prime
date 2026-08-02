@@ -198,16 +198,22 @@ def check_supabase(date_str: str):
 
     # Today's row count
     try:
-        req = urllib.request.Request(
-            f"{url}/rest/v1/velo_verdicts?select=count"
-            f"&generated_at=gte.{date_str}T00:00:00"
-            f"&generated_at=lt.{date_str}T23:59:59",
-            headers={"apikey": key, "Authorization": f"Bearer {key}", "Prefer": "count=exact"},
-        )
-        with urllib.request.urlopen(req, timeout=8) as r:
-            cr = r.headers.get("Content-Range", "")
-        today_count = int(cr.split("/")[1]) if "/" in cr else "?"
-        results.append(_pass(f"rows for {date_str}", str(today_count)))
+        # race_id membership, not a generated_at window (write time -- returns
+        # nothing for any day scored outside its own calendar date).
+        sys.path.insert(0, str(ROOT)) if str(ROOT) not in sys.path else None
+        from src.velo.verdict_loader import race_id_filter
+        _rid = race_id_filter(date_str, ROOT)
+        if _rid is None:
+            results.append(_fail(f"rows for {date_str}", "UNVERIFIED_NO_RACECARD_CACHE"))
+        else:
+            req = urllib.request.Request(
+                f"{url}/rest/v1/velo_verdicts?select=count&{_rid}",
+                headers={"apikey": key, "Authorization": f"Bearer {key}", "Prefer": "count=exact"},
+            )
+            with urllib.request.urlopen(req, timeout=8) as r:
+                cr = r.headers.get("Content-Range", "")
+            today_count = int(cr.split("/")[1]) if "/" in cr else "?"
+            results.append(_pass(f"rows for {date_str}", str(today_count)))
     except Exception as e:
         results.append(_fail(f"rows for {date_str}", str(e)))
 

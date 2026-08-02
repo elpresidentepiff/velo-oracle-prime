@@ -328,11 +328,22 @@ whether a day scored (which it couldn't, correctly, until fixed).
 > |---|---|
 > | `run_results_sigma.py` (Step 12, the MAIN sigma) | **was never migrated** — aborted a whole race day with `Predictions loaded: 0`; fixed `db8622b` |
 > | `build_canonical_model_scorecard.py` | **was never migrated** — persisted zero `MAIN_VELO_PRIME` rows; fixed `007c3a0` |
-> | `prove_supabase_persistence.py` | **STILL BROKEN** — see warning below |
-> | `check_rpdc_integrity.py` | **STILL BROKEN** |
-> | `velo_morning_cockpit.py` | **STILL BROKEN** |
-> | `velo_daily_harness.py` | STILL BROKEN (already DO-NOT-USE for its ROOT bug) |
-> | `audit/velo_ops_check.py`, `audit/velo_signal_tracker.py`, `audit/audit_railway_supabase_run_status.py` | **STILL BROKEN** |
+> | `prove_supabase_persistence.py` | fixed `2026-08-02` — was reporting `supabase=0` on a day with 49 rows |
+> | `check_rpdc_integrity.py` | fixed `2026-08-02` — now counts 49 for 2026-07-31 (was 0) |
+> | `audit/velo_ops_check.py` | fixed `2026-08-02` — now `PASS rows: 49` (was 0) |
+> | `velo_daily_harness.py` | fixed `2026-08-02` (its `ROOT` bug also corrected, but it stays **DO-NOT-USE**) |
+>
+> **Three scripts matched the grep but are NOT this bug — do not "fix" them:**
+>
+> | Script | Why generated_at is correct there |
+> |---|---|
+> | `audit/audit_railway_supabase_run_status.py` | Its entire purpose is comparing UK (03:00Z-03:00Z) vs UTC write windows to audit *when Railway wrote rows*. Write time is the subject. Changing it would destroy the tool. |
+> | `velo_morning_cockpit.py` | `_window()` is a rolling **48-hour lookback**, not a per-date filter. Different semantic; imprecise for race-date questions but not the documented bug. |
+> | `velo_signal_tracker.py` | Queries `velo_post_race_reviews` (a different table) as a fallback, not `velo_verdicts`. |
+>
+> Callers needing only a WHERE clause (count probes, integrity checks) should use
+> `verdict_loader.race_id_filter(date)`, which returns `None` when no local racecard
+> cache exists — that is the signal to report **UNVERIFIED**, never a confident zero.
 >
 > `ed7d4a9` migrated `run_multimodel_sigma.py` (Step 12B), **not** `run_results_sigma.py`
 > (Step 12). Two different files, confusingly similar names. Do not read "sigma was
@@ -340,15 +351,17 @@ whether a day scored (which it couldn't, correctly, until fixed).
 >
 > **Never trust a "N scripts fixed / all fixed" claim in this file again — run the grep.**
 
-> **WARNING — `prove_supabase_persistence.py` cannot be trusted (found 2026-08-01).**
-> Law 6 below names it as *the* tool for verifying Supabase is the system of record. It
-> filters `velo_verdicts` by a same-day `generated_at` window, so for any day scored
-> outside its own calendar date it reports the database is empty when it is full. Live
-> proof: for 2026-07-31 — a day with 49 verdicts genuinely in Supabase, which sigma
-> loaded, the canonical builder read, and the dashboard serves — it returns
-> `FAIL / NO_VERDICTS_FOR_DATE / COUNT_MISMATCH local=49 supabase=0`. Until it is
-> migrated to `verdict_loader`, a FAIL from this tool is **not** evidence of a
-> persistence gap. Verify with `load_verdicts(date)` or a race_id query instead.
+> **`prove_supabase_persistence.py` — FIXED 2026-08-02.** Law 6 below names it as *the*
+> tool for verifying Supabase is the system of record, and it had been filtering
+> `velo_verdicts` by a same-day `generated_at` window — so for any day scored outside its
+> own calendar date it reported the database empty when it was full. Live proof of the
+> defect: for 2026-07-31 — a day with 49 verdicts genuinely in Supabase, which sigma
+> loaded, the canonical builder read, and the dashboard served at that same moment — it
+> returned `FAIL / NO_VERDICTS_FOR_DATE / COUNT_MISMATCH local=49 supabase=0`. After the
+> fix the same command returns **PASS**. It now selects by race_id membership and reports
+> `UNVERIFIED_NO_RACECARD_CACHE` when the race_id set cannot be established, rather than
+> emitting a confident zero. **A verification tool returning a false negative is worse
+> than no tool** — it sends the reader hunting a gap that does not exist.
 
 **Use `src/velo/verdict_loader.load_verdicts(date_str, select=...)` for any new code that
 needs "today's verdicts."** It tries race_id membership first, falls back to

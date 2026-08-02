@@ -99,6 +99,32 @@ def known_race_ids_for_date(date_str: str, root: Path | None = None) -> list[str
     return [str(r["race_id"]) for r in races if isinstance(r, dict) and r.get("race_id")]
 
 
+def race_id_filter(date_str: str, root: Path | None = None) -> str | None:
+    """PostgREST filter fragment selecting this date's races by race_id.
+
+    For callers that issue their own REST queries and need only a WHERE clause
+    -- count probes, integrity checks, ops dashboards -- rather than the parsed
+    rows load_verdicts() returns. Use this in place of a
+    `generated_at=gte.{date}T00:00:00&generated_at=lt.{date}T23:59:59` fragment:
+    generated_at is WRITE time, so that window silently returns nothing for any
+    day scored outside its own calendar date (the normal evening-before pattern
+    and every recovery run).
+
+    Returns None when no local racecard cache exists for the date, which is the
+    signal that race_id membership cannot be established -- callers should
+    report UNVERIFIED rather than silently falling back to a generated_at
+    window and reporting a confident zero.
+
+    Example:
+        f = race_id_filter("2026-07-31")
+        sb.count("velo_verdicts", f)   # instead of a day_filter string
+    """
+    ids = known_race_ids_for_date(date_str, root)
+    if not ids:
+        return None
+    return "race_id=in.(" + ",".join(ids) + ")"
+
+
 def _load_verdicts_by_race_id(select: str, race_ids: list[str]) -> list[dict]:
     rows: list[dict] = []
     for offset in range(0, len(race_ids), _CHUNK_SIZE):

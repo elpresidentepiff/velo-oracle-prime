@@ -35,7 +35,13 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+# NOTE: this script remains DO-NOT-USE per docs/current/ONE_TRUTH.md -- the two
+# canonical orchestrators are run_full_raceday.py (morning) and
+# run_full_raceday_eod.py (evening). ROOT is corrected here only because the
+# generated_at fix below needs a resolvable import path; it was
+# `.parent.parent`, i.e. <repo>/scripts, one level short of the repo root, which
+# silently pointed DATA/SCRIPTS at the wrong location.
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 DATA = ROOT / "data"
@@ -113,10 +119,15 @@ def _check_verdicts(date_str: str) -> tuple[bool, int]:
         return True, -1
 
     try:
+        # race_id membership, not a generated_at window (write time).
+        sys.path.insert(0, str(ROOT)) if str(ROOT) not in sys.path else None
+        from src.velo.verdict_loader import race_id_filter
+        _rid = race_id_filter(date_str, ROOT)
+        if _rid is None:
+            return True, -1
         url = (
             f"{sb_url}/rest/v1/velo_verdicts"
-            f"?generated_at=gte.{date_str}T00:00:00"
-            f"&generated_at=lt.{date_str}T23:59:59"
+            f"?{_rid}"
             f"&select=race_id"
             f"&limit=1"
         )

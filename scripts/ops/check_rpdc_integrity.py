@@ -136,7 +136,19 @@ def check_date(date_str: str) -> dict:
         return result
 
     env = _load_env()
-    day_filter = f"generated_at=gte.{date_str}T00:00:00&generated_at=lt.{date_str}T23:59:59"
+    # race_id membership, not a generated_at window -- generated_at is WRITE
+    # time and returns nothing for any day scored outside its own calendar date.
+    # See docs/current/ONE_TRUTH.md, generated_at write-date-vs-race-date class.
+    sys.path.insert(0, str(ROOT)) if str(ROOT) not in sys.path else None
+    from src.velo.verdict_loader import race_id_filter
+    day_filter = race_id_filter(date_str, ROOT)
+    if day_filter is None:
+        result["status"] = "UNVERIFIED_NO_RACECARD_CACHE"
+        result.setdefault("gaps", []).append(
+            f"RACE_ID_SET_UNKNOWN: no racecard cache for {date_str} -- refusing to "
+            "report RPDC counts from a generated_at window."
+        )
+        return result
     sb_rows = _sb_get(
         env,
         f"velo_verdicts?select=race_id,rpdc_primary_tag,rpdc_tags,rpdc_tag_count,"
