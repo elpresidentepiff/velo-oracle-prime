@@ -143,6 +143,133 @@ def _sb_get(path: str) -> list[dict]:
         return []
 
 
+def _sb_get_all(path: str, page: int = 1000) -> list[dict]:
+    """_sb_get with paging. PostgREST silently caps a response at its
+    max-rows setting (1000 here), so a single _sb_get on a multi-hundred-row
+    day quietly truncates. Every count derived from it would then be an
+    undercount that looks like a real number."""
+    out: list[dict] = []
+    offset = 0
+    while True:
+        sep = "&" if "?" in path else "?"
+        batch = _sb_get(f"{path}{sep}offset={offset}&limit={page}")
+        out.extend(batch)
+        if len(batch) < page:
+            return out
+        offset += page
+
+
+def check_horse_runs_freshness(date_str: str, runner_ids: set[str]) -> dict:
+    """Gate 6 — HORSE_RUNS_STALENESS_WARN (added 2026-08-02).
+
+    Gate 5 above checks how stale runner_release_candidates is -- that is
+    RPDC's OWN OUTPUT. It says nothing about whether the INPUT this module
+    declares a dependency on ("Depends on racing_horse_runs being current",
+    see module docstring) actually is current. Those are different questions
+    and on 2026-08-02 they gave different answers:
+
+        runner_release_candidates  latest 2026-08-01  -> Gate 5 staleness 1, SILENT
+        racing_horse_runs          latest 2026-07-31  -> 2026-08-01 never ingested
+
+    2026-08-01 was never captured (no data/results/rp_results_2026_08_01.json,
+    no EOD report), so Step 13 never ran for it and racing_horse_runs has zero
+    rows for that date. RPDC then computed every horse's history without it.
+    Measured blast radius that morning: 2 of 256 runners had raced the previous
+    day and were handed days_since_run=16 and days_since_run=27 when the true
+    value for both was 1. campaign_run_no and runs_since_win are wrong by the
+    same mechanism.
+
+    Two horses is small. The CLASS is not: on any day the EOD chain does not
+    run, the next day's RPDC is silently wrong for every horse that ran on the
+    missed day, and nothing anywhere reported it.
+
+    A missing date is only counted when runner_release_candidates proves there
+    was a card that day. Absence of racing on a genuinely raceless date must
+    not read as a data gap -- the gate reports evidence, never an assumption.
+
+    WARN ONLY. Never raises, never changes the exit code: per operator ruling
+    a degraded day must still score and still learn.
+    """
+    facts: dict = {
+        "latest_horse_runs_date": None, "gap_days": None,
+        "missing_dates": [], "unverifiable_dates": [],
+        "affected_runners": 0, "affected_examples": [],
+    }
+    latest = _sb_get("/racing_horse_runs?order=run_date.desc&limit=1&select=run_date")
+    if not latest:
+        facts["error"] = "RACING_HORSE_RUNS_EMPTY_OR_UNREACHABLE"
+        return facts
+
+    latest_date = latest[0].get("run_date") or ""
+    facts["latest_horse_runs_date"] = latest_date
+    try:
+        target = date.fromisoformat(date_str)
+        newest = date.fromisoformat(latest_date)
+    except (ValueError, TypeError):
+        facts["error"] = f"UNPARSEABLE_DATE latest={latest_date!r} target={date_str!r}"
+        return facts
+
+    facts["gap_days"] = (target - newest).days
+    if facts["gap_days"] <= 1:
+        return facts  # yesterday is in — nothing missing
+
+    # Every date strictly between the newest ingested run and today.
+    candidates = [
+        (newest + timedelta(days=n)).isoformat()
+        for n in range(1, (target - newest).days)
+    ]
+    for d in candidates:
+        card = _sb_get_all(f"/runner_release_candidates?run_date=eq.{d}&select=horse_id,horse")
+        if not card:
+            # No RPDC rows either: cannot prove a card existed. Report as
+            # unverifiable rather than inflating the missing count.
+            facts["unverifiable_dates"].append(d)
+            continue
+        facts["missing_dates"].append(d)
+        for row in card:
+            hid = str(row.get("horse_id") or "")
+            if hid and hid in runner_ids:
+                facts["affected_runners"] += 1
+                if len(facts["affected_examples"]) < 5:
+                    facts["affected_examples"].append(f"{row.get('horse') or hid} (ran {d})")
+    return facts
+
+
+def report_horse_runs_freshness(date_str: str, facts: dict) -> None:
+    """Print Gate 6. Always prints a line so the number is on the record even
+    on a healthy day -- the reason this rotted unseen is that nothing ever
+    stated the freshness, only acted on it."""
+    if facts.get("error"):
+        print(f"\n⚠ HORSE_RUNS_STALENESS_WARN\n  Could not verify racing_horse_runs freshness: {facts['error']}")
+        log.warning("HORSE_RUNS_STALENESS_WARN: %s", facts["error"])
+        return
+
+    latest, gap = facts["latest_horse_runs_date"], facts["gap_days"]
+    if gap is not None and gap <= 1:
+        print(f"  racing_horse_runs freshness: OK (latest {latest}, {gap} day behind {date_str})")
+        return
+
+    print(
+        f"\n⚠ HORSE_RUNS_STALENESS_WARN\n"
+        f"  racing_horse_runs latest run_date: {latest} ({gap} days behind {date_str})\n"
+        f"  Dates with a card but NO ingested runs: {facts['missing_dates'] or 'none'}"
+    )
+    if facts["unverifiable_dates"]:
+        print(f"  Dates with no evidence either way (no card found): {facts['unverifiable_dates']}")
+    print(
+        f"  Runners on today's card who raced on a missing date: {facts['affected_runners']}\n"
+        f"  Their days_since_run / campaign_run_no / runs_since_win are WRONG.\n"
+        f"  RPDC still builds (warn-only). Repair with, for each missing date:\n"
+        f"    PYTHONPATH=. venv/bin/python scripts/ops/ingest_results_to_horse_runs.py --date <DATE>"
+    )
+    for ex in facts["affected_examples"]:
+        print(f"    - {ex}")
+    log.warning(
+        "HORSE_RUNS_STALENESS_WARN: latest=%s gap=%s missing=%s affected=%d",
+        latest, gap, facts["missing_dates"], facts["affected_runners"],
+    )
+
+
 def _sb_upsert(path: str, rows: list[dict], conflict: str) -> int:
     if not rows or not SB_URL or not SB_KEY:
         return 0
@@ -599,6 +726,19 @@ def build_rpdc_for_date(date_str: str, injection_path: str | Path | None = None)
     if not runners_to_score:
         print("  No runners to score.")
         return False
+
+    # ── Gate 6: HORSE_RUNS_STALENESS_WARN ─────────────────────────────────────
+    # Runs here, not beside Gate 5, because it needs today's runner set to
+    # report a real blast radius rather than a bare date comparison. See
+    # check_horse_runs_freshness() for why Gate 5 cannot catch this.
+    try:
+        _hr_facts = check_horse_runs_freshness(
+            date_str, {str(r.get("horse_id") or "") for r in runners_to_score}
+        )
+        report_horse_runs_freshness(date_str, _hr_facts)
+    except Exception as _e:  # a warning must never be able to break the build
+        log.warning("HORSE_RUNS_STALENESS_WARN check itself failed: %s", _e)
+        print(f"  racing_horse_runs freshness: UNVERIFIED (check failed: {_e})")
 
     # Deduplicate by horse_id (keep last — same horse may run multiple times today)
     seen_horses: dict[str, dict] = {}
