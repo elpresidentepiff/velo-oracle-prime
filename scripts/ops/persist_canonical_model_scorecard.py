@@ -26,6 +26,7 @@ import csv
 import json
 import os
 import subprocess
+import sys
 import urllib.error
 import urllib.request
 from collections import Counter
@@ -132,6 +133,13 @@ def _row_to_payload(row: dict, date: str, commit_sha: str) -> dict:
     }
 
 
+def conflict_key_columns() -> tuple[str, ...]:
+    """The unique key Supabase upserts on. Single source of truth so the
+    in-batch dedupe below and the on_conflict clause can never drift apart."""
+    return ("run_date", "race_id", "model_name", "lane_name",
+            "source_path", "source_field", "horse_id", "rank")
+
+
 def _sb_upsert(rows: list[dict]) -> tuple[int, str | None]:
     try:
         from dotenv import load_dotenv
@@ -142,7 +150,7 @@ def _sb_upsert(rows: list[dict]) -> tuple[int, str | None]:
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
     if not url or not key:
         return 0, "SUPABASE_URL/KEY not configured"
-    conflict_cols = "run_date,race_id,model_name,lane_name,source_path,source_field,horse_id,rank"
+    conflict_cols = ",".join(conflict_key_columns())
     req = urllib.request.Request(
         url + "/rest/v1" + TABLE_PATH + f"?on_conflict={conflict_cols}",
         data=json.dumps(rows).encode("utf-8"),
@@ -211,6 +219,28 @@ def main() -> None:
 
     if execute:
         payloads = [_row_to_payload(r, args.date, commit_sha) for r in rows]
+        # Collapse rows that repeat a conflict key within this batch, keeping the
+        # last. Postgres rejects the ENTIRE statement with 21000 "ON CONFLICT DO
+        # UPDATE command cannot affect row a second time" if one appears, so a
+        # single duplicated source row silently cost a whole day's persist:
+        # 2026-07-18's midprice source listed 65 races for 61 distinct ids, which
+        # produced 30 duplicate keys, failed the write, and left that date sitting
+        # at 0 wins while its CSV held 271 -- and because this script exited 0
+        # (see below) every caller reported success.
+        _seen: dict[tuple, int] = {}
+        _deduped: list[dict] = []
+        for p in payloads:
+            k = tuple(p.get(c) for c in conflict_key_columns())
+            if k in _seen:
+                _deduped[_seen[k]] = p
+            else:
+                _seen[k] = len(_deduped)
+                _deduped.append(p)
+        dropped = len(payloads) - len(_deduped)
+        audit["duplicate_conflict_keys_collapsed"] = dropped
+        if dropped:
+            print(f"  [WARN] collapsed {dropped} rows sharing a conflict key with an earlier row in this batch")
+        payloads = _deduped
         written, error = _sb_upsert(payloads)
         audit["rows_written"] = written
         audit["write_error"] = error
@@ -225,6 +255,13 @@ def main() -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(audit, indent=2), encoding="utf-8")
     print(f"audit={out_path}")
+
+    # Exit non-zero when the write failed. This printed "WRITE FAILED" and then
+    # returned success, so every orchestrator and backfill driver that checked
+    # the return code recorded a clean pass over a database that had not been
+    # written to (2026-08-02).
+    if audit.get("write_error"):
+        sys.exit(1)
 
 
 if __name__ == "__main__":

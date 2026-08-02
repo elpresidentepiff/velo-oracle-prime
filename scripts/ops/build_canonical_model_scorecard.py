@@ -417,8 +417,20 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                     if _n and _h.get("horse_id") is not None:
                         _mp_ids.setdefault(_n, _h["horse_id"])
         audit["midprice_horse_id_lookup_size"] = len(_mp_ids)
+        _mp_seen_races: set[str] = set()
         for mp_race in mp_packet.get("races", []):
             race_id = str(mp_race.get("race_id") or "")
+            # The midprice packet can list the same race twice (2026-07-18: 65
+            # race entries for 61 distinct ids). Emitting both copies produced
+            # rows sharing a conflict key, and Postgres rejects the ENTIRE upsert
+            # with 21000 "ON CONFLICT DO UPDATE command cannot affect row a
+            # second time" -- so four duplicated races cost that whole date its
+            # persist, leaving it at 0 wins in the canonical table while its CSV
+            # held 271. Keep the first occurrence.
+            if race_id in _mp_seen_races:
+                audit.setdefault("midprice_duplicate_races_skipped", []).append(race_id)
+                continue
+            _mp_seen_races.add(race_id)
             result_race = results.get(race_id)
             band_runners = [r for r in (mp_race.get("all_scored") or []) if r.get("in_band")]
             for idx, mp_runner in enumerate(band_runners, start=1):
