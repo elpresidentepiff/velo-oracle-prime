@@ -563,13 +563,32 @@ system is built so that doing the right thing produces a false confirmation.**
   56 days of local files. Each was individually invisible and collectively fatal.
 
 ### Cause 2 — the instruments lie
-`prove_supabase_persistence.py` (named by Law 6 as THE persistence check) reports
-`supabase=0` for a day with 49 rows genuinely persisted. The daily truth watchdog had the
-same defect. `live_sentient_state_touched` is computed from the runner's own failure list
-rather than the live adapter's audit, so it reports `False` while the live adapter writes
-49 updates in the same run — and that field is a documented learning-gate blocker, so
-that gate can never fire. When the verification tools are wrong, diligence does not save
-you; checking harder returns the same false answer.
+`prove_supabase_persistence.py` (named by Law 6 as THE persistence check) reported
+`supabase=0` for a day with 49 rows genuinely persisted (fixed 2026-08-02). The daily
+truth watchdog had the same defect. `build_velo_living_state.py` read
+`live_sentient_state_touched` from `sentient_state_shadow.json`, which has no such key,
+so `.get()` always defaulted to `False` and its `compliant` verdict was incapable of ever
+failing (fixed 2026-08-02 — it now reads the runner status file and reports `UNKNOWN`
+when absent). When the verification tools are wrong, diligence does not save you;
+checking harder returns the same false answer.
+
+> **Correction 2026-08-02 to this section's first draft.** It originally claimed
+> `live_sentient_state_touched` was "computed from the runner's own failure list rather
+> than the live adapter's audit ... so that gate can never fire." That was too strong and
+> partly wrong. The field IS derived from the runner, but legitimately: `run()` hashes
+> `sentient_state.json` before the shadow adapters and again after, and raises
+> `LIVE_STATE_TOUCHED` if it changed. It is a correctly-scoped guard against
+> **unauthorized** mutation during the shadow phase, `False` is the right answer for it,
+> and `eod_result_study_layer`'s `LIVE_STATE_MUTATION_DETECTED` check depends on it. The
+> real defect was narrower: the runner published only the guard, and nothing reported the
+> **authorized** live-adapter write that happens afterwards (operator sign-off
+> 2026-07-26) — so `live_sentient_state_touched: false` read as "live state untouched
+> tonight" when 49 engine updates had in fact been applied. Both facts are now published:
+> `live_adapter_state_written`, `live_adapter_updates_applied`, `live_adapter_verdict`,
+> `live_adapter_audit`, `shadow_adapter_*`, `live_state_write_authorized`, read from the
+> adapters' own audit files. The guard is unchanged and still fails on unauthorized
+> mutation. **Lesson: "this flag is lying" was itself a claim that needed the same
+> count-and-verify discipline the rest of this section demands.**
 
 ### Cause 3 — this document asserted completion the code did not have
 `ONE_TRUTH.md` opens with "IF THIS FILE CONFLICTS WITH ANY OTHER DOC, THIS FILE WINS."

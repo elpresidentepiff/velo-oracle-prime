@@ -403,6 +403,46 @@ class NightlyEODRunner:
                 
         return verdict
 
+    def _adapter_state_facts(self) -> dict:
+        """What the Playbook G adapters actually did, read from their own audits.
+
+        The runner must not infer this from its own stats: the live adapter is a
+        separate component that writes sentient_state.json after the runner's
+        own hash guard has already passed, so nothing in self.failures or
+        self.stats can see it. Publishing these alongside the guard means a
+        reader can distinguish "nothing mutated live state unexpectedly" (the
+        guard, live_sentient_state_touched) from "the authorized live adapter
+        wrote N updates tonight" (here) -- a distinction that did not exist
+        before 2026-08-02 and caused live evolution to be reported as
+        shadow-only.
+        """
+        facts: dict = {}
+        for label, path in (
+            ("live_adapter", ROOT / "data" / f"playbook_g_live_nightly_audit_{self.date_tag}.json"),
+            ("shadow_adapter", ROOT / "data" / f"playbook_g_nightly_audit_{self.date_tag}.json"),
+        ):
+            if not path.exists():
+                facts[f"{label}_audit"] = "MISSING"
+                facts[f"{label}_state_written"] = "UNKNOWN"
+                continue
+            try:
+                a = json.loads(path.read_text())
+            except Exception as e:
+                facts[f"{label}_audit"] = f"UNREADABLE:{e}"
+                facts[f"{label}_state_written"] = "UNKNOWN"
+                continue
+            facts[f"{label}_audit"] = str(path.relative_to(ROOT))
+            facts[f"{label}_state_written"] = bool(
+                a.get("live_state_touched") if label == "live_adapter" else a.get("shadow_state_touched")
+            )
+            facts[f"{label}_updates_applied"] = a.get("engine_updates_applied")
+            facts[f"{label}_verdict"] = a.get("verdict")
+        # Authorized by operator sign-off 2026-07-26; the runner only invokes the
+        # live adapter on the verdict == "PASS" path, after the shadow pass has
+        # proven idempotency on tonight's own events.
+        facts["live_state_write_authorized"] = True
+        return facts
+
     def _finalize(self, verdict: str):
         finished_at = datetime.now(timezone.utc).isoformat()
         
@@ -425,8 +465,25 @@ class NightlyEODRunner:
             "loss_count_by_type": dict(self.stats["loss_count_by_type"]),
             "data_error_count": self.stats["data_error_count"],
             "data_error_rate": self.stats["data_error_count"] / self.stats["prediction_count"] if self.stats["prediction_count"] > 0 else 0,
+            # UNAUTHORIZED-mutation guard, scoped to the shadow/verification
+            # phase only: run() hashes sentient_state.json before the shadow
+            # adapters and again after, and appends LIVE_STATE_TOUCHED if it
+            # changed. False here means "nothing mutated live state while the
+            # shadow pass ran" -- which is the correct answer, and what
+            # eod_result_study_layer's LIVE_STATE_MUTATION_DETECTED check is
+            # for. Keep it.
             "live_sentient_state_touched": any(f["type"] == "LIVE_STATE_TOUCHED" for f in self.failures),
             "shadow_state_touched": self.stats.get("updates_1", 0) > 0,
+            # ...but it says NOTHING about the AUTHORIZED live adapter, which
+            # runs afterwards (operator sign-off 2026-07-26) and legitimately
+            # writes sentient_state.json. Until 2026-08-02 the status file
+            # reported only the guard, so a reader saw
+            # live_sentient_state_touched=false and concluded live state was
+            # untouched that night, while playbook_g_live_nightly_audit recorded
+            # live_state_touched=true with 49 engine updates applied in the same
+            # run. Both facts are now published, read from the adapters' own
+            # audits rather than inferred from this runner's state.
+            **self._adapter_state_facts(),
             "supabase_writes_attempted": any(f["type"] == "SUPABASE_WRITE_ATTEMPTED" for f in self.failures),
             "supabase_backup_attempted": False,
             "hfs_read_attempted": any(f["type"] == "HFS_READ_ATTEMPTED" for f in self.failures),

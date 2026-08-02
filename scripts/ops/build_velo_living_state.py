@@ -203,15 +203,36 @@ def _build_playbook_g_state() -> dict:
     d = _read_json(shadow_path)
     if d is None:
         return {"artifact": "sentient_state_shadow.json", "status": "UNKNOWN", "parse_error": True}
-    # live_sentient_state_touched must be false for shadow-only compliance
-    touched = d.get("live_sentient_state_touched", False)
+    # live_sentient_state_touched is written by nightly_eod_learning_runner.py
+    # into data/nightly_eod_learning_status_{date}.json -- it is NOT a key of
+    # sentient_state_shadow.json. Reading it from the state file meant .get()
+    # always missed and defaulted to False, so `compliant` was hardcoded True in
+    # effect: this check could never fail, whatever happened. Read the runner's
+    # status file, and say UNKNOWN when there isn't one rather than reporting a
+    # pass by default (found 2026-08-02).
+    status_files = sorted(
+        (_REPO_ROOT / "data").glob("nightly_eod_learning_status_*.json"), reverse=True
+    )
+    runner_status = _read_json(status_files[0]) if status_files else None
+    if runner_status is None:
+        touched = "UNKNOWN"
+        compliant = "UNKNOWN"
+    else:
+        touched = runner_status.get("live_sentient_state_touched", "UNKNOWN")
+        compliant = (touched is False)
     return {
         "artifact": "sentient_state_shadow.json",
         "status": "SHADOW_ONLY",
         "last_updated": d.get("last_updated", "UNKNOWN"),
         "total_races_observed": d.get("total_races_observed", 0),
         "live_sentient_state_touched": touched,
-        "compliant": touched is False,
+        "compliant": compliant,
+        # The authorized live adapter (operator sign-off 2026-07-26) writes
+        # sentient_state.json AFTER the runner's guard; surface it so
+        # "compliant" is not misread as "live state untouched tonight".
+        "live_adapter_state_written": (runner_status or {}).get("live_adapter_state_written", "UNKNOWN"),
+        "live_adapter_updates_applied": (runner_status or {}).get("live_adapter_updates_applied", "UNKNOWN"),
+        "source": str(status_files[0].name) if status_files else "MISSING",
     }
 
 
