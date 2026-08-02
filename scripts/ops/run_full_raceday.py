@@ -22,8 +22,16 @@ scoring is skipped (never overwrites/rescoring a live day) and only the
 paper-intelligence/New Build/Champion Intent layers are (re)built.
 
 Usage:
-    PYTHONPATH=. python scripts/ops/run_full_raceday.py --date 2026-07-08 --execute
-    PYTHONPATH=. python scripts/ops/run_full_raceday.py --date 2026-07-08 --execute --skip-capture
+    PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday.py --date 2026-07-08 --execute
+    PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday.py --date 2026-07-08 --execute --skip-capture
+
+USE venv/bin/python, NOT bare `python` (corrected 2026-08-02). Steps are spawned
+with sys.executable, so the launching interpreter is the one the capture steps
+get. The venv's Playwright bundles firefox-1532, which owns the RP browser
+profile; the system python's bundles firefox-1522, which refuses that profile
+("last used with a newer version of this application"). The session probe
+surfaces that as a plain FAIL, so a wrong-interpreter launch is indistinguishable
+from a logged-out session.
         (use --skip-capture if a racecard/injection already exists for the date
         and only the downstream chain needs to run)
 
@@ -310,22 +318,65 @@ def main() -> int:
     # opened the door to phantom-race/ID-mismatch bugs (2026-07-17 Hamilton
     # incident). --allow-missing-pdfs bypasses check (2) only, for venues
     # that genuinely never get RP PDFs; passport is never overridable.
-    from scripts.ops.check_scoring_readiness_gate import check_passport, check_pdf_ingestion
+    from scripts.ops.check_scoring_readiness_gate import (
+        check_passport, check_passport_coverage, check_pdf_ingestion, format_coverage_line,
+    )
 
     print(f"\n{'='*70}\nSCORING READINESS GATE\n{'='*70}")
     passport_ok, passport_msg = check_passport(date)
     print(f"  Passport:       {'OK   ' if passport_ok else 'FAIL '} {passport_msg}")
+    # PHASE D (2026-08-02) — passport PRESENCE passed every day while real
+    # coverage sat at 45-63%, because the feed emits a row per runner whether
+    # or not a passport was found. Report the number every day, warn-only.
+    _cov_ok, _cov_stats = check_passport_coverage(date)
+    for _i, _line in enumerate(format_coverage_line(_cov_stats)):
+        print(f"  Passport cover: {_line}" if _i == 0 else f"  {_line}")
+    # PDF ingestion is a WARNING, not a blocker (operator ruling 2026-08-02).
+    #
+    # It blocked whole days that were otherwise complete. On 2026-08-02 live
+    # capture succeeded (27 races, 267 runners, all PASS) and the passport feed
+    # built fine at 548K, but zero PDFs had been dropped in the inbox, so the
+    # gate stopped the day entirely -- no verdicts, no reports, nothing. Same on
+    # 07-24, 07-25, 07-30, 07-31.
+    #
+    # The ordering argument is what settles it. Of the three inputs, only live
+    # capture is perishable -- RP drops a course from its index once that course
+    # finishes racing. The passport feed is DERIVED from that capture (Step 6
+    # reads racecards_{date}_standard.json), so it cannot precede it. PDFs are
+    # the one input that is not perishable at all: the same six sheets ingest
+    # identically at 07:00 or at midnight. Blocking the perishable-critical path
+    # on the one non-perishable input is backwards -- late PDFs are recoverable
+    # by re-ingesting and re-running the merge; a missed capture never is.
+    #
+    # Per this file's own model/data-source table, PDF sheets are "optional,
+    # additive context only" for Old VELO and No-RPR, and New Build / Champion
+    # Intent / RPDC need the live capture rather than the sheets. So a PDF-less
+    # day still scores every model; it loses postdata_score and
+    # or_compression_score, which thins the High-Conviction PDF panel and Deep
+    # Race Agent.
+    #
+    # The passport check below stays HARD and non-overridable: it is what stops
+    # New Build, Champion Intent and RPDC scoring against an empty passport bank
+    # and silently emitting garbage lanes.
     if args.allow_missing_pdfs:
         pdf_ok, ok_venues, missing_venues = True, [], []
         print("  PDF ingestion:  SKIP  --allow-missing-pdfs set")
     else:
         pdf_ok, ok_venues, missing_venues = check_pdf_ingestion(date)
-        print(f"  PDF ingestion:  {'OK   ' if pdf_ok else 'FAIL '} ingested={ok_venues or []} missing={missing_venues or []}")
-    if not (passport_ok and pdf_ok):
+        print(f"  PDF ingestion:  {'OK   ' if pdf_ok else 'WARN '} ingested={ok_venues or []} missing={missing_venues or []}")
+        if not pdf_ok:
+            print(
+                "  [WARN] Scoring proceeds without PDF enrichment for the venues above.\n"
+                "         Old VELO/No-RPR lose postdata_score + or_compression_score;\n"
+                "         New Build / Champion Intent / RPDC are unaffected (they need\n"
+                "         live capture, not sheets). Drop the sheets in and re-run\n"
+                "         auto_ingest_pdf_inbox.py + the merge to enrich this date later."
+            )
+    if not passport_ok:
         print(
-            "\n[BLOCKED] Scoring readiness gate failed — no scoring, no downstream reports.\n"
-            "  Fix the above (ingest PDFs for the missing venues) and rerun with --skip-capture,\n"
-            "  or pass --allow-missing-pdfs if those venues genuinely have no PDFs today."
+            "\n[BLOCKED] Passport feed missing or empty — no scoring, no downstream reports.\n"
+            "  This check is not overridable: New Build, Champion Intent and RPDC would\n"
+            "  otherwise score against an empty passport bank and emit silent garbage."
         )
         return 1
 

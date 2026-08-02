@@ -24,8 +24,18 @@ second run. Still: no step here should be assumed safe against a NEW,
 unfamiliar date without checking its own idempotence story first.
 
 Usage:
-    PYTHONPATH=. python scripts/ops/run_full_raceday_eod.py --date 2026-07-24 --execute
-    PYTHONPATH=. python scripts/ops/run_full_raceday_eod.py --date 2026-07-24 --execute --skip-results-capture
+    PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday_eod.py --date 2026-07-24 --execute
+    PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday_eod.py --date 2026-07-24 --execute --skip-results-capture
+
+USE venv/bin/python, NOT bare `python` (corrected 2026-08-02). Every step is
+spawned with sys.executable, so the interpreter you launch with is the one the
+capture steps get. Two Playwright installs exist on this machine with different
+bundled Firefox builds: the venv has firefox-1532, which owns the RP browser
+profile; the system python has firefox-1522, which refuses the profile with
+"This profile was last used with a newer version of this application". The
+session probe reports that as a plain FAIL, so a wrong-interpreter launch looks
+exactly like a logged-out session and sends you off re-running init-login on a
+session that was healthy all along.
         (use --skip-results-capture if data/results/rp_results_{date}.json already exists
         and only the sigma/learning chain needs to run)
 
@@ -98,6 +108,12 @@ def main() -> int:
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
     parser.add_argument("--execute", action="store_true", required=True, help="Required — this runs real captures, sigma, and learning writes.")
     parser.add_argument("--skip-results-capture", action="store_true", help="Skip results capture (assumes data/results/rp_results_{date}.json already exists)")
+    parser.add_argument("--skip-passport-refresh", action="store_true",
+                        help="Skip Step 21 (passport bank refresh). The refresh is a ~500-URL "
+                             "scrape that runs after learning has already completed.")
+    parser.add_argument("--passport-batch-limit", type=int, default=500,
+                        help="Max horse profiles to queue for Step 21 (default 500, matching "
+                             "build_rp_passport_bank_queue.py's own default).")
     args = parser.parse_args()
 
     date = args.date
@@ -305,6 +321,122 @@ def main() -> int:
         [PY, "scripts/ops/build_canonical_learning_events.py", "--date", date, "--execute"],
         critical=False, results=results,
     )
+
+    # ── Step 21: Passport bank refresh (PHASE A, wired 2026-08-02) ─────────
+    # THE BUG THIS CLOSES
+    # -------------------
+    # data/new_build/passports/horse_passports_v1.jsonl is the ONLY deep
+    # horse-career source VELO has. Every Supabase alternative is either in the
+    # dead Racing API id space (horse_profiles, racing_horses, horse_bible,
+    # horse_mark_profile -- all frozen at/before the 2026-05-14 decommission and
+    # unreachable from an rp_uid) or too shallow to be a career at all
+    # (racing_horse_runs' rp_uid era began 2026-05-01, so it holds 1-3 runs per
+    # horse; measured 2026-08-02, 72 of 79 shared horses were SHALLOWER than the
+    # bank). Deriving career_runs/win_rate from it would publish
+    # "career_runs=1, win_rate=0.0" for a horse with 17 runs.
+    #
+    # Every one of these five scripts already existed and worked. None of them
+    # was called by ANY orchestrator -- verified by AST enumeration of both
+    # run_full_raceday.py and this file. The bank, the queue and
+    # form_history_latest.json all carried the identical timestamp
+    # 2026-07-29 12:54: the fingerprint of a hand-run that simply stopped.
+    # Consequence on 2026-08-02: 116/256 runners had a passport (45.3%), 79 of
+    # the 140 missing held an official rating, and Teed Up -- which ran on
+    # 2026-07-31 -- was scored MISSING_PASSPORT.
+    #
+    # WHAT THIS ACTUALLY DRAINS, AND HOW FAST (measured 2026-08-02)
+    # -------------------------------------------------------------
+    # The queue holds 4,452 horses with status QUEUED_FOR_CAPTURE, every one of
+    # them priority 10 (source: upcoming_racecard). All 140 of the horses that
+    # were missing a passport on 2026-08-02 are in it -- none is unreachable.
+    # But within a priority the tiebreak is ALPHABETICAL BY NAME, not by race
+    # date, so the backlog drains A-to-Z rather than most-recently-needed first:
+    #
+    #     after   500 scraped (1 night):  31 of today's 140 missing filled
+    #     after 1,000 scraped (2 nights): 46
+    #     after 2,000 scraped (4 nights): 74
+    #     after 4,452 scraped (8 nights): 140  (backlog cleared)
+    #
+    # So coverage climbs steadily rather than jumping. Raise
+    # --passport-batch-limit to shorten that; 500 is the queue builder's own
+    # default and costs ~12 min at 1.5s/URL. Once the backlog is cleared, a
+    # night's new runners are a few hundred at most and 500 keeps pace.
+    #
+    # WHY IT RUNS HERE, POST-RACING
+    # -----------------------------
+    # It must never sit in the morning path: it is a ~500-URL scrape and the
+    # morning path is racing the clock against RP dropping finished courses from
+    # its index once they have run.
+    #
+    # Every sub-step is critical=False. A failed scrape degrades tomorrow's
+    # coverage; it must never fail the night's learning, which has already
+    # completed by this point (Steps 20-20E above).
+    if args.skip_passport_refresh:
+        print(f"\n{'='*70}\n[SKIP] Step 21: Passport bank refresh (--skip-passport-refresh)\n{'='*70}")
+    else:
+        passport_label = f"passport-bank-{date}"
+        queue_path = ROOT / "data" / "racing_post_url_lists" / "passport_bank_next_batch_latest.txt"
+
+        run(
+            "Step 21A: Build passport bank scrape queue",
+            [PY, "scripts/ops/build_rp_passport_bank_queue.py",
+             "--batch-limit", str(args.passport_batch_limit), "--execute"],
+            critical=False, results=results,
+        )
+
+        queue_urls = []
+        if queue_path.exists():
+            queue_urls = [ln.strip() for ln in queue_path.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        print(f"\n  Passport queue: {len(queue_urls)} URL(s) at {queue_path.name}")
+
+        if not queue_urls:
+            print("  [SKIP] Steps 21B-21E — queue is empty, nothing to capture.")
+        elif not rp_session_healthy():
+            # Not a failure: the bank simply does not refresh tonight. Said out
+            # loud so it cannot rot silently the way the whole loop just did.
+            print(
+                "  [SKIP] Steps 21B-21E — RP browser session is not logged in.\n"
+                "         The passport bank will NOT refresh tonight and coverage will\n"
+                "         decay another day. Fix with:\n"
+                f"           python scripts/ops/racing_post_account_collector.py init-login "
+                f"--profile-dir {FIREFOX_PROFILE} --execute --wait-seconds 90"
+            )
+            results.append({"step": "Step 21B-21E: Passport bank refresh (SKIPPED — RP session dead)",
+                            "cmd": [], "returncode": 0, "ok": True, "critical": False})
+        else:
+            print(f"  [OK] Session logged in. Capturing {len(queue_urls)} horse profiles "
+                  f"(~{len(queue_urls) * 1.5 / 60:.0f} min at 1.5s delay).")
+            captured = run(
+                "Step 21B: Capture horse profile pages",
+                [PY, "scripts/ops/racing_post_account_collector.py", "capture",
+                 "--date", passport_label, "--url-list", str(queue_path),
+                 "--profile-dir", str(FIREFOX_PROFILE),
+                 "--delay-seconds", "1.5", "--execute", "--batch-size", "0"],
+                critical=False, results=results,
+            )
+            if captured:
+                run(
+                    "Step 21C: Parse horse profile captures",
+                    [PY, "scripts/ops/parse_racing_post_account_capture.py",
+                     "--date", passport_label, "--execute"],
+                    critical=False, results=results,
+                )
+                run(
+                    "Step 21D: Parse RP form history",
+                    [PY, "scripts/ops/parse_rp_form_history.py", "--date", passport_label],
+                    critical=False, results=results,
+                )
+                # Default mode is merge-in-place: horses that cannot be rebuilt
+                # from this batch are carried over untouched, never dropped. Do
+                # NOT pass --rebuild here -- that drops every carry-over row and
+                # would shrink the bank to just tonight's scrape.
+                run(
+                    "Step 21E: Rebuild horse passport bank (merge-in-place)",
+                    [PY, "scripts/ops/new_build_horse_passports.py"],
+                    critical=False, results=results,
+                )
+            else:
+                print("  [SKIP] Steps 21C-21E — capture failed, nothing new to parse.")
 
     # ── Summary ────────────────────────────────────────────────────────────
     print(f"\n{'='*70}\nRUN_FULL_RACEDAY_EOD SUMMARY — {date}\n{'='*70}")
