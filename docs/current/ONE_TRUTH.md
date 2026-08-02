@@ -26,7 +26,7 @@ An auditable UK/IRE horse-racing prediction system. It captures Racing Post HTML
 ## What is LIVE
 | Thing | Truth |
 |---|---|
-| Scoring entrypoint | `scripts/ops/run_prime_today.py --date YYYY-MM-DD --source rp --no-notify` (manual; Railway cron is FAIL_OR_UNPROVEN) |
+| Scoring entrypoint | `scripts/ops/run_prime_today.py --date YYYY-MM-DD --source rp --no-notify`. **Not manual** — invoked as Step 9 of `run_full_raceday.py`, which the `VELO_Raceday_0700` Windows task runs daily at 07:00 (see "What actually starts VELO"). Run it by hand only to re-score a single day. Railway cron is FAIL_OR_UNPROVEN and is not the scheduler. |
 | Live formula | Profile `SQPE_IMPROVEMENT_MDS_V1`: `VP = (0.45·sqpe_v17 + 0.12·improvement_score + 0.10·market_deception_score) / 0.67` (`src/intelligence/velo_prime_ensemble.py:175-235`) |
 | Live model files | `models/sqpe_v17/sqpe_v17.pkl` (retrained as v17.1 on 1.54M rows, 2025 holdout AUC=0.9296, promoted 2026-06-19), `models/specialist/improvement_model/`, `models/specialist/market_deception_model/` |
 | RPR in the live model | `sqpe_v17.pkl` genuinely uses RPR (`rpr_num`+`rpr_vs_field` ≈ 50% of its real feature importance) — grandfathered by deliberate 2026-06-19 design, not a leak. See `docs/engineering/SOURCE_INCLUSION_POLICY_V1.md` for the full rationale and the empirical mid-price/short-fav band split that justifies it. New Build, Champion Intent Shadow, and No-RPR Shadow genuinely exclude it. |
@@ -150,18 +150,58 @@ skips and never overwrites if today's `velo_verdicts` already exist) → Steps 9
 Non-critical step failures do not stop the chain; critical ones (capture, parse,
 validate, scoring) do.
 
-### It is scheduled — Windows Task Scheduler, not WSL cron (changed 2026-07-29)
-The 2026-07-08 WSL crontab fired ZERO times on 2026-07-28 and 2026-07-29 (WSL not
-awake at 07:00; cron never catches up a missed firing) — 2026-07-28 was permanently
-lost as a result. Replaced 2026-07-29 with Windows scheduled task `VELO_Raceday_0700`:
-daily 07:00, `StartWhenAvailable` (runs as soon as the machine is next on if 07:00 was
-missed), `WakeToRun`, 4h execution limit. It launches
-`scripts/ops/run_full_raceday_scheduled.sh` via `wsl.exe -d Ubuntu`, which logs to
-`data/reports/run_full_raceday_cron.log` as before. The old crontab line is removed
-(backup: `~/velo_crontab_backup_2026_07_29.txt`). Backstop: session-start check #12
-(`check_todays_raceday_ran`) goes CRITICAL if today has no raceday report/verdicts
-after 08:00. (Still not a cloud agent — the pipeline needs the local RP browser
-session and `.env`, which no cloud sandbox has.)
+### VELO IS STARTED MANUALLY BY THE OPERATOR (operator ruling, 2026-08-02)
+
+**There is no automated race-day start. The operator commands the day.**
+
+```
+PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday.py --date YYYY-MM-DD --execute
+```
+
+Run it whenever the operator decides — the pipeline no longer waits on a clock.
+`--date` and `--execute` are both required (argparse `required=True`; invoking the
+script bare exits 2). Add `--allow-missing-pdfs` when the RP sheets are not in the
+inbox; add `--skip-capture` only when the racecard injection for that date already
+exists.
+
+**Scheduled tasks — exactly one remains, and it does not run a race day:**
+
+| Task | Trigger | Runs | State |
+|---|---|---|---|
+| `VELO Dashboard` | At logon | `dashboard_start.bat` → `dashboard_start.sh` → `app.main:app` | ENABLED |
+| `VELO_Raceday_0700` | (was daily 07:00) | `run_full_raceday_scheduled.sh` | **DISABLED 2026-08-02** |
+
+Verify with `schtasks.exe /query /fo CSV | grep -i velo`. Nothing else can start VELO:
+WSL crontab has zero job lines, no systemd timers, and Railway runs only the dashboard.
+
+**Why the 07:00 automation was abandoned rather than repaired.** It was unreliable in a
+way that silently cost race days, and the cause was environmental, not fixable in code:
+- `Power Management: Stop On Battery Mode, No Start On Batteries`. On a laptop, that
+  means unplugged at 07:00 → never starts; unplugged mid-run → **killed mid-capture**.
+- `Logon Mode: Interactive only` — needs a logged-in session.
+- Measured firing times from `data/reports/run_full_raceday_cron.log`:
+  `07-30 07:00:01` · `07-31 **09:52:29**` · `08-01 07:00:01` · `08-02 **11:08:56**`.
+  Two of four were hours late. `StartWhenAvailable` catches up a missed 07:00, but a
+  catch-up at 11:08 lands after cards have started — and RP drops a course from its
+  index once that course finishes racing, so the coverage is gone permanently.
+
+Task definition backed up at `data/_quarantine/VELO_Raceday_0700_task_backup_20260802.xml`.
+Re-enable with `schtasks.exe /change /tn "VELO_Raceday_0700" /ENABLE` if ever wanted.
+
+**A third task was deleted 2026-08-02: `VELO Raceday Pipeline`** (weekly 09:00 →
+`raceday_auto.bat`). It invoked `run_full_raceday.py` with **no arguments**, so it
+exited 2 every time it ever fired — while Task Scheduler recorded `Last Result: 0`,
+because the `.bat` does not propagate the exit code. A second scheduler reported green
+while executing nothing. Backup:
+`data/_quarantine/VELO_Raceday_Pipeline_task_backup_20260802.xml`.
+
+The earlier WSL crontab (2026-07-08) fired ZERO times on 2026-07-28/29 and lost
+2026-07-28 permanently; removed 2026-07-29 (backup
+`~/velo_crontab_backup_2026_07_29.txt`).
+
+**The operator now owns the timing, so the operator owns the timing constraint below —
+it is the one thing manual control does not remove.** Not a cloud agent either: the
+pipeline needs the local RP browser session and `.env`, which no cloud sandbox has.
 
 ### The timing constraint is hard, not a preference
 Confirmed 2026-07-08: Racing Post's live `/racecards/{date}` index page drops a course
@@ -223,29 +263,44 @@ race_ids/horse_uids), and none of them have a PDF-sourced fallback path. A PDF-o
 (like 2026-07-04 and the morning of 2026-07-08) will score Old VELO/No-RPR cleanly and
 leave the other three lanes permanently blank for that day.
 
-### Dashboard — one server now, not two
-`app/main.py` is now the single canonical dashboard server (port 8000). Until
-2026-07-08 there were two FastAPI apps (`app/main.py` and
-`scripts/ops/new_build_dashboard_server.py`) serving the identical static
-`app/static/dashboard/index.html` but with *different* API route sets — whichever one
-happened to be running determined which panels worked. This caused the Champion Intent
-Shadow panel to silently show "No Champion Intent data" for a full session, because the
-frontend's `/api/model-suggestions` call only existed on the server that wasn't running.
-`app/main.py` has **almost** every route `new_build_dashboard_server.py` has;
-`new_build_dashboard_server.py` is kept only because `app/main.py` imports its
-`fetch_canonical_scorecard`/`fetch_canonical_learning_events`/`_remap_numeric_race_ids`
-helpers — do not run it standalone.
+### Dashboard — `app/main.py` is the only server to run
 
-> **CORRECTION 2026-08-01 — this previously claimed "every route ... verified via
-> route-set diff." Re-running that diff shows three routes exist only in
-> `new_build_dashboard_server.py` and 404 on `app/main.py`:**
-> `/api/deep-race-agent`, `/api/radical-shadow`, `/api/health`.
-> The current `index.html` does not call the first two (those panels are unwired —
-> consistent with the known Tri-Lane/Deep-Agent/Course-Master panel gap), so nothing is
-> visibly broken **today**. But this is exactly the 2026-07-08 failure mode that made the
-> Champion Intent panel silently blank for a full session, and any future panel wired to
-> either route will 404 against the production server. Reproduce with:
-> `comm -13 <(grep -oE '@app\.(get|post)\("/[^"]+' app/main.py | sed 's/.*"//' | sort -u) <(grep -oE '@app\.(get|post)\("/[^"]+' scripts/ops/new_build_dashboard_server.py | sed 's/.*"//' | sort -u)`
+Two FastAPI apps serve the identical static `app/static/dashboard/index.html` but with
+**different route sets**, so whichever one is running determines which panels work.
+This is not theoretical: it made the Champion Intent panel show "No Champion Intent
+data" for a full session on 2026-07-08, because the frontend's `/api/model-suggestions`
+call only existed on the server that wasn't running.
+
+- **`app/main.py` — canonical. Run this one.** Port 8000. UI at `/dashboard` (the
+  root `/` returns the API index JSON, not the page).
+- **`scripts/ops/new_build_dashboard_server.py` — never run standalone.** It is kept
+  only because `app/main.py` imports its `fetch_canonical_scorecard` /
+  `fetch_canonical_learning_events` / `_remap_numeric_race_ids` helpers.
+
+Three routes exist **only** on the non-canonical server and 404 on `app/main.py`:
+`/api/deep-race-agent`, `/api/radical-shadow`, `/api/health`. Today's `index.html`
+calls none of them (those panels are unwired), so nothing is visibly broken — but any
+panel wired to them will 404 against production. Reproduce the diff with:
+```
+comm -13 <(grep -oE '@app\.(get|post)\("/[^"]+' app/main.py | sed 's/.*"//' | sort -u) \
+          <(grep -oE '@app\.(get|post)\("/[^"]+' scripts/ops/new_build_dashboard_server.py | sed 's/.*"//' | sort -u)
+```
+
+**Launch (2026-08-02):** the `VELO Dashboard` logon task runs
+`scripts/ops/dashboard_start.bat` → `scripts/ops/dashboard_start.sh`, which frees port
+8000 and starts `app.main:app` with `load_dotenv()` first. Until 2026-08-02 that `.bat`
+launched `new_build_dashboard_server.py` — **every logon started the forbidden server**,
+so whether the dashboard was correct depended on whether the logon task or a manual
+launch won. That is the mechanical cause of panels "randomly" showing nothing.
+
+`load_dotenv()` is mandatory: plain `uvicorn app.main:app` or `python app/main.py` does
+not load `.env` and fails Supabase schema verification at startup, because neither the
+module nor its `__main__` block calls it. Manual equivalent:
+```
+PYTHONPATH=. python -c "from dotenv import load_dotenv; load_dotenv(); import uvicorn; uvicorn.run('app.main:app', host='0.0.0.0', port=8000)"
+```
+Startup takes **~27s** (Feast Feature Store init) before it binds; the `.bat` opens the
+browser immediately, so at logon the first page load can fail and needs a refresh.
 
 Launch with:
 ```
@@ -547,10 +602,13 @@ not docs. The answer is structural, and it is not mainly about agent competence:
 system is built so that doing the right thing produces a false confirmation.**
 
 ### Cause 1 — success is unfalsifiable at the step level
-- `run_full_raceday.py`: 12 critical vs **17 non-critical** steps.
-  `run_full_raceday_eod.py`: 4 critical vs **17 non-critical**.
+- **49 orchestrator steps: 15 critical, 34 non-critical.** `run_full_raceday.py` has 28
+  steps (11 critical / 17 non-critical); `run_full_raceday_eod.py` has 21 (4 / 17).
   A non-critical step failing cannot fail the day, by design — reasonable individually,
   but it means "the pipeline passed" carries almost no information.
+  Counted by AST, not grep: walk each file for `ast.Call` nodes named `run` /
+  `run_capture_stdout`. An earlier `grep -c "critical=True"` count published here was
+  wrong (12/50) because grep counts text, not calls — see Cause 5.
 - **12+ ops scripts print a `FAIL` status and still `exit 0`**, so the orchestrator's
   `critical=True` check can never catch them: `prove_supabase_persistence.py`,
   `parse_rp_results_capture.py`, `capture_proof.py`, `verify_hardening_state.py`,
@@ -604,11 +662,33 @@ happened for a week.
 `NEWMARKET_JULY`; `data/reports/` vs `data/new_build/reports/`. Several of this day's
 failures were a correct action aimed one identifier off target.
 
+### Cause 5 — audits done with grep instead of a parser
+Three wrong claims were published in this file on 2026-08-01 because they came from
+`grep`, which matches text and cannot tell a function call from a comment or a string:
+step counts (12/50, actually 11 and 34/49), a step list that silently omitted Step 9.1
+(Radical Shadow), and a scheduler check that queried the one task name expected
+(`VELO_Raceday_0700`) instead of enumerating all tasks — which is why a dead second
+raceday task and a mis-pointed dashboard task went unseen for weeks.
+**For anything structural — steps, routes, imports, call graphs — use a parser
+(`ast`, `json`, `csv`), never grep. Enumerate; never query for what you expect to find.**
+
 ### The rule that follows
 **Never accept a PASS as evidence. Require a count, and compare it to an independently
 derived expected count.** Where that is impossible, say the number is unverified. This
 applies to this document as much as to the code: every claim added here from now on
 should carry the command that reproduces it.
+
+### Open, not fixed (as of 2026-08-02)
+| # | Issue | Evidence |
+|---|---|---|
+| 1 | ~~`check_rp_session_health.py` and `backfill_races_table.py` are not in git~~ **FIXED 2026-08-02 in `3f08322`.** Both are committed and pushed; a fresh clone no longer aborts with the false *"RP browser session is not logged in"*. | `git ls-files --error-unmatch` returns both |
+| 2 | 2026-08-01 holds 555 midprice rows with NULL `horse_id` (written before the horse_id fix). Tonight's Step 20C/20D rebuild resolves 505 of them → new conflict keys → **INSERT not update**, leaving ~1,060 rows. | measured: 505/555 resolve against that date's racecard |
+| 3 | Midprice horse_id resolution is **90%, not 100%** — 50 unresolved on 08-01 (Galway 30, Goodwood 7…), 1 each on 07-18 (`Aurelune`) and 07-25 (`Zarvali`). Root cause not investigated. | name in `midprice_shadow_{date}.json` matches no `horse_name` in `racecard_merged` |
+| 4 | Runtime data artifacts are tracked in git. **The cleanup was attempted and did not take:** `.gitignore` already has rules for `data/reports/`, `data/new_build/`, `data/incoming_pdfs/`, `data/racecard_merged/` — but `git rm --cached` was never run, and git ignores `.gitignore` for files already tracked. **1,906 tracked files match an ignore rule** (`data/reports/` 1,114 · `data/new_build/` 327 · `data/incoming_pdfs/` 161 · `data/racecard_merged/` 68). `git status` therefore can never show whether **code** changed. **Do NOT blanket-untrack:** `data/new_build/` holds `horse_passports_v1.jsonl`, and git is that bank's only durable copy until Phase B gives it a Supabase table. | `git ls-files \| git check-ignore --stdin --no-index` — note `--no-index` is required, without it git skips tracked files and returns 0 |
+| 5 | 2026-07-06 canonical: 1,647 scorecard rows but 324 learning events, 324 rows with `horse_id = ''` (empty string, not NULL — passes an `is.null` filter, fails a truthiness check). Pre-existing, untouched. | one-off `persist_july06_canonical_runtime.py` |
+| 6 | **2026-05-14 is a hard identity seam.** Racing API decommission split the horse layer into two ID spaces that do not meet. `racing_horse_runs` is the only table that crossed it, by writing the new IDs into the same column: 91,125 rows `hrs_*` (to 2026-05-17) + 17,567 numeric `rp_uid` (from 2026-05-01). Every other horse table is `hrs_*`-keyed and frozen — `racing_horses` has **0 rows** with `last_seen ≥ 2026-05-14`; `horse_mark_profile` stopped 2026-04-14; `horse_bible` 2026-04-24; `horse_event_history` is empty. **The "183,699 horses in Supabase" are a dead archive in an ID space today's racecards cannot address.** | `horse_id like.hrs_*` vs `not.like.hrs*` counts; `rp_uid` join: `racing_horse_runs.horse_id` 139/256, `horse_profiles.id` 0/256 |
+| 7 | `scripts/audit/pipeline_stale_run_audit.py` (committed 2026-06-08) **has never worked.** Line 58 selects `completed_at`, which does not exist on `pipeline_runs` (the column is `finished_at`) → HTTP 400 on every run. Then `stale_count` is `None`, so the `== 0` check fails, execution enters the "stale runs found" branch, and line 122 raises `KeyError: 'recovery_note'`. It also has no `load_dotenv()` and exits **0** on the missing-env path. Nothing calls it, so nobody found out. | run it: 400 → `KeyError`; `pipeline_runs` column list |
+| 8 | **GitNexus `repo` by NAME resolves to the wrong index.** Two indexes share the name `velo-oracle-prime`. `repo:"velo-oracle-prime"` → 848 files (a 2026-03-24 index of `~/.openclaw/workspace/repos/`, commit `4bfb096`). `repo:"/mnt/c/Users/puror/velo-oracle-prime"` → 4,860 files (current). **Always pass the path.** Answers keyed on the name are five months stale and describe a different checkout — files it lists (`scripts/run_prime_today.py`, `scripts/backtest.py`) do not exist here. | `MATCH (f:File) RETURN count(f)` under each identifier |
 
 ## What is BLOCKED / KNOWN ISSUES (updated 2026-07-28)
 - **Telegram scoring alerts:** DISABLED (`--no-notify`).
@@ -640,6 +720,29 @@ should carry the command that reproduces it.
     New Build, No-RPR/SQPE Shadow, Champion Intent Shadow — are `critical=True` in
     `run_full_raceday.py`: a failure in any one fails the whole day, no silent partial pass.
     See THE_ONE_TRUTH.md HARD RULES #8-9 for full rationale.
+11. **Passport COVERAGE is reported every day, warn-only (added 2026-08-02, `686488b`).**
+    `check_passport_coverage()` in `check_scoring_readiness_gate.py`. Item 10's presence
+    check passed every single day while real coverage sat at 45-63%, because the feed
+    emits a row per runner whether or not a passport was found. On 2026-08-02: 116/256
+    (45.3%), and 79 of the 140 missing held an official rating — they had raced.
+    Judged on **GB/IRE only**, via the same per-race region data `_pdf_eligible_courses()`
+    uses: blended, 64 international runners who structurally cannot have an RP passport
+    drag the figure from 52.6% to 45.3%, and the warning could then never clear no matter
+    how well Step 21 worked. Threshold 0.70, override `VELO_PASSPORT_COVERAGE_MIN`.
+    **Warns, never blocks** — a degraded day must still score and still learn.
+12. **RPDC input freshness — Gate 6 `HORSE_RUNS_STALENESS_WARN` (added 2026-08-02, `cccab84`).**
+    `build_rpdc_daily.py` declares a dependency on `racing_horse_runs` being current.
+    Gate 5 only measured staleness of `runner_release_candidates` — RPDC's own OUTPUT —
+    and the two disagree: on 2026-08-02 output was 1 day stale (silent) while the input
+    was missing 2026-08-01 entirely. Blast radius that morning: 2 of 256 runners had
+    raced the previous day and were handed `days_since_run` 16 and 27 when the true value
+    was 1; `campaign_run_no` and `runs_since_win` are wrong by the same mechanism.
+    **The class matters more than the count** — on any day the EOD chain does not run, the
+    next day's RPDC is silently wrong for every horse that ran on the missed day.
+    A date counts as missing only when `runner_release_candidates` proves a card existed;
+    otherwise it is reported as *unverifiable*. Warn-only, wrapped in try/except.
+    Note `build_rpdc_for_date` **deletes the whole day before re-inserting** — back up
+    before re-running.
 
 ## What must happen AFTER results (~21:00 BST) — Steps 10-20
 ```
@@ -670,8 +773,27 @@ Step 19:  python scripts/ops/router_shadow_audit.py --prev-csv data/router_shado
 Step 20:  python scripts/ops/nightly_eod_learning_runner.py --date YYYY-MM-DD
           (--date REQUIRED -- omitting it defaults to yesterday, which will
           FAIL if yesterday has no scored data. Root-caused 2026-07-10.)
+Step 21:  PASSPORT BANK REFRESH (wired 2026-08-02, commit 686488b)
+          21A build_rp_passport_bank_queue.py --batch-limit 500 --execute
+          21B racing_post_account_collector.py capture --date passport-bank-YYYY-MM-DD
+              --url-list data/racing_post_url_lists/passport_bank_next_batch_latest.txt
+          21C parse_racing_post_account_capture.py --date passport-bank-YYYY-MM-DD --execute
+          21D parse_rp_form_history.py --date passport-bank-YYYY-MM-DD
+          21E new_build_horse_passports.py        (merge-in-place; NEVER --rebuild here,
+              that drops every carry-over row and shrinks the bank to one night's scrape)
+          All five are critical=False and run LAST, after learning has completed.
+          Skip with --skip-passport-refresh. Skips loudly, never silently, when
+          the queue is empty or the RP session is down.
 ```
 `DAY COMPLETE` only when all pass plus final Council + Mission Control refresh.
+
+**Run the orchestrators with `venv/bin/python`, never bare `python`** (corrected
+2026-08-02). Steps are spawned with `sys.executable`, so the launching interpreter
+is the one the capture steps get. The venv's Playwright bundles `firefox-1532`,
+which owns the RP browser profile; the system python's bundles `firefox-1522`,
+which refuses that profile with *"last used with a newer version of this
+application"*. `check_rp_session_health.probe()` reports that as a plain `FAIL`,
+so a wrong-interpreter launch is **indistinguishable from a logged-out session**.
 
 **Note on Step 10A fallback:** If `build_rp_results_url_list.py` fails (no manifest), generate URL list directly from `racecard_injection.json` (replace `/racecards/` → `/results/`) and write to `data/racing_post_url_lists/rp_results_YYYY-MM-DD.txt`.
 
