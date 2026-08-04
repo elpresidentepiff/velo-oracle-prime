@@ -227,6 +227,35 @@ def main() -> None:
         # produced 30 duplicate keys, failed the write, and left that date sitting
         # at 0 wins while its CSV held 271 -- and because this script exited 0
         # (see below) every caller reported success.
+        # Hold back rows whose conflict key carries no horse identity.
+        #
+        # Postgres treats NULLs as DISTINCT in a unique index, so ON CONFLICT
+        # can never match a row with horse_id NULL/''. Every rebuild therefore
+        # re-INSERTs them instead of updating, and the day's row count grows
+        # without bound. Measured on 2026-08-01: the morning wrote 555
+        # NULL-keyed MIDPRICE_SPECIALIST_SHADOW rows, the evening 20C/20D
+        # rebuild resolved 551 of them, and because the resolved rows carried
+        # NEW keys they inserted alongside rather than replacing -- 1,110 rows
+        # where 555 belonged. The same thing happened again on 08-03.
+        #
+        # A row with no horse_id is unusable anyway: it cannot join to a result,
+        # so it can never be scored, reconciled or learned from. Holding it back
+        # loses nothing and closes the duplication class at source. The rows are
+        # counted and named in the audit so an unresolved horse stays visible --
+        # upstream midprice horse_id resolution is ~90%, tracked separately.
+        _unkeyed = [p for p in payloads if not str(p.get("horse_id") or "").strip()]
+        if _unkeyed:
+            payloads = [p for p in payloads if str(p.get("horse_id") or "").strip()]
+            audit["rows_held_back_no_horse_id"] = len(_unkeyed)
+            audit["held_back_examples"] = [
+                {"race_id": p.get("race_id"), "model_name": p.get("model_name"),
+                 "rank": p.get("rank"), "horse": p.get("horse")}
+                for p in _unkeyed[:20]
+            ]
+            print(f"  [WARN] held back {len(_unkeyed)} row(s) with no horse_id — they can never "
+                  f"be upserted (NULL keys are distinct in Postgres) and would duplicate on "
+                  f"every rebuild. See audit 'held_back_examples'.")
+
         _seen: dict[tuple, int] = {}
         _deduped: list[dict] = []
         for p in payloads:
