@@ -218,14 +218,49 @@ def _load_last_council_verdict(date_str: str) -> str:
             return d.get("council_verdict", "NOT_RUN")
         except Exception:
             pass
-    runs = sorted(glob.glob(str(ROOT / "data" / "council_runs" / "council_run_*.json")), reverse=True)
-    if runs:
-        try:
-            d = json.loads(Path(runs[0]).read_text())
-            return d.get("council_verdict", "STALE_OR_STUB")
-        except Exception:
-            pass
-    return "NOT_RUN"
+    # NEVER inherit another day's verdict (fixed 2026-08-04).
+    #
+    # This used to fall back to the most recent council_run_*.json from ANY
+    # date and return its verdict as if it were today's. Observed 2026-08-03:
+    # Step 15 ran before the Council did, found no council_run for 08-03,
+    # picked up an earlier day's PASS_TO_LEARNING, and published
+    #     council_artifacts: run=MISSING packet=MISSING report=MISSING
+    #     council_verdict:   PASS_TO_LEARNING
+    #     learning_gate:     OPEN
+    # Step 16d re-ran after the real Council and flipped it to WATCH_ONLY /
+    # BLOCKED. So the fail-open was masked only because 16d happened to run.
+    # On any night 16d fails, the day learns on a verdict borrowed from a
+    # different day's races.
+    #
+    # This is the exact shape CLAUDE.md Law 5 forbids for source_truth --
+    # "never by default, missing = UNKNOWN" -- and the same rule has to hold
+    # for the council verdict, which gates the same decision.
+    #
+    # NOT_RUN_TODAY is not PASS_TO_LEARNING, so the caller blocks. Callers
+    # that want to show the last known verdict for context must read it
+    # explicitly and label it stale.
+    return "NOT_RUN_TODAY"
+
+
+def _council_learning_disposition(date_str: str) -> dict:
+    """Classify TODAY's council agent labels as performance vs integrity.
+
+    Reads the same council_run file the verdict comes from, and delegates to
+    src.velo.council.agents.learning_disposition so the label taxonomy has one
+    owner. If today's council run is absent or unreadable the day is treated as
+    integrity-blocked -- absence of evidence is never a pass (CLAUDE.md Law 5).
+    """
+    run_path = ROOT / "data" / "council_runs" / f"council_run_{date_str}.json"
+    if not run_path.exists():
+        return {"allowed": False, "disposition": "COUNCIL_RUN_MISSING",
+                "performance_reasons": [], "integrity_reasons": ["council run not found"]}
+    try:
+        d = json.loads(run_path.read_text())
+        from src.velo.council.agents import learning_disposition
+        return learning_disposition(d.get("agent_responses", []))
+    except Exception as e:
+        return {"allowed": False, "disposition": "COUNCIL_READ_ERROR",
+                "performance_reasons": [], "integrity_reasons": [str(e)]}
 
 
 def _sigma_artifact_status(date_str: str) -> dict:
@@ -574,10 +609,20 @@ def build_mission_control(date_str: str) -> dict:
         promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
         reason_codes.append("GATE_SIGMA_INCOMPLETE")
 
+    # A non-PASS council verdict always blocks PROMOTION. Whether it blocks
+    # LEARNING now depends on why (operator ruling 2026-08-02: learning must
+    # happen every day, including degraded ones). A day the model called badly
+    # is still a day whose data is sound -- and the one most worth learning
+    # from. Only a data-trust failure blocks learning.
+    learning_disposition = _council_learning_disposition(date_str)
     if council_verdict not in ("PASS_TO_LEARNING",):
-        learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
         promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED
         reason_codes.append(f"GATE_COUNCIL_{council_verdict}")
+        if not learning_disposition["allowed"]:
+            learning_gate = MC_CONFIG.LEARNING_GATE_BLOCKED
+            reason_codes.append(f"GATE_INTEGRITY_{learning_disposition['disposition']}")
+        else:
+            reason_codes.append(f"LEARNING_ALLOWED_{learning_disposition['disposition']}")
 
     if run_truth["status"] == "MANUAL_RECOVERY_ONLY":
         promotion_gate = MC_CONFIG.PROMOTION_GATE_BLOCKED

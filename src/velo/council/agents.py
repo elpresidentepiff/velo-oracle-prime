@@ -26,6 +26,84 @@ ROOT = Path(__file__).resolve().parents[3]
 CONTAMINATED_RUN_IDS = {"32cc27f9", "847964a6"}
 BASELINE_SR = 0.20
 
+# ── Council label taxonomy — single source of truth ───────────────────────
+# These were local variables inside PrimeChair.run(). They are module-level
+# constants now because update_mission_control.py and
+# nightly_eod_learning_runner.py both have to reason about the SAME sets, and
+# a second hand-maintained copy of a label list is exactly how the
+# "near-identical names on non-identical things" failures in ONE_TRUTH began.
+BLOCKING_LABELS = {
+    "FLATLINE_BLOCK", "CONTAMINATION_DETECTED", "CONTAMINATED",
+    "SOURCE_CONTAMINATED", "SR_BELOW_HALF_BASELINE",
+}
+WATCH_LABELS = {
+    "SR_BELOW_BASELINE", "SOURCE_UNKNOWN", "SIGMA_MISSING",
+    "MISSING_SNAPSHOTS", "MIDPRICE_NOT_BUILT",
+}
+
+# Labels that describe HOW THE MODEL PERFORMED, not whether the day's data can
+# be trusted. A low strike rate is a fact about the picks; it says nothing about
+# whether the capture, identity resolution or reconciliation were sound.
+#
+# Operator ruling 2026-08-02: "LEARNING HAS TO HAPPEN EVERY DAY EVEN ON
+# DEGRADED DAYS". A day the model called badly is the day most worth learning
+# from -- holding it out biases the evidence base toward days the model already
+# handled well. Before this, 2026-08-03 (32/32 reconciled, 0 identity failures,
+# 100% PDF enrichment, SR 15.6%) was held out of learning purely for SR.
+#
+# Everything NOT in this set stays a hard block. Contamination, flatlines,
+# unknown source, missing sigma and missing snapshots all mean the day's data
+# cannot be trusted, and learning from untrustworthy data is worse than not
+# learning at all.
+PERFORMANCE_ONLY_LABELS = {"SR_BELOW_BASELINE", "SR_BELOW_HALF_BASELINE"}
+
+
+def learning_disposition(agent_responses: List[Dict]) -> Dict:
+    """Decide whether learning may consume this day, and say why.
+
+    Returns {allowed, disposition, performance_reasons, integrity_reasons}.
+
+      allowed=True  disposition=CLEAN                  no adverse labels
+      allowed=True  disposition=DEGRADED_PERFORMANCE   only SR labels fired
+      allowed=False disposition=INTEGRITY_BLOCKED      a data-trust label fired
+
+    DEGRADED_PERFORMANCE days are learned from AND labelled, so a later audit
+    can tell a bad-picks day from a clean one without re-deriving it.
+    """
+    # No agent responses means the Council produced no evidence, which is not
+    # the same as producing clean evidence. Treating it as CLEAN would be the
+    # identical fail-open this function exists to close (CLAUDE.md Law 5:
+    # missing = UNKNOWN, never a default pass).
+    if not agent_responses:
+        return {
+            "allowed": False,
+            "disposition": "NO_AGENT_RESPONSES",
+            "performance_reasons": [],
+            "integrity_reasons": ["council run contained no agent responses"],
+        }
+
+    integrity: list = []
+    performance: list = []
+    for resp in agent_responses:
+        labels = set(resp.get("labels", []))
+        agent = resp.get("agent", "?")
+        for lab in sorted(labels & (BLOCKING_LABELS | WATCH_LABELS)):
+            (performance if lab in PERFORMANCE_ONLY_LABELS else integrity).append(
+                f"{agent}: {lab}"
+            )
+    if integrity:
+        disposition = "INTEGRITY_BLOCKED"
+    elif performance:
+        disposition = "DEGRADED_PERFORMANCE"
+    else:
+        disposition = "CLEAN"
+    return {
+        "allowed": not integrity,
+        "disposition": disposition,
+        "performance_reasons": performance,
+        "integrity_reasons": integrity,
+    }
+
 
 def _extract_sha8(run_id: str) -> str:
     parts = run_id.split("_")
@@ -301,14 +379,8 @@ class PrimeChair(CouncilAgent):
         date_str = evidence_packet.get("metadata", {}).get("date", "")
         agent_responses = evidence_packet.get("_agent_responses", [])
 
-        blocking_labels = {
-            "FLATLINE_BLOCK", "CONTAMINATION_DETECTED", "CONTAMINATED",
-            "SOURCE_CONTAMINATED", "SR_BELOW_HALF_BASELINE",
-        }
-        watch_labels = {
-            "SR_BELOW_BASELINE", "SOURCE_UNKNOWN", "SIGMA_MISSING",
-            "MISSING_SNAPSHOTS", "MIDPRICE_NOT_BUILT",
-        }
+        blocking_labels = BLOCKING_LABELS
+        watch_labels = WATCH_LABELS
 
         all_labels: set = set()
         blocking_reasons: list = []

@@ -130,9 +130,32 @@ class NightlyEODRunner:
             _gate_blocks.append("COUNCIL_RUN_MISSING")
         else:
             try:
-                _cv = json.loads(_council_path.read_text()).get("council_verdict", "NOT_RUN")
-                if _cv != "PASS_TO_LEARNING":
-                    _gate_blocks.append(f"COUNCIL_VERDICT:{_cv}")
+                _council = json.loads(_council_path.read_text())
+                _cv = _council.get("council_verdict", "NOT_RUN")
+                self.council_verdict = _cv
+                # A non-PASS verdict no longer blocks learning by itself.
+                # Operator ruling 2026-08-02: learning happens every day,
+                # including degraded ones. Only a DATA-TRUST failure blocks --
+                # contamination, flatline, unknown source, missing sigma or
+                # missing snapshots. A low strike rate is a fact about the
+                # picks, not about whether the day's data can be believed, and
+                # holding those days out biases the evidence base toward days
+                # the model already handled well. 2026-08-03 was the case that
+                # forced this: 32/32 reconciled, 0 identity failures, 100% PDF
+                # enrichment, held out solely because SR was 15.6%.
+                from src.velo.council.agents import learning_disposition
+                _disp = learning_disposition(_council.get("agent_responses", []))
+                self.council_disposition = _disp
+                if not _disp["allowed"]:
+                    _gate_blocks.append(
+                        f"COUNCIL_INTEGRITY:{_cv}:{';'.join(_disp['integrity_reasons'])}"
+                    )
+                elif _disp["disposition"] != "CLEAN":
+                    logger.warning(
+                        "Council verdict %s but reasons are performance-only (%s) — "
+                        "learning PROCEEDS, day labelled %s.",
+                        _cv, "; ".join(_disp["performance_reasons"]), _disp["disposition"],
+                    )
             except Exception as _e:
                 _gate_blocks.append(f"COUNCIL_READ_ERROR:{_e}")
 
@@ -162,7 +185,17 @@ class NightlyEODRunner:
                 self.failures.append({"type": "GATE_BLOCKED", "reason": _block})
             return self._finalize("FAIL_GATE_BLOCKED")
 
-        logger.info("Gate pre-flight PASS — sigma=PASS, council=PASS_TO_LEARNING, learning_gate=OPEN")
+        # Report the verdict that actually applied, not a hardcoded one. This
+        # line used to assert "council=PASS_TO_LEARNING" unconditionally, so a
+        # WATCH_ONLY day admitted on performance-only grounds logged a verdict
+        # it never had -- the same instrument-lies-about-itself pattern that
+        # ONE_TRUTH's "Cause 2 — the instruments lie" section documents.
+        _disp = getattr(self, "council_disposition", None) or {}
+        logger.info(
+            "Gate pre-flight PASS — sigma=PASS, council=%s (%s), learning_gate=OPEN",
+            getattr(self, "council_verdict", "UNKNOWN"),
+            _disp.get("disposition", "UNCLASSIFIED"),
+        )
 
         # 1. Data Integrity Check
         if not self.pred_file.exists():
