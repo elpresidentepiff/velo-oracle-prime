@@ -1667,22 +1667,49 @@ def main():
     # every day the same failure repeated -- scoring ran before PDFs landed,
     # forcing a manual re-run of 6+ downstream reports after the fact once PDFs
     # arrived, and repeatedly opened the door to phantom-race/ID-mismatch bugs.
-    from scripts.ops.check_scoring_readiness_gate import check_passport, check_pdf_ingestion
+    from scripts.ops.check_scoring_readiness_gate import (
+        check_passport, check_passport_coverage, check_pdf_ingestion, format_coverage_line,
+    )
 
     print("\nSCORING READINESS GATE")
     print("-" * 40)
     passport_ok, passport_msg = check_passport(date_str)
     print(f"  Passport:       {'OK   ' if passport_ok else 'FAIL '} {passport_msg}")
+    _cov_ok, _cov_stats = check_passport_coverage(date_str)
+    for _i, _line in enumerate(format_coverage_line(_cov_stats)):
+        print(f"  Passport cover: {_line}" if _i == 0 else f"  {_line}")
+
+    # PDF ingestion is a WARNING here, not a blocker (operator ruling 2026-08-02).
+    #
+    # THIS GATE IS A SECOND COPY. run_full_raceday.py has its own, and on
+    # 2026-08-02 only that one was flipped to WARN -- this file was left hard,
+    # which is exactly what ONE_TRUTH's own text warned about ("hard-wired into
+    # BOTH run_prime_today.py and run_full_raceday.py"). Consequence on
+    # 2026-08-04: the orchestrator warned about Lingfield having no sheets and
+    # proceeded, then Step 9 blocked here and killed a day whose capture,
+    # passport feed and RPDC had all succeeded (252 runners scored by RPDC, 27
+    # races captured). Both copies must agree or the day dies at the second one.
+    #
+    # The ordering argument is unchanged: of the three inputs only live capture
+    # is perishable -- RP drops a course from its index once it finishes racing.
+    # PDFs ingest identically at 07:00 or at midnight. Blocking the perishable
+    # path on the non-perishable input is backwards.
     if args.allow_missing_pdfs:
         pdf_ok = True
         print("  PDF ingestion:  SKIP  --allow-missing-pdfs set")
     else:
         pdf_ok, ok_venues, missing_venues = check_pdf_ingestion(date_str)
-        print(f"  PDF ingestion:  {'OK   ' if pdf_ok else 'FAIL '} ingested={ok_venues or []} missing={missing_venues or []}")
+        print(f"  PDF ingestion:  {'OK   ' if pdf_ok else 'WARN '} ingested={ok_venues or []} missing={missing_venues or []}")
+        if not pdf_ok:
+            print("  [WARN] Scoring proceeds without PDF enrichment for the venues above.\n"
+                  "         Old VELO/No-RPR lose postdata_score + or_compression_score;\n"
+                  "         New Build / Champion Intent / RPDC are unaffected.")
     print("-" * 40)
-    if not (passport_ok and pdf_ok):
-        print("\nSCORING BLOCKED — readiness gate failed. Fix the above, or pass "
-              "--allow-missing-pdfs if these venues genuinely have no PDFs today.\n")
+    # Passport stays HARD and non-overridable: scoring against an empty passport
+    # bank emits silent garbage lanes.
+    if not passport_ok:
+        print("\nSCORING BLOCKED — passport feed missing or empty. This check is not "
+              "overridable; run Step 6 (new_build_current_card_feed.py) first.\n")
         sys.exit(1)
     # ─────────────────────────────────────────────────────────────────────────
 
