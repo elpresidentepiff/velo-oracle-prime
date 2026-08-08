@@ -3,9 +3,13 @@ name: Deploy Cloudflare Edge Worker
 # Deploys the velo-oracle-edge Cloudflare Worker on push to main.
 # Also runs a post-deploy health probe to confirm the worker is live.
 #
-# Required GitHub secrets:
+# Required GitHub secrets (add via repo Settings > Secrets > Actions):
 #   CLOUDFLARE_API_TOKEN  — Cloudflare API token with Workers:Edit permission
 #   CLOUDFLARE_ACCOUNT_ID — Cloudflare account ID
+#
+# To get these:
+#   1. https://dash.cloudflare.com/profile/api-tokens → Create Token → Workers Scripts:Edit
+#   2. https://dash.cloudflare.com → right sidebar → Account ID
 #
 # Optional GitHub secrets (for KV rate-limiting):
 #   CF_KV_RATE_LIMITER_ID — KV namespace ID for RATE_LIMITER binding
@@ -38,10 +42,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check required secrets
+        run: |
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
+            echo "::warning::CLOUDFLARE_API_TOKEN secret is not set."
+            echo "::warning::Add it via: repo Settings > Secrets and variables > Actions > New repository secret"
+            echo "::warning::Get token at: https://dash.cloudflare.com/profile/api-tokens"
+            echo "SECRETS_MISSING=true" >> $GITHUB_ENV
+          else
+            echo "SECRETS_MISSING=false" >> $GITHUB_ENV
+          fi
+
       - name: Install Wrangler
+        if: env.SECRETS_MISSING == 'false'
         run: npm install -g wrangler
 
       - name: Deploy to Cloudflare Workers
+        if: env.SECRETS_MISSING == 'false'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -55,10 +72,10 @@ jobs:
           fi
 
       - name: Post-deploy health probe
+        if: env.SECRETS_MISSING == 'false'
         run: |
           echo "Waiting 5s for worker to propagate..."
           sleep 5
-          # Probe the edge worker test endpoint
           RESPONSE=$(curl -s -o /tmp/edge_probe.json -w "%{http_code}" \
             --max-time 15 \
             "https://velo-oracle-edge.workers.dev/velo/test")
@@ -70,6 +87,22 @@ jobs:
           else
             echo "SUCCESS: Edge worker is live"
           fi
+
+      - name: Secrets missing — skip deploy
+        if: env.SECRETS_MISSING == 'true'
+        run: |
+          echo "=== DEPLOY SKIPPED — Cloudflare secrets not configured ==="
+          echo ""
+          echo "To enable automatic deployment, add these GitHub repository secrets:"
+          echo "  CLOUDFLARE_API_TOKEN  — Workers:Edit API token"
+          echo "  CLOUDFLARE_ACCOUNT_ID — Your Cloudflare account ID"
+          echo ""
+          echo "Get token: https://dash.cloudflare.com/profile/api-tokens"
+          echo "Get account ID: https://dash.cloudflare.com (right sidebar)"
+          echo ""
+          echo "To deploy manually:"
+          echo "  cd workers/velo-edge"
+          echo "  CLOUDFLARE_API_TOKEN=<token> wrangler deploy --env production"
 
       - name: Summary
         if: always()
