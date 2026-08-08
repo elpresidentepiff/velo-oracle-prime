@@ -73,7 +73,24 @@ serves the operator-facing view. Endpoints as of this writing:
 `/api/dashboard/truth-summary`, `/api/dashboard-truth`, `/api/doctrine-scorecard`,
 `/api/old-velo-verdicts`, `/api/canonical-scorecard`, `/api/canonical-learning-events`,
 `/api/canonical-race-truth`, `/api/model-suggestions`, `/api/model-suggestions-race`,
-`/api/health`.
+`/api/health`, `/api/continuity`, `/api/runtime-truth`.
+
+## Edge layer (Cloudflare Worker)
+`workers/velo-edge/index.js` — Cloudflare Worker v2.0 (hard-wired 2026-08-08).
+Routes all `/velo/*` requests to the Railway backend with caching and rate-limiting.
+Key routes:
+- `GET /velo/test` — edge health ping (no backend call)
+- `GET /velo/status` — live system status from Railway `/health`
+- `GET /velo/today` — today's governed card from `/api/governed-card`
+- `GET /velo/verdicts` — raw verdicts from `/api/old-velo-verdicts`
+- `GET /velo/sigma` — sigma scorecard from `/api/canonical-scorecard`
+- `GET /velo/oracle` — full dashboard truth from `/api/dashboard-truth`
+- `GET /velo/continuity` — machine-readable session state from `/api/continuity`
+- `POST /velo/predict` — prediction engine at `/api/v1/predict/quick`
+- `POST /velo/trigger/score` — trigger daily scoring
+- `POST /velo/trigger/sigma` — trigger sigma reconciliation
+- `ANY /api/*` — transparent proxy to Railway backend
+Deploy: `wrangler deploy --env production` from `workers/velo-edge/`.
 
 Per the CANONICAL MODEL TRUTH SPINE law (`ONE_TRUTH.md`), the dashboard must read
 `canonical_model_scorecards` / `canonical_learning_events` for model/result/learning

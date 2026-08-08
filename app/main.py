@@ -812,6 +812,135 @@ async def runtime_truth():
     }
 
 
+
+# ── Continuity endpoint — machine-readable session state for cold context pickup ──
+@app.get("/api/continuity")
+async def continuity_state(date: str = Query(default=None)):
+    """
+    Machine-readable session state for cold context pickup.
+
+    Returns the canonical system state needed to resume a session without
+    re-reading the entire ONE_TRUTH.md. Covers:
+    - Current scoring status and last pipeline run
+    - Learning gate status and shadow model progress
+    - Active model weights and ensemble profile
+    - Last sigma scorecard summary
+    - Safety gate states
+    - Git commit and deployment fingerprint
+
+    This is the endpoint /velo/continuity on the Cloudflare edge worker proxies to.
+    """
+    import pathlib as _pathlib
+    import json as _json
+    import urllib.parse as _up
+    from app.core.runtime_env import get_commit_sha
+
+    target_date = date or utc_now().strftime("%Y-%m-%d")
+    root = _pathlib.Path(__file__).parent.parent
+
+    # ── Pipeline run status ──────────────────────────────────────────────────
+    pipeline_status: dict = {"status": "unknown", "source": "unavailable"}
+    try:
+        sb_url = os.getenv("SUPABASE_URL", "").rstrip("/")
+        sb_key = (
+            os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+            or os.getenv("SUPABASE_SERVICE_KEY", "")
+            or os.getenv("SUPABASE_KEY", "")
+        )
+        if sb_url and sb_key:
+            qs = _up.urlencode({
+                "select": "id,service_name,run_state,status,source_date,created_at",
+                "order": "created_at.desc",
+                "limit": "5",
+            })
+            req = urllib.request.Request(
+                f"{sb_url}/rest/v1/pipeline_runs?{qs}",
+                headers={
+                    "apikey": sb_key,
+                    "Authorization": f"Bearer {sb_key}",
+                    "Accept": "application/json",
+                },
+            )
+            with urllib.request.urlopen(req, timeout=5) as r:
+                rows = json.loads(r.read())
+            pipeline_status = {"status": "ok", "recent_runs": rows, "source": "supabase"}
+    except Exception as e:
+        pipeline_status = {"status": "error", "error": str(e), "source": "supabase"}
+
+    # ── Latest sigma scorecard ───────────────────────────────────────────────
+    sigma_summary: dict = {"status": "unavailable"}
+    try:
+        sigma_path = root / "data" / "doctrine_market_scorecard_latest.json"
+        if sigma_path.exists():
+            sigma_summary = _json.loads(sigma_path.read_text(encoding="utf-8"))
+            sigma_summary["source"] = "local_file"
+    except Exception as e:
+        sigma_summary = {"status": "error", "error": str(e)}
+
+    # ── Shadow model gate ────────────────────────────────────────────────────
+    shadow_gate: dict = {"status": "unavailable"}
+    try:
+        gate_path = root / "data" / "shadow_model_forward_gate.json"
+        if gate_path.exists():
+            shadow_gate = _json.loads(gate_path.read_text(encoding="utf-8"))
+            shadow_gate["source"] = "local_file"
+    except Exception as e:
+        shadow_gate = {"status": "error", "error": str(e)}
+
+    # ── Sentient state (Playbook G) ──────────────────────────────────────────
+    sentient_state: dict = {"status": "unavailable"}
+    try:
+        ss_path = root / "data" / "sentient_state.json"
+        if ss_path.exists():
+            raw = _json.loads(ss_path.read_text(encoding="utf-8"))
+            # Surface only the summary fields — not the full doctrine corpus
+            sentient_state = {
+                "status": "ok",
+                "appetite_state": raw.get("appetite_state", {}),
+                "doctrine_strengths": {k: v for k, v in list(raw.get("doctrine_strengths", {}).items())[:5]},
+                "source": "local_file",
+            }
+    except Exception as e:
+        sentient_state = {"status": "error", "error": str(e)}
+
+    return {
+        "continuity_version": "1.0",
+        "generated_at": utc_now_iso(),
+        "target_date": target_date,
+        "git_commit": get_commit_sha(),
+        "system_modes": {
+            "g_shadow_mode": os.getenv("VELO_G_SHADOW_MODE", "shadow"),
+            "execution_mode": os.getenv("VELO_EXECUTION_MODE", "PAPER"),
+            "betfair_mode": os.getenv("BETFAIR_MODE", "PAPER"),
+            "live_execution_blocked": True,
+        },
+        "learning_governance": {
+            "scoring": "ACTIVE_LIVE",
+            "reconciliation": "ACTIVE_LIVE",
+            "evidence_accumulation": "ACTIVE_SHADOW",
+            "autonomous_learning": "DISABLED_MANUAL_ONLY",
+            "components": {
+                "sqpe_v17": "LIVE_WEIGHTED",
+                "improvement": "LIVE_WEIGHTED",
+                "market_deception": "LIVE_WEIGHTED",
+                "place_prob": "LIVE_VISIBLE_ONLY",
+                "playbook_g": "SHADOW_ONLY",
+                "no_vp_composite": "SHADOW_ONLY",
+            },
+        },
+        "pipeline_status": pipeline_status,
+        "sigma_summary": sigma_summary,
+        "shadow_gate": shadow_gate,
+        "sentient_state": sentient_state,
+        "key_docs": {
+            "one_truth": "docs/current/ONE_TRUTH.md",
+            "system_map": "docs/current/SYSTEM_MAP.md",
+            "next_actions": "docs/current/NEXT_ACTIONS.md",
+            "current_state": "docs/current/CURRENT_STATE.md",
+        },
+    }
+
+
 # ── Scoring trigger — called by GitHub Actions scheduler ─────────────────────
 @app.post("/api/trigger/score-daily", status_code=202)
 async def trigger_score_daily(request: Request, x_trigger_secret: str = Header(None)):

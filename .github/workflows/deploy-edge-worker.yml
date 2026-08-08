@@ -1,0 +1,81 @@
+name: Deploy Cloudflare Edge Worker
+
+# Deploys the velo-oracle-edge Cloudflare Worker on push to main.
+# Also runs a post-deploy health probe to confirm the worker is live.
+#
+# Required GitHub secrets:
+#   CLOUDFLARE_API_TOKEN  — Cloudflare API token with Workers:Edit permission
+#   CLOUDFLARE_ACCOUNT_ID — Cloudflare account ID
+#
+# Optional GitHub secrets (for KV rate-limiting):
+#   CF_KV_RATE_LIMITER_ID — KV namespace ID for RATE_LIMITER binding
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'workers/velo-edge/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy target'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - development
+
+jobs:
+  deploy:
+    name: Deploy Edge Worker
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: workers/velo-edge
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Deploy to Cloudflare Workers
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          ENV="${{ github.event.inputs.environment || 'production' }}"
+          echo "Deploying to environment: ${ENV}"
+          if [ "${ENV}" = "production" ]; then
+            wrangler deploy --env production
+          else
+            wrangler deploy --env development
+          fi
+
+      - name: Post-deploy health probe
+        run: |
+          echo "Waiting 5s for worker to propagate..."
+          sleep 5
+          # Probe the edge worker test endpoint
+          RESPONSE=$(curl -s -o /tmp/edge_probe.json -w "%{http_code}" \
+            --max-time 15 \
+            "https://velo-oracle-edge.workers.dev/velo/test")
+          echo "HTTP status: ${RESPONSE}"
+          cat /tmp/edge_probe.json
+          echo ""
+          if [ "${RESPONSE}" != "200" ]; then
+            echo "WARN: Edge worker probe returned ${RESPONSE} (may be propagating)"
+          else
+            echo "SUCCESS: Edge worker is live"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "=== Edge Worker Deploy Summary ==="
+          echo "Branch     : ${{ github.ref_name }}"
+          echo "Commit     : ${{ github.sha }}"
+          echo "Actor      : ${{ github.actor }}"
+          echo "Run URL    : https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"

@@ -4,19 +4,26 @@ compatibility_date = "2024-01-01"
 
 # Worker configuration
 workers_dev = true
-route = ""
-zone_id = ""
 
 # Environment variables
+# NOTE: The worker uses RAILWAY_URL (renamed from API_BASE in v2.0)
 [vars]
-API_BASE = "https://velo-oracle-production.up.railway.app"
+RAILWAY_URL = "https://velo-oracle-production.up.railway.app"
+
+# KV namespace for rate limiting (optional — worker degrades gracefully without it)
+# Create with: wrangler kv:namespace create "RATE_LIMITER"
+# Then uncomment and replace id below:
+# [[kv_namespaces]]
+# binding = "RATE_LIMITER"
+# id = "YOUR_KV_NAMESPACE_ID_HERE"
+# id_preview = "YOUR_KV_NAMESPACE_PREVIEW_ID_HERE"
 
 # Production environment
 [env.production]
 name = "velo-oracle-edge"
-vars = { API_BASE = "https://velo-oracle-production.up.railway.app" }
+vars = { RAILWAY_URL = "https://velo-oracle-production.up.railway.app" }
 
 # Development environment
 [env.development]
 name = "velo-oracle-edge-dev"
-vars = { API_BASE = "http://localhost:8000" }
+vars = { RAILWAY_URL = "http://localhost:8000" }

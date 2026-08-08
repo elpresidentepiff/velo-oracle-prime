@@ -1,11 +1,16 @@
-# VELO Oracle - Cron Schedule
-# Run daily predictions every hour from 8 AM to 10 PM
-
-# Minute Hour Day Month DayOfWeek Command
-0 8-22 * * * cd /home/ubuntu/velo-oracle && python3 run_daily_predictions.py >> logs/predictions.log 2>&1
-
-# Alternative: Run every 2 hours
-# 0 */2 * * * cd /home/ubuntu/velo-oracle && python3 run_daily_predictions.py >> logs/predictions.log 2>&1
-
-# Alternative: Run at specific times (9 AM, 12 PM, 3 PM, 6 PM)
-# 0 9,12,15,18 * * * cd /home/ubuntu/velo-oracle && python3 run_daily_predictions.py >> logs/predictions.log 2>&1
+# VELO Oracle - Cron Schedule Reference
+# =======================================
+# NOTE: The authoritative schedule is in .github/workflows/score-daily.yml
+# (GitHub Actions owns the cron — Railway cron is NOT configured separately)
+#
+# For local/manual reference only:
+#
+# Morning scoring: 09:00 UTC Mon-Sat
+# 0 9 * * 1-6  cd /path/to/velo-oracle-prime && PYTHONPATH=. python scripts/ops/run_prime_today.py
+#
+# Evening sigma: 21:00 UTC Mon-Sat
+# 0 21 * * 1-6  cd /path/to/velo-oracle-prime && PYTHONPATH=. python scripts/ops/run_results_sigma.py --notify-telegram
+#
+# Full raceday (morning + evening combined via Railway trigger):
+# Triggered by GitHub Actions -> POST /api/trigger/score-daily
+# Triggered by GitHub Actions -> POST /api/trigger/sigma
