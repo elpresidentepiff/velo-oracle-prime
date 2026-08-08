@@ -830,9 +830,10 @@ async def continuity_state(date: str = Query(default=None)):
 
     This is the endpoint /velo/continuity on the Cloudflare edge worker proxies to.
     """
-    import pathlib as _pathlib
     import json as _json
+    import pathlib as _pathlib
     import urllib.parse as _up
+
     from app.core.runtime_env import get_commit_sha
 
     target_date = date or utc_now().strftime("%Y-%m-%d")
@@ -897,7 +898,7 @@ async def continuity_state(date: str = Query(default=None)):
             sentient_state = {
                 "status": "ok",
                 "appetite_state": raw.get("appetite_state", {}),
-                "doctrine_strengths": {k: v for k, v in list(raw.get("doctrine_strengths", {}).items())[:5]},
+                "doctrine_strengths": dict(list(raw.get("doctrine_strengths", {}).items())[:5]),
                 "source": "local_file",
             }
     except Exception as e:
