@@ -196,6 +196,17 @@ every failure below actually happened and cost race days:
 
 Per-day log: `data/reports/velo_daily_YYYY-MM-DD.log`.
 
+**No GitHub Actions schedule remains.** `VELO Nightly EOD Learning` (cron
+`15 23 * * *`) was deleted 2026-08-31: it invoked
+`scripts/ops/ensure_daily_learning.py`, which had been moved to
+`archive/dead_scripts/`, so every run since died on `No such file or
+directory` while still uploading 538 artifacts. It failed every night for at
+least a fortnight and nobody was told, which is the same class of fault as the
+scheduler that reported green while executing nothing — a job whose only
+output is a red tick nobody reads is indistinguishable from no job at all.
+`VELO Score Daily` was already disabled. The two Windows tasks are now the
+only things that start VELO, as this file has always claimed.
+
 **The automation is inert until the RP session is restored.** As of 2026-08-31
 the probe returns `SESSION_LOGGED_OUT`, so both tasks abort by design. Restore
 with (headed browser, log in by hand, let it close itself):
