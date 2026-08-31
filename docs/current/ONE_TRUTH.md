@@ -164,12 +164,52 @@ script bare exits 2). Add `--allow-missing-pdfs` when the RP sheets are not in t
 inbox; add `--skip-capture` only when the racecard injection for that date already
 exists.
 
-**Scheduled tasks — exactly one remains, and it does not run a race day:**
+**Scheduled tasks (re-automated 2026-08-31, operator-requested):**
 
 | Task | Trigger | Runs | State |
 |---|---|---|---|
 | `VELO Dashboard` | At logon | `dashboard_start.bat` → `dashboard_start.sh` → `app.main:app` | ENABLED |
-| `VELO_Raceday_0700` | (was daily 07:00) | `run_full_raceday_scheduled.sh` | **DISABLED 2026-08-02** |
+| `VELO_Raceday_Morning` | Daily 07:00 | `velo_daily.sh morning` → `run_full_raceday.py` (Steps 1–9.6) | **ENABLED** |
+| `VELO_Raceday_EOD` | Daily 22:00 | `velo_daily.sh eod` → `run_full_raceday_eod.py` (Steps 10A–21, incl. daily passport bank refresh) | **ENABLED** |
+| `VELO_Raceday_0700` | (was daily 07:00) | `run_full_raceday_scheduled.sh` | DISABLED 2026-08-02, superseded |
+
+`scripts/ops/velo_daily.sh` is the single entrypoint for both. It exists because
+every failure below actually happened and cost race days:
+
+- **Battery.** Both new tasks are registered with `AllowStartIfOnBatteries` and
+  `DontStopIfGoingOnBatteries`. The 2026-08-02 task had the defaults, so an
+  unplugged laptop meant no start at 07:00 and a kill mid-capture.
+- **Exit codes.** The wrapper ends in an explicit `exit "${RC}"`. The deleted
+  `VELO Raceday Pipeline` task reported `Last Result: 0` for weeks while
+  exiting 2, because a `.bat` swallowed the code. Verified 2026-08-31: a failed
+  run now surfaces as `Last Result: 2`.
+- **Dead RP session.** Both phases probe `check_rp_session_health.py` before
+  anything expensive and abort with a toast rather than burning the capture
+  window against a logged-out profile.
+- **Late starts.** `StartWhenAvailable` catches up a missed firing. A morning
+  run beginning at or after 10:00 is flagged `LATE_START` and warns, because RP
+  drops a course from its index once it finishes racing — that coverage is
+  unrecoverable, and the old failure was that nothing said so.
+- **Silence.** Each run writes `data/reports/velo_daily_status.json` with phase,
+  date, outcome and finish time, so "did it run?" is answerable without reading
+  logs, and a phase that stops firing shows as a stale timestamp.
+
+Per-day log: `data/reports/velo_daily_YYYY-MM-DD.log`.
+
+**The automation is inert until the RP session is restored.** As of 2026-08-31
+the probe returns `SESSION_LOGGED_OUT`, so both tasks abort by design. Restore
+with (headed browser, log in by hand, let it close itself):
+
+```
+cd /mnt/c/Users/puror/velo-oracle-prime
+PYTHONPATH=. venv/bin/python scripts/ops/racing_post_account_collector.py init-login --execute
+PYTHONPATH=. venv/bin/python scripts/ops/check_rp_session_health.py   # expect status PASS
+```
+
+Note the venv: system `python3` has playwright 1.60 (firefox-1522) and cannot
+open a profile last written by the venv's 1.61 (firefox-1532) — it fails with
+"profile was last used with a newer version", which looks like a broken profile
+and is not one.
 
 Verify with `schtasks.exe /query /fo CSV | grep -i velo`. Nothing else can start VELO:
 WSL crontab has zero job lines, no systemd timers, and Railway runs only the dashboard.
