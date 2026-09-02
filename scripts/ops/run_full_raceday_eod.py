@@ -176,6 +176,21 @@ def main() -> int:
         ):
             return 1
 
+    # ── Step 11B: evaluate the frozen WIN/PLACE/LONGSHOT card ────────────
+    # The three-option card is BUILT in the morning (run_full_raceday.py Step
+    # 9.6), pre-race, so its role_metrics are all zero by construction. Nothing
+    # in this orchestrator ever joined it to results, so sigma's
+    # three_option_tracking reported WIN/PLACE/LONGSHOT n=0 every single day —
+    # on 2026-09-01 that hid a LONGSHOT lane that went 4/39 at 15.0/12.0/11.0/
+    # 10.0 for +9.00pts (ROI +23.1%), the only profitable lane of the day.
+    # Must run after Step 11 (results parsed) and before Step 12 (sigma reads
+    # the evaluation output).
+    run(
+        "Step 11B: Old VELO role evaluation (WIN/PLACE/LONGSHOT)",
+        [PY, "scripts/ops/evaluate_old_velo_three_option_card.py", "--date", date],
+        critical=False, results=results,
+    )
+
     # ── Step 12: reconcile predictions vs results (sigma) ────────────────
     if not run(
         "Step 12: Results + sigma reconciliation",
