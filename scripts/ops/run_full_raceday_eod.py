@@ -206,6 +206,20 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 12C: place stack shadow (settles the place leg) ─────────────
+    # Every other lane in this orchestrator is scored on the win market. The
+    # place signal stacks were therefore carrying evidence from 20-46 selection
+    # samples that nobody could check — ELITE was documented at "Frame=100%,
+    # E/W 1/4 ROI +170%" and measures 64.1% frame, -9.13% place ROI over 248.
+    # This settles the place leg at industry terms and accumulates a forward
+    # ledger, and asserts each signal's firing rate against its calibration so
+    # a dead threshold cannot sit unnoticed the way MDS_HIGH did at 0.20%.
+    run(
+        "Step 12C: Place stack shadow (place-leg settlement)",
+        [PY, "scripts/ops/run_place_stack_shadow.py", "--date", date],
+        critical=False, results=results,
+    )
+
     # ── Step 13: write run history (feeds tomorrow's RPDC) ───────────────
     run(
         "Step 13: Ingest results to horse runs",
