@@ -53,7 +53,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PY = sys.executable
-FIREFOX_PROFILE = ROOT / "data" / "browser_profiles" / "racing_post_account_firefox"
+# One profile, defined once.
+#
+# This file used to declare its own path, pointing at
+# racing_post_account_firefox while the collector, the session probe and every
+# manual init-login all defaulted to racing_post_account. So the operator could
+# log in, the probe could report PASS, and this script would still abort with
+# "RP browser session is not logged in" - because it was asking a different
+# directory. That is exactly what happened on 2026-09-01: a good login, a green
+# probe, and the 07:00 run dead in 22 seconds against a profile nobody uses.
+#
+# Importing the collector's default means there is no second copy to drift.
+from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR as FIREFOX_PROFILE
 
 
 def _utc_now() -> str:
