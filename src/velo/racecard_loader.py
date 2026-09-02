@@ -60,12 +60,20 @@ def _parse_betting_forecast(forecast_str: str | None) -> dict[str, float]:
                 num, den = odds_tok.split("/")
                 dec = round(int(num) / int(den) + 1, 3)
             else:
+                # Bare tokens are NET prices: 0.25 -> 1.25, 3.0 -> 4.0.
+                #
+                # There used to be a branch here that treated a sub-1 result as
+                # a probability and inverted it (1/0.25 = 4.00). It existed to
+                # absorb the negative tokens that build_betting_forecast emitted
+                # for odds-on runners, and it turned a 1/4 favourite into a 3/1
+                # chance that nothing downstream could distinguish from a real
+                # one. Both sides are fixed now: the writer emits the net price
+                # unchanged and a genuine odds-on runner lands correctly here.
                 dec = round(float(odds_tok) + 1, 3)
-                # RP sometimes stores morning price as (probability - 1), e.g. "-0.667".
-                # After +1 this recovers the probability (e.g. 0.333).
-                # Convert probability → decimal odds so downstream sp_dec is correct.
-                if 0 < dec < 1.0:
-                    dec = round(1.0 / dec, 3)
+                if dec < 1.0:
+                    # Impossible as decimal odds. Treat as unavailable rather
+                    # than repair it into a plausible-looking wrong price.
+                    continue
             result[horse_name.strip().lower()] = dec
         except (ValueError, ZeroDivisionError):
             continue
