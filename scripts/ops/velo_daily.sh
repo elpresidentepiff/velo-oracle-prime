@@ -24,7 +24,28 @@ set -u
 cd /mnt/c/Users/puror/velo-oracle-prime || exit 1
 
 PHASE="${1:-morning}"
-DATE="${2:-$(date +%Y-%m-%d)}"
+
+# The date each phase is *about*, which is not always today.
+#
+# The 22:00 EOD reconciles the day that has just finished racing. If the machine
+# is asleep at 22:00, StartWhenAvailable catches the run up the next morning —
+# and taking today's date then asks for results of races that have not been run.
+# That is exactly what happened on 2026-09-02: the EOD fired at 07:40, looked
+# for 2026-09-02 results, and died at Step 10A while 2026-09-01 went
+# unreconciled entirely.
+#
+# So a catch-up EOD running before the day's racing has finished is still about
+# yesterday. After 18:00 it is about today. An explicit second argument always
+# wins, for reruns.
+if [ -n "${2:-}" ]; then
+  DATE="$2"
+elif [ "${PHASE}" = "eod" ] && [ "$(date +%H)" -lt 18 ]; then
+  DATE="$(date -d 'yesterday' +%Y-%m-%d)"
+  LATE_EOD="CAUGHT_UP_FOR_PREVIOUS_DAY"
+else
+  DATE="$(date +%Y-%m-%d)"
+fi
+LATE_EOD="${LATE_EOD:-}"
 LOG_DIR="data/reports"
 LOG="${LOG_DIR}/velo_daily_${DATE}.log"
 STATUS_FILE="${LOG_DIR}/velo_daily_status.json"
@@ -69,6 +90,9 @@ case "${PHASE}" in
 esac
 
 log "===== velo_daily ${PHASE} fired for ${DATE} ====="
+if [ -n "${LATE_EOD}" ]; then
+  log "[WARN] EOD did not run at 22:00 and is catching up. Reconciling ${DATE}, not today."
+fi
 
 # ── The RP session gate ───────────────────────────────────────────────────────
 # Both phases capture from Racing Post, so both are worthless without a live
@@ -119,11 +143,11 @@ case "${PHASE}" in
     ;;
 esac
 
-log "===== ${PHASE} finished rc=${RC} ${LATE} ====="
+log "===== ${PHASE} finished rc=${RC} ${LATE} ${LATE_EOD} ====="
 if [ "${RC}" -eq 0 ]; then
-  write_status "OK" "${LATE}"
+  write_status "OK" "${LATE} ${LATE_EOD}"
 else
-  write_status "FAILED" "rc=${RC} ${LATE}"
+  write_status "FAILED" "rc=${RC} ${LATE} ${LATE_EOD}"
   notify "VELO ${PHASE} failed" "Exit ${RC}. See data/reports/velo_daily_${DATE}.log"
 fi
 
