@@ -430,26 +430,32 @@ def main() -> int:
             results.append({"step": "Step 21B-21E: Passport bank refresh (SKIPPED — RP session dead)",
                             "cmd": [], "returncode": 0, "ok": True, "critical": False})
         else:
+            # Steps 21B-21D collect horse form from Racing Post's JSON API
+            # rather than by scraping the profile page. RP moved horse profiles
+            # to Next.js during the 2026-08-05..08-31 outage; the HTML now
+            # carries horseProfile.form.data = null and fetches form
+            # client-side, so the old scrape read 500 pages, parsed 0, and
+            # reported success every night from 2026-09-01. The bank last grew
+            # on 2026-08-04.
+            #
+            # The API 406s unless the request comes from the horse's own
+            # profile page, so the collector navigates per horse — roughly the
+            # same wall-clock cost as the scrape it replaces.
             print(f"  [OK] Session logged in. Capturing {len(queue_urls)} horse profiles "
-                  f"(~{len(queue_urls) * 1.5 / 60:.0f} min at 1.5s delay).")
+                  f"via JSON API (~{len(queue_urls) * 2.0 / 60:.0f} min).")
             captured = run(
-                "Step 21B: Capture horse profile pages",
-                [PY, "scripts/ops/racing_post_account_collector.py", "capture",
+                "Step 21B: Capture horse form (RP JSON API)",
+                [PY, "scripts/ops/capture_rp_horse_form_api.py",
                  "--date", passport_label, "--url-list", str(queue_path),
                  "--profile-dir", str(FIREFOX_PROFILE),
-                 "--delay-seconds", "1.5", "--execute", "--batch-size", "0"],
+                 "--delay-seconds", "1.2", "--execute"],
                 critical=False, results=results,
             )
             if captured:
                 run(
-                    "Step 21C: Parse horse profile captures",
-                    [PY, "scripts/ops/parse_racing_post_account_capture.py",
-                     "--date", passport_label, "--execute"],
-                    critical=False, results=results,
-                )
-                run(
-                    "Step 21D: Parse RP form history",
-                    [PY, "scripts/ops/parse_rp_form_history.py", "--date", passport_label],
+                    "Step 21C: Parse RP form history (API)",
+                    [PY, "scripts/ops/parse_rp_form_history_api.py",
+                     "--date", passport_label],
                     critical=False, results=results,
                 )
                 # Default mode is merge-in-place: horses that cannot be rebuilt
