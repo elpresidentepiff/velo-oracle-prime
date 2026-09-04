@@ -177,6 +177,10 @@ def main() -> int:
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
     parser.add_argument("--execute", action="store_true", required=True, help="Required — this runs real captures and scoring.")
     parser.add_argument("--skip-capture", action="store_true", help="Skip Steps 1-3 (assumes racecard_injection.json already exists for --date)")
+    parser.add_argument("--skip-passport-topup", action="store_true",
+                        help="Skip the pre-scoring passport top-up for today's runners.")
+    parser.add_argument("--passport-topup-limit", type=int, default=400,
+                        help="Max horses to capture in the top-up (default 400, ~8 min).")
     parser.add_argument(
         "--allow-missing-pdfs",
         action="store_true",
@@ -346,6 +350,65 @@ def main() -> int:
     # operator's inbox folder and ingests them. Non-critical by design: if the
     # sheets are not downloaded yet, the gate below still blocks — this step
     # only removes the manual copy/ingest work, it does not weaken the gate.
+    # ── Passport top-up for today's runners (wired 2026-09-04) ───────────
+    # THE COVERAGE PROBLEM THIS FIXES
+    #
+    # 11 of the New Build champion's 45 features are pp_*, sourced from the
+    # passport bank. The bank is refreshed in the EVENING (EOD Step 21), and
+    # its queue drained alphabetically inside a single priority tier -- so a
+    # horse declared for this afternoon waited behind every name earlier in
+    # the alphabet. Measured this morning before the fix: 248 of 469 runners
+    # had a passport, 47.3%. Half the field was scored with pp_* null while
+    # every New Build model was trained on rows where those fields existed.
+    # That training/serving skew is the most likely reason Lane C backtests
+    # at 28.4% SR and runs at 16.3% on the live ledger.
+    #
+    # build_rp_passport_bank_queue.py now promotes horses racing within 48h to
+    # priority 1, so this top-up captures today's missing runners specifically
+    # rather than grinding the general backlog.
+    #
+    # WHY IT IS SAFE IN THE MORNING PATH
+    # The perishable step is the racecard capture above -- RP drops a course
+    # from its index once it has run. This step comes after that, reads the
+    # merged cards, and costs ~1.2s per horse over the JSON API (a few hundred
+    # horses, so minutes not tens of minutes). Every sub-step is non-critical:
+    # a failure here thins pp_* coverage for today and nothing else.
+    if not args.skip_passport_topup:
+        run("Passport top-up: queue today's runners first",
+            [PY, "scripts/ops/build_rp_passport_bank_queue.py",
+             "--batch-limit", str(args.passport_topup_limit), "--execute"],
+            critical=False, results=results)
+
+        _queue = ROOT / "data" / "racing_post_url_lists" / "passport_bank_next_batch_latest.txt"
+        _urls = [ln for ln in _queue.read_text(encoding="utf-8").splitlines() if ln.strip()] if _queue.exists() else []
+        if not _urls:
+            print("\n[SKIP] Passport top-up — queue empty, every runner already banked.")
+        else:
+            # Deliberately NOT gated on rp_session_healthy(). The login belongs
+            # to the old HTML scrape; the JSON API this step calls serves
+            # form/record/profile logged-out. Measured 2026-09-04 with the probe
+            # reporting SESSION_LOGGED_OUT: 242/285 horses captured, 53 run
+            # fields each, career record present — indistinguishable from the
+            # previous day's logged-in capture. A session gate here would have
+            # skipped a run that took today's coverage from 52.9% to 91.3%.
+            if not rp_session_healthy():
+                print("\n  [WARN] RP session logged out — continuing; the form API does "
+                      "not require it. Unraced horses will still 404, which is correct.")
+            _label = f"passport-topup-{date}"
+            print(f"\n  Passport top-up: {len(_urls)} horse(s) (~{len(_urls) * 1.2 / 60:.0f} min at 1.2s)")
+            if run("Passport top-up: capture horse form (RP JSON API)",
+                   [PY, "scripts/ops/capture_rp_horse_form_api.py",
+                    "--date", _label, "--url-list", str(_queue),
+                    "--profile-dir", str(FIREFOX_PROFILE),
+                    "--delay-seconds", "1.2", "--execute"],
+                   critical=False, results=results):
+                run("Passport top-up: parse RP form history (API)",
+                    [PY, "scripts/ops/parse_rp_form_history_api.py", "--date", _label],
+                    critical=False, results=results)
+                run("Passport top-up: rebuild passport bank (merge-in-place)",
+                    [PY, "scripts/ops/new_build_horse_passports.py"],
+                    critical=False, results=results)
+
     # Fetch the sheets BEFORE ingesting them (wired 2026-09-04). The ingest
     # step below has always worked; nothing ever downloaded its input, so it
     # spent 2026-08-04 to 09-04 exiting 0 on an empty inbox while
