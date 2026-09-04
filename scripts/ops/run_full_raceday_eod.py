@@ -114,6 +114,34 @@ def rp_session_healthy() -> bool:
         return False
 
 
+def rp_session_autoheal() -> bool:
+    """Try to sign the profile back in before giving up on the day.
+
+    The session probe was wired in to stop a dead login being discovered
+    mid-scrape. It did that -- and then became the thing that cancelled the
+    day, because the only cure was a human at a keyboard and both scheduled
+    runs fire while nobody is watching. Healing is strictly better than
+    blocking: on no credentials, or a failed sign-in, this returns False and
+    the caller prints the same manual instructions it always did.
+    """
+    try:
+        sys.path.insert(0, str(ROOT))
+        from scripts.ops.racing_post_account_collector import auto_login
+        result = auto_login(FIREFOX_PROFILE, execute=True)
+    except Exception as e:
+        print(f"  [WARN] Auto-login raised: {type(e).__name__}: {e}")
+        return False
+    status = result.get("status")
+    if status == "PASS":
+        print("  [OK] Auto-login succeeded — session restored.")
+        return True
+    if status == "SKIPPED_NO_CREDENTIALS":
+        print("  [INFO] No RP_EMAIL/RP_PASSWORD in .env — cannot self-heal.")
+    else:
+        print(f"  [WARN] Auto-login did not restore the session: {result.get('reason') or status}")
+    return False
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
@@ -141,14 +169,17 @@ def main() -> int:
     else:
         print("\nPre-flight: RP session health check...")
         if not rp_session_healthy():
-            print(
-                "\n[BLOCKED] RP browser session is not logged in. Live capture will fail.\n"
-                "Fix: interactively run\n"
-                f"  python scripts/ops/racing_post_account_collector.py init-login "
-                f"--profile-dir {FIREFOX_PROFILE} --execute --wait-seconds 90\n"
-                "then rerun this script. Aborting before wasting a capture attempt."
-            )
-            return 1
+            print("  [WARN] Session logged out — attempting auto-login...")
+            if not rp_session_autoheal():
+                print(
+                    "\n[BLOCKED] RP browser session is not logged in. Live capture will fail.\n"
+                    "Fix: set RP_EMAIL and RP_PASSWORD in .env so this heals itself, or\n"
+                    "interactively run\n"
+                    f"  python scripts/ops/racing_post_account_collector.py init-login "
+                    f"--profile-dir {FIREFOX_PROFILE} --execute --wait-seconds 90\n"
+                    "then rerun this script. Aborting before wasting a capture attempt."
+                )
+                return 1
         print("  [OK] Session logged in.")
 
         if not run(
@@ -431,7 +462,7 @@ def main() -> int:
 
         if not queue_urls:
             print("  [SKIP] Steps 21B-21E — queue is empty, nothing to capture.")
-        elif not rp_session_healthy():
+        elif not (rp_session_healthy() or rp_session_autoheal()):
             # Not a failure: the bank simply does not refresh tonight. Said out
             # loud so it cannot rot silently the way the whole loop just did.
             print(
