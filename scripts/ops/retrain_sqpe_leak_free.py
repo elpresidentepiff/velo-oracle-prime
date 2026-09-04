@@ -254,6 +254,16 @@ def main() -> int:
                          "block below meaningless.")
     ap.add_argument("--train-cutoff", type=int, default=2025,
                     help="Exclusive year cutoff (default 2025 = train <=2024, test 2025+).")
+    ap.add_argument("--with-career-features", action="store_true",
+                    help="Join data/raceform_v17_career_features.parquet and add its cf_* "
+                         "columns. Strip RPR and field_size becomes the top feature at 24% "
+                         "importance — a structural base rate, not knowledge about a horse. "
+                         "These are the horse's own prior-run history, computed as-of each "
+                         "race, and they are what the lane needs in RPR's place.")
+    ap.add_argument("--drop-market-career", action="store_true",
+                    help="With --with-career-features, exclude the cf_mkt_* columns (past-race "
+                         "SP). They are not today's price and not the banned live-market "
+                         "family, but they are market-derived and this switch removes them.")
     args = ap.parse_args()
 
     print("=" * 68)
@@ -286,7 +296,29 @@ def main() -> int:
         print(f"  Sampled to {len(df):,} rows across {df['race_id'].nunique():,} whole "
               f"races (development run — not for promotion)")
 
-    missing = [f for f in LEAK_FREE_FEATURES if f not in df.columns]
+    feature_set = list(LEAK_FREE_FEATURES)
+    if args.with_career_features:
+        career_path = ROOT / "data" / "raceform_v17_career_features.parquet"
+        if not career_path.exists():
+            print(f"\nERROR: {career_path} not found — run "
+                  "scripts/new_build/build_career_features.py first")
+            return 1
+        career = pd.read_parquet(career_path)
+        if not pd.api.types.is_datetime64_any_dtype(career["date_parsed"]):
+            career["date_parsed"] = pd.to_datetime(career["date_parsed"], errors="coerce")
+        before = len(df)
+        df = df.merge(career, on=["race_id", "horse", "date_parsed"], how="left", validate="m:1")
+        cf = [c for c in career.columns if c.startswith("cf_")]
+        if args.drop_market_career:
+            dropped = [c for c in cf if c.startswith("cf_mkt_")]
+            cf = [c for c in cf if not c.startswith("cf_mkt_")]
+            print(f"  Dropped {len(dropped)} market-derived career column(s): {dropped}")
+        feature_set += cf
+        print(f"\nJoined {len(cf)} career feature(s); rows {before:,} -> {len(df):,}")
+        print(f"  career coverage on joined rows: "
+              f"{df['cf_career_runs'].notna().mean() * 100:.1f}%")
+
+    missing = [f for f in feature_set if f not in df.columns]
     if missing:
         print(f"\nERROR: missing features in parquet: {missing}")
         return 1
@@ -300,11 +332,11 @@ def main() -> int:
     print(f"Test  {len(test_df):,} rows  ({test_df['date_parsed'].dt.year.min()}"
           f"–{test_df['date_parsed'].dt.year.max()})")
 
-    X_tr = train_df[LEAK_FREE_FEATURES].fillna(0)
-    X_te = test_df[LEAK_FREE_FEATURES].fillna(0)
+    X_tr = train_df[feature_set].fillna(0)
+    X_te = test_df[feature_set].fillna(0)
     y_tr, y_te = train_df["target"], test_df["target"]
     print(f"\nWin rate  train {y_tr.mean():.4f}   test {y_te.mean():.4f}")
-    print(f"Features  {len(LEAK_FREE_FEATURES)} (production uses 37)")
+    print(f"Features  {len(feature_set)} (production uses 37)")
 
     print("\nTraining GBM + isotonic calibration — identical hyperparameters to\n"
           "retrain_sqpe_v17.py, so the only variable is the feature set ...")
@@ -356,7 +388,7 @@ def main() -> int:
         print(f"  ROI 95% CI          : [{lo:+.2%}, {hi:+.2%}]")
 
     base = model.calibrated_classifiers_[0].estimator
-    importance = sorted(zip(LEAK_FREE_FEATURES, base.feature_importances_),
+    importance = sorted(zip(feature_set, base.feature_importances_),
                         key=lambda x: -x[1])
     print(f"\n{'=' * 68}\nTOP 15 FEATURES (no leaking feature can appear here)")
     for feat, val in importance[:15]:
@@ -368,7 +400,7 @@ def main() -> int:
         print(f"  {'':<14}{'production':>14}{'leak-free':>14}")
         print(f"  {'AUC':<14}{pm.get('auc', 0):>14.4f}{auc:>14.4f}")
         print(f"  {'Top-1':<14}{pm.get('top1_accuracy', 0):>14.4f}{top1:>14.4f}")
-        print(f"  {'Features':<14}{pm.get('n_features', 0):>14}{len(LEAK_FREE_FEATURES):>14}")
+        print(f"  {'Features':<14}{pm.get('n_features', 0):>14}{len(feature_set):>14}")
         print("\n  A large AUC drop here is the expected and correct result:")
         print("  it is the size of the leak, now removed.")
 
@@ -384,8 +416,8 @@ def main() -> int:
         "source": str(args.features),
         "development_run": bool(args.sample),
         "train_cutoff_year": args.train_cutoff,
-        "n_features": len(LEAK_FREE_FEATURES),
-        "feature_names": LEAK_FREE_FEATURES,
+        "n_features": len(feature_set),
+        "feature_names": feature_set,
         "removed_leaking_features": sorted(BANNED_LEAK_FEATURES),
         "removal_rationale": {
             "rpr_num": "post-race Racing Post Rating; within-race rho vs finish -0.937",
