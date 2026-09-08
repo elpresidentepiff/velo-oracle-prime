@@ -55,30 +55,72 @@ log() { echo "$(date -Is)  $*" | tee -a "${LOG}"; }
 
 notify() {
   # Never fatal: a missed toast must not change the outcome of a run.
+  #
+  # This is the shallow channel. It vanishes in 15 seconds, reaches one machine,
+  # and leaves no trace - so an unseen toast and an unsent one look identical.
+  # Between 2026-09-04 and 2026-09-07 it fired six times into an empty room
+  # while three race days were lost. Anything that matters must ALSO go through
+  # alert(), which persists and reaches a phone.
   powershell.exe -NoProfile -WindowStyle Hidden -Command \
     "Add-Type -AssemblyName System.Windows.Forms;\$n = New-Object System.Windows.Forms.NotifyIcon;\$n.Icon = [System.Drawing.SystemIcons]::Information;\$n.Visible = \$true;\$n.ShowBalloonTip(15000, '$1', '$2', 'Info');Start-Sleep -Seconds 12; \$n.Dispose()" \
     >/dev/null 2>&1 || true
 }
 
+alert() {
+  # The deep channel: Telegram, and a written record of whether it landed.
+  # Never fatal - but never silent about its own failure either.
+  #   alert <severity> <title> <body>
+  PYTHONPATH=. venv/bin/python scripts/ops/velo_alert.py \
+    --severity "$1" --title "$2" --body "$3" >>"${LOG}" 2>&1 || true
+}
+
 write_status() {
-  # A machine-readable record of the last run of each phase, so "did it run?"
-  # is answerable without reading logs - and so a phase that stops firing
-  # entirely is visible as a stale timestamp rather than as silence.
+  # A machine-readable record of each phase, so "did it run?" is answerable
+  # without reading logs - and so a phase that stops firing entirely is visible
+  # as a stale timestamp rather than as silence.
+  #
+  # It also counts. The file used to hold only the LAST run of each phase, which
+  # is why six consecutive aborts across four days were indistinguishable from
+  # the first one: every toast said the same thing and nothing knew it was the
+  # sixth. Day one is an annoyance, day four is an emergency, and a system that
+  # cannot tell them apart cannot escalate. consecutive_failures is that memory.
+  #
+  # Echoes the resulting streak so the caller can escalate on it.
   PHASE="$PHASE" DATE="$DATE" OUTCOME="$1" DETAIL="${2:-}" STATUS_FILE="$STATUS_FILE" \
-  venv/bin/python - <<'PY' 2>/dev/null || true
+  venv/bin/python - <<'PY' 2>/dev/null || echo 0
 import json, os, pathlib, datetime
 p = pathlib.Path(os.environ["STATUS_FILE"])
 try:
     state = json.loads(p.read_text())
 except Exception:
     state = {}
-state[os.environ["PHASE"]] = {
-    "date": os.environ["DATE"],
-    "outcome": os.environ["OUTCOME"],
+
+phase = os.environ["PHASE"]
+outcome = os.environ["OUTCOME"]
+date = os.environ["DATE"]
+prior = state.get(phase) or {}
+failed = outcome != "OK"
+
+if failed:
+    streak = int(prior.get("consecutive_failures") or 0) + 1
+    first_failure = prior.get("first_failure_date") or date
+    last_ok = prior.get("last_ok_date")
+else:
+    streak = 0
+    first_failure = None
+    last_ok = date
+
+state[phase] = {
+    "date": date,
+    "outcome": outcome,
     "detail": os.environ["DETAIL"],
     "finished_at": datetime.datetime.now().astimezone().isoformat(),
+    "consecutive_failures": streak,
+    "first_failure_date": first_failure,
+    "last_ok_date": last_ok,
 }
 p.write_text(json.dumps(state, indent=2))
+print(streak)
 PY
 }
 
@@ -107,8 +149,34 @@ print(json.loads(m.group(0)).get("status", "UNKNOWN") if m else "UNKNOWN")' 2>/d
 
 if [ "${STATUS}" != "PASS" ]; then
   log "[ABORT] RP session probe returned ${STATUS} — not launching ${PHASE}."
-  write_status "ABORTED_SESSION" "${STATUS}"
-  notify "VELO ${PHASE} did not run" "Racing Post session is ${STATUS}. Log in again, or the day is lost."
+  STREAK="$(write_status "ABORTED_SESSION" "${STATUS}")"
+  STREAK="${STREAK:-1}"
+
+  # The whole point of counting. One abort is a bad morning; a run of them is a
+  # dead system nobody has noticed, and it must not read the same either time.
+  if [ "${STREAK}" -ge 2 ]; then
+    SEVERITY="critical"
+    HEADLINE="VELO ${PHASE} has not run ${STREAK} times in a row"
+    log "[ABORT] This is consecutive failure #${STREAK} for the ${PHASE} phase."
+  else
+    SEVERITY="warning"
+    HEADLINE="VELO ${PHASE} did not run"
+  fi
+
+  DETAIL="Racing Post session is ${STATUS}.
+
+Nothing was captured for ${DATE}. Predictions for a day that has already run
+cannot be recreated - that window is gone once the racing is over.
+
+Fix:
+  cd /mnt/c/Users/puror/velo-oracle-prime
+  PYTHONPATH=. venv/bin/python scripts/ops/_init_login_timed.py
+  PYTHONPATH=. venv/bin/python scripts/ops/check_rp_session_health.py
+
+The probe must report PASS before the next run will launch."
+
+  notify "${HEADLINE}" "Racing Post session is ${STATUS}. Log in again, or the day is lost."
+  alert "${SEVERITY}" "${HEADLINE}" "${DETAIL}"
   exit 2
 fi
 log "RP session OK."
@@ -145,10 +213,35 @@ esac
 
 log "===== ${PHASE} finished rc=${RC} ${LATE} ${LATE_EOD} ====="
 if [ "${RC}" -eq 0 ]; then
-  write_status "OK" "${LATE} ${LATE_EOD}"
+  # Capture the streak BEFORE it is reset, so a recovery can name what it ended.
+  PRIOR_STREAK="$(venv/bin/python -c "
+import json,sys
+try:
+    print(int((json.load(open('${STATUS_FILE}')).get('${PHASE}') or {}).get('consecutive_failures') or 0))
+except Exception:
+    print(0)
+" 2>/dev/null || echo 0)"
+  write_status "OK" "${LATE} ${LATE_EOD}" >/dev/null
+  if [ "${PRIOR_STREAK}" -ge 2 ]; then
+    # Recovery is worth saying out loud. A run of failures that simply stops
+    # being reported leaves you unsure whether it was fixed or just gave up.
+    alert "info" "VELO ${PHASE} is running again" \
+      "Recovered after ${PRIOR_STREAK} consecutive failures. ${DATE} completed rc=0."
+  fi
 else
-  write_status "FAILED" "rc=${RC} ${LATE} ${LATE_EOD}"
+  STREAK="$(write_status "FAILED" "rc=${RC} ${LATE} ${LATE_EOD}")"
+  STREAK="${STREAK:-1}"
+  if [ "${STREAK}" -ge 2 ]; then
+    SEVERITY="critical"
+    HEADLINE="VELO ${PHASE} has failed ${STREAK} times in a row"
+  else
+    SEVERITY="warning"
+    HEADLINE="VELO ${PHASE} failed"
+  fi
   notify "VELO ${PHASE} failed" "Exit ${RC}. See data/reports/velo_daily_${DATE}.log"
+  alert "${SEVERITY}" "${HEADLINE}" \
+    "Exit code ${RC} for ${DATE}.
+See data/reports/velo_daily_${DATE}.log"
 fi
 
 # The bug that let a dead scheduler report green for weeks: propagate the code.

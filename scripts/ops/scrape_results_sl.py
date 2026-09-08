@@ -27,6 +27,21 @@ BST = timezone(timedelta(hours=1))
 
 # Map SL course shortcodes to VELO venue codes (they differ for some)
 SL_TO_VELO = {
+    "CRK": "COR",   # Cork — SL uses CRK, VELO uses COR (silently dropped until 2026-09-07)
+    # 2026-09-08 backfill sweep. SL's code differs from VELO's canonical for each
+    # of these, so every one was landing outside the allowlist and being binned.
+    "HFD": "HER",   # Hereford
+    "MKR": "MKT",   # Market Rasen
+    "FKN": "FAK",   # Fakenham
+    "CHC": "CHM",   # Chelmsford City. The name map below ALREADY said CHM, but a
+                    # code that is present-yet-unmapped shadows it: the lookup is
+                    # `SL_TO_VELO.get(code, code) or NAME_MAP.get(name)`, and an
+                    # unmapped code falls back to itself, which is truthy, so the
+                    # name map is never consulted. Mapping the code is the fix
+                    # that matches this file's own stated convention.
+                    # NOTE: new_build_dashboard_server.py records Chelmsford as
+                    # CHE, which is *Chester* in this file. Left for the operator
+                    # - not reconciled here.
     "FFL": "FFO",
     "GOW": "GOW",
     "AYR": "AYR",
@@ -125,10 +140,17 @@ SL_COURSE_NAME_TO_VELO = {
     "Dundalk": "DUN",
     "Wetherby": "WET",
     "Chelmsford City": "CHM",
+    # Added 2026-09-07. Perth arrives with course_shortcode=None, so the code
+    # path never applies and it fell through to nothing - PER was in
+    # VELO_VENUES the whole time. Found by the DROPPED-DOMESTIC warning on the
+    # first day it existed, which is the entire argument for that warning.
+    "Perth": "PER",
+    "Downpatrick": "DPT",  # NI, also arrives with course_shortcode=None
 }
 
 # Irish venues (for region field)
-IRE_VENUES = {"GOW", "LIM", "COR", "CUR", "FTH", "GAL", "KIL", "LEO", "NAA", "NAV", "TIP", "TRA", "BAL", "DUN"}
+IRE_VENUES = {"GOW", "LIM", "COR", "CUR", "FTH", "GAL", "KIL", "LEO", "NAA", "NAV", "TIP", "TRA", "BAL", "DUN",
+              "BLL", "ROS", "PUN", "KLN"}  # added with the venues below; all IRE, and region drives downstream joins
 
 # Venues to include (filter out non-VELO venues)
 VELO_VENUES = {
@@ -145,7 +167,36 @@ VELO_VENUES = {
     "AIN", "WEX", "SLI", "FAI", "CLO", "DRO", "BAL",
     "KLB", "RHO", "PAT", "BAN", "CRT", "WDR", "YOR",
     "HUN", "RED", "SOU", "DUN", "WET",
+    # Added 2026-09-07. Every one of these is a real UK/IRE course that this
+    # scraper had been discarding in silence since it was written: a survey of
+    # 2026-08-24..09-07 found 85 domestic races dropped across 15 days, because
+    # a hand-maintained allowlist fails closed and said nothing when it did.
+    "FON",  # Fontwell
+    "THI",  # Thirsk
+    "NAB",  # Newton Abbot
+    "NBY",  # Newbury
+    "SDG",  # Sedgefield
+    "BLL",  # Bellewstown (IRE)
+    "ROS",  # Roscommon (IRE) — VELO's own RP captures use ROS
+    # 2026-09-08. Canonical codes confirmed against the repo before adding:
+    # FAK/Fakenham and PUN/Punchestown appear as such in the course maps, and
+    # new_build_dashboard_server.py records Killarney as KLN.
+    "FAK",  # Fakenham
+    "PUN",  # Punchestown (IRE) — note PAT is listed above as a Punchestown
+            # "alternate"; left in place rather than guessed at.
+    "KLN",  # Killarney (IRE) — KIL also appears above and may be a legacy
+            # duplicate for the same course. Flagged, not silently merged.
 }
+
+# Countries whose meetings VELO deliberately does not model. Anything NOT in
+# here is treated as domestic, so an unrecognised course in a new country warns
+# loudly rather than vanishing. False positives are noise; false negatives are
+# lost race days, and this file has already proved which of those actually costs
+# something. Fail noisy, not closed.
+FOREIGN_COUNTRIES = {"FR", "USA", "SAF", "GER", "ITY", "UAE", "AUS", "HK", "JPN", "CAN",
+                     # Seen in the 2026-09-08 sweep. Adding them only quiets the
+                     # warning; these were never eligible for the allowlist.
+                     "BR", "BAH", "CHI", "URU", "ARG"}
 
 
 def _slug(name: str) -> str:
@@ -203,6 +254,7 @@ def fetch_sl_results(date: str) -> list[dict]:
 def build_results_json(meetings: list[dict], date: str) -> dict:
     """Convert SL meetings → Racing API results format for sigma."""
     results = []
+    dropped_domestic: list[dict] = []
 
     for meeting in meetings:
         races = meeting.get("races", [])
@@ -211,10 +263,26 @@ def build_results_json(meetings: list[dict], date: str) -> dict:
 
         sl_code = races[0].get("course_shortcode", "")
         sl_course_name = races[0].get("course_name", "")
+        sl_country = races[0].get("country_short_name", "")
         velo_venue = SL_TO_VELO.get(sl_code, sl_code) or SL_COURSE_NAME_TO_VELO.get(sl_course_name, "")
 
         if velo_venue not in VELO_VENUES:
-            print(f"  [SKIP-VENUE] {sl_course_name} ({sl_code}) -> {velo_venue}")
+            if sl_country in FOREIGN_COUNTRIES:
+                # Expected and uninteresting: we do not model these.
+                print(f"  [skip-foreign] {sl_course_name} ({sl_country})")
+            else:
+                # A domestic meeting we cannot place. This is data loss, and it
+                # used to look identical to the line above.
+                dropped_domestic.append(
+                    {"course": sl_course_name, "sl_code": sl_code,
+                     "mapped_to": velo_venue, "country": sl_country,
+                     "races": len(races)}
+                )
+                print(
+                    f"  [DROPPED-DOMESTIC] {sl_course_name} ({sl_country}) "
+                    f"code={sl_code!r} -> {velo_venue!r} — {len(races)} races LOST. "
+                    f"Add it to VELO_VENUES (or SL_TO_VELO if the code differs)."
+                )
             continue
 
         ms = meeting.get("meeting_summary", {})
@@ -298,7 +366,7 @@ def build_results_json(meetings: list[dict], date: str) -> dict:
                 }
             )
 
-    return {"results": results}
+    return {"results": results, "dropped_domestic": dropped_domestic}
 
 
 def main() -> None:
@@ -312,11 +380,24 @@ def main() -> None:
 
     results = build_results_json(meetings, args.date)
     races = results["results"]
+    dropped = results.get("dropped_domestic") or []
     print(f"  VELO races built: {len(races)}")
 
     out_path = ROOT / "data" / f"results_{args.date.replace('-', '_')}.json"
     out_path.write_text(json.dumps(results, indent=2))
     print(f"  Saved: {out_path}")
+
+    # A partial day must announce itself. Silently writing a short results file
+    # is how 85 domestic races went missing across 15 days without a single
+    # complaint from this script.
+    if dropped:
+        lost = sum(d["races"] for d in dropped)
+        print("\n" + "=" * 68)
+        print(f"  INCOMPLETE: {lost} domestic races were dropped for {args.date}.")
+        for d in dropped:
+            print(f"    {d['course']} ({d['country']}) code={d['sl_code']!r} -> {d['mapped_to']!r}: {d['races']} races")
+        print("  This results file is NOT a full day. Fix the mapping and rerun.")
+        print("=" * 68)
 
     print("\nRaces:")
     for r in races:
