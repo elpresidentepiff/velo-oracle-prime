@@ -139,13 +139,56 @@ fi
 # ── The RP session gate ───────────────────────────────────────────────────────
 # Both phases capture from Racing Post, so both are worthless without a live
 # session. Probing costs ~30s and saves the entire window.
-log "RP session probe..."
-PROBE="$(PYTHONPATH=. timeout 240 venv/bin/python scripts/ops/check_rp_session_health.py 2>&1)"
-echo "${PROBE}" >> "${LOG}"
-STATUS="$(printf '%s' "${PROBE}" | venv/bin/python -c 'import sys,json,re
+probe_status() {
+  PROBE="$(PYTHONPATH=. timeout 240 venv/bin/python scripts/ops/check_rp_session_health.py 2>&1)"
+  echo "${PROBE}" >> "${LOG}"
+  printf '%s' "${PROBE}" | venv/bin/python -c 'import sys,json,re
 raw = sys.stdin.read()
 m = re.search(r"\{.*\}", raw, re.S)
-print(json.loads(m.group(0)).get("status", "UNKNOWN") if m else "UNKNOWN")' 2>/dev/null || echo UNKNOWN)"
+print(json.loads(m.group(0)).get("status", "UNKNOWN") if m else "UNKNOWN")' 2>/dev/null || echo UNKNOWN
+}
+
+log "RP session probe..."
+STATUS="$(probe_status)"
+
+# ── Self-heal before giving up ────────────────────────────────────────────────
+# Measured 2026-09-08: the rp_authenticated cookie lasts about 9h20m (logged in
+# 22:20, expired 07:40 the next morning, mid-run). The two phases are 15 hours
+# apart, so ONE login can never cover both - the session is guaranteed to be
+# dead for at least one of them every single day. Aborting on that is correct
+# but useless on its own; it just moves the loss from "bad data" to "no data".
+#
+# So try the credentialed login once before declaring the day lost. auto-login
+# leaves the profile untouched on failure, so a failed attempt costs a minute
+# and cannot make things worse. If it succeeds the run proceeds normally; if it
+# fails we abort exactly as before, but the alert now says WHY it could not
+# heal itself.
+AUTOHEAL=""
+if [ "${STATUS}" != "PASS" ]; then
+  log "[HEAL] Session is ${STATUS}. Attempting credentialed auto-login..."
+  HEAL_OUT="$(PYTHONPATH=. timeout 300 venv/bin/python \
+    scripts/ops/racing_post_account_collector.py auto-login --execute 2>&1)"
+  echo "${HEAL_OUT}" >> "${LOG}"
+  # NOTE: double quotes are fine inside this single-quoted block; do NOT escape
+  # them. A backslash-escaped quote reaches Python literally and is a syntax
+  # error, which would send every heal attempt down the fallback branch and
+  # report "could not parse" instead of the real rejection - a silent
+  # degradation of the very message this exists to deliver.
+  AUTOHEAL="$(printf '%s' "${HEAL_OUT}" | venv/bin/python -c 'import sys, json, re
+raw = sys.stdin.read()
+m = re.search(r"\{.*\}", raw, re.S)
+d = json.loads(m.group(0)) if m else {}
+diag = (d.get("diagnostics") or {}).get("page_text_head", "") or ""
+# Surface the human-readable rejection, never the credentials themselves.
+print(str(d.get("status", "UNKNOWN")) + ": " + str(d.get("reason") or diag[:160] or "no detail"))' 2>/dev/null || echo "UNKNOWN: could not parse auto-login output")"
+  log "[HEAL] auto-login -> ${AUTOHEAL}"
+  STATUS="$(probe_status)"
+  if [ "${STATUS}" = "PASS" ]; then
+    log "[HEAL] Session recovered without an operator. Continuing."
+    alert "info" "VELO ${PHASE} self-healed its RP session" \
+      "The session had expired and was renewed automatically. ${DATE} is proceeding normally."
+  fi
+fi
 
 if [ "${STATUS}" != "PASS" ]; then
   log "[ABORT] RP session probe returned ${STATUS} — not launching ${PHASE}."
@@ -164,11 +207,16 @@ if [ "${STATUS}" != "PASS" ]; then
   fi
 
   DETAIL="Racing Post session is ${STATUS}.
+Auto-login was attempted and did not recover it: ${AUTOHEAL:-not attempted}
 
 Nothing was captured for ${DATE}. Predictions for a day that has already run
 cannot be recreated - that window is gone once the racing is over.
 
-Fix:
+If auto-login is failing on credentials, fix .env (RP_EMAIL / RP_PASSWORD) -
+that is the durable fix, because the session cookie only lasts ~9h and the two
+daily phases are 15h apart, so a manual login can never cover both.
+
+Manual fallback:
   cd /mnt/c/Users/puror/velo-oracle-prime
   PYTHONPATH=. venv/bin/python scripts/ops/_init_login_timed.py
   PYTHONPATH=. venv/bin/python scripts/ops/check_rp_session_health.py
