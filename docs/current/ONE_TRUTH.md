@@ -193,6 +193,25 @@ every failure below actually happened and cost race days:
 - **Silence.** Each run writes `data/reports/velo_daily_status.json` with phase,
   date, outcome and finish time, so "did it run?" is answerable without reading
   logs, and a phase that stops firing shows as a stale timestamp.
+- **Sleeping laptop (fixed 2026-09-13).** `StartWhenAvailable` only catches a
+  missed run up when the machine next wakes; it never wakes it. Week of 07 Sep the
+  morning started 10:10 (09), 10:00 (10), **not at all** (12) and 11:05 (13) — the
+  09th and 12th produced no predictions. Both tasks now have `WakeToRun=true`, and
+  the Balanced plan's *Allow wake timers* is **Enable on AC** (it was Disable on AC
+  and DC, so `WakeToRun` alone would still never have fired). DC is deliberately
+  left Disabled: no self-waking in a bag on battery. So the laptop must be plugged
+  in and asleep (not shut down) at 07:00 / 22:00. Verify:
+  `schtasks.exe /Query /TN VELO_Raceday_Morning /XML | grep WakeToRun` and
+  `powercfg.exe /q SCHEME_CURRENT SUB_SLEEP RTCWAKE` (expect AC index `0x1`).
+- **Phase collision (fixed 2026-09-13).** Waking after missing both phases makes
+  Task Scheduler fire the morning AND the caught-up EOD in the same second
+  (13 Sep, 11:05:16). Both drive the one Firefox profile; the EOD's auto-login won
+  it and the morning died on "Firefox is already running". `velo_daily.sh` now
+  takes `flock /tmp/velo_daily.lock` before the session probe. A caught-up EOD
+  sleeps 90s first so the morning wins (cards vanish, results do not); a phase
+  that cannot get the lock within `VELO_LOCK_WAIT_SECS` (default 7200) exits 3
+  with `ABORTED_LOCKED` and a Telegram alert. Any manual capture against the
+  profile should take the same lock: `flock -w 600 /tmp/velo_daily.lock <cmd>`.
 
 Per-day log: `data/reports/velo_daily_YYYY-MM-DD.log`.
 
@@ -854,7 +873,16 @@ so a wrong-interpreter launch is **indistinguishable from a logged-out session**
 - Mission Control derives `source_truth` from the latest observability packet (`UNKNOWN` when missing/malformed, never CLEAN by default) and blocks learning on DEGRADED/UNKNOWN. Tests: `tests/test_mission_control_source_truth.py`.
 
 ## What blocks learning (any one of)
-Degraded/unknown source · Council verdict not `PASS_TO_LEARNING` · pipeline truth `MANUAL_RECOVERY_ONLY` · contaminated run IDs (`MC_CONFIG.CONTAMINATED_RUN_IDS`) · flatline/identity failures · Playbook G `live_sentient_state_touched != false`.
+Degraded/unknown source · Council **integrity** failure (`learning_disposition` = `INTEGRITY_BLOCKED` / `COUNCIL_RUN_MISSING` / `NO_AGENT_RESPONSES`) · pipeline truth other than `AUTOMATED_RUN_OK` or `MANUAL_RECOVERY_ONLY` · contaminated run IDs (`MC_CONFIG.CONTAMINATED_RUN_IDS`) · flatline/identity failures · Playbook G `live_sentient_state_touched != false`.
+
+**Corrected 2026-09-13 — this list used to say any non-`PASS_TO_LEARNING` council verdict, and
+`MANUAL_RECOVERY_ONLY`, block learning. Neither has been true since the 2026-08-02 operator ruling
+("learning must happen every day, including degraded ones").** Both now block **promotion** only.
+A `WATCH_ONLY` council blocks learning only when the reason is data trust, not strike rate
+(`update_mission_control.py` → `_council_learning_disposition` → `src/velo/council/agents.py:61`).
+Live proof: 2026-09-10 council `WATCH_ONLY` (SR 13.5%) → `learning_gate_status=OPEN`,
+reasons `LEARNING_ALLOWED_DEGRADED_PERFORMANCE`, 38 learning events written; 2026-09-08 and
+09-11 carry `GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY` with learning `OPEN`.
 
 ## Next safe command
 ```

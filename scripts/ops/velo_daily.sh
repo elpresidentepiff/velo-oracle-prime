@@ -136,6 +136,47 @@ if [ -n "${LATE_EOD}" ]; then
   log "[WARN] EOD did not run at 22:00 and is catching up. Reconciling ${DATE}, not today."
 fi
 
+# ── One phase at a time ───────────────────────────────────────────────────────
+# Both phases drive the same Firefox profile, and Firefox refuses a profile that
+# is already open. On 2026-09-13 the laptop slept from Friday night to Sunday
+# 11:05; on wake, StartWhenAvailable fired the missed morning AND the missed EOD
+# in the same second. The EOD's auto-login took the profile, the morning's died
+# with "Firefox is already running", and the day aborted before capturing a card.
+#
+# So the phases queue behind one lock. When they collide the morning goes first:
+# today's cards vanish from the RP index as courses finish, yesterday's results
+# do not. A caught-up EOD therefore steps back before contending. A phase that
+# still cannot get the lock after LOCK_WAIT_SECS gives up loudly rather than
+# running alongside the other.
+#
+# Children inherit the descriptor, so a Firefox left behind by a killed run
+# keeps holding the lock - correct, because it is still holding the profile.
+LOCK_FILE="/tmp/velo_daily.lock"
+LOCK_WAIT_SECS="${VELO_LOCK_WAIT_SECS:-7200}"
+exec 9>"${LOCK_FILE}"
+if [ -n "${LATE_EOD}" ]; then
+  sleep 90
+fi
+if ! flock -n 9; then
+  log "[WAIT] Another VELO phase is using the RP browser profile. Queuing for up to $((LOCK_WAIT_SECS / 60)) min..."
+  WAIT_START="$(date +%s)"
+  if ! flock -w "${LOCK_WAIT_SECS}" 9; then
+    log "[ABORT] Still waiting after $((LOCK_WAIT_SECS / 60)) min — not launching ${PHASE} alongside it."
+    STREAK="$(write_status "ABORTED_LOCKED" "waited ${LOCK_WAIT_SECS}s")"
+    STREAK="${STREAK:-1}"
+    SEVERITY="warning"
+    [ "${STREAK}" -ge 2 ] && SEVERITY="critical"
+    alert "${SEVERITY}" "VELO ${PHASE} did not run" \
+      "Another VELO phase held the RP browser profile for over $((LOCK_WAIT_SECS / 60)) min.
+Nothing was run for ${DATE}.
+
+Find what is holding it:
+  pgrep -af 'velo_daily|run_full_raceday|firefox'"
+    exit 3
+  fi
+  log "[WAIT] Lock acquired after $(( ($(date +%s) - WAIT_START) / 60 )) min."
+fi
+
 # ── The RP session gate ───────────────────────────────────────────────────────
 # Both phases capture from Racing Post, so both are worthless without a live
 # session. Probing costs ~30s and saves the entire window.
