@@ -745,6 +745,11 @@ overrides the Dockerfile `CMD`. `railway.json` is present but is not the config 
 - Any new Supabase read in the dashboard must use `resolve_supabase_service_key()`
   (`app/core/runtime_env.py`), never a hand-picked env var name.
 - A start command that uses shell syntax must be wrapped in `sh -c`.
+- **Readiness gate:** `[deploy] healthcheckPath = "/"`, `healthcheckTimeout = 300` (added
+  2026-09-13). Railway keeps the old deployment serving until `/` answers, so a deploy no longer
+  means ~2.5 min of 502, and a build that never starts is abandoned. Deliberately not `/health`:
+  that returns 503 when the last scoring run is > 26 h old and would block every deploy after a
+  missed race day. The old `[healthcheck]` table in `railway.toml` was never read by Railway.
 - Reproduce production before pushing a deploy fix: fresh venv,
   `pip install -r requirements_production.txt`, start with only `SUPABASE_URL` and
   `SUPABASE_SERVICE_KEY` set. That surfaced the first two faults on 2026-09-13 and would

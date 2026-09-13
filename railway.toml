@@ -10,11 +10,18 @@ buildCommand = "pip install -r requirements_production.txt"
 # runtime log). sh -c makes the expansion happen.
 startCommand = "sh -c 'uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}'"
 restartPolicyType = "ON_FAILURE"
-
-[healthcheck]
-path = "/health"
-timeout = 30
-interval = 60
+# Readiness gate: Railway keeps the previous deployment serving until this path answers
+# 200, and abandons a deployment that never does. Without it every deploy gave ~2.5 min
+# of 502 while the app started (2026-09-13). A [healthcheck] table used to sit here;
+# Railway does not read that key, so no check ever ran.
+#
+# "/" not "/health": /health returns 503 whenever the last scoring run is > 26 h old,
+# which would block every deploy after the laptop misses a race day. "/" answers only
+# once FastAPI startup (including the Supabase schema verification) has completed, so
+# it catches the import crash and the unexpanded-${PORT} crash that kept this service
+# down from 2026-08-08 to 2026-09-13.
+healthcheckPath = "/"
+healthcheckTimeout = 300
 
 # ── Scoring cron ──────────────────────────────────────────────────────────────
 # This documents the intended schedule. Railway stores service config server-side.
