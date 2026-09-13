@@ -4,7 +4,11 @@ builder = "NIXPACKS"
 buildCommand = "pip install -r requirements_production.txt"
 
 [deploy]
-startCommand = "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"
+# The service builds from the Dockerfile, and Railway runs startCommand in exec form: no
+# shell, so ${PORT:-8080} reached uvicorn literally ("is not a valid integer") and the
+# container crash-looped behind a SUCCESS deploy and a 502 (found 2026-09-13 in the
+# runtime log). sh -c makes the expansion happen.
+startCommand = "sh -c 'uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}'"
 restartPolicyType = "ON_FAILURE"
 
 [healthcheck]
