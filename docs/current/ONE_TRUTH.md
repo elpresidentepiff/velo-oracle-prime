@@ -94,6 +94,19 @@ output. Backtest AUC (0.7028) is NOT promotion evidence on its own.
 If SR>=40% holds there, escalate to operator for an EW-overlay decision; if it decays
 toward base rate, retire the lane and return to feature work (issues #78/#80).
 
+**MDS-heavy blend shadow lane (operator-approved 2026-09-13):** `MDS_HEAVY_SHADOW_V1`
+re-ranks the same live components with sqpe_v17 .10 / MDS .90 / improvement 0
+(`scripts/ops/run_mds_heavy_shadow_today.py`, morning Step 9.1c, non-critical; whole
+field ranked into `canonical_model_scorecards`). Evidence:
+`docs/research/WEIGHT_STUDY_2026_09_13.md` — rolling out-of-sample Jun–Sep (1,714 races)
++0.9 pts win SR, 95% CI [+0.1, +1.8], **ROI not better**; improvement_score took zero
+weight in every fold. MDS is built on pre-race market features, so the lane leans to
+favourites. It refuses to score unless `verdict_loader` resolves by `race_id` (the
+generated_at fallback pulls other days' verdicts — see "Canonical backfill" below).
+Forward rows begin 2026-09-14. **Gate: >= 300 forward races with results, then operator
+decision.** Live weights unchanged. Track:
+`select count(*) filter (where win), count(*) from canonical_model_scorecards where model_name='MDS_HEAVY_SHADOW_V1' and rank=1 and result_position is not null;`
+
 ## SUBSYSTEM TRUTH BOARD (audited 2026-07-29, all claims reproduced not assumed)
 
 | Subsystem | Truth |
@@ -193,6 +206,25 @@ every failure below actually happened and cost race days:
 - **Silence.** Each run writes `data/reports/velo_daily_status.json` with phase,
   date, outcome and finish time, so "did it run?" is answerable without reading
   logs, and a phase that stops firing shows as a stale timestamp.
+- **Sleeping laptop (fixed 2026-09-13).** `StartWhenAvailable` only catches a
+  missed run up when the machine next wakes; it never wakes it. Week of 07 Sep the
+  morning started 10:10 (09), 10:00 (10), **not at all** (12) and 11:05 (13) — the
+  09th and 12th produced no predictions. Both tasks now have `WakeToRun=true`, and
+  the Balanced plan's *Allow wake timers* is **Enable on AC** (it was Disable on AC
+  and DC, so `WakeToRun` alone would still never have fired). DC is deliberately
+  left Disabled: no self-waking in a bag on battery. So the laptop must be plugged
+  in and asleep (not shut down) at 07:00 / 22:00. Verify:
+  `schtasks.exe /Query /TN VELO_Raceday_Morning /XML | grep WakeToRun` and
+  `powercfg.exe /q SCHEME_CURRENT SUB_SLEEP RTCWAKE` (expect AC index `0x1`).
+- **Phase collision (fixed 2026-09-13).** Waking after missing both phases makes
+  Task Scheduler fire the morning AND the caught-up EOD in the same second
+  (13 Sep, 11:05:16). Both drive the one Firefox profile; the EOD's auto-login won
+  it and the morning died on "Firefox is already running". `velo_daily.sh` now
+  takes `flock /tmp/velo_daily.lock` before the session probe. A caught-up EOD
+  sleeps 90s first so the morning wins (cards vanish, results do not); a phase
+  that cannot get the lock within `VELO_LOCK_WAIT_SECS` (default 7200) exits 3
+  with `ABORTED_LOCKED` and a Telegram alert. Any manual capture against the
+  profile should take the same lock: `flock -w 600 /tmp/velo_daily.lock <cmd>`.
 
 Per-day log: `data/reports/velo_daily_YYYY-MM-DD.log`.
 
@@ -313,6 +345,47 @@ and RPDC all structurally require the live browser-injection racecard (real RP
 race_ids/horse_uids), and none of them have a PDF-sourced fallback path. A PDF-only day
 (like 2026-07-04 and the morning of 2026-07-08) will score Old VELO/No-RPR cleanly and
 leave the other three lanes permanently blank for that day.
+
+### Local-only data now has a Supabase home (2026-09-13, operator-approved)
+
+Migration `supabase/migrations/20260913_001_velo_daily_artifacts.sql` (RLS on,
+service_role only) created, and `scripts/ops/persist_daily_artifacts.py` backfilled
+(counts read back and matched):
+
+| Table | Source | Rows at backfill |
+|---|---|---|
+| `velo_council_runs` | `data/council_runs/` | 66 |
+| `velo_mission_control` | `data/mission_control/` | 67 |
+| `velo_model_comparison_ledger` | `data/model_comparison_ledger.csv` (`model_comparison` is an unrelated aggregate) | 2,274 |
+| `new_build_horse_passports` | `data/new_build/passports/horse_passports_v1.jsonl` | 13,062 |
+| `velo_report_artifacts` | LLM briefs, midprice/MDS shadow packets, three-option card, RPDC gate card, verdict backups, doctrine scorecard, sidecar stack | 236 |
+
+`velo_learning_events` (stopped 2026-05-22) got the runner's 2,126 events for 59 dates.
+**Seven `app/main.py` routes read local files only and therefore served stale or 404 on
+Railway** (`/api/llm-brief`, `/api/midprice-shadow`, `/api/old-velo-verdicts`,
+`/api/doctrine-scorecard`, `/old_velo_three_option_card_latest.json`,
+`/rpdc_gate_card_latest.json`, `/sidecar_stack_latest.json`). They now go through
+`_report_artifact()`: Supabase row and local file both read, the newer one served —
+verified identical payloads with the local file removed from the lookup. Railway only
+picks this up once the branch is deployed.
+
+**Canonical backfill 2026-09-13:** 23 dates (May 27 – Jul 15) written, 19,965 scorecard
+rows / 19,963 learning events, every MAIN_VELO_PRIME race verified to belong to its
+date. 12 dates were written then **deleted** (05-23/24/25, 06-02/05/06/07/19/20/23/28,
+07-10): `load_verdicts()` had no racecard cache for them, fell back to generated_at, and
+pulled up to 971 other days' rescored verdicts under each date. Pre-existing canonical
+rows for **07-24 (55), 07-27 (35), 07-31 (49)** contain races whose `velo_race_truth`
+date differs — not touched, cause unconfirmed. `build_canonical_learning_events.py` now
+collapses duplicate conflict keys and exits 1 on a failed write (06-10 had lost all 755
+events while exiting 0).
+
+**racing_horse_runs backfill 2026-09-13:** 10 dates, 5,153 rows (05-09/10/12/13/14/15,
+05-31, 06-05, 06-14, 06-20), each matched to the source file's race/runner/max-position
+counts. Skipped: 05-16 (`pdf_*` race ids, 70 runners without ids), 05-18 (`RP_*` slug ids),
+06-24 (23 of 38 pages unparsed, implausible fields). `ingest_results_to_horse_runs.py` now
+prefers `horse_rp_uid` and reads `distance_f`/`race_class` — distance and class were NULL
+on every RP-era row. Existing non-canonical id styles still in the table: `RP_*` 05-19
+(311), `rp_*` 05-23→06-04 (1,796), `pdf_*` 05-17 (257).
 
 ### Dashboard — `app/main.py` is the only server to run
 
@@ -835,7 +908,13 @@ Step 21:  PASSPORT BANK REFRESH (wired 2026-08-02, commit 686488b)
           All five are critical=False and run LAST, after learning has completed.
           Skip with --skip-passport-refresh. Skips loudly, never silently, when
           the queue is empty or the RP session is down.
+Step 20F: persist_nightly_learning_events.py --date YYYY-MM-DD --execute
+          (runner's jsonl -> velo_learning_events; wired 2026-09-13, non-critical)
+Step 22:  persist_daily_artifacts.py --kind all --date YYYY-MM-DD --execute
+          (council, Mission Control, model ledger, passport bank, dashboard reports
+          -> Supabase; wired 2026-09-13, non-critical, runs after 21E)
 ```
+Morning also runs `persist_daily_artifacts.py --kind reports` as its last step (2026-09-13).
 `DAY COMPLETE` only when all pass plus final Council + Mission Control refresh.
 
 **Run the orchestrators with `venv/bin/python`, never bare `python`** (corrected
@@ -854,7 +933,16 @@ so a wrong-interpreter launch is **indistinguishable from a logged-out session**
 - Mission Control derives `source_truth` from the latest observability packet (`UNKNOWN` when missing/malformed, never CLEAN by default) and blocks learning on DEGRADED/UNKNOWN. Tests: `tests/test_mission_control_source_truth.py`.
 
 ## What blocks learning (any one of)
-Degraded/unknown source · Council verdict not `PASS_TO_LEARNING` · pipeline truth `MANUAL_RECOVERY_ONLY` · contaminated run IDs (`MC_CONFIG.CONTAMINATED_RUN_IDS`) · flatline/identity failures · Playbook G `live_sentient_state_touched != false`.
+Degraded/unknown source · Council **integrity** failure (`learning_disposition` = `INTEGRITY_BLOCKED` / `COUNCIL_RUN_MISSING` / `NO_AGENT_RESPONSES`) · pipeline truth other than `AUTOMATED_RUN_OK` or `MANUAL_RECOVERY_ONLY` · contaminated run IDs (`MC_CONFIG.CONTAMINATED_RUN_IDS`) · flatline/identity failures · Playbook G `live_sentient_state_touched != false`.
+
+**Corrected 2026-09-13 — this list used to say any non-`PASS_TO_LEARNING` council verdict, and
+`MANUAL_RECOVERY_ONLY`, block learning. Neither has been true since the 2026-08-02 operator ruling
+("learning must happen every day, including degraded ones").** Both now block **promotion** only.
+A `WATCH_ONLY` council blocks learning only when the reason is data trust, not strike rate
+(`update_mission_control.py` → `_council_learning_disposition` → `src/velo/council/agents.py:61`).
+Live proof: 2026-09-10 council `WATCH_ONLY` (SR 13.5%) → `learning_gate_status=OPEN`,
+reasons `LEARNING_ALLOWED_DEGRADED_PERFORMANCE`, 38 learning events written; 2026-09-08 and
+09-11 carry `GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY` with learning `OPEN`.
 
 ## Next safe command
 ```

@@ -30,6 +30,18 @@ PASSPORT_PATH = ROOT / "data" / "new_build" / "passports" / "horse_passports_v1.
 PROFILE_RE = re.compile(r"/profile/horse/(?P<uid>\d+)/(?P<slug>[^\"'<>?#/\s]+)")
 
 SOURCE_PRIORITIES = {
+    # Horses declared on a card in the next 48h outrank everything. Without
+    # this tier the queue drained alphabetically inside priority 10 (the sort
+    # below is (priority, status, name, uid)), so a horse running tonight
+    # waited behind every "Aardvark" the pipeline had ever indexed. Measured
+    # 2026-09-04: passport coverage was 47.3% of the day's runners with 3,423
+    # horses queued -- roughly half the field scored with pp_* features null
+    # while the New Build models were trained on rows where they were present.
+    "racing_imminent": 1,
+    # NOTE: current_racecard (20) sorts BELOW upcoming_racecard (10), which is
+    # backwards. Left alone deliberately -- racing_imminent above is keyed off
+    # the actual merged cards and supersedes both; reordering the legacy tiers
+    # would reshuffle ~13k rows for no measured gain.
     "upcoming_racecard": 10,
     "current_racecard": 20,
     "big_race_entries": 30,
@@ -162,6 +174,56 @@ def add_racecard_injection_candidates(candidates: dict[str, dict]) -> None:
                     source_date=capture_date,
                     source_file=str(path),
                 )
+
+
+def add_racing_imminent_candidates(candidates: dict[str, dict], *, days_ahead: int = 1) -> dict[str, int]:
+    """Promote horses declared on today's and tomorrow's cards to the front.
+
+    Reads the merged racecards, which are the same artifact scoring reads, so
+    "who is racing" here means exactly what it means downstream. Returns
+    per-date counts for the report.
+    """
+    from datetime import date as _date, timedelta
+
+    seen: dict[str, int] = {}
+    today = _date.today()
+    for offset in range(days_ahead + 1):
+        day = (today + timedelta(days=offset)).isoformat()
+        paths = sorted((ROOT / "data" / "racecard_merged").glob(f"racecard_*_{day}.json"))
+        n = 0
+        for path in paths:
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            races = data.get("races", [])
+            if isinstance(races, dict):
+                races = list(races.values())
+            for race in races:
+                if not isinstance(race, dict):
+                    continue
+                horses = race.get("horses", [])
+                if isinstance(horses, dict):
+                    horses = list(horses.values())
+                for horse in horses:
+                    if not isinstance(horse, dict):
+                        continue
+                    uid = str(horse.get("horse_id") or "").strip()
+                    if not uid.isdigit():
+                        continue  # synthetic rp_VEN_slug ids have no profile page
+                    _candidate(
+                        candidates,
+                        uid=uid,
+                        name=horse.get("horse_name"),
+                        source="racing_imminent",
+                        source_date=day,
+                        source_file=path.name,
+                        profile_url=None,
+                        reason="RACING_WITHIN_48H",
+                    )
+                    n += 1
+        seen[day] = n
+    return seen
 
 
 def add_existing_profile_candidates(candidates: dict[str, dict]) -> None:
@@ -416,8 +478,26 @@ def run(*, batch_limit: int, execute: bool) -> dict:
     add_existing_profile_candidates(candidates)
     add_raw_profile_link_review_candidates(candidates)
     add_statistics_candidates(candidates)
-    rows = apply_status(candidates, _load_passport_ids(), _load_captured_profile_ids())
-    return write_outputs(rows, batch_limit=batch_limit, execute=execute)
+    # Last, so it upgrades rather than inserts: _candidate() only lowers an
+    # existing row's priority, so a horse already indexed from any other
+    # source is promoted in place rather than duplicated.
+    imminent = add_racing_imminent_candidates(candidates)
+    passport_ids = _load_passport_ids()
+    rows = apply_status(candidates, passport_ids, _load_captured_profile_ids())
+
+    imminent_rows = [r for r in rows if r.get("source") == "racing_imminent"]
+    needed = [r for r in imminent_rows if r["status"] == "QUEUED_FOR_CAPTURE"]
+    print(f"  racing within 48h: {len(imminent_rows)} horse(s) across {imminent} — "
+          f"{len(imminent_rows) - len(needed)} already banked, {len(needed)} queued first")
+
+    result = write_outputs(rows, batch_limit=batch_limit, execute=execute)
+    result["racing_imminent"] = {
+        "runners_by_date": imminent,
+        "distinct_horses": len(imminent_rows),
+        "already_banked": len(imminent_rows) - len(needed),
+        "queued_for_capture": len(needed),
+    }
+    return result
 
 
 def main() -> None:

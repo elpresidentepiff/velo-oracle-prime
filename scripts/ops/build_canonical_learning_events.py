@@ -287,10 +287,13 @@ def main() -> None:
     print(f"Promotion-eligible events: {audit['promotion_eligible_count']} (must be 0)")
 
     if execute:
-        written, error = _sb_upsert(
-            "canonical_learning_events", events,
-            "run_date,race_id,model_name,lane_name,horse_id,learning_class,event_type",
-        )
+        # Tied ranks can emit two events with the same conflict key; Postgres rejects the
+        # whole batch (21000 "cannot affect row a second time"). 2026-06-10 lost all 755
+        # events this way while the script exited 0. Collapse to the last row per key.
+        conflict = ("run_date", "race_id", "model_name", "lane_name", "horse_id", "learning_class", "event_type")
+        unique = {tuple(e.get(c) for c in conflict): e for e in events}
+        audit["duplicate_conflict_keys_collapsed"] = len(events) - len(unique)
+        written, error = _sb_upsert("canonical_learning_events", list(unique.values()), ",".join(conflict))
         audit["rows_written"] = written
         audit["write_error"] = error
         if error:
@@ -304,6 +307,8 @@ def main() -> None:
     print(f"csv={csv_path}")
     print(f"summary={summary_path}")
     print(f"audit={audit_path}")
+    if audit["write_error"]:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

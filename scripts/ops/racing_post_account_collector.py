@@ -7,7 +7,8 @@ browser profile that the operator logs into manually, then captures only the
 Racing Post URLs explicitly provided in a URL list.
 
 Rules:
-- no credentials in code
+- no credentials in code (auto-login reads the operator's own credentials from
+  .env at run time; nothing is hardcoded, logged, or written to any artifact)
 - no proxy rotation
 - no captcha bypass
 - no hidden endpoint mining
@@ -31,6 +32,8 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PROFILE_DIR = ROOT / "data" / "browser_profiles" / "racing_post_account"
 DEFAULT_RAW_DIR = ROOT / "data" / "racing_post_account_raw"
 DEFAULT_LOGIN_URL = "https://www.racingpost.com/"
+# The real sign-in form (verified 2026-09-04). /account/login 404s.
+RP_AUTH_LOGIN_URL = "https://www.racingpost.com/auth/login/"
 DEFAULT_ALLOWED_DOMAINS = {"racingpost.com", "www.racingpost.com"}
 
 
@@ -182,6 +185,189 @@ def init_login(profile_dir: Path, login_url: str, *, execute: bool, wait_seconds
     payload["status"] = "PASS"
     payload["saved_at"] = _utc_now()
     payload["wait_seconds_used"] = wait_seconds if not sys.stdin.isatty() else None
+    return payload
+
+
+def _rp_credentials() -> tuple[str, str]:
+    """Operator's own Racing Post credentials, from the environment only.
+
+    RP_EMAIL / RP_PASSWORD, with RACING_POST_* accepted as aliases. Returns
+    ("", "") when unset -- callers must treat that as "fall back to manual
+    login", never as an error, so a machine without credentials still works
+    exactly as it did before.
+    """
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(ROOT / ".env")
+    except Exception:
+        pass
+    email = os.getenv("RP_EMAIL") or os.getenv("RACING_POST_EMAIL") or ""
+    password = os.getenv("RP_PASSWORD") or os.getenv("RACING_POST_PASSWORD") or ""
+    return email.strip(), password
+
+
+def auto_login(
+    profile_dir: Path,
+    *,
+    execute: bool,
+    headed: bool = False,
+    timeout_s: int = 60,
+) -> dict:
+    """Sign the persistent profile in without an operator at the keyboard.
+
+    Why this exists: the browser profile's session expires every few days, and
+    until 2026-09-04 the only cure was a human running init-login and typing
+    into a visible Firefox window. Both scheduled runs gate on the session
+    probe, so an expired session did not degrade the day -- it cancelled it,
+    and it cancelled it silently at 07:00 while the operator was asleep
+    (2026-09-01: a good login against the wrong profile dir, a green probe, and
+    a dead 22-second run).
+
+    Never logs or returns the password. On any failure the profile is left
+    exactly as it was and the caller falls back to the manual init-login path.
+    """
+    profile_dir = _assert_repo_path(profile_dir, "profile_dir")
+    email, password = _rp_credentials()
+    payload = {
+        "mode": "auto-login",
+        "status": "DRY_RUN",
+        "profile_dir": str(profile_dir),
+        "login_url": RP_AUTH_LOGIN_URL,
+        "email_present": bool(email),
+        "password_present": bool(password),
+    }
+    if not (email and password):
+        payload.update(
+            status="SKIPPED_NO_CREDENTIALS",
+            hint="Set RP_EMAIL and RP_PASSWORD in .env, or log in manually with init-login.",
+        )
+        return payload
+    if not execute:
+        return payload
+
+    sync_playwright = _import_playwright()
+    profile_dir.mkdir(parents=True, exist_ok=True)
+    diag: dict = {}
+    try:
+        with sync_playwright() as p:
+            browser = p.firefox.launch_persistent_context(
+                user_data_dir=str(profile_dir),
+                headless=not headed,
+                viewport={"width": 1400, "height": 1000},
+                firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
+            )
+            page = browser.new_page()
+            page.goto(RP_AUTH_LOGIN_URL, wait_until="domcontentloaded", timeout=timeout_s * 1000)
+
+            # TrustArc consent banner sits over the form until it is dismissed.
+            for selector in ("#truste-consent-button", "button#truste-consent-button"):
+                try:
+                    banner = page.locator(selector)
+                    if banner.count() and banner.first.is_visible():
+                        banner.first.click(timeout=5000)
+                        page.wait_for_timeout(1000)
+                        break
+                except Exception:
+                    pass
+
+            # Type rather than fill: the form is React-controlled and only
+            # enables its submit button once it has seen real key events.
+            page.click("#email", timeout=timeout_s * 1000)
+            page.type("#email", email, delay=25)
+            page.click("#password", timeout=timeout_s * 1000)
+            page.type("#password", password, delay=25)
+            page.locator("#password").blur()
+            page.wait_for_timeout(500)
+
+            # Echo the email back off the page (never the password) so a typo,
+            # an autofill collision or a stripped character is visible instead
+            # of hiding behind RP's generic "check the email address" error.
+            try:
+                diag["email_in_field"] = page.eval_on_selector("#email", "e => e.value")
+                diag["password_chars_in_field"] = page.eval_on_selector("#password", "e => e.value.length")
+            except Exception:
+                pass
+
+            submit = page.locator('button[type="submit"]').first
+            try:
+                diag["submit_disabled"] = submit.is_disabled()
+            except Exception:
+                diag["submit_disabled"] = None
+
+            try:
+                submit.click(timeout=timeout_s * 1000)
+                diag["submit_method"] = "click"
+            except Exception:
+                page.locator("#password").press("Enter")
+                diag["submit_method"] = "enter"
+
+            # A React form that rejects the click leaves us on the same URL with
+            # the fields still mounted; give the alternate path one go before
+            # calling it a failure.
+            page.wait_for_timeout(4000)
+            if page.locator("#password").count() and "/auth/login" in page.url:
+                try:
+                    page.locator("#password").press("Enter")
+                    diag["submit_retry"] = "enter"
+                    page.wait_for_timeout(4000)
+                except Exception:
+                    pass
+            try:
+                page.wait_for_load_state("networkidle", timeout=timeout_s * 1000)
+            except Exception:
+                page.wait_for_timeout(5000)
+            page.wait_for_timeout(3000)
+
+            # Diagnostics, never secrets: where we ended up and what the page
+            # said. A sign-in that fails silently is the whole reason the
+            # session used to rot unnoticed, so record enough to tell a wrong
+            # password from a changed form from a blocked submit.
+            diag["final_url"] = page.url
+            try:
+                diag["page_text_head"] = " ".join(page.inner_text("body")[:600].split())
+            except Exception:
+                pass
+            diag["login_form_still_present"] = bool(page.locator("#password").count())
+            try:
+                body_text = page.inner_text("body")[:4000]
+            except Exception:
+                body_text = ""
+            try:
+                errs = page.evaluate("""() => [...document.querySelectorAll(
+                    '[class*=error i],[class*=Error],[role=alert],[aria-invalid=true]')]
+                    .map(e => (e.innerText||e.getAttribute('aria-label')||'').trim())
+                    .filter(Boolean).slice(0,5)""")
+                if errs:
+                    diag["field_errors"] = errs
+            except Exception:
+                pass
+            for marker in ("incorrect", "not recognised", "not recognized", "invalid",
+                           "try again", "locked", "verify", "unable to log"):
+                if marker in body_text.lower():
+                    idx = body_text.lower().index(marker)
+                    diag["page_message"] = " ".join(body_text[max(0, idx - 120): idx + 160].split())
+                    break
+            browser.close()
+    except Exception as exc:
+        payload.update(status="FAIL", reason=f"LOGIN_DRIVE_FAILED: {type(exc).__name__}", diagnostics=diag)
+        return payload
+
+    # Verdict comes from the same probe the orchestrators gate on -- never from
+    # "the click did not throw".
+    try:
+        sys.path.insert(0, str(ROOT))
+        from scripts.ops.check_rp_session_health import probe
+        health = probe(profile_dir, timeout_s=20)
+    except Exception as exc:
+        payload.update(status="FAIL", reason=f"PROBE_FAILED: {type(exc).__name__}")
+        return payload
+
+    payload["diagnostics"] = diag
+    payload["health"] = {k: health.get(k) for k in ("status", "reason", "http_status", "authenticated_cookie", "offers_sign_in")}
+    payload["status"] = "PASS" if health.get("status") == "PASS" else "FAIL"
+    if payload["status"] == "FAIL":
+        payload.setdefault("reason", health.get("reason") or "SESSION_STILL_LOGGED_OUT")
+    payload["completed_at"] = _utc_now()
     return payload
 
 
@@ -468,6 +654,12 @@ def main() -> None:
         help="When stdin is not a real TTY (e.g. non-interactive pass-through session), "
              "wait this long for manual login instead of blocking on input().")
 
+    auto = sub.add_parser("auto-login", help="Sign the profile in from RP_EMAIL/RP_PASSWORD in .env (no operator needed).")
+    auto.add_argument("--profile-dir", default=str(DEFAULT_PROFILE_DIR))
+    auto.add_argument("--headed", action="store_true", help="Show the browser (default headless).")
+    auto.add_argument("--timeout-seconds", type=int, default=60)
+    auto.add_argument("--execute", action="store_true")
+
     capture = sub.add_parser("capture", help="Capture explicitly listed Racing Post URLs.")
     capture.add_argument("--url-list", required=True)
     capture.add_argument("--date", required=True, help="YYYY-MM-DD")
@@ -493,7 +685,14 @@ def main() -> None:
     manual.add_argument("--execute", action="store_true")
 
     args = parser.parse_args()
-    if args.command == "init-login":
+    if args.command == "auto-login":
+        payload = auto_login(
+            Path(args.profile_dir),
+            execute=args.execute,
+            headed=args.headed,
+            timeout_s=args.timeout_seconds,
+        )
+    elif args.command == "init-login":
         payload = init_login(Path(args.profile_dir), args.login_url, execute=args.execute, wait_seconds=args.wait_seconds)
     elif args.command == "manual-capture":
         allowed = set(DEFAULT_ALLOWED_DOMAINS)
@@ -525,6 +724,10 @@ def main() -> None:
             batch_size=args.batch_size,
         )
     print(json.dumps(payload, indent=2))
+    # auto-login is the only mode a pipeline branches on, so give it a real
+    # exit code. Every other mode keeps its existing always-0 behaviour.
+    if args.command == "auto-login" and payload.get("status") != "PASS":
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

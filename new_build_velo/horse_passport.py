@@ -114,6 +114,17 @@ class HorsePassport:
     win_rate: float = 0.0
     place_rate: float = 0.0
 
+    # Authoritative lifetime totals from RP's /api/horse-profile/record.
+    # career_runs above counts only the runs this build actually saw — the form
+    # API caps at 5 — so the rates that divide by it stay observed-window rates
+    # and these carry the true career alongside. None when the record endpoint
+    # was unavailable or the runs predate the API capture.
+    career_starts_official: Optional[int] = None
+    career_wins_official: Optional[int] = None
+    career_best_rpr: Optional[int] = None
+    career_best_ts: Optional[int] = None
+    career_prize_sterling_official: Optional[float] = None
+
     # Layoff
     last_run_date: Optional[str] = None
     days_since_last_run: Optional[int] = None
@@ -228,6 +239,13 @@ class HorsePassportBuilder:
         sorted_dates = [d for d, _ in dated]
 
         career_runs = len(sorted_runs)
+        # Horse-level constants, stamped identically on every run by
+        # parse_rp_form_history_api.py; any run carries them.
+        career_starts_official = runs[0].get("career_starts_official")
+        career_wins_official = runs[0].get("career_wins_official")
+        career_best_rpr = runs[0].get("career_best_rpr")
+        career_best_ts = runs[0].get("career_best_ts")
+        career_prize_official = runs[0].get("career_prize_sterling_official")
         wins = sum(1 for r in sorted_runs if r.get("position") == 1)
         places = sum(1 for r in sorted_runs if r.get("position") is not None and r["position"] <= 3)
         win_rate = round(wins / career_runs, 4) if career_runs else 0.0
@@ -549,6 +567,11 @@ class HorsePassportBuilder:
             horse_name=horse_name,
             horse_rp_uid=horse_rp_uid,
             career_runs=career_runs,
+            career_starts_official=career_starts_official,
+            career_wins_official=career_wins_official,
+            career_best_rpr=career_best_rpr,
+            career_best_ts=career_best_ts,
+            career_prize_sterling_official=career_prize_official,
             wins=wins,
             places=places,
             win_rate=win_rate,

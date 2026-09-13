@@ -339,15 +339,37 @@ def sb_upsert(path: str, data: dict | list, on_conflict: str) -> bool:
 
 
 def _load_three_option_summary(race_date: str) -> dict:
-    """Load WIN/PLACE/LONGSHOT role metrics from the three-option card if available."""
+    """Load WIN/PLACE/LONGSHOT role metrics for the day.
+
+    Source of truth is old_velo_role_evaluation_{tag}.json, written by
+    evaluate_old_velo_three_option_card.py at EOD (Step 11B) once results
+    exist. The three-option CARD itself is built pre-race in the morning, so
+    its own role_metrics are zero by construction — reading the card was why
+    this block reported WIN/PLACE/LONGSHOT n=0 every day and hid the LONGSHOT
+    lane's 2026-09-01 +23.1% ROI from the EOD learning loop entirely.
+
+    The card is kept only as a last-resort fallback so the shape of the
+    artifact never changes; when it is the source, or when every role comes
+    back with n=0, the summary says so out loud instead of publishing
+    zeros that read like a real measurement.
+    """
     tag = race_date.replace("-", "_")
+    eval_path = ROOT / "data" / "reports" / f"old_velo_role_evaluation_{tag}.json"
     card_path = ROOT / "data" / "reports" / f"old_velo_three_option_card_{tag}.json"
-    if not card_path.exists():
-        return {"available": False}
+
+    if eval_path.exists():
+        src_path, source = eval_path, "role_evaluation"
+    elif card_path.exists():
+        src_path, source = card_path, "frozen_card_pre_race"
+    else:
+        return {"available": False, "source": None,
+                "reason": "NO_ROLE_EVALUATION_AND_NO_CARD"}
+
     try:
-        card = json.loads(card_path.read_text(encoding="utf-8"))
-        metrics = card.get("role_metrics", {})
-        summary = {"available": True, "roles": {}}
+        payload = json.loads(src_path.read_text(encoding="utf-8"))
+        metrics = payload.get("role_metrics", {})
+        summary = {"available": True, "source": source,
+                   "source_path": str(src_path.relative_to(ROOT)), "roles": {}}
         for role, m in metrics.items():
             n = m.get("evaluated", 0)
             summary["roles"][role] = {
@@ -356,10 +378,23 @@ def _load_three_option_summary(race_date: str) -> dict:
                 "frames": m.get("frames", 0),
                 "sr": round(m["wins"] / n, 4) if n else 0,
                 "frame_rate": round(m["frames"] / n, 4) if n else 0,
+                "roi": m.get("roi"),
             }
+        evaluated_total = sum(r["n"] for r in summary["roles"].values())
+        summary["evaluated_total"] = evaluated_total
+        if evaluated_total == 0:
+            summary["status"] = "UNEVALUATED"
+            summary["reason"] = (
+                "ROLE_EVAL_MISSING_RAN_ON_PRE_RACE_CARD" if source == "frozen_card_pre_race"
+                else "ROLE_EVAL_PRESENT_BUT_JOINED_NOTHING"
+            )
+        else:
+            summary["status"] = "EVALUATED"
+            summary["reason"] = None
         return summary
-    except Exception:
-        return {"available": False}
+    except Exception as exc:
+        return {"available": False, "source": source,
+                "reason": f"ROLE_EVAL_READ_FAILED: {type(exc).__name__}"}
 
 
 # SIGMA-26: verdict select clause used by STEP 1 to build predictions[race_id].

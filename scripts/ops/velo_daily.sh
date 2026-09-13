@@ -24,7 +24,28 @@ set -u
 cd /mnt/c/Users/puror/velo-oracle-prime || exit 1
 
 PHASE="${1:-morning}"
-DATE="${2:-$(date +%Y-%m-%d)}"
+
+# The date each phase is *about*, which is not always today.
+#
+# The 22:00 EOD reconciles the day that has just finished racing. If the machine
+# is asleep at 22:00, StartWhenAvailable catches the run up the next morning —
+# and taking today's date then asks for results of races that have not been run.
+# That is exactly what happened on 2026-09-02: the EOD fired at 07:40, looked
+# for 2026-09-02 results, and died at Step 10A while 2026-09-01 went
+# unreconciled entirely.
+#
+# So a catch-up EOD running before the day's racing has finished is still about
+# yesterday. After 18:00 it is about today. An explicit second argument always
+# wins, for reruns.
+if [ -n "${2:-}" ]; then
+  DATE="$2"
+elif [ "${PHASE}" = "eod" ] && [ "$(date +%H)" -lt 18 ]; then
+  DATE="$(date -d 'yesterday' +%Y-%m-%d)"
+  LATE_EOD="CAUGHT_UP_FOR_PREVIOUS_DAY"
+else
+  DATE="$(date +%Y-%m-%d)"
+fi
+LATE_EOD="${LATE_EOD:-}"
 LOG_DIR="data/reports"
 LOG="${LOG_DIR}/velo_daily_${DATE}.log"
 STATUS_FILE="${LOG_DIR}/velo_daily_status.json"
@@ -34,30 +55,72 @@ log() { echo "$(date -Is)  $*" | tee -a "${LOG}"; }
 
 notify() {
   # Never fatal: a missed toast must not change the outcome of a run.
+  #
+  # This is the shallow channel. It vanishes in 15 seconds, reaches one machine,
+  # and leaves no trace - so an unseen toast and an unsent one look identical.
+  # Between 2026-09-04 and 2026-09-07 it fired six times into an empty room
+  # while three race days were lost. Anything that matters must ALSO go through
+  # alert(), which persists and reaches a phone.
   powershell.exe -NoProfile -WindowStyle Hidden -Command \
     "Add-Type -AssemblyName System.Windows.Forms;\$n = New-Object System.Windows.Forms.NotifyIcon;\$n.Icon = [System.Drawing.SystemIcons]::Information;\$n.Visible = \$true;\$n.ShowBalloonTip(15000, '$1', '$2', 'Info');Start-Sleep -Seconds 12; \$n.Dispose()" \
     >/dev/null 2>&1 || true
 }
 
+alert() {
+  # The deep channel: Telegram, and a written record of whether it landed.
+  # Never fatal - but never silent about its own failure either.
+  #   alert <severity> <title> <body>
+  PYTHONPATH=. venv/bin/python scripts/ops/velo_alert.py \
+    --severity "$1" --title "$2" --body "$3" >>"${LOG}" 2>&1 || true
+}
+
 write_status() {
-  # A machine-readable record of the last run of each phase, so "did it run?"
-  # is answerable without reading logs - and so a phase that stops firing
-  # entirely is visible as a stale timestamp rather than as silence.
+  # A machine-readable record of each phase, so "did it run?" is answerable
+  # without reading logs - and so a phase that stops firing entirely is visible
+  # as a stale timestamp rather than as silence.
+  #
+  # It also counts. The file used to hold only the LAST run of each phase, which
+  # is why six consecutive aborts across four days were indistinguishable from
+  # the first one: every toast said the same thing and nothing knew it was the
+  # sixth. Day one is an annoyance, day four is an emergency, and a system that
+  # cannot tell them apart cannot escalate. consecutive_failures is that memory.
+  #
+  # Echoes the resulting streak so the caller can escalate on it.
   PHASE="$PHASE" DATE="$DATE" OUTCOME="$1" DETAIL="${2:-}" STATUS_FILE="$STATUS_FILE" \
-  venv/bin/python - <<'PY' 2>/dev/null || true
+  venv/bin/python - <<'PY' 2>/dev/null || echo 0
 import json, os, pathlib, datetime
 p = pathlib.Path(os.environ["STATUS_FILE"])
 try:
     state = json.loads(p.read_text())
 except Exception:
     state = {}
-state[os.environ["PHASE"]] = {
-    "date": os.environ["DATE"],
-    "outcome": os.environ["OUTCOME"],
+
+phase = os.environ["PHASE"]
+outcome = os.environ["OUTCOME"]
+date = os.environ["DATE"]
+prior = state.get(phase) or {}
+failed = outcome != "OK"
+
+if failed:
+    streak = int(prior.get("consecutive_failures") or 0) + 1
+    first_failure = prior.get("first_failure_date") or date
+    last_ok = prior.get("last_ok_date")
+else:
+    streak = 0
+    first_failure = None
+    last_ok = date
+
+state[phase] = {
+    "date": date,
+    "outcome": outcome,
     "detail": os.environ["DETAIL"],
     "finished_at": datetime.datetime.now().astimezone().isoformat(),
+    "consecutive_failures": streak,
+    "first_failure_date": first_failure,
+    "last_ok_date": last_ok,
 }
 p.write_text(json.dumps(state, indent=2))
+print(streak)
 PY
 }
 
@@ -69,22 +132,140 @@ case "${PHASE}" in
 esac
 
 log "===== velo_daily ${PHASE} fired for ${DATE} ====="
+if [ -n "${LATE_EOD}" ]; then
+  log "[WARN] EOD did not run at 22:00 and is catching up. Reconciling ${DATE}, not today."
+fi
+
+# ── One phase at a time ───────────────────────────────────────────────────────
+# Both phases drive the same Firefox profile, and Firefox refuses a profile that
+# is already open. On 2026-09-13 the laptop slept from Friday night to Sunday
+# 11:05; on wake, StartWhenAvailable fired the missed morning AND the missed EOD
+# in the same second. The EOD's auto-login took the profile, the morning's died
+# with "Firefox is already running", and the day aborted before capturing a card.
+#
+# So the phases queue behind one lock. When they collide the morning goes first:
+# today's cards vanish from the RP index as courses finish, yesterday's results
+# do not. A caught-up EOD therefore steps back before contending. A phase that
+# still cannot get the lock after LOCK_WAIT_SECS gives up loudly rather than
+# running alongside the other.
+#
+# Children inherit the descriptor, so a Firefox left behind by a killed run
+# keeps holding the lock - correct, because it is still holding the profile.
+LOCK_FILE="/tmp/velo_daily.lock"
+LOCK_WAIT_SECS="${VELO_LOCK_WAIT_SECS:-7200}"
+exec 9>"${LOCK_FILE}"
+if [ -n "${LATE_EOD}" ]; then
+  sleep 90
+fi
+if ! flock -n 9; then
+  log "[WAIT] Another VELO phase is using the RP browser profile. Queuing for up to $((LOCK_WAIT_SECS / 60)) min..."
+  WAIT_START="$(date +%s)"
+  if ! flock -w "${LOCK_WAIT_SECS}" 9; then
+    log "[ABORT] Still waiting after $((LOCK_WAIT_SECS / 60)) min — not launching ${PHASE} alongside it."
+    STREAK="$(write_status "ABORTED_LOCKED" "waited ${LOCK_WAIT_SECS}s")"
+    STREAK="${STREAK:-1}"
+    SEVERITY="warning"
+    [ "${STREAK}" -ge 2 ] && SEVERITY="critical"
+    alert "${SEVERITY}" "VELO ${PHASE} did not run" \
+      "Another VELO phase held the RP browser profile for over $((LOCK_WAIT_SECS / 60)) min.
+Nothing was run for ${DATE}.
+
+Find what is holding it:
+  pgrep -af 'velo_daily|run_full_raceday|firefox'"
+    exit 3
+  fi
+  log "[WAIT] Lock acquired after $(( ($(date +%s) - WAIT_START) / 60 )) min."
+fi
 
 # ── The RP session gate ───────────────────────────────────────────────────────
 # Both phases capture from Racing Post, so both are worthless without a live
 # session. Probing costs ~30s and saves the entire window.
-log "RP session probe..."
-PROBE="$(PYTHONPATH=. timeout 240 venv/bin/python scripts/ops/check_rp_session_health.py 2>&1)"
-echo "${PROBE}" >> "${LOG}"
-STATUS="$(printf '%s' "${PROBE}" | venv/bin/python -c 'import sys,json,re
+probe_status() {
+  PROBE="$(PYTHONPATH=. timeout 240 venv/bin/python scripts/ops/check_rp_session_health.py 2>&1)"
+  echo "${PROBE}" >> "${LOG}"
+  printf '%s' "${PROBE}" | venv/bin/python -c 'import sys,json,re
 raw = sys.stdin.read()
 m = re.search(r"\{.*\}", raw, re.S)
-print(json.loads(m.group(0)).get("status", "UNKNOWN") if m else "UNKNOWN")' 2>/dev/null || echo UNKNOWN)"
+print(json.loads(m.group(0)).get("status", "UNKNOWN") if m else "UNKNOWN")' 2>/dev/null || echo UNKNOWN
+}
+
+log "RP session probe..."
+STATUS="$(probe_status)"
+
+# ── Self-heal before giving up ────────────────────────────────────────────────
+# Measured 2026-09-08: the rp_authenticated cookie lasts about 9h20m (logged in
+# 22:20, expired 07:40 the next morning, mid-run). The two phases are 15 hours
+# apart, so ONE login can never cover both - the session is guaranteed to be
+# dead for at least one of them every single day. Aborting on that is correct
+# but useless on its own; it just moves the loss from "bad data" to "no data".
+#
+# So try the credentialed login once before declaring the day lost. auto-login
+# leaves the profile untouched on failure, so a failed attempt costs a minute
+# and cannot make things worse. If it succeeds the run proceeds normally; if it
+# fails we abort exactly as before, but the alert now says WHY it could not
+# heal itself.
+AUTOHEAL=""
+if [ "${STATUS}" != "PASS" ]; then
+  log "[HEAL] Session is ${STATUS}. Attempting credentialed auto-login..."
+  HEAL_OUT="$(PYTHONPATH=. timeout 300 venv/bin/python \
+    scripts/ops/racing_post_account_collector.py auto-login --execute 2>&1)"
+  echo "${HEAL_OUT}" >> "${LOG}"
+  # NOTE: double quotes are fine inside this single-quoted block; do NOT escape
+  # them. A backslash-escaped quote reaches Python literally and is a syntax
+  # error, which would send every heal attempt down the fallback branch and
+  # report "could not parse" instead of the real rejection - a silent
+  # degradation of the very message this exists to deliver.
+  AUTOHEAL="$(printf '%s' "${HEAL_OUT}" | venv/bin/python -c 'import sys, json, re
+raw = sys.stdin.read()
+m = re.search(r"\{.*\}", raw, re.S)
+d = json.loads(m.group(0)) if m else {}
+diag = (d.get("diagnostics") or {}).get("page_text_head", "") or ""
+# Surface the human-readable rejection, never the credentials themselves.
+print(str(d.get("status", "UNKNOWN")) + ": " + str(d.get("reason") or diag[:160] or "no detail"))' 2>/dev/null || echo "UNKNOWN: could not parse auto-login output")"
+  log "[HEAL] auto-login -> ${AUTOHEAL}"
+  STATUS="$(probe_status)"
+  if [ "${STATUS}" = "PASS" ]; then
+    log "[HEAL] Session recovered without an operator. Continuing."
+    alert "info" "VELO ${PHASE} self-healed its RP session" \
+      "The session had expired and was renewed automatically. ${DATE} is proceeding normally."
+  fi
+fi
 
 if [ "${STATUS}" != "PASS" ]; then
   log "[ABORT] RP session probe returned ${STATUS} — not launching ${PHASE}."
-  write_status "ABORTED_SESSION" "${STATUS}"
-  notify "VELO ${PHASE} did not run" "Racing Post session is ${STATUS}. Log in again, or the day is lost."
+  STREAK="$(write_status "ABORTED_SESSION" "${STATUS}")"
+  STREAK="${STREAK:-1}"
+
+  # The whole point of counting. One abort is a bad morning; a run of them is a
+  # dead system nobody has noticed, and it must not read the same either time.
+  if [ "${STREAK}" -ge 2 ]; then
+    SEVERITY="critical"
+    HEADLINE="VELO ${PHASE} has not run ${STREAK} times in a row"
+    log "[ABORT] This is consecutive failure #${STREAK} for the ${PHASE} phase."
+  else
+    SEVERITY="warning"
+    HEADLINE="VELO ${PHASE} did not run"
+  fi
+
+  DETAIL="Racing Post session is ${STATUS}.
+Auto-login was attempted and did not recover it: ${AUTOHEAL:-not attempted}
+
+Nothing was captured for ${DATE}. Predictions for a day that has already run
+cannot be recreated - that window is gone once the racing is over.
+
+If auto-login is failing on credentials, fix .env (RP_EMAIL / RP_PASSWORD) -
+that is the durable fix, because the session cookie only lasts ~9h and the two
+daily phases are 15h apart, so a manual login can never cover both.
+
+Manual fallback:
+  cd /mnt/c/Users/puror/velo-oracle-prime
+  PYTHONPATH=. venv/bin/python scripts/ops/_init_login_timed.py
+  PYTHONPATH=. venv/bin/python scripts/ops/check_rp_session_health.py
+
+The probe must report PASS before the next run will launch."
+
+  notify "${HEADLINE}" "Racing Post session is ${STATUS}. Log in again, or the day is lost."
+  alert "${SEVERITY}" "${HEADLINE}" "${DETAIL}"
   exit 2
 fi
 log "RP session OK."
@@ -119,12 +300,37 @@ case "${PHASE}" in
     ;;
 esac
 
-log "===== ${PHASE} finished rc=${RC} ${LATE} ====="
+log "===== ${PHASE} finished rc=${RC} ${LATE} ${LATE_EOD} ====="
 if [ "${RC}" -eq 0 ]; then
-  write_status "OK" "${LATE}"
+  # Capture the streak BEFORE it is reset, so a recovery can name what it ended.
+  PRIOR_STREAK="$(venv/bin/python -c "
+import json,sys
+try:
+    print(int((json.load(open('${STATUS_FILE}')).get('${PHASE}') or {}).get('consecutive_failures') or 0))
+except Exception:
+    print(0)
+" 2>/dev/null || echo 0)"
+  write_status "OK" "${LATE} ${LATE_EOD}" >/dev/null
+  if [ "${PRIOR_STREAK}" -ge 2 ]; then
+    # Recovery is worth saying out loud. A run of failures that simply stops
+    # being reported leaves you unsure whether it was fixed or just gave up.
+    alert "info" "VELO ${PHASE} is running again" \
+      "Recovered after ${PRIOR_STREAK} consecutive failures. ${DATE} completed rc=0."
+  fi
 else
-  write_status "FAILED" "rc=${RC} ${LATE}"
+  STREAK="$(write_status "FAILED" "rc=${RC} ${LATE} ${LATE_EOD}")"
+  STREAK="${STREAK:-1}"
+  if [ "${STREAK}" -ge 2 ]; then
+    SEVERITY="critical"
+    HEADLINE="VELO ${PHASE} has failed ${STREAK} times in a row"
+  else
+    SEVERITY="warning"
+    HEADLINE="VELO ${PHASE} failed"
+  fi
   notify "VELO ${PHASE} failed" "Exit ${RC}. See data/reports/velo_daily_${DATE}.log"
+  alert "${SEVERITY}" "${HEADLINE}" \
+    "Exit code ${RC} for ${DATE}.
+See data/reports/velo_daily_${DATE}.log"
 fi
 
 # The bug that let a dead scheduler report green for weeks: propagate the code.

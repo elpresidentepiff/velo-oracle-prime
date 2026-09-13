@@ -49,7 +49,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PY = sys.executable
-FIREFOX_PROFILE = ROOT / "data" / "browser_profiles" / "racing_post_account_firefox"
+# One profile, defined once.
+#
+# This file used to declare its own path, pointing at
+# racing_post_account_firefox while the collector, the session probe and every
+# manual init-login all defaulted to racing_post_account. So the operator could
+# log in, the probe could report PASS, and this script would still abort with
+# "RP browser session is not logged in" - because it was asking a different
+# directory. That is exactly what happened on 2026-09-01: a good login, a green
+# probe, and the 07:00 run dead in 22 seconds against a profile nobody uses.
+#
+# Importing the collector's default means there is no second copy to drift.
+from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR as FIREFOX_PROFILE
 
 
 def _utc_now() -> str:
@@ -133,11 +144,43 @@ def rp_session_healthy() -> bool:
         return False
 
 
+def rp_session_autoheal() -> bool:
+    """Try to sign the profile back in before giving up on the day.
+
+    The session probe was wired in to stop a dead login being discovered
+    mid-scrape. It did that -- and then became the thing that cancelled the
+    day, because the only cure was a human at a keyboard and both scheduled
+    runs fire while nobody is watching. Healing is strictly better than
+    blocking: on no credentials, or a failed sign-in, this returns False and
+    the caller prints the same manual instructions it always did.
+    """
+    try:
+        sys.path.insert(0, str(ROOT))
+        from scripts.ops.racing_post_account_collector import auto_login
+        result = auto_login(FIREFOX_PROFILE, execute=True)
+    except Exception as e:
+        print(f"  [WARN] Auto-login raised: {type(e).__name__}: {e}")
+        return False
+    status = result.get("status")
+    if status == "PASS":
+        print("  [OK] Auto-login succeeded — session restored.")
+        return True
+    if status == "SKIPPED_NO_CREDENTIALS":
+        print("  [INFO] No RP_EMAIL/RP_PASSWORD in .env — cannot self-heal.")
+    else:
+        print(f"  [WARN] Auto-login did not restore the session: {result.get('reason') or status}")
+    return False
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
     parser.add_argument("--execute", action="store_true", required=True, help="Required — this runs real captures and scoring.")
     parser.add_argument("--skip-capture", action="store_true", help="Skip Steps 1-3 (assumes racecard_injection.json already exists for --date)")
+    parser.add_argument("--skip-passport-topup", action="store_true",
+                        help="Skip the pre-scoring passport top-up for today's runners.")
+    parser.add_argument("--passport-topup-limit", type=int, default=400,
+                        help="Max horses to capture in the top-up (default 400, ~8 min).")
     parser.add_argument(
         "--allow-missing-pdfs",
         action="store_true",
@@ -154,14 +197,17 @@ def main() -> int:
     if not args.skip_capture:
         print("\nPre-flight: RP session health check...")
         if not rp_session_healthy():
-            print(
-                "\n[BLOCKED] RP browser session is not logged in. Live capture will fail.\n"
-                "Fix: interactively run\n"
-                f"  python scripts/ops/racing_post_account_collector.py init-login "
-                f"--profile-dir {FIREFOX_PROFILE} --execute --wait-seconds 90\n"
-                "then rerun this script. Aborting before wasting a capture attempt."
-            )
-            return 1
+            print("  [WARN] Session logged out — attempting auto-login...")
+            if not rp_session_autoheal():
+                print(
+                    "\n[BLOCKED] RP browser session is not logged in. Live capture will fail.\n"
+                    "Fix: set RP_EMAIL and RP_PASSWORD in .env so this heals itself, or\n"
+                    "interactively run\n"
+                    f"  python scripts/ops/racing_post_account_collector.py init-login "
+                    f"--profile-dir {FIREFOX_PROFILE} --execute --wait-seconds 90\n"
+                    "then rerun this script. Aborting before wasting a capture attempt."
+                )
+                return 1
         print("  [OK] Session logged in.")
 
     # ── Steps 1-3: live racecard capture ─────────────────────────────────
@@ -304,6 +350,76 @@ def main() -> int:
     # operator's inbox folder and ingests them. Non-critical by design: if the
     # sheets are not downloaded yet, the gate below still blocks — this step
     # only removes the manual copy/ingest work, it does not weaken the gate.
+    # ── Passport top-up for today's runners (wired 2026-09-04) ───────────
+    # THE COVERAGE PROBLEM THIS FIXES
+    #
+    # 11 of the New Build champion's 45 features are pp_*, sourced from the
+    # passport bank. The bank is refreshed in the EVENING (EOD Step 21), and
+    # its queue drained alphabetically inside a single priority tier -- so a
+    # horse declared for this afternoon waited behind every name earlier in
+    # the alphabet. Measured this morning before the fix: 248 of 469 runners
+    # had a passport, 47.3%. Half the field was scored with pp_* null while
+    # every New Build model was trained on rows where those fields existed.
+    # That training/serving skew is the most likely reason Lane C backtests
+    # at 28.4% SR and runs at 16.3% on the live ledger.
+    #
+    # build_rp_passport_bank_queue.py now promotes horses racing within 48h to
+    # priority 1, so this top-up captures today's missing runners specifically
+    # rather than grinding the general backlog.
+    #
+    # WHY IT IS SAFE IN THE MORNING PATH
+    # The perishable step is the racecard capture above -- RP drops a course
+    # from its index once it has run. This step comes after that, reads the
+    # merged cards, and costs ~1.2s per horse over the JSON API (a few hundred
+    # horses, so minutes not tens of minutes). Every sub-step is non-critical:
+    # a failure here thins pp_* coverage for today and nothing else.
+    if not args.skip_passport_topup:
+        run("Passport top-up: queue today's runners first",
+            [PY, "scripts/ops/build_rp_passport_bank_queue.py",
+             "--batch-limit", str(args.passport_topup_limit), "--execute"],
+            critical=False, results=results)
+
+        _queue = ROOT / "data" / "racing_post_url_lists" / "passport_bank_next_batch_latest.txt"
+        _urls = [ln for ln in _queue.read_text(encoding="utf-8").splitlines() if ln.strip()] if _queue.exists() else []
+        if not _urls:
+            print("\n[SKIP] Passport top-up — queue empty, every runner already banked.")
+        else:
+            # Deliberately NOT gated on rp_session_healthy(). The login belongs
+            # to the old HTML scrape; the JSON API this step calls serves
+            # form/record/profile logged-out. Measured 2026-09-04 with the probe
+            # reporting SESSION_LOGGED_OUT: 242/285 horses captured, 53 run
+            # fields each, career record present — indistinguishable from the
+            # previous day's logged-in capture. A session gate here would have
+            # skipped a run that took today's coverage from 52.9% to 91.3%.
+            if not rp_session_healthy():
+                print("\n  [WARN] RP session logged out — continuing; the form API does "
+                      "not require it. Unraced horses will still 404, which is correct.")
+            _label = f"passport-topup-{date}"
+            print(f"\n  Passport top-up: {len(_urls)} horse(s) (~{len(_urls) * 1.2 / 60:.0f} min at 1.2s)")
+            if run("Passport top-up: capture horse form (RP JSON API)",
+                   [PY, "scripts/ops/capture_rp_horse_form_api.py",
+                    "--date", _label, "--url-list", str(_queue),
+                    "--profile-dir", str(FIREFOX_PROFILE),
+                    "--delay-seconds", "1.2", "--execute"],
+                   critical=False, results=results):
+                run("Passport top-up: parse RP form history (API)",
+                    [PY, "scripts/ops/parse_rp_form_history_api.py", "--date", _label],
+                    critical=False, results=results)
+                run("Passport top-up: rebuild passport bank (merge-in-place)",
+                    [PY, "scripts/ops/new_build_horse_passports.py"],
+                    critical=False, results=results)
+
+    # Fetch the sheets BEFORE ingesting them (wired 2026-09-04). The ingest
+    # step below has always worked; nothing ever downloaded its input, so it
+    # spent 2026-08-04 to 09-04 exiting 0 on an empty inbox while
+    # postdata_score, plot_conviction and or_run_history all sat at 0%.
+    # Race day carries the full F_ sheet set; the day before carries only five
+    # of eight overnight O_ sheets (no postdata), which is why this belongs
+    # here and not in the evening EOD next to the passport scrape.
+    run("Fetch RP meeting PDFs from Newspaper Form tab",
+        [PY, "scripts/ops/fetch_rp_meeting_pdfs.py", "--date", date, "--execute"],
+        critical=False, results=results)
+
     run("Auto-ingest RP PDFs from inbox",
         [PY, "scripts/ops/auto_ingest_pdf_inbox.py", "--date", date, "--execute"],
         critical=False, results=results)
@@ -409,6 +525,11 @@ def main() -> int:
     # a new lane must never block the day. Feeds mp_* ledger columns via Step 12B.
     run("Step 9.1b: Mid-Price Specialist Shadow",
         [PY, "scripts/ops/run_midprice_shadow_today.py", "--date", date], critical=False, results=results)
+    # MDS-heavy blend shadow lane (operator-approved 2026-09-13): re-ranks the same
+    # live components sqpe .10 / MDS .90 / improvement 0. Paper-only, non-critical.
+    # Must run before the canonical scorecard build below, which reads its packet.
+    run("Step 9.1c: MDS-Heavy Blend Shadow",
+        [PY, "scripts/ops/run_mds_heavy_shadow_today.py", "--date", date], critical=False, results=results)
     run("Step 9.2: Tri-Lane Stress Test",
         [PY, "scripts/ops/run_tri_lane_stress_test.py", "--date", date, "--ruleset", "v2"], critical=False, results=results)
     tri_lane_json = ROOT / "data" / "reports" / f"tri_lane_stress_test_{date.replace('-', '_')}_v2.json"
@@ -471,6 +592,13 @@ def main() -> int:
     # DEEPSEEK_API_KEY is not set in .env; non-critical either way.
     run("LLM Morning Suggestions Brief",
         [PY, "scripts/ops/run_llm_intel_brief.py", "--date", date, "--mode", "suggestions"],
+        critical=False, results=results)
+
+    # ── Persist the dashboard's report files to Supabase (2026-09-13) ─────
+    # Railway serves the dashboard from git + Supabase and cannot see these
+    # local files; app/main.py now reads velo_report_artifacts first.
+    run("Persist dashboard report artifacts (Supabase)",
+        [PY, "scripts/ops/persist_daily_artifacts.py", "--kind", "reports", "--date", date, "--execute"],
         critical=False, results=results)
 
     # ── Summary ───────────────────────────────────────────────────────────

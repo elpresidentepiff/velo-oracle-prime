@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
+from collections import Counter
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -19,6 +21,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RAW_DIR = ROOT / "data" / "racing_post_account_raw"
 DEFAULT_PARSED_DIR = ROOT / "data" / "racing_post_account_parsed"
+# A capture day that understands fewer than this share of its pages has been
+# broken by an upstream site change, not by a thin card.
+MIN_PARSE_RATE = 0.50
+
 PRELOADED_RE = re.compile(r"window\.PRELOADED_STATE\s*=\s*(\{.*?\});", re.S)
 
 
@@ -183,12 +189,39 @@ def parse_capture_day(*, capture_date: str, raw_dir: Path, output_dir: Path, exe
     output_day_dir.mkdir(parents=True, exist_ok=True)
     out_path = output_day_dir / "horse_profiles.json"
     out_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    payload["status"] = "PASS"
     payload["output_path"] = str(out_path)
+
+    # A parse that reads every page and understands none of them is a broken
+    # parser, not a quiet day — but it used to stamp itself PASS and exit 0.
+    # Racing Post migrated horse profiles from a server-rendered
+    # window.PRELOADED_STATE app to Next.js during the 2026-08-05..08-31
+    # outage. Every run since has read its captures, returned zero profiles,
+    # and reported success: the passport bank last grew on 2026-08-04 and
+    # nothing said so. Downstream, parse_rp_form_history.py then wrote
+    # horses_processed=0 and Step 21E rebuilt the bank from nothing, also
+    # green. Silence is the one outcome a scraper must never be allowed.
+    seen = payload["pages_seen"]
+    parsed = payload["horse_profiles_count"]
+    if seen and not parsed:
+        reasons = Counter(r.get("status") for r in page_results).most_common(3)
+        payload["status"] = "FAIL_NO_PROFILES_PARSED"
+        payload["failure_reason"] = (
+            f"read {seen} captured page(s) and parsed 0 horse profiles; "
+            f"page statuses: {reasons}"
+        )
+    elif seen and parsed / seen < MIN_PARSE_RATE:
+        reasons = Counter(r.get("status") for r in page_results).most_common(3)
+        payload["status"] = "FAIL_PARSE_RATE_COLLAPSED"
+        payload["failure_reason"] = (
+            f"parsed {parsed}/{seen} ({parsed / seen:.1%}) of captured pages, "
+            f"below the {MIN_PARSE_RATE:.0%} floor; page statuses: {reasons}"
+        )
+    else:
+        payload["status"] = "PASS"
     return payload
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser(description="Parse local Racing Post account capture files.")
     parser.add_argument("--date", required=True, help="YYYY-MM-DD capture date")
     parser.add_argument("--raw-dir", default=str(DEFAULT_RAW_DIR))
@@ -204,6 +237,15 @@ def main() -> None:
     )
     print(json.dumps(payload, indent=2, ensure_ascii=False))
 
+    # Exit non-zero on a failed parse so the orchestrator records a FAIL
+    # instead of counting it among the passes. Step 21C is non-critical, so
+    # this surfaces the breakage in the run report without ending the night.
+    status = payload.get("status", "")
+    if status.startswith("FAIL"):
+        print(f"\n[FAIL] {status}: {payload.get('failure_reason', '')}", file=sys.stderr)
+        return 1
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -1468,6 +1468,45 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
 _NO_STORE_HEADERS = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache"}
 
 
+def _report_artifact(artifact_type: str, date: str | None, local_path: pathlib.Path | None):
+    """Return (payload, source) for a dashboard report file, or (None, None).
+
+    These routes used to read data/ files only. Railway has no data/ beyond what
+    git carried at deploy time, so there they served stale copies or 404s while
+    the laptop looked fine (found 2026-09-13). scripts/ops/persist_daily_artifacts.py
+    now copies the files to public.velo_report_artifacts; this reads that row
+    (exact date, or the newest when date is None) AND the local file, and serves
+    whichever is newer -- so a pending persist never makes the laptop regress and
+    Railway gets the current copy.
+    """
+    row = None
+    url, key = resolve_supabase_url(), resolve_supabase_service_key()
+    if url and key:
+        query = f"select=payload,run_date,source_mtime&artifact_type=eq.{artifact_type}"
+        query += f"&run_date=eq.{date}" if date else ""
+        req = urllib.request.Request(
+            f"{url}/rest/v1/velo_report_artifacts?{query}&order=run_date.desc&limit=1",
+            headers={"apikey": key, "Authorization": f"Bearer {key}"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                rows = json.loads(resp.read())
+            row = rows[0] if rows else None
+        except Exception as exc:
+            logger.warning("velo_report_artifacts read failed for %s %s: %s", artifact_type, date, exc)
+    if local_path is not None and local_path.exists():
+        local_mtime = datetime.fromtimestamp(local_path.stat().st_mtime, tz=UTC)
+        try:
+            remote_mtime = datetime.fromisoformat(str(row["source_mtime"])) if row and row.get("source_mtime") else None
+        except ValueError:
+            remote_mtime = None
+        if row is None or remote_mtime is None or local_mtime.timestamp() > remote_mtime.timestamp() + 1:
+            return json.loads(local_path.read_text(encoding="utf-8")), "local_file"
+    if row is not None:
+        return row["payload"], "supabase_report_artifacts"
+    return None, None
+
+
 @app.get("/dashboard", include_in_schema=False)
 async def dashboard():
     """Serve the Governed Card Dashboard UI.
@@ -1489,9 +1528,10 @@ async def dashboard():
 async def dashboard_sidecar_stack():
     """Serve the generated sidecar stack consumed by dashboard panels A-D."""
     sidecar_path = pathlib.Path(__file__).parent / "static" / "dashboard" / "sidecar_stack_latest.json"
-    if not sidecar_path.exists():
+    payload, _source = _report_artifact("sidecar_stack", None, sidecar_path)
+    if payload is None:
         raise HTTPException(status_code=404, detail="Dashboard sidecar stack not found")
-    return FileResponse(str(sidecar_path), media_type="application/json", headers=_NO_STORE_HEADERS)
+    return JSONResponse(payload, headers=_NO_STORE_HEADERS)
 
 
 @app.get("/rpdc_gate_card_latest.json", include_in_schema=False)
@@ -1505,13 +1545,13 @@ async def rpdc_gate_card(date: str = Query(default=None)):
     staking impact. Same dated-file-first pattern as the three-option card."""
     reports_dir = pathlib.Path(__file__).parent.parent / "data" / "reports"
     if date:
-        dated_path = reports_dir / f"rpdc_gate_card_{date.replace('-', '_')}.json"
-        if dated_path.exists():
-            return FileResponse(str(dated_path), media_type="application/json", headers=_NO_STORE_HEADERS)
-    card_path = reports_dir / "rpdc_gate_card_latest.json"
-    if not card_path.exists():
+        payload, _source = _report_artifact("rpdc_gate_card", date, reports_dir / f"rpdc_gate_card_{date.replace('-', '_')}.json")
+        if payload is not None:
+            return JSONResponse(payload, headers=_NO_STORE_HEADERS)
+    payload, _source = _report_artifact("rpdc_gate_card", None, reports_dir / "rpdc_gate_card_latest.json")
+    if payload is None:
         raise HTTPException(status_code=404, detail="RPDC gate card not found")
-    return FileResponse(str(card_path), media_type="application/json", headers=_NO_STORE_HEADERS)
+    return JSONResponse(payload, headers=_NO_STORE_HEADERS)
 
 
 @app.get("/old_velo_three_option_card_latest.json", include_in_schema=False)
@@ -1528,13 +1568,17 @@ async def old_velo_three_option_card(date: str = Query(default=None)):
     split, or dashboard viewed with no date param at all)."""
     reports_dir = pathlib.Path(__file__).parent.parent / "data" / "reports"
     if date:
-        dated_path = reports_dir / f"old_velo_three_option_card_{date.replace('-', '_')}.json"
-        if dated_path.exists():
-            return FileResponse(str(dated_path), media_type="application/json", headers=_NO_STORE_HEADERS)
-    card_path = reports_dir / "old_velo_three_option_card_latest.json"
-    if not card_path.exists():
+        payload, _source = _report_artifact(
+            "old_velo_three_option_card", date, reports_dir / f"old_velo_three_option_card_{date.replace('-', '_')}.json"
+        )
+        if payload is not None:
+            return JSONResponse(payload, headers=_NO_STORE_HEADERS)
+    payload, _source = _report_artifact(
+        "old_velo_three_option_card", None, reports_dir / "old_velo_three_option_card_latest.json"
+    )
+    if payload is None:
         raise HTTPException(status_code=404, detail="Three-option card not found")
-    return FileResponse(str(card_path), media_type="application/json", headers=_NO_STORE_HEADERS)
+    return JSONResponse(payload, headers=_NO_STORE_HEADERS)
 
 
 @app.get("/api/model-suggestions")
@@ -1573,10 +1617,9 @@ async def model_suggestions_race_proxy(date: str = Query(default=None), race_id:
 async def doctrine_scorecard_proxy():
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation
     to a single server — see docs/current/ONE_TRUTH.md)."""
-    import json as _json
-
     path = pathlib.Path(__file__).parent.parent / "data" / "doctrine_scorecard_latest.json"
-    if not path.exists():
+    payload, _source = _report_artifact("doctrine_scorecard", None, path)
+    if payload is None:
         return JSONResponse(
             {
                 "status": "NOT_FOUND",
@@ -1588,7 +1631,7 @@ async def doctrine_scorecard_proxy():
             },
             status_code=404,
         )
-    return JSONResponse(_json.loads(path.read_text(encoding="utf-8")))
+    return JSONResponse(payload)
 
 
 @app.get("/api/canonical-scorecard")
@@ -1678,9 +1721,9 @@ async def midprice_shadow(date: str = Query(default=None)):
 
     d = date or _dt.date.today().isoformat()
     path = pathlib.Path(__file__).parent.parent / "data" / "reports" / f"midprice_shadow_{d.replace('-', '_')}.json"
-    if not path.exists():
+    data, source = _report_artifact("midprice_shadow", d, path)
+    if data is None:
         return {"date": d, "status": "NOT_RUN", "picks": []}
-    data = json.loads(path.read_text(encoding="utf-8"))
     picks = []
     for race in data.get("races", []):
         tp = race.get("top_pick")
@@ -1705,6 +1748,7 @@ async def midprice_shadow(date: str = Query(default=None)):
         "status": "OK",
         "model_version": data.get("model_version"),
         "trust_policy": data.get("trust_policy"),
+        "source": source,
         "picks": picks,
     }
 
@@ -1721,9 +1765,8 @@ async def llm_brief(date: str = Query(default=None), mode: str = Query(default=N
     reports = pathlib.Path(__file__).parent.parent / "data" / "reports"
     modes = [mode] if mode in ("suggestions", "eod") else ["eod", "suggestions"]
     for m in modes:
-        path = reports / f"llm_brief_{m}_{tag}.json"
-        if path.exists():
-            data = json.loads(path.read_text(encoding="utf-8"))
+        data, source = _report_artifact(f"llm_brief_{m}", d, reports / f"llm_brief_{m}_{tag}.json")
+        if data is not None:
             return {
                 "date": d,
                 "status": "OK",
@@ -1732,6 +1775,7 @@ async def llm_brief(date: str = Query(default=None), mode: str = Query(default=N
                 "generated_at": data.get("generated_at"),
                 "trust_policy": data.get("trust_policy"),
                 "brief_markdown": data.get("brief_markdown"),
+                "source": source,
             }
     return {"date": d, "status": "NOT_RUN", "mode": mode, "brief_markdown": None}
 
@@ -1745,9 +1789,9 @@ async def old_velo_verdicts(date: str = Query(default=None)):
 
     d = date or _dt.date.today().isoformat()
     path = pathlib.Path(__file__).parent.parent / "data" / f"velo_prime_verdicts_{d.replace('-', '_')}.json"
-    if not path.exists():
+    races, source = _report_artifact("velo_prime_verdicts", d, path)
+    if races is None:
         return {"meta": {"requested_date": d, "record_count": 0, "source": "missing"}, "verdicts": []}
-    races = json.loads(path.read_text())
     races = races if isinstance(races, list) else races.get("races", [])
     verdicts = []
     for r in races:
@@ -1776,7 +1820,7 @@ async def old_velo_verdicts(date: str = Query(default=None)):
         "meta": {
             "requested_date": d,
             "loaded_date": d,
-            "source": "local_json",
+            "source": "local_json" if source == "local_file" else source,
             "record_count": len(verdicts),
             "date_mismatch": False,
         },

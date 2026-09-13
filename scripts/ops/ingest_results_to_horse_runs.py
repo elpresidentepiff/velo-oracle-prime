@@ -120,9 +120,11 @@ def ingest_results(date_str: str) -> None:
         race_name = race.get("race_name", "")
         race_type = race.get("type", "")
         distance = race.get("dist", "")
-        distance_f = race.get("dist_f")
+        # RP-era parser writes distance_f / race_class; Racing API era wrote dist_f / class.
+        # Reading only the old names left both columns NULL on every RP-era row.
+        distance_f = race.get("dist_f") or race.get("distance_f")
         going = race.get("going", "")
-        race_class = race.get("class")
+        race_class = race.get("class") or race.get("race_class")
         pattern = race.get("pattern", "")
 
         for runner in race.get("runners") or []:
@@ -138,7 +140,11 @@ def ingest_results(date_str: str) -> None:
                 pass
 
             rows.append({
-                "horse_id": runner.get("horse_id", ""),
+                # The numeric RP uid is the canonical RP-era identity. Some parser
+                # generations left horse_id empty (2026-05-31) or as a venue slug
+                # (rp_EPS_*, 2026-06-05) while horse_rp_uid was correct; those rows
+                # were dropped or keyed into an id space nothing else joins to.
+                "horse_id": runner.get("horse_rp_uid") or runner.get("horse_id", ""),
                 "horse": runner.get("horse", ""),
                 "race_id": race_id,
                 "run_date": date_str,

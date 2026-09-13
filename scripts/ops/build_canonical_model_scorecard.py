@@ -462,6 +462,48 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                     ),
                 )
 
+    # ── MDS-Heavy Blend Shadow (operator-approved lane, 2026-09-13) ─────────
+    # Same live components, re-weighted sqpe .10 / MDS .90 / improvement 0
+    # (docs/research/WEIGHT_STUDY_2026_09_13.md). Whole field ranked so
+    # rank-depth questions stay answerable, same as the midprice lane.
+    # Promotion gate: >=300 forward races with results, then operator decision.
+    mds_path = ROOT / "data" / "reports" / f"mds_heavy_shadow_{tag}.json"
+    if not mds_path.exists():
+        audit["sources_missing"]["mds_heavy_shadow"] = str(mds_path)
+    else:
+        audit["sources_found"]["mds_heavy_shadow"] = mds_path.name
+        mds_packet = json.loads(mds_path.read_text(encoding="utf-8"))
+        for mds_race in mds_packet.get("races", []):
+            race_id = str(mds_race.get("race_id") or "")
+            result_race = results.get(race_id)
+            scored = [r for r in (mds_race.get("all_scored") or []) if r.get("rank")]
+            top_tie = _tie_status([r.get("score") or 0.0 for r in scored])
+            if top_tie != "CLEAN":
+                audit["ties_found"].append({"race_id": race_id, "field": "mds_heavy_blend", "tie_status": top_tie})
+            for r in scored:
+                outcome = _runner_lookup(result_race, r.get("horse") or "")
+                _add_row(
+                    race_id=race_id,
+                    course=(result_race or {}).get("course"),
+                    off_time=(result_race or {}).get("off"),
+                    model_name="MDS_HEAVY_SHADOW_V1", lane_name="shadow_only",
+                    source_path=str(mds_path.relative_to(ROOT)),
+                    source_field="mds_heavy_blend", sort_direction="descending",
+                    rank=r.get("rank"), horse=r.get("horse"),
+                    horse_id=outcome.get("horse_id") or r.get("horse_id"),
+                    score=r.get("score"), sp_dec=outcome.get("sp_dec") or r.get("odds_decimal"),
+                    result_position=outcome.get("position"), win=outcome.get("win"), frame=outcome.get("frame"),
+                    policy_decision=mds_packet.get("trust_policy") or "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+                    stake_authorised=False, dashboard_visible=True,
+                    learning_class=("MODEL_HIT_POLICY_BLOCKED" if outcome.get("win") else "MODEL_MISS"),
+                    tie_status=top_tie if r.get("rank") == 1 else "N/A",
+                    notes=(
+                        f"SHADOW_ONLY -- {mds_packet.get('model_version')} weights {mds_packet.get('weights')}; "
+                        f"live rank {r.get('live_rank')}. velo_scoring_allowed=False. "
+                        "Gate: >=300 forward races + operator decision. Not a promotable claim."
+                    ),
+                )
+
     audit["row_count"] = len(rows)
     return rows, audit
 

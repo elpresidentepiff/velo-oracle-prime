@@ -53,7 +53,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PY = sys.executable
-FIREFOX_PROFILE = ROOT / "data" / "browser_profiles" / "racing_post_account_firefox"
+# One profile, defined once.
+#
+# This file used to declare its own path, pointing at
+# racing_post_account_firefox while the collector, the session probe and every
+# manual init-login all defaulted to racing_post_account. So the operator could
+# log in, the probe could report PASS, and this script would still abort with
+# "RP browser session is not logged in" - because it was asking a different
+# directory. That is exactly what happened on 2026-09-01: a good login, a green
+# probe, and the 07:00 run dead in 22 seconds against a profile nobody uses.
+#
+# Importing the collector's default means there is no second copy to drift.
+from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR as FIREFOX_PROFILE
 
 
 def _utc_now() -> str:
@@ -103,6 +114,34 @@ def rp_session_healthy() -> bool:
         return False
 
 
+def rp_session_autoheal() -> bool:
+    """Try to sign the profile back in before giving up on the day.
+
+    The session probe was wired in to stop a dead login being discovered
+    mid-scrape. It did that -- and then became the thing that cancelled the
+    day, because the only cure was a human at a keyboard and both scheduled
+    runs fire while nobody is watching. Healing is strictly better than
+    blocking: on no credentials, or a failed sign-in, this returns False and
+    the caller prints the same manual instructions it always did.
+    """
+    try:
+        sys.path.insert(0, str(ROOT))
+        from scripts.ops.racing_post_account_collector import auto_login
+        result = auto_login(FIREFOX_PROFILE, execute=True)
+    except Exception as e:
+        print(f"  [WARN] Auto-login raised: {type(e).__name__}: {e}")
+        return False
+    status = result.get("status")
+    if status == "PASS":
+        print("  [OK] Auto-login succeeded — session restored.")
+        return True
+    if status == "SKIPPED_NO_CREDENTIALS":
+        print("  [INFO] No RP_EMAIL/RP_PASSWORD in .env — cannot self-heal.")
+    else:
+        print(f"  [WARN] Auto-login did not restore the session: {result.get('reason') or status}")
+    return False
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
@@ -130,14 +169,17 @@ def main() -> int:
     else:
         print("\nPre-flight: RP session health check...")
         if not rp_session_healthy():
-            print(
-                "\n[BLOCKED] RP browser session is not logged in. Live capture will fail.\n"
-                "Fix: interactively run\n"
-                f"  python scripts/ops/racing_post_account_collector.py init-login "
-                f"--profile-dir {FIREFOX_PROFILE} --execute --wait-seconds 90\n"
-                "then rerun this script. Aborting before wasting a capture attempt."
-            )
-            return 1
+            print("  [WARN] Session logged out — attempting auto-login...")
+            if not rp_session_autoheal():
+                print(
+                    "\n[BLOCKED] RP browser session is not logged in. Live capture will fail.\n"
+                    "Fix: set RP_EMAIL and RP_PASSWORD in .env so this heals itself, or\n"
+                    "interactively run\n"
+                    f"  python scripts/ops/racing_post_account_collector.py init-login "
+                    f"--profile-dir {FIREFOX_PROFILE} --execute --wait-seconds 90\n"
+                    "then rerun this script. Aborting before wasting a capture attempt."
+                )
+                return 1
         print("  [OK] Session logged in.")
 
         if not run(
@@ -165,6 +207,21 @@ def main() -> int:
         ):
             return 1
 
+    # ── Step 11B: evaluate the frozen WIN/PLACE/LONGSHOT card ────────────
+    # The three-option card is BUILT in the morning (run_full_raceday.py Step
+    # 9.6), pre-race, so its role_metrics are all zero by construction. Nothing
+    # in this orchestrator ever joined it to results, so sigma's
+    # three_option_tracking reported WIN/PLACE/LONGSHOT n=0 every single day —
+    # on 2026-09-01 that hid a LONGSHOT lane that went 4/39 at 15.0/12.0/11.0/
+    # 10.0 for +9.00pts (ROI +23.1%), the only profitable lane of the day.
+    # Must run after Step 11 (results parsed) and before Step 12 (sigma reads
+    # the evaluation output).
+    run(
+        "Step 11B: Old VELO role evaluation (WIN/PLACE/LONGSHOT)",
+        [PY, "scripts/ops/evaluate_old_velo_three_option_card.py", "--date", date],
+        critical=False, results=results,
+    )
+
     # ── Step 12: reconcile predictions vs results (sigma) ────────────────
     if not run(
         "Step 12: Results + sigma reconciliation",
@@ -177,6 +234,20 @@ def main() -> int:
     run(
         "Step 12B: Multi-model sigma",
         [PY, "scripts/ops/run_multimodel_sigma.py", "--date", date, "--execute"],
+        critical=False, results=results,
+    )
+
+    # ── Step 12C: place stack shadow (settles the place leg) ─────────────
+    # Every other lane in this orchestrator is scored on the win market. The
+    # place signal stacks were therefore carrying evidence from 20-46 selection
+    # samples that nobody could check — ELITE was documented at "Frame=100%,
+    # E/W 1/4 ROI +170%" and measures 64.1% frame, -9.13% place ROI over 248.
+    # This settles the place leg at industry terms and accumulates a forward
+    # ledger, and asserts each signal's firing rate against its calibration so
+    # a dead threshold cannot sit unnoticed the way MDS_HIGH did at 0.20%.
+    run(
+        "Step 12C: Place stack shadow (place-leg settlement)",
+        [PY, "scripts/ops/run_place_stack_shadow.py", "--date", date],
         critical=False, results=results,
     )
 
@@ -322,6 +393,16 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 20F: nightly learning events -> velo_learning_events ──────────
+    # Wired 2026-09-13. The runner's own events (Step 20's jsonl) reached
+    # Supabase for the last time on 2026-05-22; 59 dates existed only on the
+    # laptop until the operator-approved backfill. Idempotent (consumption_id).
+    run(
+        "Step 20F: Persist nightly learning events (velo_learning_events)",
+        [PY, "scripts/ops/persist_nightly_learning_events.py", "--date", date, "--execute"],
+        critical=False, results=results,
+    )
+
     # ── Step 21: Passport bank refresh (PHASE A, wired 2026-08-02) ─────────
     # THE BUG THIS CLOSES
     # -------------------
@@ -391,7 +472,7 @@ def main() -> int:
 
         if not queue_urls:
             print("  [SKIP] Steps 21B-21E — queue is empty, nothing to capture.")
-        elif not rp_session_healthy():
+        elif not (rp_session_healthy() or rp_session_autoheal()):
             # Not a failure: the bank simply does not refresh tonight. Said out
             # loud so it cannot rot silently the way the whole loop just did.
             print(
@@ -404,26 +485,32 @@ def main() -> int:
             results.append({"step": "Step 21B-21E: Passport bank refresh (SKIPPED — RP session dead)",
                             "cmd": [], "returncode": 0, "ok": True, "critical": False})
         else:
+            # Steps 21B-21D collect horse form from Racing Post's JSON API
+            # rather than by scraping the profile page. RP moved horse profiles
+            # to Next.js during the 2026-08-05..08-31 outage; the HTML now
+            # carries horseProfile.form.data = null and fetches form
+            # client-side, so the old scrape read 500 pages, parsed 0, and
+            # reported success every night from 2026-09-01. The bank last grew
+            # on 2026-08-04.
+            #
+            # The API 406s unless the request comes from the horse's own
+            # profile page, so the collector navigates per horse — roughly the
+            # same wall-clock cost as the scrape it replaces.
             print(f"  [OK] Session logged in. Capturing {len(queue_urls)} horse profiles "
-                  f"(~{len(queue_urls) * 1.5 / 60:.0f} min at 1.5s delay).")
+                  f"via JSON API (~{len(queue_urls) * 2.0 / 60:.0f} min).")
             captured = run(
-                "Step 21B: Capture horse profile pages",
-                [PY, "scripts/ops/racing_post_account_collector.py", "capture",
+                "Step 21B: Capture horse form (RP JSON API)",
+                [PY, "scripts/ops/capture_rp_horse_form_api.py",
                  "--date", passport_label, "--url-list", str(queue_path),
                  "--profile-dir", str(FIREFOX_PROFILE),
-                 "--delay-seconds", "1.5", "--execute", "--batch-size", "0"],
+                 "--delay-seconds", "1.2", "--execute"],
                 critical=False, results=results,
             )
             if captured:
                 run(
-                    "Step 21C: Parse horse profile captures",
-                    [PY, "scripts/ops/parse_racing_post_account_capture.py",
-                     "--date", passport_label, "--execute"],
-                    critical=False, results=results,
-                )
-                run(
-                    "Step 21D: Parse RP form history",
-                    [PY, "scripts/ops/parse_rp_form_history.py", "--date", passport_label],
+                    "Step 21C: Parse RP form history (API)",
+                    [PY, "scripts/ops/parse_rp_form_history_api.py",
+                     "--date", passport_label],
                     critical=False, results=results,
                 )
                 # Default mode is merge-in-place: horses that cannot be rebuilt
@@ -437,6 +524,16 @@ def main() -> int:
                 )
             else:
                 print("  [SKIP] Steps 21C-21E — capture failed, nothing new to parse.")
+
+    # ── Step 22: persist local-only artifacts to Supabase ──────────────────
+    # Wired 2026-09-13. Council runs, Mission Control, the multi-model ledger,
+    # the passport bank and the dashboard's report files had no Supabase home,
+    # so Railway could not see them. Runs last, after 21E has rebuilt the bank.
+    run(
+        "Step 22: Persist daily artifacts (council, MC, ledger, passports, reports)",
+        [PY, "scripts/ops/persist_daily_artifacts.py", "--kind", "all", "--date", date, "--execute"],
+        critical=False, results=results,
+    )
 
     # ── Summary ────────────────────────────────────────────────────────────
     print(f"\n{'='*70}\nRUN_FULL_RACEDAY_EOD SUMMARY — {date}\n{'='*70}")

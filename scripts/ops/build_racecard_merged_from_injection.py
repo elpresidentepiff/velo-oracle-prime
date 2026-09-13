@@ -229,20 +229,43 @@ def safe_numeric(val) -> float | None:
 
 
 def build_betting_forecast(runners: list[dict]) -> str:
-    """Build 'net_odds HorseName, ...' string from runner forecast_odds (decimal)."""
+    """Build 'net_odds HorseName, ...' from runner forecast_odds.
+
+    RP's forecastOddsValue is already the NET (fractional) price, not decimal —
+    a 1/4 shot arrives as 0.25, a 3/1 as 3.0. This is the same convention as
+    odds_value on RP's horse-profile API, where 85/40F carries 2.125.
+
+    This function used to subtract 1 from it, treating it as decimal. Paired
+    with a compensating +1 in racecard_loader._parse_betting_forecast, that
+    quietly priced every runner one full point too short in decimal terms — a
+    3/1 shot read back as 3.0 instead of 4.0 — and did something far worse to
+    odds-on runners. A 1/4 shot became -0.75 on the wire, which the loader's
+    "looks like a probability" branch then inverted to 4.00. On 2026-09-02 that
+    put Etienne on the card at 4.00; it won at SP 1.04. Once inverted the value
+    is indistinguishable from a real 3/1 chance, so nothing downstream could
+    ever have caught it.
+
+    Emitting the net price unchanged is what the reader's +1 has always
+    expected. Both halves are fixed together; either alone re-breaks the pair.
+    """
     parts = []
     for r in runners:
         name = r.get("horse") or ""
         if not name or r.get("non_runner"):
             continue
-        dec = r.get("forecast_odds")
-        if dec is None:
+        net = r.get("forecast_odds")
+        if net is None:
             continue
         try:
-            net = round(float(dec) - 1, 3)
-            parts.append(f"{net} {name}")
+            net = round(float(net), 3)
         except (TypeError, ValueError):
             continue
+        # A net price is never negative. Anything below zero means the upstream
+        # value was not what we think it is — skip it rather than publish a
+        # price that will be silently inverted downstream.
+        if net < 0:
+            continue
+        parts.append(f"{net} {name}")
     return ", ".join(parts)
 
 

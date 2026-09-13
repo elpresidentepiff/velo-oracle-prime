@@ -60,7 +60,7 @@ Then follow Steps 1–20 in `THE_ONE_TRUTH.md`.
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **velo-oracle-prime** (20301 symbols, 42785 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **velo-oracle-prime** (20801 symbols, 41798 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -130,19 +130,19 @@ Before completing any code modification task, verify:
 
 ## Keeping the Index Fresh
 
-**Index is currently STALE** — last indexed 2026-07-08, current branch has many commits since. Embeddings: 0 (never generated). Re-run after committing:
+After committing code changes, the GitNexus index becomes stale. Re-run analyze to update it:
 
 ```bash
 npx gitnexus analyze
 ```
 
-Add `--embeddings` for semantic search (first time is slow, subsequent runs are incremental):
+If the index previously included embeddings, preserve them by adding `--embeddings`:
 
 ```bash
 npx gitnexus analyze --embeddings
 ```
 
-Note: if disk is full, `npx gitnexus analyze` will fail. Free space first.
+To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.embeddings` field shows the count (0 means no embeddings). **Running analyze without `--embeddings` will delete any previously generated embeddings.**
 
 > Claude Code users: A PostToolUse hook handles this automatically after `git commit` and `git merge`.
 

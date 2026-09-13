@@ -24,6 +24,7 @@ Usage:
 import argparse
 import json
 import re
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -447,6 +448,56 @@ def _load_readiness_index(date: str) -> dict[str, dict[str, Any]]:
     }
 
 
+def _race_id_from_url(url: str) -> str:
+    """Extract race_id from RP URL: /results/{course_id}/{slug}/{date}/{race_id}."""
+    m = re.search(r"/results/\d+/[^/]+/\d{4}-\d{2}-\d{2}/(\d+)", url or "")
+    return m.group(1) if m else ""
+
+
+def _adapt_race_result(data: dict[str, Any]) -> dict[str, Any]:
+    """Normalize RP's current `initialState.raceResult.data` into the
+    {"race": {...}, "runners": [...]} shape the rest of this parser expects.
+
+    RP renamed the results slice (resultPage -> raceResult) and flattened it:
+    raceId/courseName now sit at the top level, race title/going/distance moved
+    into `header`, and each runner carries `odds` where the old build carried
+    `startingPrice` and `drawLabel` ("(14)") where it carried `draw`.
+    """
+    header = data.get("header") or {}
+    yards = header.get("distanceYard")
+    distance_f = ""
+    if yards:
+        try:
+            distance_f = round(float(yards) / 220.0, 1)
+        except (TypeError, ValueError):
+            distance_f = ""
+    if not distance_f:
+        distance_f = str(header.get("distanceShort") or "").replace("f", "")
+
+    race = {
+        "raceId": data.get("raceId"),
+        "courseId": data.get("courseUid"),
+        "courseName": data.get("courseName"),
+        "raceTime": data.get("localRaceDatetime") or data.get("raceDatetime") or header.get("raceTime"),
+        "raceTitle": header.get("raceTitle"),
+        "raceClass": header.get("raceClass"),
+        "going": header.get("going"),
+        "distanceFurlongs": distance_f,
+    }
+
+    runners: list[dict[str, Any]] = []
+    for r in data.get("runners") or []:
+        if not isinstance(r, dict):
+            continue
+        runners.append({
+            **r,
+            "horseId": r.get("horseUid"),
+            "startingPrice": r.get("odds"),
+            "draw": re.sub(r"[^0-9]", "", str(r.get("drawLabel") or "")),
+        })
+    return {"race": race, "runners": runners}
+
+
 def _find_result_data(next_data: dict[str, Any]) -> dict[str, Any] | None:
     """
     Try multiple known NEXT_DATA paths for result race data.
@@ -455,6 +506,17 @@ def _find_result_data(next_data: dict[str, Any]) -> dict[str, Any] | None:
     ist = next_data.get("props", {}).get("pageProps", {}).get("initialState", {})
     if not ist:
         return None
+
+    # Current RP build (confirmed 2026-09-01): the results slice is
+    # initialState.raceResult.data, and it is flat rather than {"race": ...}.
+    # None of the legacy paths below matched it, so every page silently fell
+    # through to the BeautifulSoup table fallback -- which reads race identity
+    # from a page-wide regex and stamped all 39 captures with one id.
+    race_result = ist.get("raceResult")
+    if isinstance(race_result, dict):
+        data = race_result.get("data")
+        if isinstance(data, dict) and data.get("raceId") and data.get("runners"):
+            return _adapt_race_result(data)
 
     candidates = [
         # Results page primary path
@@ -643,7 +705,22 @@ def _parse_result_page(
     race = page_data.get("race") or {}
     runners_raw = page_data.get("runners") or []
 
-    race_id = str(race.get("raceId") or "")
+    # Race identity: the page's own raceId first, the requested URL second,
+    # the page-wide regex only as a last resort.
+    #
+    # That regex used to be the only fallback, and on 2026-09-01 it stamped ALL
+    # 39 captures with the same id (925952 -- the first "raceId" in a piece of
+    # page furniture, not this race's). Sigma matched 0/39 and blocked the
+    # night's learning. The URL is what we asked RP for and is the id the
+    # morning racecard is keyed by, so it outranks anything scraped from the
+    # body.
+    url_race_id = _race_id_from_url(source_url)
+    next_race_id = str(race.get("raceId") or "")
+    if next_race_id and url_race_id and next_race_id != url_race_id:
+        print(f"  [WARN] race id mismatch in {html_path.name}: "
+              f"page={next_race_id} url={url_race_id} — using url")
+        next_race_id = url_race_id
+    race_id = next_race_id or url_race_id or str(race_id_from_html(html_path))
     if not race_id:
         return None
 
@@ -825,6 +902,26 @@ def parse_results(
 
     results.sort(key=lambda r: (r.get("off") or "", r.get("race_id") or ""))
 
+    # Identity guard (added 2026-09-02). Distinct result pages must carry
+    # distinct race_ids. When a parser fallback collapsed all 39 of 2026-09-01's
+    # captures onto one id, every field below still looked healthy -- 39 files
+    # seen, 39 races parsed, 0 parse errors, status PASS -- and nothing noticed
+    # until sigma reconciled 0/39 an hour later and blocked the night. A
+    # collision is a parse failure, not a warning, and the canonical results
+    # file is NOT written: leaving it absent is what makes the EOD orchestrator
+    # re-capture and re-parse instead of skipping straight past it.
+    id_counts: dict[str, int] = {}
+    for r in results:
+        rid = str(r.get("race_id") or "")
+        id_counts[rid] = id_counts.get(rid, 0) + 1
+    collisions = {rid: n for rid, n in id_counts.items() if n > 1}
+    for rid, n in sorted(collisions.items(), key=lambda kv: -kv[1]):
+        parse_errors.append({
+            "race_id": rid,
+            "reason": f"DUPLICATE_RACE_ID — {n} captures parsed to the same race_id",
+            "files": [Path(r["raw_file"]).name for r in results if str(r.get("race_id")) == rid][:5],
+        })
+
     payload: dict[str, Any] = {
         "source": "racing_post",
         "date": date,
@@ -845,7 +942,17 @@ def parse_results(
         return payload
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    out_file = OUT_DIR / f"rp_results_{date.replace('-', '_')}.json"
+    stem = f"rp_results_{date.replace('-', '_')}"
+    if collisions:
+        out_file = OUT_DIR / f"{stem}.rejected.json"
+        payload["status"] = "FAIL_DUPLICATE_RACE_IDS"
+        payload["output"] = str(out_file)
+        out_file.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"  [FAIL] {sum(collisions.values())} captures share {len(collisions)} "
+              f"race_id(s) — refusing to write canonical results.")
+        print(f"  Diagnostic: {out_file}")
+        return payload
+    out_file = OUT_DIR / f"{stem}.json"
     out_file.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     payload["status"] = "PASS"
     payload["output"] = str(out_file)
@@ -872,6 +979,8 @@ def main() -> None:
         execute=args.execute,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))
+    if str(result.get("status", "")).startswith("FAIL"):
+        sys.exit(1)
 
 
 if __name__ == "__main__":
