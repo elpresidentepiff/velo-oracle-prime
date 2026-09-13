@@ -1494,6 +1494,12 @@ def _report_artifact(artifact_type: str, date: str | None, local_path: pathlib.P
             row = rows[0] if rows else None
         except Exception as exc:
             logger.warning("velo_report_artifacts read failed for %s %s: %s", artifact_type, date, exc)
+    # On Railway every data file is a git checkout stamped with deploy time, so a stale
+    # tracked "latest" file always looks newer than the persisted row (seen 2026-09-13:
+    # sidecar stack served from 2026-07-25). There, Supabase wins whenever it has a row.
+    on_railway = bool(os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("RAILWAY_ENVIRONMENT_NAME") or os.getenv("RAILWAY_SERVICE_ID"))
+    if row is not None and on_railway:
+        return row["payload"], "supabase_report_artifacts"
     if local_path is not None and local_path.exists():
         local_mtime = datetime.fromtimestamp(local_path.stat().st_mtime, tz=UTC)
         try:

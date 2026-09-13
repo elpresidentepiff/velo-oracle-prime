@@ -2,7 +2,9 @@
 # Install with: pip install -r requirements_production.txt
 
 # Core ML
-scikit-learn>=1.7.0,<2.0.0
+# Pinned to the version the live models load under (venv, 2026-09-13). An unpinned
+# install resolved 1.9.1, which cannot unpickle sqpe_v17.pkl ("No module named '_loss'").
+scikit-learn==1.8.0
 numpy>=2.0.0,<3.0.0
 pandas>=2.2.0,<3.0.0
 joblib>=1.3.0
@@ -16,6 +18,9 @@ fastapi==0.109.0
 uvicorn[standard]==0.27.0
 pydantic==2.5.3
 pydantic-settings>=2.1.0
+# FastAPI refuses to register File/UploadFile routes without it; /api/upload/spotlight
+# made the app crash on import, so every Railway deploy since at least 2026-08-08 failed.
+python-multipart>=0.0.9
 
 # Database
 supabase>=2.7.0
