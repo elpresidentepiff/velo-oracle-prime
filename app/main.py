@@ -2745,7 +2745,7 @@ async def dashboard_truth(date: str = Query(default=None)):
     # 33 via SUPABASE_SERVICE_ROLE_KEY. Every other read/write path in this
     # pipeline already uses the service-role key; matching that here rather
     # than changing RLS policy itself. This endpoint is read-only.
-    sb_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY", "")
+    sb_key = resolve_supabase_service_key()  # includes SUPABASE_SERVICE_KEY, the name Railway uses
 
     # ── A. Supabase truth ─────────────────────────────────────────────────────
     sb_truth: dict = {

@@ -101,7 +101,11 @@ def _sb_get(path: str) -> list[dict]:
     except Exception:
         pass
     url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
+    # Railway names the service key SUPABASE_SERVICE_KEY. Without that fallback this returned []
+    # silently there, so the canonical scorecard and learning-event panels showed 0 rows
+    # on a date holding 1,415 (found 2026-09-13).
+    key = (os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_SERVICE_KEY")
+           or os.environ.get("SUPABASE_KEY"))
     if not url or not key:
         return []
     page_size = 1000
