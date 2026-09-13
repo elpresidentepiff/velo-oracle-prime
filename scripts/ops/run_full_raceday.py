@@ -525,6 +525,11 @@ def main() -> int:
     # a new lane must never block the day. Feeds mp_* ledger columns via Step 12B.
     run("Step 9.1b: Mid-Price Specialist Shadow",
         [PY, "scripts/ops/run_midprice_shadow_today.py", "--date", date], critical=False, results=results)
+    # MDS-heavy blend shadow lane (operator-approved 2026-09-13): re-ranks the same
+    # live components sqpe .10 / MDS .90 / improvement 0. Paper-only, non-critical.
+    # Must run before the canonical scorecard build below, which reads its packet.
+    run("Step 9.1c: MDS-Heavy Blend Shadow",
+        [PY, "scripts/ops/run_mds_heavy_shadow_today.py", "--date", date], critical=False, results=results)
     run("Step 9.2: Tri-Lane Stress Test",
         [PY, "scripts/ops/run_tri_lane_stress_test.py", "--date", date, "--ruleset", "v2"], critical=False, results=results)
     tri_lane_json = ROOT / "data" / "reports" / f"tri_lane_stress_test_{date.replace('-', '_')}_v2.json"
@@ -587,6 +592,13 @@ def main() -> int:
     # DEEPSEEK_API_KEY is not set in .env; non-critical either way.
     run("LLM Morning Suggestions Brief",
         [PY, "scripts/ops/run_llm_intel_brief.py", "--date", date, "--mode", "suggestions"],
+        critical=False, results=results)
+
+    # ── Persist the dashboard's report files to Supabase (2026-09-13) ─────
+    # Railway serves the dashboard from git + Supabase and cannot see these
+    # local files; app/main.py now reads velo_report_artifacts first.
+    run("Persist dashboard report artifacts (Supabase)",
+        [PY, "scripts/ops/persist_daily_artifacts.py", "--kind", "reports", "--date", date, "--execute"],
         critical=False, results=results)
 
     # ── Summary ───────────────────────────────────────────────────────────

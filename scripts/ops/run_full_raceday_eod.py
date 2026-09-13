@@ -393,6 +393,16 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 20F: nightly learning events -> velo_learning_events ──────────
+    # Wired 2026-09-13. The runner's own events (Step 20's jsonl) reached
+    # Supabase for the last time on 2026-05-22; 59 dates existed only on the
+    # laptop until the operator-approved backfill. Idempotent (consumption_id).
+    run(
+        "Step 20F: Persist nightly learning events (velo_learning_events)",
+        [PY, "scripts/ops/persist_nightly_learning_events.py", "--date", date, "--execute"],
+        critical=False, results=results,
+    )
+
     # ── Step 21: Passport bank refresh (PHASE A, wired 2026-08-02) ─────────
     # THE BUG THIS CLOSES
     # -------------------
@@ -514,6 +524,16 @@ def main() -> int:
                 )
             else:
                 print("  [SKIP] Steps 21C-21E — capture failed, nothing new to parse.")
+
+    # ── Step 22: persist local-only artifacts to Supabase ──────────────────
+    # Wired 2026-09-13. Council runs, Mission Control, the multi-model ledger,
+    # the passport bank and the dashboard's report files had no Supabase home,
+    # so Railway could not see them. Runs last, after 21E has rebuilt the bank.
+    run(
+        "Step 22: Persist daily artifacts (council, MC, ledger, passports, reports)",
+        [PY, "scripts/ops/persist_daily_artifacts.py", "--kind", "all", "--date", date, "--execute"],
+        critical=False, results=results,
+    )
 
     # ── Summary ────────────────────────────────────────────────────────────
     print(f"\n{'='*70}\nRUN_FULL_RACEDAY_EOD SUMMARY — {date}\n{'='*70}")

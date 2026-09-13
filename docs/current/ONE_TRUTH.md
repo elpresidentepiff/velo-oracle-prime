@@ -94,6 +94,19 @@ output. Backtest AUC (0.7028) is NOT promotion evidence on its own.
 If SR>=40% holds there, escalate to operator for an EW-overlay decision; if it decays
 toward base rate, retire the lane and return to feature work (issues #78/#80).
 
+**MDS-heavy blend shadow lane (operator-approved 2026-09-13):** `MDS_HEAVY_SHADOW_V1`
+re-ranks the same live components with sqpe_v17 .10 / MDS .90 / improvement 0
+(`scripts/ops/run_mds_heavy_shadow_today.py`, morning Step 9.1c, non-critical; whole
+field ranked into `canonical_model_scorecards`). Evidence:
+`docs/research/WEIGHT_STUDY_2026_09_13.md` — rolling out-of-sample Jun–Sep (1,714 races)
++0.9 pts win SR, 95% CI [+0.1, +1.8], **ROI not better**; improvement_score took zero
+weight in every fold. MDS is built on pre-race market features, so the lane leans to
+favourites. It refuses to score unless `verdict_loader` resolves by `race_id` (the
+generated_at fallback pulls other days' verdicts — see "Canonical backfill" below).
+Forward rows begin 2026-09-14. **Gate: >= 300 forward races with results, then operator
+decision.** Live weights unchanged. Track:
+`select count(*) filter (where win), count(*) from canonical_model_scorecards where model_name='MDS_HEAVY_SHADOW_V1' and rank=1 and result_position is not null;`
+
 ## SUBSYSTEM TRUTH BOARD (audited 2026-07-29, all claims reproduced not assumed)
 
 | Subsystem | Truth |
@@ -332,6 +345,47 @@ and RPDC all structurally require the live browser-injection racecard (real RP
 race_ids/horse_uids), and none of them have a PDF-sourced fallback path. A PDF-only day
 (like 2026-07-04 and the morning of 2026-07-08) will score Old VELO/No-RPR cleanly and
 leave the other three lanes permanently blank for that day.
+
+### Local-only data now has a Supabase home (2026-09-13, operator-approved)
+
+Migration `supabase/migrations/20260913_001_velo_daily_artifacts.sql` (RLS on,
+service_role only) created, and `scripts/ops/persist_daily_artifacts.py` backfilled
+(counts read back and matched):
+
+| Table | Source | Rows at backfill |
+|---|---|---|
+| `velo_council_runs` | `data/council_runs/` | 66 |
+| `velo_mission_control` | `data/mission_control/` | 67 |
+| `velo_model_comparison_ledger` | `data/model_comparison_ledger.csv` (`model_comparison` is an unrelated aggregate) | 2,274 |
+| `new_build_horse_passports` | `data/new_build/passports/horse_passports_v1.jsonl` | 13,062 |
+| `velo_report_artifacts` | LLM briefs, midprice/MDS shadow packets, three-option card, RPDC gate card, verdict backups, doctrine scorecard, sidecar stack | 236 |
+
+`velo_learning_events` (stopped 2026-05-22) got the runner's 2,126 events for 59 dates.
+**Seven `app/main.py` routes read local files only and therefore served stale or 404 on
+Railway** (`/api/llm-brief`, `/api/midprice-shadow`, `/api/old-velo-verdicts`,
+`/api/doctrine-scorecard`, `/old_velo_three_option_card_latest.json`,
+`/rpdc_gate_card_latest.json`, `/sidecar_stack_latest.json`). They now go through
+`_report_artifact()`: Supabase row and local file both read, the newer one served —
+verified identical payloads with the local file removed from the lookup. Railway only
+picks this up once the branch is deployed.
+
+**Canonical backfill 2026-09-13:** 23 dates (May 27 – Jul 15) written, 19,965 scorecard
+rows / 19,963 learning events, every MAIN_VELO_PRIME race verified to belong to its
+date. 12 dates were written then **deleted** (05-23/24/25, 06-02/05/06/07/19/20/23/28,
+07-10): `load_verdicts()` had no racecard cache for them, fell back to generated_at, and
+pulled up to 971 other days' rescored verdicts under each date. Pre-existing canonical
+rows for **07-24 (55), 07-27 (35), 07-31 (49)** contain races whose `velo_race_truth`
+date differs — not touched, cause unconfirmed. `build_canonical_learning_events.py` now
+collapses duplicate conflict keys and exits 1 on a failed write (06-10 had lost all 755
+events while exiting 0).
+
+**racing_horse_runs backfill 2026-09-13:** 10 dates, 5,153 rows (05-09/10/12/13/14/15,
+05-31, 06-05, 06-14, 06-20), each matched to the source file's race/runner/max-position
+counts. Skipped: 05-16 (`pdf_*` race ids, 70 runners without ids), 05-18 (`RP_*` slug ids),
+06-24 (23 of 38 pages unparsed, implausible fields). `ingest_results_to_horse_runs.py` now
+prefers `horse_rp_uid` and reads `distance_f`/`race_class` — distance and class were NULL
+on every RP-era row. Existing non-canonical id styles still in the table: `RP_*` 05-19
+(311), `rp_*` 05-23→06-04 (1,796), `pdf_*` 05-17 (257).
 
 ### Dashboard — `app/main.py` is the only server to run
 
@@ -854,7 +908,13 @@ Step 21:  PASSPORT BANK REFRESH (wired 2026-08-02, commit 686488b)
           All five are critical=False and run LAST, after learning has completed.
           Skip with --skip-passport-refresh. Skips loudly, never silently, when
           the queue is empty or the RP session is down.
+Step 20F: persist_nightly_learning_events.py --date YYYY-MM-DD --execute
+          (runner's jsonl -> velo_learning_events; wired 2026-09-13, non-critical)
+Step 22:  persist_daily_artifacts.py --kind all --date YYYY-MM-DD --execute
+          (council, Mission Control, model ledger, passport bank, dashboard reports
+          -> Supabase; wired 2026-09-13, non-critical, runs after 21E)
 ```
+Morning also runs `persist_daily_artifacts.py --kind reports` as its last step (2026-09-13).
 `DAY COMPLETE` only when all pass plus final Council + Mission Control refresh.
 
 **Run the orchestrators with `venv/bin/python`, never bare `python`** (corrected
