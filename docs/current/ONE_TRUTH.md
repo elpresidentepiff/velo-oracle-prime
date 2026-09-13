@@ -366,8 +366,9 @@ Railway** (`/api/llm-brief`, `/api/midprice-shadow`, `/api/old-velo-verdicts`,
 `/api/doctrine-scorecard`, `/old_velo_three_option_card_latest.json`,
 `/rpdc_gate_card_latest.json`, `/sidecar_stack_latest.json`). They now go through
 `_report_artifact()`: Supabase row and local file both read, the newer one served —
-verified identical payloads with the local file removed from the lookup. Railway only
-picks this up once the branch is deployed.
+verified identical payloads with the local file removed from the lookup. On Railway the
+Supabase row always wins (a git checkout makes every stale tracked file look newest). Live on
+Railway since 2026-09-13 (`8bb4eae`) — see the Railway section.
 
 **Canonical backfill 2026-09-13:** 23 dates (May 27 – Jul 15) written, 19,965 scorecard
 rows / 19,963 learning events, every MAIN_VELO_PRIME race verified to belong to its
@@ -707,17 +708,54 @@ only, no external NLP/sentiment service.
 - **RPDC missing tags:** STABLE_WARM / MARK_READY / MARK_NEAR / COURSE_RETURN absent from all May–Jun 2026 data. Investigate Supabase `runner_release_candidates`.
 - **New scrapers/parsers:** `scripts/ops/scrape_bha_going_stick.py` (D-1, shell ready) · `scripts/ops/parse_runner_notes.py` (D-3, verdict intel only)
 
-## Railway — What It Actually Does (audited 2026-07-28)
+## Railway — What It Actually Does (re-verified 2026-09-13)
 
-Railway (`railway.toml`) runs ONE thing: `uvicorn app.main:app --host 0.0.0.0 --port $PORT` — the FastAPI dashboard server. That's it. Everything else is either dead or never wired.
+Railway runs ONE thing: the FastAPI dashboard (`app.main:app`). Project `sincere-empathy`,
+service `velo-oracle`, environment `production`, public URL
+https://velo-oracle-production.up.railway.app. **It deploys automatically on every push to
+`main`** (Railway GitHub integration). It reads Supabase; it has no `data/` beyond what git
+carried at deploy time, and no RP browser session.
 
 | Railway service | Status | Verdict |
 |---|---|---|
-| Dashboard (`app.main:app`) | RUNNING | Only working Railway use. Reads Supabase. Accessible remotely. |
-| Scoring cron (`run_prime_today.py @ 09:00 UTC Mon-Sat`) | FAIL_OR_UNPROVEN | Cannot work — needs logged-in local RP browser session (Playwright + Firefox profile). Railway has no access to this. |
-| EOD/sigma chain | NOT DEPLOYED | Also cannot work remotely — depends on local result capture files. |
+| Dashboard (`app.main:app`) | **RUNNING since 2026-09-13** (was DOWN from at least 2026-08-08) | `/health` 200 healthy, sqpe_v17 loaded; `/api/canonical-scorecard?date=2026-09-11` = 1,415 rows; report-artifact routes answer `source=supabase_report_artifacts`. |
+| Scoring cron | NOT ON RAILWAY | Structurally impossible there — needs the local RP browser session. Scoring runs from the two Windows tasks (see STANDARD DAILY OPERATION). |
+| EOD/sigma chain | NOT ON RAILWAY | Same reason — local result captures. |
 
-**Cost verdict:** You are paying Railway to host a dashboard that reads Supabase. If remote access to the dashboard matters, keep it. If you only use it locally, shut down Railway and run `app.main:app` locally — saves the subscription entirely. Do NOT attempt to wire the scoring cron on Railway: it structurally requires a local browser session that cannot exist in a cloud container.
+**How the build really works (from the deployment manifest, not the files):** the service
+builds from `/Dockerfile` (`python:3.11-slim`, `pip install -r requirements_production.txt`)
+even though `railway.toml` says `NIXPACKS`; the service setting wins. The **start command is
+`railway.toml` `[deploy] startCommand`** (deployment `configFile=/railway.toml`), which
+overrides the Dockerfile `CMD`. `railway.json` is present but is not the config in use.
+
+**Why it was down for five weeks — four stacked faults, all fixed 2026-09-13:**
+
+| Fault | Symptom | Fix |
+|---|---|---|
+| `python-multipart` missing from `requirements_production.txt`; `/api/upload/spotlight` takes an `UploadFile` | app crashed on import | added (`45340bb`) |
+| unpinned `scikit-learn` resolved 1.9.1, which cannot unpickle `sqpe_v17.pkl` ("No module named '_loss'") | `/health` 503, model CORRUPT | pinned `scikit-learn==1.8.0`, the version the live models load under (`45340bb`) |
+| Railway executes `startCommand` in **exec form** (no shell), so `${PORT:-8080}` reached uvicorn literally — "is not a valid integer" | crash loop behind a **SUCCESS** deploy and a 502 | `startCommand = "sh -c 'uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}'"` (`e4acd06`) |
+| Railway names the key **`SUPABASE_SERVICE_KEY`** (there is no `SUPABASE_SERVICE_ROLE_KEY`); the canonical fetch helper and `/api/dashboard-truth` read only ROLE_KEY or `SUPABASE_KEY` | canonical panels silently showed 0 rows | read `SUPABASE_SERVICE_KEY` too / `resolve_supabase_service_key()` (`8bb4eae`) |
+
+**Rules that follow:**
+- **Do not trust the GitHub deployment status for Railway** — it reported `failure` for deploys
+  Railway itself marked SUCCESS, and SUCCESS itself only means the container started. Check:
+  `railway deployment list --service velo-oracle`, `railway logs --service velo-oracle`
+  (`--build` for the build), then `curl` the URL's `/health`.
+- Any new Supabase read in the dashboard must use `resolve_supabase_service_key()`
+  (`app/core/runtime_env.py`), never a hand-picked env var name.
+- A start command that uses shell syntax must be wrapped in `sh -c`.
+- Reproduce production before pushing a deploy fix: fresh venv,
+  `pip install -r requirements_production.txt`, start with only `SUPABASE_URL` and
+  `SUPABASE_SERVICE_KEY` set. That surfaced the first two faults on 2026-09-13 and would
+  surface the key-name one; only the exec-form fault needed Railway's runtime log.
+- CLI login needs a pseudo-terminal: `script -qfc "railway login --browserless"`, then approve
+  the printed link. The `RAILWAY_TOKEN` in `.env` is invalid (checked 2026-09-13).
+- Non-fatal startup noise on Railway: `SECURITY VERIFICATION INCOMPLETE` (security validator
+  cannot read `pg_class` through PostgREST) and the optional `shadow_verdicts` table missing.
+
+**Cost verdict (unchanged):** Railway hosts a dashboard that reads Supabase. Keep it if remote
+access matters; otherwise run `app.main:app` locally. Never wire scoring onto it.
 
 ## DEEP AUDIT 2026-08-01 — why work keeps needing 10 attempts
 
@@ -816,7 +854,7 @@ should carry the command that reproduces it.
 
 ## What is BLOCKED / KNOWN ISSUES (updated 2026-07-28)
 - **Telegram scoring alerts:** DISABLED (`--no-notify`).
-- **Railway cron:** FAIL_OR_UNPROVEN — every scoring run is manual. See Railway section above.
+- **Railway:** dashboard only, running again since 2026-09-13 after five weeks down; scoring is not and cannot be on Railway (the two Windows tasks run it). See Railway section above.
 - **Local test suite:** pytest 6.2.5 incompatible with pytest-asyncio 1.3.0; 3 test modules have import drift. **30/30 governance tests pass** (governance-v1-hardened tag @ `2cc135a`).
 - **Learning gate:** Check daily — blocked on DEGRADED/UNKNOWN source or Council verdict not `PASS_TO_LEARNING`.
 - **Calibration threshold:** `nightly_eod_learning_runner.py` classifies any VP > 0.35 loss as `CALIBRATION_ERROR` — too aggressive (catches ~57-85% of all losses). Fix: raise to VP > 0.55. Queued.
