@@ -30,6 +30,7 @@ FIX (sentient-feedback-loop):
 
 import json
 import logging
+import math
 import os
 from datetime import datetime
 from difflib import SequenceMatcher
@@ -378,7 +379,14 @@ class SentientLoopbackEngine:
         if predicted_winner and actual_winner and not correct:
             logger.debug("[G] Prediction mismatch: predicted='%s' actual='%s'", predicted_winner, actual_winner)
 
-        sp = float(actual_result.get("sp") or 0.0)
+        try:
+            sp = float(actual_result.get("sp"))
+        except (TypeError, ValueError):
+            sp = 0.0
+        if correct and (not math.isfinite(sp) or sp <= 1.0):
+            raise ValueError(
+                "Correct outcome has no valid settled decimal SP; refusing to record false -1 profit"
+            )
         profit = (sp - 1.0) if correct else -1.0
 
         return {

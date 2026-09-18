@@ -53,6 +53,7 @@ class PlaybookGLiveAdapter(PlaybookGShadowAdapter):
             "events_read": 0,
             "events_learning_allowed_true": 0,
             "events_skipped_learning_not_allowed": 0,
+            "events_skipped_incomplete_outcome": 0,
             "events_skipped_duplicate": 0,
             "engine_updates_attempted": 0,
             "engine_updates_applied": 0,

@@ -7,6 +7,7 @@ Proves that Playbook G cannot learn from unsafe events and cannot touch live sta
 """
 
 import json
+import math
 import os
 import sys
 import logging
@@ -52,6 +53,7 @@ class PlaybookGShadowAdapter:
             "events_read": 0,
             "events_learning_allowed_true": 0,
             "events_skipped_learning_not_allowed": 0,
+            "events_skipped_incomplete_outcome": 0,
             "events_skipped_duplicate": 0,
             "engine_updates_attempted": 0,
             "engine_updates_applied": 0,
@@ -76,23 +78,45 @@ class PlaybookGShadowAdapter:
             "mpi": float(pred_snap.get("velo_prime_prob") or 0) * 100,
             "chaos_bloom": float(pred_snap.get("chaos_bloom") or 0) * 100,
             "story_anchor": "favourite" if res_snap.get("favourite_won") else "non-favourite",
-            "power_anchor": pred_snap.get("horse_id"),
-            "runners": []
+            "power_anchor": pred_snap.get("horse_id") or pred_snap.get("horse") or pred_snap.get("horse_name"),
+            "runners": res_snap.get("runners") or []
         }
         
         prediction = {
-            "power_anchor": pred_snap.get("horse_id"),
+            "power_anchor": pred_snap.get("horse_id") or pred_snap.get("horse") or pred_snap.get("horse_name"),
             "confidence": float(pred_snap.get("velo_prime_prob") or 0),
             "doctrines_fired": pred_snap.get("doctrines_fired") or []
         }
         
         actual_result = {
-            "winner": res_snap.get("winner_id"),
+            "winner": res_snap.get("winner_id") or res_snap.get("winner_name"),
+            "sp": res_snap.get("winner_sp"),
             "favourite_won": res_snap.get("favourite_won", False),
-            "winner_profile": {}
+            "winner_profile": res_snap.get("winner_profile") or {}
         }
         
         return race_data, prediction, actual_result
+
+    @staticmethod
+    def _has_complete_outcome(event: dict) -> bool:
+        """Fail closed unless the ledger proves identity, outcome and settled price."""
+        pred_snap = event.get("prediction_snapshot") or {}
+        res_snap = event.get("result_snapshot") or {}
+        predicted = pred_snap.get("horse_id") or pred_snap.get("horse") or pred_snap.get("horse_name")
+        winner = res_snap.get("winner_id") or res_snap.get("winner_name")
+        try:
+            settled_sp = float(res_snap.get("winner_sp"))
+        except (TypeError, ValueError):
+            settled_sp = 0.0
+        outcome_known = res_snap.get("outcome_known") is True
+        return bool(
+            predicted
+            and winner
+            and event.get("prediction_result") in {"WIN", "LOSS"}
+            and outcome_known
+            and math.isfinite(settled_sp)
+            and settled_sp > 1.0
+        )
 
     def run(self):
         logger.info(f"Starting Shadow Adapter Audit: {self.events_path}")
@@ -102,6 +126,7 @@ class PlaybookGShadowAdapter:
             "events_read": 0,
             "events_learning_allowed_true": 0,
             "events_skipped_learning_not_allowed": 0,
+            "events_skipped_incomplete_outcome": 0,
             "events_skipped_duplicate": 0,
             "engine_updates_attempted": 0,
             "engine_updates_applied": 0,
@@ -131,7 +156,14 @@ class PlaybookGShadowAdapter:
                 # 2. Safety Gate: learning_allowed
                 if not event.get("learning_allowed"):
                     self.audit["events_skipped_learning_not_allowed"] += 1
-                    self.processed_keys.add(key)
+                    continue
+
+                if not self._has_complete_outcome(event):
+                    self.audit["events_skipped_incomplete_outcome"] += 1
+                    logger.error(
+                        "Blocked incomplete learning event %s: identity, outcome, or settled SP missing",
+                        event.get("race_id"),
+                    )
                     continue
                 
                 self.audit["events_learning_allowed_true"] += 1
@@ -162,8 +194,12 @@ class PlaybookGShadowAdapter:
                     logger.error(f"Engine update failed for {event.get('race_id')}: {e}")
 
         # Final Verdict
-        if self.audit["events_learning_allowed_true"] == 0 and self.audit["engine_updates_applied"] == 0:
-            if self.audit["events_skipped_learning_not_allowed"] > 0:
+        if self.audit["events_skipped_incomplete_outcome"] > 0:
+            self.audit["verdict"] = "FAIL_INCOMPLETE_OUTCOME"
+        elif self.audit["events_learning_allowed_true"] == 0 and self.audit["engine_updates_applied"] == 0:
+            if (
+                self.audit["events_skipped_learning_not_allowed"] > 0
+            ):
                  self.audit["verdict"] = "PASS_GATED"
             else:
                  self.audit["verdict"] = "PASS_IDEMPOTENT"

@@ -11,9 +11,11 @@ import os
 import sys
 import glob
 import logging
+import math
 import hashlib
 import argparse
 import uuid
+import re
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import Counter
@@ -33,6 +35,97 @@ logger = logging.getLogger("nightly_runner")
 def _exit_code_for_verdict(verdict: str) -> int:
     """Translate the runner's domain verdict into a truthful process result."""
     return 0 if verdict == "PASS" else 1
+
+
+def _settled_sp_decimal(value) -> float | None:
+    """Return a truthful decimal SP, or None when the result has no settled price."""
+    if value is None or isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        decimal = float(value)
+        return decimal if math.isfinite(decimal) and decimal > 1.0 else None
+
+    text = str(value).strip().lower()
+    if not text:
+        return None
+    if text in {"evens", "evensf", "evs", "evsf", "even", "evenf"}:
+        return 2.0
+    cleaned = re.sub(r"[^0-9./]", "", text)
+    try:
+        if "/" in cleaned:
+            numerator, denominator = cleaned.split("/", 1)
+            decimal = float(numerator) / float(denominator) + 1.0
+        else:
+            decimal = float(cleaned)
+    except (TypeError, ValueError, ZeroDivisionError):
+        return None
+    return round(decimal, 6) if math.isfinite(decimal) and decimal > 1.0 else None
+
+
+def _settled_result_facts(result: dict) -> dict:
+    """Extract only outcome facts that are actually present in the RP result."""
+    runners = [r for r in (result.get("runners") or []) if isinstance(r, dict)]
+    winners = [r for r in runners if str(r.get("position", "")).strip() == "1"]
+    winner = winners[0] if winners else {}
+
+    winner_id = str(
+        winner.get("horse_id")
+        or result.get("winner_id")
+        or result.get("winner_rp_uid")
+        or ""
+    ).strip()
+    winner_name = str(
+        winner.get("horse")
+        or result.get("winner_horse")
+        or result.get("winner_name")
+        or ""
+    ).strip()
+    winner_sp = _settled_sp_decimal(
+        winner.get("sp_dec")
+        or winner.get("sp")
+        or result.get("winner_sp")
+    )
+
+    explicit_favourite = result.get("favourite_won")
+    if isinstance(explicit_favourite, bool):
+        favourite_won = explicit_favourite
+    else:
+        priced_runners = [
+            _settled_sp_decimal(r.get("sp_dec") or r.get("sp"))
+            for r in runners
+            if not r.get("non_runner")
+        ]
+        priced_runners = [sp for sp in priced_runners if sp is not None]
+        favourite_won = bool(
+            winner_sp is not None
+            and priced_runners
+            and winner_sp == min(priced_runners)
+        )
+
+    winner_profile = {}
+    running_style = winner.get("running_style") or winner.get("run_style")
+    if running_style:
+        winner_profile["running_style"] = running_style
+    draw_raw = winner.get("draw")
+    if draw_raw not in (None, ""):
+        try:
+            winner_profile["draw"] = int(str(draw_raw).strip())
+        except (TypeError, ValueError):
+            pass
+    for field in ("was_hidden_improver", "late_money"):
+        if field in winner:
+            winner_profile[field] = bool(winner.get(field))
+    if winner.get("in_running_comment"):
+        winner_profile["in_running_comment"] = winner["in_running_comment"]
+
+    return {
+        "winner_id": winner_id,
+        "winner_name": winner_name,
+        "winner_sp": winner_sp,
+        "favourite_won": favourite_won,
+        "winner_profile": winner_profile,
+        "winner_identity_known": bool(winner_id or winner_name),
+    }
 
 class NightlyEODRunner:
     def __init__(
@@ -75,7 +168,8 @@ class NightlyEODRunner:
             "losses": 0,
             "void_or_unknown": 0,
             "loss_count_by_type": Counter(),
-            "data_error_count": 0
+            "data_error_count": 0,
+            "learning_blocked": 0,
         }
 
     def _get_file_hash(self, path: Path):
@@ -289,29 +383,38 @@ class NightlyEODRunner:
             # "horse" is the canonical name field in VELO verdicts (not "horse_name")
             top_horse_name = (top_pick.get("horse") or top_pick.get("horse_name") or "").strip().lower()
 
-            winner_id = ""
-            winner_name = ""
-            runners = r_race.get("runners", [])
-            sorted_runners = sorted([r for r in runners if str(r.get("position", "")).isdigit()],
-                                 key=lambda r: int(r["position"]))
-            if sorted_runners:
-                winner_id = sorted_runners[0].get("horse_id") or ""
-                winner_name = (sorted_runners[0].get("horse") or "").strip().lower()
+            settled = _settled_result_facts(r_race)
+            winner_id = settled["winner_id"]
+            winner_name = settled["winner_name"].lower()
 
             outcome = "UNKNOWN"
-            if top_pick and (winner_id or winner_name):
-                id_match = bool(top_horse_id and winner_id and top_horse_id == winner_id)
+            comparable_identity = bool(
+                (top_horse_id and winner_id)
+                or (top_horse_name and winner_name)
+            )
+            if top_pick and settled["winner_identity_known"] and comparable_identity:
+                id_match = bool(top_horse_id and winner_id and str(top_horse_id) == str(winner_id))
                 name_match = bool(top_horse_name and winner_name and top_horse_name == winner_name)
                 outcome = "WIN" if (id_match or name_match) else "LOSS"
-            
-            loss_type = self._classify_loss(p_race, r_race)
+
+            outcome_known = outcome in {"WIN", "LOSS"}
+            settled_price_known = settled["winner_sp"] is not None
+            learning_allowed = outcome_known and settled_price_known
+            if not outcome_known:
+                permission_reason = "BLOCKED_OUTCOME_IDENTITY_UNRESOLVED"
+            elif not settled_price_known:
+                permission_reason = "BLOCKED_SETTLED_SP_MISSING"
+            else:
+                permission_reason = "OUTCOME_ONLY_SETTLED_RESULT_VERIFIED"
+
+            loss_type = self._classify_loss(p_race, r_race) if outcome_known else "DATA_ERROR"
             
             # Create Event
             event = {
                 "event_type": "result_confirmed",
                 "learning_mode": "OUTCOME_ONLY_EOD_REPLAY",
-                "learning_allowed": True,
-                "learning_permission_reason": "OUTCOME_ONLY_NO_HFS_FEATURES",
+                "learning_allowed": learning_allowed,
+                "learning_permission_reason": permission_reason,
                 "hfs_training_safe": False,
                 "hfs_features_used": False,
                 "sentient_state_target": str(self.state_path),
@@ -321,12 +424,19 @@ class NightlyEODRunner:
                 "prediction_snapshot": top_pick,
                 "result_snapshot": {
                     "winner_id": winner_id,
-                    "favourite_won": r_race.get("favourite_won")
+                    "winner_name": settled["winner_name"],
+                    "winner_sp": settled["winner_sp"],
+                    "favourite_won": settled["favourite_won"],
+                    "winner_profile": settled["winner_profile"],
+                    "outcome_known": outcome_known,
                 },
                 "market_snapshot": {},
                 "prediction_result": outcome,
                 "loss_type": loss_type,
-                "confidence_error": abs(float(top_pick.get("velo_prime_prob") or 0.0) - (1.0 if outcome == "WIN" else 0.0)),
+                "confidence_error": (
+                    abs(float(top_pick.get("velo_prime_prob") or 0.0) - (1.0 if outcome == "WIN" else 0.0))
+                    if outcome_known else None
+                ),
                 "source_prediction": str(self.pred_file),
                 "source_result": str(self.res_file)
             }
@@ -337,14 +447,23 @@ class NightlyEODRunner:
                  event["failure_reason"] = "UNSAFE_HFS_FIELD_PRESENT"
                  self.failures.append({"type": "HFS_READ_ATTEMPTED", "race_id": rid})
 
+            if not outcome_known or not settled_price_known:
+                self.stats["data_error_count"] += 1
+                self.stats["learning_blocked"] += 1
+                self.failures.append({
+                    "type": "INCOMPLETE_LEARNING_OUTCOME",
+                    "race_id": rid,
+                    "reason": permission_reason,
+                })
+
             with open(self.events_path, "a") as f:
                 f.write(json.dumps(event) + "\n")
             
             self.stats["events_created"] += 1
+            if outcome == "WIN": self.stats["wins"] += 1
+            elif outcome == "LOSS": self.stats["losses"] += 1
+            else: self.stats["void_or_unknown"] += 1
             if event["learning_allowed"]:
-                if outcome == "WIN": self.stats["wins"] += 1
-                elif outcome == "LOSS": self.stats["losses"] += 1
-                else: self.stats["void_or_unknown"] += 1
                 self.stats["loss_count_by_type"][loss_type] += 1
 
         if self.stats["matched_races"] == 0:
@@ -368,12 +487,24 @@ class NightlyEODRunner:
         adapter.run()
         audit_1 = json.loads(nightly_audit_path.read_text())
         updates_1 = audit_1["engine_updates_applied"]
+        if str(audit_1.get("verdict", "")).startswith("FAIL"):
+            self.failures.append({
+                "type": "SHADOW_ADAPTER_FAILED",
+                "verdict": audit_1.get("verdict"),
+            })
+            return self._finalize("FAIL")
         
         # 4. Duplicate Check
         adapter.run()
         audit_2 = json.loads(nightly_audit_path.read_text())
         updates_2 = audit_2["engine_updates_applied"]
         duplicates_skipped = audit_2["events_skipped_duplicate"]
+        if str(audit_2.get("verdict", "")).startswith("FAIL"):
+            self.failures.append({
+                "type": "SHADOW_ADAPTER_FAILED_ON_DUPLICATE_CHECK",
+                "verdict": audit_2.get("verdict"),
+            })
+            return self._finalize("FAIL")
         
         if updates_2 > 0:
             self.failures.append({"type": "DUPLICATE_REPLAY_MUTATED_STATE", "updates": updates_2})
@@ -507,6 +638,7 @@ class NightlyEODRunner:
             "void_or_unknown": self.stats["void_or_unknown"],
             "loss_count_by_type": dict(self.stats["loss_count_by_type"]),
             "data_error_count": self.stats["data_error_count"],
+            "learning_blocked": self.stats["learning_blocked"],
             "data_error_rate": self.stats["data_error_count"] / self.stats["prediction_count"] if self.stats["prediction_count"] > 0 else 0,
             # UNAUTHORIZED-mutation guard, scoped to the shadow/verification
             # phase only: run() hashes sentient_state.json before the shadow
