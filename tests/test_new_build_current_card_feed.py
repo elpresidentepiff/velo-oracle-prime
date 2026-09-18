@@ -35,4 +35,6 @@ def test_reason_codes_do_not_emit_rpr_and_mark_passport_strength() -> None:
     assert "JOCKEY_CONTINUITY" in codes
     assert "OR_RISING" in codes
     assert "FIRST_TIME_HEADGEAR" in codes
+    assert "COURSE_SEEN_NEEDS_TARGET_COURSE_COMPUTE" in codes
+    assert "NO_INTENT_SCORE_FOR_CURRENT_RACE" in codes
     assert not any("RPR" in code for code in codes)

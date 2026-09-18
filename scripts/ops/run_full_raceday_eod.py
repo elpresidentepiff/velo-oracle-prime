@@ -103,6 +103,70 @@ def run_capture_stdout(label: str, cmd: list[str], out_path: Path, *, critical: 
     return ok
 
 
+def _completion_summary(results: list[dict], blocked_reason: str | None = None) -> dict:
+    """Classify the day close independently from optional research steps."""
+    required_failures = [r["step"] for r in results if r["critical"] and not r["ok"]]
+    optional_failures = [r["step"] for r in results if not r["critical"] and not r["ok"]]
+
+    if blocked_reason:
+        status = "BLOCKED"
+    elif required_failures:
+        status = "FAIL"
+    elif optional_failures:
+        status = "PASS_WITH_WARNINGS"
+    else:
+        status = "PASS"
+
+    return {
+        "status": status,
+        "blocked_reason": blocked_reason,
+        "required_failures": required_failures,
+        "optional_failures": optional_failures,
+        "required_steps_passed": sum(1 for r in results if r["critical"] and r["ok"]),
+        "required_steps_total": sum(1 for r in results if r["critical"]),
+    }
+
+
+def _finalize_run(
+    date: str,
+    date_tag: str,
+    results: list[dict],
+    *,
+    blocked_reason: str | None = None,
+) -> int:
+    """Persist a truthful terminal record for success, failure, or blocking."""
+    completion = _completion_summary(results, blocked_reason)
+    print(f"\n{'='*70}\nRUN_FULL_RACEDAY_EOD SUMMARY — {date}\n{'='*70}")
+    for result in results:
+        status = "PASS" if result["ok"] else (
+            "FAIL(required)" if result["critical"] else "FAIL(optional)"
+        )
+        print(f"  [{status:>18}] {result['step']}")
+    print(
+        f"\n  Day-close status: {completion['status']} — "
+        f"{sum(1 for r in results if r['ok'])} passed, "
+        f"{sum(1 for r in results if not r['ok'])} failed out of {len(results)} steps."
+    )
+
+    report_path = ROOT / "data" / "reports" / f"run_full_raceday_eod_{date_tag}.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(
+        json.dumps(
+            {
+                "date": date,
+                "generated_at": _utc_now(),
+                "status": completion["status"],
+                "completion": completion,
+                "results": results,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    print(f"  Report: {report_path}")
+    return 0 if completion["status"] in {"PASS", "PASS_WITH_WARNINGS"} else 1
+
+
 def rp_session_healthy() -> bool:
     try:
         sys.path.insert(0, str(ROOT))
@@ -179,7 +243,12 @@ def main() -> int:
                     f"--profile-dir {FIREFOX_PROFILE} --execute --wait-seconds 90\n"
                     "then rerun this script. Aborting before wasting a capture attempt."
                 )
-                return 1
+                return _finalize_run(
+                    date,
+                    date_tag,
+                    results,
+                    blocked_reason="RP_SESSION_UNAVAILABLE",
+                )
         print("  [OK] Session logged in.")
 
         if not run(
@@ -187,7 +256,7 @@ def main() -> int:
             [PY, "scripts/ops/build_rp_results_url_list.py", "--date", date, "--execute"],
             critical=True, results=results,
         ):
-            return 1
+            return _finalize_run(date, date_tag, results)
 
         url_list = ROOT / "data" / "racing_post_url_lists" / f"rp_results_{date}.txt"
         if not run(
@@ -197,7 +266,7 @@ def main() -> int:
              "--profile-dir", str(FIREFOX_PROFILE), "--execute"],
             critical=True, results=results,
         ):
-            return 1
+            return _finalize_run(date, date_tag, results)
 
         if not run(
             "Step 11: Parse race result captures",
@@ -205,7 +274,7 @@ def main() -> int:
              "--date", date, "--capture-date", f"rp-results-{date}", "--execute"],
             critical=True, results=results,
         ):
-            return 1
+            return _finalize_run(date, date_tag, results)
 
     # ── Step 11B: evaluate the frozen WIN/PLACE/LONGSHOT card ────────────
     # The three-option card is BUILT in the morning (run_full_raceday.py Step
@@ -228,13 +297,13 @@ def main() -> int:
         [PY, "scripts/ops/run_results_sigma.py", "--date", date, "--source", "cache"],
         critical=True, results=results,
     ):
-        return 1
+        return _finalize_run(date, date_tag, results)
 
     # ── Step 12B: multi-model sigma (Old VELO / No-RPR / New Build / Champion) ──
     run(
         "Step 12B: Multi-model sigma",
         [PY, "scripts/ops/run_multimodel_sigma.py", "--date", date, "--execute"],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
     # ── Step 12C: place stack shadow (settles the place leg) ─────────────
@@ -255,7 +324,7 @@ def main() -> int:
     run(
         "Step 13: Ingest results to horse runs",
         [PY, "scripts/ops/ingest_results_to_horse_runs.py", "--date", date],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
     # ── Step 14: rebuild sigma retrieval corpus ───────────────────────────
@@ -279,7 +348,7 @@ def main() -> int:
     run(
         "Step 15: Update Mission Control",
         [PY, "scripts/ops/update_mission_control.py", "--date", date],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
     # ── Step 16a: VP30 operator card ──────────────────────────────────────
@@ -294,7 +363,7 @@ def main() -> int:
     run(
         "Step 16b: VELO Council",
         [PY, "scripts/audit/run_velo_council.py", "--date", date],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
     # ── Step 16c: LLM end-of-day report (2026-07-29) ─────────────────────
@@ -316,7 +385,7 @@ def main() -> int:
     run(
         "Step 16d: Mission Control final refresh (post-council)",
         [PY, "scripts/ops/update_mission_control.py", "--date", date],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
     # ── Step 17: paper execution bridge close (SIM only) ──────────────────
@@ -344,7 +413,7 @@ def main() -> int:
     run(
         "Step 20: Nightly EOD learning runner",
         [PY, "scripts/ops/nightly_eod_learning_runner.py", "--date", date],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
     # ── Step 20B: VCP-03 coherence burn-in log ─────────────────────────────
@@ -379,18 +448,18 @@ def main() -> int:
     run(
         "Step 20C: Canonical scorecard rebuild (results-aware)",
         [PY, "scripts/ops/build_canonical_model_scorecard.py", "--date", date],
-        critical=False, results=results,
+        critical=True, results=results,
     )
     run(
         "Step 20D: Canonical scorecard persist (post-results)",
         [PY, "scripts/ops/persist_canonical_model_scorecard.py",
          "--date", date, "--csv", str(canonical_csv), "--execute"],
-        critical=False, results=results,
+        critical=True, results=results,
     )
     run(
         "Step 20E: Canonical learning events build + persist",
         [PY, "scripts/ops/build_canonical_learning_events.py", "--date", date, "--execute"],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
     # ── Step 20F: nightly learning events -> velo_learning_events ──────────
@@ -400,7 +469,7 @@ def main() -> int:
     run(
         "Step 20F: Persist nightly learning events (velo_learning_events)",
         [PY, "scripts/ops/persist_nightly_learning_events.py", "--date", date, "--execute"],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
     # ── Step 20G: shadow-lane disagreement audit ───────────────────────────
@@ -550,24 +619,10 @@ def main() -> int:
     run(
         "Step 22: Persist daily artifacts (council, MC, ledger, passports, reports)",
         [PY, "scripts/ops/persist_daily_artifacts.py", "--kind", "all", "--date", date, "--execute"],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
-    # ── Summary ────────────────────────────────────────────────────────────
-    print(f"\n{'='*70}\nRUN_FULL_RACEDAY_EOD SUMMARY — {date}\n{'='*70}")
-    n_ok = sum(1 for r in results if r["ok"])
-    n_fail = sum(1 for r in results if not r["ok"])
-    for r in results:
-        status = "PASS" if r["ok"] else ("FAIL(critical)" if r["critical"] else "FAIL(non-critical)")
-        print(f"  [{status:>18}] {r['step']}")
-    print(f"\n  {n_ok} passed, {n_fail} failed out of {len(results)} steps.")
-
-    report_path = ROOT / "data" / "reports" / f"run_full_raceday_eod_{date_tag}.json"
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps({"date": date, "generated_at": _utc_now(), "results": results}, indent=2), encoding="utf-8")
-    print(f"  Report: {report_path}")
-
-    return 0 if all(r["ok"] or not r["critical"] for r in results) else 1
+    return _finalize_run(date, date_tag, results)
 
 
 if __name__ == "__main__":

@@ -92,16 +92,20 @@ class TestPathIndependence:
 # Test B — Feed row coverage
 # ===========================================================================
 class TestFeedRowCoverage:
-    def test_build_current_card_feed_returns_runner_count(self) -> None:
+    def test_build_current_card_feed_returns_runner_count(self, monkeypatch, tmp_path: Path) -> None:
         """build_current_card_feed(execute=False) must complete and report runners_processed > 0."""
-        from new_build_velo.current_card_feed import build_current_card_feed
+        import new_build_velo.current_card_feed as current_card_feed
 
-        result = build_current_card_feed(execute=False)
+        report_root = tmp_path / "reports"
+        monkeypatch.setattr(current_card_feed, "REPORT_ROOT", report_root)
+
+        result = current_card_feed.build_current_card_feed(execute=False)
         assert isinstance(result, dict), "build_current_card_feed must return a dict"
         assert "runners_processed" in result, "result must contain runners_processed"
         assert result["runners_processed"] > 0, (
             f"Expected runners_processed > 0, got {result['runners_processed']}"
         )
+        assert not (report_root / "passport_coverage_latest.json").exists()
 
 
 # ===========================================================================

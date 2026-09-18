@@ -123,7 +123,8 @@ def lookup_passport_features(
 ) -> Dict[str, Any]:
     """Looks up passport and computes model-ready features."""
     load_index()
-    
+
+    requested_as_of_date = as_of_date
     as_of_date = as_of_date or date.today()
     
     passport = None
@@ -136,6 +137,30 @@ def lookup_passport_features(
         # Log at debug if horse_name is available
         # if horse_name: logger.debug(f"PASSPORT_MISS: {horse_name}")
         return _null_features()
+
+    # The passport bank is a latest-state aggregate. A historical lookup is
+    # safe only when its most recent contributing run is not after the target
+    # race. Same-day lookups retain the established live-feed semantics, while
+    # future races fail closed instead of emitting impossible values such as
+    # negative days since last run.
+    if requested_as_of_date is not None:
+        last_run_raw = passport.get("last_run_date")
+        if not last_run_raw:
+            logger.debug("PASSPORT_AS_OF_UNPROVEN: %s has no last_run_date", horse_name)
+            return _null_features()
+        try:
+            passport_last_run = date.fromisoformat(str(last_run_raw)[:10])
+        except (TypeError, ValueError):
+            logger.debug("PASSPORT_AS_OF_UNPROVEN: %s has invalid last_run_date", horse_name)
+            return _null_features()
+        if passport_last_run > as_of_date:
+            logger.debug(
+                "PASSPORT_FUTURE_DATA_BLOCKED: %s last_run=%s target=%s",
+                horse_name,
+                passport_last_run,
+                as_of_date,
+            )
+            return _null_features()
 
     # Base features from V1 fields
     res = _null_features()
@@ -197,11 +222,11 @@ def lookup_passport_features(
 def batch_lookup(
     runners: List[Dict],
     as_of_date: date | None = None,
+    coverage_report_path: Path | None = _COVERAGE_REPORT,
 ) -> Tuple[List[Dict], Dict]:
     """Enriches a list of runners with passport features and returns coverage summary."""
     load_index()
     
-    as_of_date = as_of_date or date.today()
     cov_logger = PassportCoverageLogger()
     
     enriched = []
@@ -223,7 +248,8 @@ def batch_lookup(
         
     summary = cov_logger.summary()
     
-    cov_logger.write_report(_COVERAGE_REPORT)
+    if coverage_report_path is not None:
+        cov_logger.write_report(coverage_report_path)
     
     # Log coverage thresholds
     pct = summary["coverage_pct"]

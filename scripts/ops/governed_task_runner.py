@@ -108,12 +108,21 @@ class GovernedTaskRunner:
         rc, out = _run_script("task_contract_runner.py", tca_args)
         self.results["contract_audit"] = self._parse_json(out)
         
-        if rc == 0:
+        contract_audit_ok = rc == 0
+        execution_ok = self.results.get("execution_exit_code") == 0
+
+        if contract_audit_ok and execution_ok:
             self.status = "PASS"
             print(f"\n[GOVERNOR] SUCCESS: Task governed and verified.")
         else:
             self.status = "FAIL"
-            print(f"\n[GOVERNOR] FAILURE: Task final audit failed.")
+            if not execution_ok:
+                print(
+                    "\n[GOVERNOR] FAILURE: Governed command exited with "
+                    f"code {self.results.get('execution_exit_code')}."
+                )
+            if not contract_audit_ok:
+                print(f"\n[GOVERNOR] FAILURE: Task final audit failed.")
 
         return self.save()
 

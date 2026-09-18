@@ -300,7 +300,6 @@ def _reason_codes(
     if (runner.get("horse") or "").lower() == "she is for me boys":
         codes.append("PG_LAY_DOCTRINE_ACTIVE")
 
-    return codes
     if runner.get("headgear_first_time"):
         codes.append("FIRST_TIME_HEADGEAR")
     if runner.get("wind_surgery"):
@@ -514,14 +513,7 @@ def build_current_card_feed(*, execute: bool = False, racecard_path: Path | None
         "weak_profile_count": weak_profile_count,
         "missing_rp_uids": missing_rp_uids,
         "source_passport_bank_path": str(PASSPORT_PATH.resolve()),
-        "generated_at": utc_now(),
     }
-    try:
-        (REPORT_ROOT / "passport_coverage_latest.json").write_text(
-            json.dumps(coverage_summary, indent=2), encoding="utf-8"
-        )
-    except Exception:
-        pass
     passport_count = sum(1 for row in feed_rows if row["passport_found"])
     champion_count = sum(1 for row in feed_rows if row["champion_features_available"])
     intent_count = sum(1 for row in feed_rows if row["intent_features_available"])
@@ -580,6 +572,12 @@ def build_current_card_feed(*, execute: bool = False, racecard_path: Path | None
         },
     }
     if execute:
+        try:
+            (REPORT_ROOT / "passport_coverage_latest.json").write_text(
+                json.dumps(coverage_summary, indent=2), encoding="utf-8"
+            )
+        except Exception:
+            pass
         _write_jsonl(FEED_JSONL_PATH, feed_rows)
         _write_json(REPORT_JSON_PATH, payload)
         REPORT_MD_PATH.parent.mkdir(parents=True, exist_ok=True)

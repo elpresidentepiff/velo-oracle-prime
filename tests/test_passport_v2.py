@@ -63,7 +63,7 @@ def test_t4_pp_layoff_encoding():
     f1 = pl.lookup_passport_features(102, None, as_of_date=date(2026, 5, 30))
     assert f1["pp_layoff"] == 1
 
-def test_t5_batch_lookup_coverage():
+def test_t5_batch_lookup_coverage(tmp_path):
     """T5. batch_lookup returns coverage"""
     import new_build_velo.passport_lookup as pl
     pl._by_uid[201] = {"career_runs": 5}
@@ -77,10 +77,34 @@ def test_t5_batch_lookup_coverage():
         {"horse_rp_uid": 204, "horse_name": "M1"},
         {"horse_rp_uid": 205, "horse_name": "M2"},
     ]
-    _, summary = batch_lookup(runners)
+    report_path = tmp_path / "passport_coverage.json"
+    _, summary = batch_lookup(runners, coverage_report_path=report_path)
     assert summary["passport_hits"] == 3
     assert summary["passport_misses"] == 2
     assert summary["coverage_pct"] == 60.0
+    assert json.loads(report_path.read_text())["passport_hits"] == 3
+
+
+def test_t5b_historical_lookup_blocks_future_passport_data():
+    import new_build_velo.passport_lookup as pl
+
+    pl._by_uid[206] = {
+        "horse_name": "Future Horse",
+        "career_runs": 10,
+        "win_rate": 0.5,
+        "last_run_date": "2026-09-18",
+        "win_rate_last3": 1.0,
+    }
+
+    features = pl.lookup_passport_features(
+        206,
+        "Future Horse",
+        as_of_date=date(2026, 7, 1),
+    )
+
+    assert features["pp_career_runs"] is None
+    assert features["pp_win_rate_last3"] is None
+    assert features["pp_days_since_last"] is None
 
 def test_t6_no_rpr_keys():
     """T6. No RPR keys in output"""

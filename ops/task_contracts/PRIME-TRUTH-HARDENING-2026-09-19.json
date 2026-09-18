@@ -1,0 +1,59 @@
+{
+  "task_id": "PRIME-TRUTH-HARDENING-2026-09-19",
+  "title": "Make Prime command outcomes and point-in-time evidence truthful",
+  "classification": "AGENT_CONDUCT_GOVERNED",
+  "allowed_paths": [
+    "ops/task_contracts/PRIME-TRUTH-HARDENING-2026-09-19.json",
+    "ops/task_contracts/PRIME-TRUTH-HARDENING-2026-09-19.classification.txt",
+    "scripts/ops/governed_task_runner.py",
+    "scripts/ops/nightly_eod_learning_runner.py",
+    "scripts/ops/run_full_raceday_eod.py",
+    "new_build_velo/current_card_feed.py",
+    "new_build_velo/passport_lookup.py",
+    "tests/test_governed_task_runner.py",
+    "tests/test_nightly_eod_learning_runner.py",
+    "tests/test_passport_v2.py",
+    "tests/test_new_build_current_card_feed.py",
+    "tests/test_live_passport_feed.py",
+    "tests/test_run_full_raceday_eod.py",
+    "data/current/"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "data/sentient_state.json",
+    "data/sentient_state_shadow.json",
+    ".env"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "edit_outcome_propagation",
+    "edit_point_in_time_guard",
+    "repair_unreachable_reason_codes",
+    "prevent_dry_run_writes",
+    "define_truthful_day_close",
+    "isolate_test_outputs",
+    "run_targeted_tests"
+  ],
+  "forbidden_actions": [
+    "live_scoring_change",
+    "supabase_write",
+    "telegram_send",
+    "model_promotion",
+    "production_deploy",
+    "credential_exposure"
+  ],
+  "forbidden_keywords": [],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ]
+}

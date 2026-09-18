@@ -29,6 +29,11 @@ from scripts.playbook_g_shadow_adapter import PlaybookGShadowAdapter
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("nightly_runner")
 
+
+def _exit_code_for_verdict(verdict: str) -> int:
+    """Translate the runner's domain verdict into a truthful process result."""
+    return 0 if verdict == "PASS" else 1
+
 class NightlyEODRunner:
     def __init__(
         self,
@@ -393,7 +398,7 @@ class NightlyEODRunner:
         self.stats["updates_2"] = updates_2
         self.stats["dups"] = duplicates_skipped
 
-        verdict = self._finalize("PASS")
+        verdict = "PASS"
 
         # 4b. Apply the SAME night's events to the LIVE state.
         # Authorized 2026-07-26 (operator sign-off) after the doctrines_fired
@@ -420,6 +425,8 @@ class NightlyEODRunner:
                                 live_audit.get("verdict"), live_audit.get("engine_updates_applied"))
             except Exception as e:
                 logger.error(f"LIVE playbook G update failed (shadow state is unaffected): {e}")
+                self.failures.append({"type": "LIVE_ADAPTER_FAILED", "reason": str(e)})
+                verdict = "FAIL"
         
         # 5. Trigger Study Layer
         if verdict == "PASS":
@@ -434,7 +441,10 @@ class NightlyEODRunner:
             except Exception as e:
                 logger.error(f"Failed to trigger study layer: {e}")
                 
-        return verdict
+        # Finalize only after the authorized live adapter and study layer have
+        # finished. The published status then includes the live adapter's own
+        # audit instead of permanently reporting it as missing.
+        return self._finalize(verdict)
 
     def _adapter_state_facts(self) -> dict:
         """What the Playbook G adapters actually did, read from their own audits.
@@ -579,4 +589,5 @@ if __name__ == "__main__":
         pred_file=args.pred_file,
         result_file=args.result_file,
     )
-    runner.run()
+    verdict = runner.run()
+    sys.exit(_exit_code_for_verdict(verdict))
