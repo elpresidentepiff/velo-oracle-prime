@@ -910,6 +910,13 @@ Step 21:  PASSPORT BANK REFRESH (wired 2026-08-02, commit 686488b)
           the queue is empty or the RP session is down.
 Step 20F: persist_nightly_learning_events.py --date YYYY-MM-DD --execute
           (runner's jsonl -> velo_learning_events; wired 2026-09-13, non-critical)
+Step 20G: model_disagreement_audit.py --window-days 30
+          (shadow lanes vs MAIN_VELO_PRIME on the equal race set, split
+          AGREE/DISAGREE; wired 2026-09-18, non-critical, local CSVs only.
+          A lane's headline SR is mostly the incumbent's picks reported back --
+          only the DISAGREE cohort is that lane's own evidence, and every ROI
+          ships with an ex-bigprice twin. Writes
+          data/model_disagreement_audit_latest.{csv,md} + append-only ledger.)
 Step 22:  persist_daily_artifacts.py --kind all --date YYYY-MM-DD --execute
           (council, Mission Control, model ledger, passport bank, dashboard reports
           -> Supabase; wired 2026-09-13, non-critical, runs after 21E)

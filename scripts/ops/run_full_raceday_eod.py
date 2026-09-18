@@ -403,6 +403,24 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 20G: shadow-lane disagreement audit ───────────────────────────
+    # Wired 2026-09-18. Every nightly artifact reported each lane's headline
+    # strike rate side by side, and that number is close to useless for a
+    # keep/drop call because lanes overlap. On 2026-09-18 MDS_HEAVY_SHADOW_V1
+    # read as "27.8% vs Main's 28.5%, nearly level" -- while picking the SAME
+    # horse as Main in 130 of 158 races. Its entire independent contribution
+    # was 28 races (3/28 against Main's 4/28). A lane can sit "nearly level"
+    # for months on the headline and be adding nothing at all.
+    #
+    # Must run after 20C, which is what rebuilds today's canonical scorecard
+    # results-aware; the audit reads those local per-date CSVs (no network, no
+    # credentials) so it is safe to rerun on any date.
+    run(
+        "Step 20G: Model disagreement audit (shadow lanes vs incumbent)",
+        [PY, "scripts/ops/model_disagreement_audit.py", "--window-days", "30"],
+        critical=False, results=results,
+    )
+
     # ── Step 21: Passport bank refresh (PHASE A, wired 2026-08-02) ─────────
     # THE BUG THIS CLOSES
     # -------------------
