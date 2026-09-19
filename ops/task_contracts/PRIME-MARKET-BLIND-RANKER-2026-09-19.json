@@ -1,0 +1,62 @@
+{
+  "task_id": "PRIME-MARKET-BLIND-RANKER-2026-09-19",
+  "title": "Test a disposable market-blind pairwise ranking challenger",
+  "classification": "AGENT_CONDUCT_GOVERNED",
+  "allowed_paths": [
+    "ops/task_contracts/PRIME-MARKET-BLIND-RANKER-2026-09-19.json",
+    "ops/task_contracts/PRIME-MARKET-BLIND-RANKER-2026-09-19.classification.txt",
+    "scripts/analysis/prime_market_blind_ranker_challenger.py",
+    "tests/test_prime_market_blind_ranker_challenger.py"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "data/sentient_state.json",
+    "data/sentient_state_shadow.json",
+    ".env"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_historical_snapshots",
+    "read_historical_results",
+    "fit_disposable_market_blind_ranker",
+    "compute_chronological_holdout_metrics",
+    "write_analysis_artifacts_to_explicit_output",
+    "add_regression_tests",
+    "run_targeted_tests"
+  ],
+  "forbidden_actions": [
+    "live_scoring_change",
+    "supabase_write",
+    "telegram_send",
+    "production_model_write",
+    "model_promotion",
+    "production_deploy",
+    "credential_exposure",
+    "live_state_write",
+    "shadow_state_write"
+  ],
+  "forbidden_keywords": [],
+  "classification_required": [
+    "ANALYSIS_ONLY",
+    "CHRONOLOGICAL_HOLDOUT",
+    "DISPOSABLE_MARKET_BLIND_RANKER",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_LIVE_OR_CANONICAL_SHADOW_STATE_WRITE"
+  ],
+  "final_classifications": [
+    "ANALYSIS_ONLY",
+    "CHRONOLOGICAL_HOLDOUT",
+    "DISPOSABLE_MARKET_BLIND_RANKER",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_LIVE_OR_CANONICAL_SHADOW_STATE_WRITE"
+  ]
+}
