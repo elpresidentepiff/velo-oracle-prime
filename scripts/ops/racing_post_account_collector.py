@@ -29,7 +29,14 @@ from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_PROFILE_DIR = ROOT / "data" / "browser_profiles" / "racing_post_account"
+# This is the single canonical RP browser profile for every collector,
+# orchestrator, session probe and PDF fetch.  The former default
+# ``racing_post_account`` became non-interactive on 2026-09-19/20: both headed
+# and headless login timed out before the form could be driven.  The established
+# Firefox profile below passed the same auto-login and authenticated-cookie
+# probe on 2026-09-20.  Consumers must import this constant rather than copying
+# the path, so capture and health checks cannot drift onto different profiles.
+DEFAULT_PROFILE_DIR = ROOT / "data" / "browser_profiles" / "racing_post_account_firefox"
 DEFAULT_RAW_DIR = ROOT / "data" / "racing_post_account_raw"
 DEFAULT_LOGIN_URL = "https://www.racingpost.com/"
 # The real sign-in form (verified 2026-09-04). /account/login 404s.

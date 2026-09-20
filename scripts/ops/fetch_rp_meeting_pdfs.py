@@ -84,8 +84,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR
+
 DEFAULT_INBOX = Path("/mnt/c/Users/puror/OneDrive/Documents/horses for courses")
-DEFAULT_PROFILE_DIR = ROOT / "data" / "browser_profiles" / "racing_post_account"
 URL_LIST_DIR = ROOT / "data" / "racing_post_url_lists"
 REPORT_DIR = ROOT / "data" / "reports"
 

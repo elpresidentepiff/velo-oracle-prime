@@ -1,0 +1,59 @@
+{
+  "task_id": "RP-PROFILE-RECOVERY-2026-09-20",
+  "title": "Restore the verified Racing Post browser profile as the single runtime default",
+  "classification": "AGENT_CONDUCT_GOVERNED",
+  "allowed_paths": [
+    "ops/task_contracts/RP-PROFILE-RECOVERY-2026-09-20.json",
+    "ops/task_contracts/RP-PROFILE-RECOVERY-2026-09-20.classification.txt",
+    "scripts/ops/racing_post_account_collector.py",
+    "scripts/ops/check_rp_session_health.py",
+    "scripts/ops/fetch_rp_meeting_pdfs.py",
+    "tests/test_rp_profile_routing.py",
+    "docs/current/ONE_TRUTH.md",
+    "data/current/"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "data/sentient_state.json",
+    "data/sentient_state_shadow.json",
+    ".env",
+    "supabase/"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "route_existing_rp_profile",
+    "deduplicate_profile_constant",
+    "update_runtime_truth",
+    "add_profile_routing_regression_test",
+    "run_targeted_tests",
+    "run_existing_session_probe"
+  ],
+  "forbidden_actions": [
+    "live_scoring_change",
+    "model_weight_change",
+    "supabase_schema_change",
+    "model_promotion",
+    "gate_bypass",
+    "credential_exposure"
+  ],
+  "forbidden_keywords": [],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_SCHEMA_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_GATE_BYPASS"
+  ],
+  "final_classifications": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_SCHEMA_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_GATE_BYPASS"
+  ],
+  "known_limitations": [
+    "GitNexus MCP is unavailable in this session.",
+    "GitNexus CLI 1.6.12 was recovered after disk cleanup and rebuilt a Windows-owned structural index at commit 6e6533c.",
+    "GitNexus impact for DEFAULT_PROFILE_DIR returned exact LOW risk with zero linked dependents; direct-import regression coverage verifies all five authoritative runtime consumers.",
+    "The pre-existing dirty worktree prevents a repository-wide task-contract audit from isolating only this task; targeted diffs are required."
+  ]
+}

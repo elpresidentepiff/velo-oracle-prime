@@ -239,15 +239,26 @@ output is a red tick nobody reads is indistinguishable from no job at all.
 `VELO Score Daily` was already disabled. The two Windows tasks are now the
 only things that start VELO, as this file has always claimed.
 
-**The automation is inert until the RP session is restored.** As of 2026-08-31
-the probe returns `SESSION_LOGGED_OUT`, so both tasks abort by design. Restore
-with (headed browser, log in by hand, let it close itself):
+**The automation is inert until the RP session is restored.** Both tasks abort
+by design when the probe returns `SESSION_LOGGED_OUT`. The canonical profile is
+`data/browser_profiles/racing_post_account_firefox`; the collector, probe, PDF
+fetcher and both orchestrators import the same definition. Restore with:
 
 ```
 cd /mnt/c/Users/puror/velo-oracle-prime
 PYTHONPATH=. venv/bin/python scripts/ops/racing_post_account_collector.py init-login --execute
 PYTHONPATH=. venv/bin/python scripts/ops/check_rp_session_health.py   # expect status PASS
 ```
+
+**Profile recovery 2026-09-20.** The temporary default
+`data/browser_profiles/racing_post_account` became non-interactive: headed and
+headless auto-login both timed out before the login form could be driven, and
+manual `init-login` opened a window that would not accept input. The RP page
+still exposed the expected selectors and the configured credentials were valid.
+The established `racing_post_account_firefox` profile passed the same auto-login
+and authenticated-cookie probe immediately. The runtime default was therefore
+returned to that verified profile; no scraper, score, model, weight or gate was
+changed.
 
 Note the venv: system `python3` has playwright 1.60 (firefox-1522) and cannot
 open a profile last written by the venv's 1.61 (firefox-1532) — it fails with
@@ -301,9 +312,8 @@ profile's login state (fetches one horse-profile page, checks the real `isLogged
 Wired into `scripts/ops/velo_session_start_check.py` as check #11, and into
 `run_full_raceday.py`'s pre-flight. Root cause it exists: on 2026-07-08 a dead session
 caused 92% capture failure (146 attempts, only 11 real successes) before anyone noticed
-— now caught in 2 seconds instead of after hundreds of wasted requests. If the session
-is dead, fix is interactive and cannot be automated (RP login requires a human to type
-credentials into a real browser window):
+— now caught in 2 seconds instead of after hundreds of wasted requests. Credentialed
+auto-login runs first; if it fails, use the interactive recovery path:
 ```
 python scripts/ops/racing_post_account_collector.py init-login \
   --profile-dir data/browser_profiles/racing_post_account_firefox \

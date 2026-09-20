@@ -28,7 +28,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-DEFAULT_PROFILE_DIR = ROOT / "data" / "browser_profiles" / "racing_post_account"
+from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR
+
 PROBE_URL = "https://www.racingpost.com/profile/horse/4057201/a-dublin-job/form"
 PRELOADED_RE = re.compile(r"window\.PRELOADED_STATE\s*=\s*(\{.*?\});", re.S)
 
