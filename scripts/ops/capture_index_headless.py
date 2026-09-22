@@ -14,7 +14,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[2]
-PROFILE = ROOT / "data" / "browser_profiles" / "racing_post_account"
+PROFILE = ROOT / "data" / "browser_profiles" / "racing_post_account_firefox"
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--date", default=None, help="Target date YYYY-MM-DD (default: today UTC)")
