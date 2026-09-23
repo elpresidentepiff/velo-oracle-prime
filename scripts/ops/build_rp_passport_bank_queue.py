@@ -252,6 +252,11 @@ def add_existing_profile_candidates(candidates: dict[str, dict]) -> None:
 
 def add_raw_profile_link_review_candidates(candidates: dict[str, dict]) -> None:
     for path in sorted(RAW_ROOT.glob("*/*.html")):
+        # Storage cleanup can leave a historical merged-capture symlink whose
+        # target has been archived or removed.  glob() still returns the link,
+        # but it is not readable evidence and must not abort today's queue.
+        if not path.is_file():
+            continue
         text = path.read_text(encoding="utf-8", errors="replace")
         source = "raw_profile_link_review"
         for match in PROFILE_RE.finditer(text):
