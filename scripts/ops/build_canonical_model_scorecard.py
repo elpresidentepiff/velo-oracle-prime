@@ -546,6 +546,47 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                         ),
                     )
 
+    # ── Captain Velo selective-value forward shadow (2026-09-26) ────────
+    captain_path = ROOT / "data" / "reports" / f"captain_velo_shadow_{tag}.json"
+    if not captain_path.exists():
+        audit["sources_missing"]["captain_velo_shadow"] = str(captain_path)
+    else:
+        audit["sources_found"]["captain_velo_shadow"] = captain_path.name
+        captain_packet = json.loads(captain_path.read_text(encoding="utf-8"))
+        for captain_race in captain_packet.get("races", []):
+            selection = captain_race.get("selection")
+            if captain_race.get("action") != "SHADOW_SELECTION" or not isinstance(selection, dict):
+                continue
+            race_id = str(captain_race.get("race_id") or "")
+            result_race = results.get(race_id)
+            outcome = _runner_lookup(result_race, selection.get("horse") or "")
+            _add_row(
+                race_id=race_id,
+                course=(result_race or {}).get("course") or captain_race.get("course"),
+                off_time=(result_race or {}).get("off") or captain_race.get("off_time"),
+                model_name=captain_packet.get("model_version") or "CAPTAIN_VELO_VALUE_V1",
+                lane_name="selective_value_forward_shadow_only",
+                source_path=str(captain_path.relative_to(ROOT)),
+                source_field="selection.quoted_expected_edge", sort_direction="descending",
+                rank=1, horse=selection.get("horse"),
+                horse_id=outcome.get("horse_id") or selection.get("horse_id"),
+                score=selection.get("quoted_expected_edge"),
+                sp_dec=outcome.get("sp_dec") or selection.get("decimal_odds"),
+                result_position=outcome.get("position"), win=outcome.get("win"),
+                frame=outcome.get("frame"),
+                policy_decision="SHADOW_SELECTION", stake_authorised=False,
+                dashboard_visible=False,
+                learning_class=("MODEL_HIT_POLICY_BLOCKED" if outcome.get("win") else "MODEL_MISS"),
+                tie_status="N/A",
+                notes=(
+                    f"FORWARD_SHADOW_ONLY -- market={selection.get('market_probability')}; "
+                    f"structural={selection.get('structural_probability')}; "
+                    f"consensus={selection.get('consensus_probability')}; "
+                    f"captured_odds={selection.get('decimal_odds')}. No stake, execution, learning, or "
+                    "promotion authority. Fresh post-2026-09-24 settlement evidence required."
+                ),
+            )
+
     audit["row_count"] = len(rows)
     return rows, audit
 

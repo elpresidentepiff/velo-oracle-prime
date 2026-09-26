@@ -1,0 +1,239 @@
+{
+  "generated_at": "2026-09-26T10:29:01.407916+00:00",
+  "model_version": "CAPTAIN_VELO_VALUE_V1",
+  "classification": "ANALYSIS_ONLY_RETROSPECTIVE_REUSED_HOLDOUT",
+  "evidence_end_date": "2026-09-24",
+  "truth_disclosure": "The final chronological block was already inspected by earlier forecasting work and during challenger design. It is not a pristine holdout and cannot authorize promotion.",
+  "decision_contract": {
+    "structural_features": [
+      "sqpe_v17_prob",
+      "market_deception_score"
+    ],
+    "structural_weights": {
+      "sqpe_v17_prob": 0.45,
+      "market_deception_score": 0.1
+    },
+    "structural_beta": 0.42,
+    "market_source": "complete captured pre-off sp_dec field with overround removed",
+    "market_blend_alpha": 0.8,
+    "minimum_structural_market_ratio": 1.2,
+    "minimum_quoted_expected_edge": 0.1,
+    "decimal_odds_range": [
+      2.0,
+      20.0
+    ],
+    "maximum_selections_per_race": 1,
+    "abstention_allowed": true,
+    "improvement_score_used": false,
+    "sqpe_no_rpr_shadow_used": false
+  },
+  "blocks": {
+    "train": {
+      "races": 1027,
+      "start": "2026-05-21",
+      "end": "2026-06-30",
+      "complete_price_fields": 219
+    },
+    "calibration": {
+      "races": 623,
+      "start": "2026-07-05",
+      "end": "2026-08-03",
+      "complete_price_fields": 623
+    },
+    "test": {
+      "races": 595,
+      "start": "2026-08-04",
+      "end": "2026-09-24",
+      "complete_price_fields": 595
+    }
+  },
+  "source_diagnostics": {
+    "selection": {
+      "snapshot_files_seen": 174,
+      "snapshot_rows_seen": 64902,
+      "rows_contaminated_run": 807,
+      "candidate_race_runs": 6417,
+      "race_runs_missing_exact_time": 170,
+      "race_runs_post_off": 837,
+      "race_runs_too_small": 3,
+      "races_selected": 3113,
+      "superseded_pre_off_runs": 2294
+    },
+    "skipped": {
+      "field_or_winner_not_evaluable": 121,
+      "result_not_found": 747
+    }
+  },
+  "calibration_block_diagnostic": {
+    "bets": 62,
+    "wins": 11,
+    "hit_rate": 0.1774193548387097,
+    "profit": 51.5,
+    "roi": 0.8306451612903226,
+    "average_decimal_odds": 12.048387096774194,
+    "roi_bootstrap_95pct": [
+      -0.12903225806451613,
+      1.9435483870967742
+    ],
+    "average_structural_market_ratio": 3.3714685558964614,
+    "average_quoted_expected_edge": 0.3094512280654324,
+    "benchmarks_on_same_races": {
+      "captured_market_favourite": {
+        "bets": 62,
+        "wins": 27,
+        "hit_rate": 0.43548387096774194,
+        "profit": 17.75,
+        "roi": 0.2862903225806452,
+        "average_decimal_odds": 3.232741935483871
+      },
+      "production_g_top": {
+        "bets": 62,
+        "wins": 18,
+        "hit_rate": 0.2903225806451613,
+        "profit": 8.0,
+        "roi": 0.12903225806451613,
+        "average_decimal_odds": 7.7259677419354835
+      },
+      "production_base_top": {
+        "bets": 62,
+        "wins": 18,
+        "hit_rate": 0.2903225806451613,
+        "profit": 8.0,
+        "roi": 0.12903225806451613,
+        "average_decimal_odds": 7.8872580645161285
+      },
+      "structural_top": {
+        "bets": 62,
+        "wins": 17,
+        "hit_rate": 0.27419354838709675,
+        "profit": 4.5,
+        "roi": 0.07258064516129033,
+        "average_decimal_odds": 7.8348387096774195
+      }
+    },
+    "paired_roi_delta_bootstrap_95pct": {
+      "vs_market_favourite": [
+        -0.5746774193548387,
+        1.8046774193548387
+      ],
+      "vs_production_g": [
+        -0.28225806451612906,
+        1.8366129032258065
+      ]
+    },
+    "monthly": {
+      "2026-07": {
+        "bets": 55,
+        "wins": 10,
+        "hit_rate": 0.18181818181818182,
+        "profit": 48.5,
+        "roi": 0.8818181818181818,
+        "average_decimal_odds": 12.018181818181818
+      },
+      "2026-08": {
+        "bets": 7,
+        "wins": 1,
+        "hit_rate": 0.14285714285714285,
+        "profit": 3.0,
+        "roi": 0.42857142857142855,
+        "average_decimal_odds": 12.285714285714286
+      }
+    },
+    "skipped": {
+      "policy_abstention": 561
+    }
+  },
+  "reused_test_block_diagnostic": {
+    "bets": 52,
+    "wins": 7,
+    "hit_rate": 0.1346153846153846,
+    "profit": 19.0,
+    "roi": 0.36538461538461536,
+    "average_decimal_odds": 11.923076923076923,
+    "roi_bootstrap_95pct": [
+      -0.5,
+      1.3846153846153846
+    ],
+    "average_structural_market_ratio": 2.996950060246301,
+    "average_quoted_expected_edge": 0.222001729873726,
+    "benchmarks_on_same_races": {
+      "captured_market_favourite": {
+        "bets": 52,
+        "wins": 14,
+        "hit_rate": 0.2692307692307692,
+        "profit": -14.26,
+        "roi": -0.2742307692307692,
+        "average_decimal_odds": 3.1186538461538458
+      },
+      "production_g_top": {
+        "bets": 52,
+        "wins": 11,
+        "hit_rate": 0.21153846153846154,
+        "profit": 8.48,
+        "roi": 0.1630769230769231,
+        "average_decimal_odds": 7.6736538461538455
+      },
+      "production_base_top": {
+        "bets": 52,
+        "wins": 11,
+        "hit_rate": 0.21153846153846154,
+        "profit": 8.48,
+        "roi": 0.1630769230769231,
+        "average_decimal_odds": 7.6736538461538455
+      },
+      "structural_top": {
+        "bets": 52,
+        "wins": 11,
+        "hit_rate": 0.21153846153846154,
+        "profit": 8.48,
+        "roi": 0.1630769230769231,
+        "average_decimal_odds": 7.250576923076922
+      }
+    },
+    "paired_roi_delta_bootstrap_95pct": {
+      "vs_market_favourite": [
+        -0.3638461538461539,
+        1.8117307692307691
+      ],
+      "vs_production_g": [
+        -0.41596153846153844,
+        0.9474999999999999
+      ]
+    },
+    "monthly": {
+      "2026-08": {
+        "bets": 4,
+        "wins": 2,
+        "hit_rate": 0.5,
+        "profit": 14.0,
+        "roi": 3.5,
+        "average_decimal_odds": 9.25
+      },
+      "2026-09": {
+        "bets": 48,
+        "wins": 5,
+        "hit_rate": 0.10416666666666667,
+        "profit": 5.0,
+        "roi": 0.10416666666666667,
+        "average_decimal_odds": 12.145833333333334
+      }
+    },
+    "skipped": {
+      "policy_abstention": 543
+    }
+  },
+  "readout": {
+    "status": "POSITIVE_POINT_ESTIMATE_NOT_FORWARD_PROVEN",
+    "promotion_authorized": false,
+    "next_gate": "fresh forward-only shadow settlement after 2026-09-24"
+  },
+  "safety": {
+    "production_scoring_changed": false,
+    "production_weights_changed": false,
+    "verdicts_written": false,
+    "stakes_written": false,
+    "bets_placed": false,
+    "supabase_writes": false,
+    "gates_changed": false
+  }
+}

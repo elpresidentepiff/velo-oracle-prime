@@ -1,0 +1,29 @@
+{
+  "task_id": "PRIME-CAPTAIN-VELO-CHALLENGER-2026-09-26",
+  "objective": "Build and test a selective value challenger against production Velo and the captured pre-off market without changing live behaviour.",
+  "classification": "ANALYSIS_AND_FORWARD_SHADOW_ONLY",
+  "authorized_writes": [
+    "scripts/analysis/captain_velo_challenger.py",
+    "scripts/ops/run_captain_velo_shadow.py",
+    "tests/test_captain_velo_challenger.py",
+    "data/research/captain_velo_2026_09_26/*",
+    "data/reports/captain_velo_shadow_2026_09_26.json",
+    "ops/task_contracts/PRIME-CAPTAIN-VELO-CHALLENGER-2026-09-26.json"
+  ],
+  "forbidden": [
+    "production scoring changes",
+    "model weight installation",
+    "gate bypasses",
+    "execution-mode changes",
+    "stake generation",
+    "bet placement",
+    "Supabase writes",
+    "credentials or browser profile changes"
+  ],
+  "truth_conditions": [
+    "Disclose that the historical final block is reused and not pristine.",
+    "Use only strictly pre-off complete runner snapshots.",
+    "Require fresh post-2026-09-24 settlements before any promotion claim.",
+    "Keep all forward output PAPER/SIM shadow-only."
+  ]
+}
