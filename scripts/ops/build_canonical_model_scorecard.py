@@ -504,6 +504,48 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                     ),
                 )
 
+    # ── Forward-only forecasting shadow package (2026-09-26) ─────────────
+    forecasting_path = ROOT / "data" / "reports" / f"forecasting_shadow_package_{tag}.json"
+    if not forecasting_path.exists():
+        audit["sources_missing"]["forecasting_shadow_package"] = str(forecasting_path)
+    else:
+        audit["sources_found"]["forecasting_shadow_package"] = forecasting_path.name
+        forecasting_packet = json.loads(forecasting_path.read_text(encoding="utf-8"))
+        for forecast_race in forecasting_packet.get("races", []):
+            race_id = str(forecast_race.get("race_id") or "")
+            result_race = results.get(race_id)
+            for lane_key, lane in (forecast_race.get("lanes") or {}).items():
+                scored = [runner for runner in (lane.get("runners") or []) if runner.get("rank")]
+                top_tie = _tie_status([runner.get("probability") or 0.0 for runner in scored])
+                if top_tie != "CLEAN":
+                    audit["ties_found"].append(
+                        {"race_id": race_id, "field": f"forecasting_{lane_key}", "tie_status": top_tie}
+                    )
+                for runner in scored:
+                    outcome = _runner_lookup(result_race, runner.get("horse") or "")
+                    _add_row(
+                        race_id=race_id,
+                        course=(result_race or {}).get("course"),
+                        off_time=(result_race or {}).get("off"),
+                        model_name=lane.get("model_name"), lane_name="forward_shadow_only",
+                        source_path=str(forecasting_path.relative_to(ROOT)),
+                        source_field=f"lanes.{lane_key}.probability", sort_direction="descending",
+                        rank=runner.get("rank"), horse=runner.get("horse"),
+                        horse_id=outcome.get("horse_id") or runner.get("horse_id"),
+                        score=runner.get("probability"), sp_dec=outcome.get("sp_dec"),
+                        result_position=outcome.get("position"), win=outcome.get("win"),
+                        frame=outcome.get("frame"),
+                        policy_decision=forecasting_packet.get("trust_policy") or "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
+                        stake_authorised=False, dashboard_visible=False,
+                        learning_class=("MODEL_HIT_POLICY_BLOCKED" if outcome.get("win") else "MODEL_MISS"),
+                        tie_status=top_tie if runner.get("rank") == 1 else "N/A",
+                        notes=(
+                            f"FORWARD_SHADOW_ONLY -- {lane.get('model_name')}; live rank "
+                            f"{runner.get('live_rank')}. No scoring, staking, learning, or promotion authority. "
+                            "Gate: >=300 forward settled disagreement races plus operator decision."
+                        ),
+                    )
+
     audit["row_count"] = len(rows)
     return rows, audit
 

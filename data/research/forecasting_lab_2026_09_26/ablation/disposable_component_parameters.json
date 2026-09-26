@@ -1,0 +1,35 @@
+{
+  "classification": "DISPOSABLE_ANALYSIS_PARAMETERS_ONLY",
+  "weights_read_from_production": {
+    "sqpe_v17_prob": 0.45,
+    "improvement_score": 0.12,
+    "market_deception_score": 0.1
+  },
+  "component_variants": {
+    "sqpe_only": [
+      "sqpe_v17_prob"
+    ],
+    "sqpe_plus_improvement": [
+      "sqpe_v17_prob",
+      "improvement_score"
+    ],
+    "sqpe_plus_mds": [
+      "sqpe_v17_prob",
+      "market_deception_score"
+    ],
+    "sqpe_plus_improvement_mds": [
+      "sqpe_v17_prob",
+      "improvement_score",
+      "market_deception_score"
+    ]
+  },
+  "fitted_beta": {
+    "stored_base": 0.43,
+    "stored_g": 0.43,
+    "sqpe_only": 0.32,
+    "sqpe_plus_improvement": 0.34,
+    "sqpe_plus_mds": 0.42,
+    "sqpe_plus_improvement_mds": 0.4
+  },
+  "selected_variant": "sqpe_plus_mds"
+}

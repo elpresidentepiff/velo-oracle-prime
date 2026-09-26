@@ -1,0 +1,39 @@
+{
+  "classification": "DISPOSABLE_ANALYSIS_PARAMETERS_ONLY",
+  "model_specifications": {
+    "raw_base": {
+      "kind": "temperature",
+      "source": "base",
+      "beta": 1.0
+    },
+    "base_temperature": {
+      "kind": "temperature",
+      "source": "base",
+      "beta": 0.43
+    },
+    "g_temperature": {
+      "kind": "temperature",
+      "source": "g",
+      "beta": 0.43
+    }
+  },
+  "late_market_specifications": {
+    "late_market": {
+      "kind": "market"
+    },
+    "base_late_market_blend": {
+      "kind": "market_blend",
+      "source": "base",
+      "beta": 0.43,
+      "alpha": 0.73
+    },
+    "g_late_market_blend": {
+      "kind": "market_blend",
+      "source": "g",
+      "beta": 0.43,
+      "alpha": 0.73
+    }
+  },
+  "selected_model": "g_temperature",
+  "selected_late_market": "late_market"
+}

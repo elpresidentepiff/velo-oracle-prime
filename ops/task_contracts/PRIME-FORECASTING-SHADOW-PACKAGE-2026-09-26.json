@@ -1,0 +1,36 @@
+{
+  "task_id": "PRIME-FORECASTING-SHADOW-PACKAGE-2026-09-26",
+  "title": "Run three frozen forecasting challengers prospectively",
+  "classification": "AGENT_CONDUCT_GOVERNED",
+  "allowed_paths": [
+    "scripts/ops/run_forecasting_shadow_package.py",
+    "scripts/ops/run_full_raceday.py",
+    "scripts/ops/build_canonical_model_scorecard.py",
+    "tests/test_forecasting_shadow_package.py",
+    "ops/task_contracts/PRIME-FORECASTING-SHADOW-PACKAGE-2026-09-26.json"
+  ],
+  "allowed_actions": [
+    "read_persisted_pre_race_components",
+    "write_dated_shadow_report",
+    "append_shadow_rows_to_canonical_scorecard",
+    "run_noncritical_morning_step",
+    "run_tests"
+  ],
+  "forbidden_actions": [
+    "live_scoring_change",
+    "production_weight_change",
+    "model_promotion",
+    "stake_authorisation",
+    "telegram_send",
+    "canonical_state_write",
+    "retroactive_shadow_prediction"
+  ],
+  "final_classifications": [
+    "FORWARD_ONLY",
+    "SHADOW_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_PRODUCTION_WEIGHT_CHANGE",
+    "NO_PROMOTION",
+    "NO_STAKING"
+  ]
+}

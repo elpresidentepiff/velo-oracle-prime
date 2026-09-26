@@ -1,0 +1,1578 @@
+{
+  "generated_at": "2026-09-26T10:08:41.014704+01:00",
+  "classification": "ANALYSIS_ONLY",
+  "time_contract": "fit train, select calibration, evaluate untouched test; whole race days",
+  "market_blind_contract": {
+    "price_features_used": false,
+    "favourite_flag_used": false,
+    "runner_identity_used": false,
+    "result_fields_used_as_features": false
+  },
+  "source_diagnostics": {
+    "selection": {
+      "snapshot_files_seen": 174,
+      "snapshot_rows_seen": 64902,
+      "rows_contaminated_run": 807,
+      "candidate_race_runs": 6417,
+      "race_runs_missing_exact_time": 170,
+      "race_runs_post_off": 837,
+      "race_runs_too_small": 3,
+      "races_selected": 3113,
+      "superseded_pre_off_runs": 2294
+    },
+    "skipped": {
+      "field_or_winner_not_evaluable": 121,
+      "result_not_found": 747
+    }
+  },
+  "blocks": {
+    "train": {
+      "races": 1027,
+      "start": "2026-05-21",
+      "end": "2026-06-30"
+    },
+    "calibration": {
+      "races": 623,
+      "start": "2026-07-05",
+      "end": "2026-08-03"
+    },
+    "test": {
+      "races": 595,
+      "start": "2026-08-04",
+      "end": "2026-09-24"
+    }
+  },
+  "feature_coverage_on_train": {
+    "sqpe_v17_prob": 1.0,
+    "improvement_score": 1.0,
+    "market_deception_score": 1.0,
+    "place_prob": 1.0,
+    "longshot_prob": 1.0,
+    "spotlight_score": 0.6311351146484745,
+    "nds_score": 0.22361190070115597
+  },
+  "fitted_on_train_only": {
+    "stored_g": {
+      "beta": 0.43,
+      "train_log_loss": 2.1184089902334127
+    },
+    "pairwise_core_c0.01": {
+      "feature_set": "core",
+      "features": [
+        "sqpe_v17_prob",
+        "improvement_score",
+        "market_deception_score"
+      ],
+      "c": 0.01,
+      "gamma": 0.7,
+      "train_log_loss": 2.134900769620032,
+      "coefficients": {
+        "sqpe_v17_prob": 1.8599614917571676,
+        "improvement_score": -1.9407646745291085,
+        "market_deception_score": 11.750989517488152
+      }
+    },
+    "pairwise_core_c0.1": {
+      "feature_set": "core",
+      "features": [
+        "sqpe_v17_prob",
+        "improvement_score",
+        "market_deception_score"
+      ],
+      "c": 0.1,
+      "gamma": 0.64,
+      "train_log_loss": 2.1351971272636363,
+      "coefficients": {
+        "sqpe_v17_prob": 1.829402157427119,
+        "improvement_score": -2.5379787878905558,
+        "market_deception_score": 13.391475438726784
+      }
+    },
+    "pairwise_core_c1": {
+      "feature_set": "core",
+      "features": [
+        "sqpe_v17_prob",
+        "improvement_score",
+        "market_deception_score"
+      ],
+      "c": 1.0,
+      "gamma": 0.64,
+      "train_log_loss": 2.1352387635097245,
+      "coefficients": {
+        "sqpe_v17_prob": 1.8219113831217106,
+        "improvement_score": -2.6097484321869717,
+        "market_deception_score": 13.599632658085882
+      }
+    },
+    "pairwise_core_c10": {
+      "feature_set": "core",
+      "features": [
+        "sqpe_v17_prob",
+        "improvement_score",
+        "market_deception_score"
+      ],
+      "c": 10.0,
+      "gamma": 0.64,
+      "train_log_loss": 2.1352439835148913,
+      "coefficients": {
+        "sqpe_v17_prob": 1.8210980983510037,
+        "improvement_score": -2.6170758009265827,
+        "market_deception_score": 13.621037215436823
+      }
+    },
+    "pairwise_expanded_c0.01": {
+      "feature_set": "expanded",
+      "features": [
+        "sqpe_v17_prob",
+        "improvement_score",
+        "market_deception_score",
+        "place_prob",
+        "longshot_prob",
+        "spotlight_score",
+        "nds_score"
+      ],
+      "c": 0.01,
+      "gamma": 0.86,
+      "train_log_loss": 2.0881599785186493,
+      "coefficients": {
+        "sqpe_v17_prob": -0.4242880093045677,
+        "improvement_score": -1.8362716232125524,
+        "market_deception_score": 9.524987301569567,
+        "place_prob": 2.0590387418122633,
+        "longshot_prob": -1.4481844559481054,
+        "spotlight_score": 1.547871070318514,
+        "nds_score": -64.6323556502203
+      }
+    },
+    "pairwise_expanded_c0.1": {
+      "feature_set": "expanded",
+      "features": [
+        "sqpe_v17_prob",
+        "improvement_score",
+        "market_deception_score",
+        "place_prob",
+        "longshot_prob",
+        "spotlight_score",
+        "nds_score"
+      ],
+      "c": 0.1,
+      "gamma": 0.82,
+      "train_log_loss": 2.087577828634436,
+      "coefficients": {
+        "sqpe_v17_prob": -1.0500258735239676,
+        "improvement_score": -2.079170202172023,
+        "market_deception_score": 11.207020561969246,
+        "place_prob": 2.3064491330153563,
+        "longshot_prob": -1.7819825854816222,
+        "spotlight_score": 1.55060814960757,
+        "nds_score": -71.94397329425466
+      }
+    },
+    "pairwise_expanded_c1": {
+      "feature_set": "expanded",
+      "features": [
+        "sqpe_v17_prob",
+        "improvement_score",
+        "market_deception_score",
+        "place_prob",
+        "longshot_prob",
+        "spotlight_score",
+        "nds_score"
+      ],
+      "c": 1.0,
+      "gamma": 0.82,
+      "train_log_loss": 2.087576928448098,
+      "coefficients": {
+        "sqpe_v17_prob": -1.140733821037069,
+        "improvement_score": -2.103187142170404,
+        "market_deception_score": 11.430545635661117,
+        "place_prob": 2.339410640652837,
+        "longshot_prob": -1.8226135550274347,
+        "spotlight_score": 1.5500010150653385,
+        "nds_score": -72.81221497440886
+      }
+    },
+    "pairwise_expanded_c10": {
+      "feature_set": "expanded",
+      "features": [
+        "sqpe_v17_prob",
+        "improvement_score",
+        "market_deception_score",
+        "place_prob",
+        "longshot_prob",
+        "spotlight_score",
+        "nds_score"
+      ],
+      "c": 10.0,
+      "gamma": 0.82,
+      "train_log_loss": 2.0875785827439852,
+      "coefficients": {
+        "sqpe_v17_prob": -1.1502161141002143,
+        "improvement_score": -2.105582251515808,
+        "market_deception_score": 11.453670302945424,
+        "place_prob": 2.342830314245228,
+        "longshot_prob": -1.8267683772559118,
+        "spotlight_score": 1.5499292243496114,
+        "nds_score": -72.9006314373868
+      }
+    }
+  },
+  "selected_on_calibration_only": {
+    "variant": "pairwise_core_c0.1",
+    "metrics": {
+      "stored_g": {
+        "races": 623,
+        "top1_accuracy": 0.26163723916532905,
+        "top3_accuracy": 0.5746388443017657,
+        "multiclass_log_loss": 2.0273432584634565,
+        "multiclass_brier": 0.8403792618558511,
+        "flat_stake_roi": -0.015730337078651683,
+        "flat_stake_profit": -9.799999999999999,
+        "ece": 0.014124706257678981,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3228,
+            "predicted_mean": 0.05284164441227722,
+            "observed_rate": 0.0647459727385378
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1473,
+            "predicted_mean": 0.1408747163863074,
+            "observed_rate": 0.13306177868295996
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 619,
+            "predicted_mean": 0.24445809769221388,
+            "observed_rate": 0.20193861066235863
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 188,
+            "predicted_mean": 0.3403106267096938,
+            "observed_rate": 0.3404255319148936
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 53,
+            "predicted_mean": 0.4356656609193249,
+            "observed_rate": 0.4528301886792453
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 12,
+            "predicted_mean": 0.5442061898759387,
+            "observed_rate": 0.4166666666666667
+          }
+        ],
+        "mean_winner_rank": 3.92776886035313,
+        "median_winner_rank": 3,
+        "mean_reciprocal_rank": 0.4637002836462159,
+        "winner_pairwise_accuracy": 0.6317695660543361
+      },
+      "pairwise_core_c0.01": {
+        "races": 623,
+        "top1_accuracy": 0.2857142857142857,
+        "top3_accuracy": 0.5842696629213483,
+        "multiclass_log_loss": 2.0572765333828253,
+        "multiclass_brier": 0.8629405554873854,
+        "flat_stake_roi": 0.05548956661316212,
+        "flat_stake_profit": 34.57,
+        "ece": 0.02048239545247317,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3670,
+            "predicted_mean": 0.06073551504697283,
+            "observed_rate": 0.07166212534059946
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1360,
+            "predicted_mean": 0.13082066499009404,
+            "observed_rate": 0.1411764705882353
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 232,
+            "predicted_mean": 0.24185500199467808,
+            "observed_rate": 0.2543103448275862
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 108,
+            "predicted_mean": 0.3426052247292212,
+            "observed_rate": 0.3055555555555556
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 66,
+            "predicted_mean": 0.44737086549488037,
+            "observed_rate": 0.3181818181818182
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 38,
+            "predicted_mean": 0.5408909643258633,
+            "observed_rate": 0.39473684210526316
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 24,
+            "predicted_mean": 0.6447399671635231,
+            "observed_rate": 0.20833333333333334
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 26,
+            "predicted_mean": 0.7519671778100072,
+            "observed_rate": 0.38461538461538464
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 28,
+            "predicted_mean": 0.8589690302994833,
+            "observed_rate": 0.42857142857142855
+          },
+          {
+            "bucket": "0.9-1.0",
+            "n": 21,
+            "predicted_mean": 0.9484027717688287,
+            "observed_rate": 0.6190476190476191
+          }
+        ],
+        "mean_winner_rank": 3.780096308186196,
+        "median_winner_rank": 3,
+        "mean_reciprocal_rank": 0.48457860135227715,
+        "winner_pairwise_accuracy": 0.6468759418883779
+      },
+      "pairwise_core_c0.1": {
+        "races": 623,
+        "top1_accuracy": 0.28892455858747995,
+        "top3_accuracy": 0.5858747993579454,
+        "multiclass_log_loss": 2.0526986666015437,
+        "multiclass_brier": 0.8611381748831752,
+        "flat_stake_roi": 0.06913322632423756,
+        "flat_stake_profit": 43.07,
+        "ece": 0.020709204370058198,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3660,
+            "predicted_mean": 0.061382604197593386,
+            "observed_rate": 0.0715846994535519
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1380,
+            "predicted_mean": 0.13073395638082227,
+            "observed_rate": 0.14057971014492754
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 235,
+            "predicted_mean": 0.24349196108130336,
+            "observed_rate": 0.2723404255319149
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 102,
+            "predicted_mean": 0.34599220287346016,
+            "observed_rate": 0.27450980392156865
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 62,
+            "predicted_mean": 0.44932155736427903,
+            "observed_rate": 0.3387096774193548
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 39,
+            "predicted_mean": 0.5439906151701671,
+            "observed_rate": 0.38461538461538464
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 21,
+            "predicted_mean": 0.6499262419755001,
+            "observed_rate": 0.19047619047619047
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 24,
+            "predicted_mean": 0.7474721311546447,
+            "observed_rate": 0.4166666666666667
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 28,
+            "predicted_mean": 0.855094652913332,
+            "observed_rate": 0.42857142857142855
+          },
+          {
+            "bucket": "0.9-1.0",
+            "n": 22,
+            "predicted_mean": 0.9459541011400975,
+            "observed_rate": 0.5909090909090909
+          }
+        ],
+        "mean_winner_rank": 3.744783306581059,
+        "median_winner_rank": 3,
+        "mean_reciprocal_rank": 0.48771083405206717,
+        "winner_pairwise_accuracy": 0.6497417543465578
+      },
+      "pairwise_core_c1": {
+        "races": 623,
+        "top1_accuracy": 0.28731942215088285,
+        "top3_accuracy": 0.5826645264847512,
+        "multiclass_log_loss": 2.0545509463292957,
+        "multiclass_brier": 0.8616999013368286,
+        "flat_stake_roi": 0.06191011235955056,
+        "flat_stake_profit": 38.57,
+        "ece": 0.021082735535515457,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3665,
+            "predicted_mean": 0.06125993025874616,
+            "observed_rate": 0.07148703956343792
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1375,
+            "predicted_mean": 0.1306998134958553,
+            "observed_rate": 0.1410909090909091
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 234,
+            "predicted_mean": 0.24368833109051477,
+            "observed_rate": 0.27350427350427353
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 101,
+            "predicted_mean": 0.3459043478897307,
+            "observed_rate": 0.27722772277227725
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 63,
+            "predicted_mean": 0.4492736881290108,
+            "observed_rate": 0.31746031746031744
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 39,
+            "predicted_mean": 0.5444215361065855,
+            "observed_rate": 0.41025641025641024
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 20,
+            "predicted_mean": 0.6462373906111095,
+            "observed_rate": 0.2
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 25,
+            "predicted_mean": 0.7455408846509046,
+            "observed_rate": 0.4
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 28,
+            "predicted_mean": 0.855481878620718,
+            "observed_rate": 0.39285714285714285
+          },
+          {
+            "bucket": "0.9-1.0",
+            "n": 23,
+            "predicted_mean": 0.9459677670735482,
+            "observed_rate": 0.6086956521739131
+          }
+        ],
+        "mean_winner_rank": 3.7335473515248796,
+        "median_winner_rank": 3,
+        "mean_reciprocal_rank": 0.4869269900591181,
+        "winner_pairwise_accuracy": 0.6502736150309064
+      },
+      "pairwise_core_c10": {
+        "races": 623,
+        "top1_accuracy": 0.28731942215088285,
+        "top3_accuracy": 0.5826645264847512,
+        "multiclass_log_loss": 2.0547421994864266,
+        "multiclass_brier": 0.8617573869664183,
+        "flat_stake_roi": 0.06191011235955056,
+        "flat_stake_profit": 38.57,
+        "ece": 0.021109785157864682,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3667,
+            "predicted_mean": 0.06126327176965623,
+            "observed_rate": 0.07144805017725661
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1373,
+            "predicted_mean": 0.13072960020096863,
+            "observed_rate": 0.1412964311726147
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 234,
+            "predicted_mean": 0.24373258548013135,
+            "observed_rate": 0.27350427350427353
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 101,
+            "predicted_mean": 0.3460492179671199,
+            "observed_rate": 0.27722772277227725
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 63,
+            "predicted_mean": 0.4495136539307108,
+            "observed_rate": 0.31746031746031744
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 39,
+            "predicted_mean": 0.5447259608520968,
+            "observed_rate": 0.41025641025641024
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 20,
+            "predicted_mean": 0.6466027448183781,
+            "observed_rate": 0.2
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 25,
+            "predicted_mean": 0.7459601930873031,
+            "observed_rate": 0.4
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 28,
+            "predicted_mean": 0.8558766944381594,
+            "observed_rate": 0.39285714285714285
+          },
+          {
+            "bucket": "0.9-1.0",
+            "n": 23,
+            "predicted_mean": 0.9461811082185086,
+            "observed_rate": 0.6086956521739131
+          }
+        ],
+        "mean_winner_rank": 3.7335473515248796,
+        "median_winner_rank": 3,
+        "mean_reciprocal_rank": 0.4869269900591181,
+        "winner_pairwise_accuracy": 0.6502736150309064
+      },
+      "pairwise_expanded_c0.01": {
+        "races": 623,
+        "top1_accuracy": 0.2504012841091493,
+        "top3_accuracy": 0.536115569823435,
+        "multiclass_log_loss": 2.1061431506754076,
+        "multiclass_brier": 0.8725851595910484,
+        "flat_stake_roi": -0.08385232744783307,
+        "flat_stake_profit": -52.24,
+        "ece": 0.02722700039971063,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3749,
+            "predicted_mean": 0.05775783178989293,
+            "observed_rate": 0.07255268071485729
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1116,
+            "predicted_mean": 0.13584036918091197,
+            "observed_rate": 0.15412186379928317
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 345,
+            "predicted_mean": 0.24340099630400072,
+            "observed_rate": 0.18840579710144928
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 155,
+            "predicted_mean": 0.34373951039103573,
+            "observed_rate": 0.2838709677419355
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 82,
+            "predicted_mean": 0.44317904407522757,
+            "observed_rate": 0.3048780487804878
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 58,
+            "predicted_mean": 0.5403827832976394,
+            "observed_rate": 0.3275862068965517
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 28,
+            "predicted_mean": 0.6455218237602629,
+            "observed_rate": 0.2857142857142857
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 22,
+            "predicted_mean": 0.7313798670051579,
+            "observed_rate": 0.4090909090909091
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 13,
+            "predicted_mean": 0.8496462233422252,
+            "observed_rate": 0.5384615384615384
+          },
+          {
+            "bucket": "0.9-1.0",
+            "n": 5,
+            "predicted_mean": 0.944363338004275,
+            "observed_rate": 0.4
+          }
+        ],
+        "mean_winner_rank": 4.170144462279294,
+        "median_winner_rank": 3,
+        "mean_reciprocal_rank": 0.44980800490145567,
+        "winner_pairwise_accuracy": 0.6073416784305001
+      },
+      "pairwise_expanded_c0.1": {
+        "races": 623,
+        "top1_accuracy": 0.2536115569823435,
+        "top3_accuracy": 0.5313001605136437,
+        "multiclass_log_loss": 2.1048608999832075,
+        "multiclass_brier": 0.8710102475533935,
+        "flat_stake_roi": -0.06629213483146067,
+        "flat_stake_profit": -41.3,
+        "ece": 0.02512000291999285,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3751,
+            "predicted_mean": 0.05876225228373225,
+            "observed_rate": 0.0722474006931485
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1130,
+            "predicted_mean": 0.1368016845550091,
+            "observed_rate": 0.15398230088495576
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 350,
+            "predicted_mean": 0.24478716258735211,
+            "observed_rate": 0.19714285714285715
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 150,
+            "predicted_mean": 0.3498749390839126,
+            "observed_rate": 0.2866666666666667
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 78,
+            "predicted_mean": 0.45082444153281415,
+            "observed_rate": 0.32051282051282054
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 48,
+            "predicted_mean": 0.545866678757925,
+            "observed_rate": 0.3333333333333333
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 32,
+            "predicted_mean": 0.6514290587374987,
+            "observed_rate": 0.25
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 17,
+            "predicted_mean": 0.7413051779746119,
+            "observed_rate": 0.47058823529411764
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 12,
+            "predicted_mean": 0.8562866045261172,
+            "observed_rate": 0.5833333333333334
+          },
+          {
+            "bucket": "0.9-1.0",
+            "n": 5,
+            "predicted_mean": 0.9501752377956499,
+            "observed_rate": 0.4
+          }
+        ],
+        "mean_winner_rank": 4.226324237560193,
+        "median_winner_rank": 3,
+        "mean_reciprocal_rank": 0.45102794889120423,
+        "winner_pairwise_accuracy": 0.6032464442550091
+      },
+      "pairwise_expanded_c1": {
+        "races": 623,
+        "top1_accuracy": 0.2520064205457464,
+        "top3_accuracy": 0.5329052969502408,
+        "multiclass_log_loss": 2.106255697058813,
+        "multiclass_brier": 0.8712801185480124,
+        "flat_stake_roi": -0.06918138041733547,
+        "flat_stake_profit": -43.1,
+        "ece": 0.024983031622470314,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3758,
+            "predicted_mean": 0.0587849667371891,
+            "observed_rate": 0.07291112293773283
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1121,
+            "predicted_mean": 0.13690533219057074,
+            "observed_rate": 0.15165031222123104
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 352,
+            "predicted_mean": 0.24444465978502306,
+            "observed_rate": 0.19602272727272727
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 150,
+            "predicted_mean": 0.35024990664083794,
+            "observed_rate": 0.2866666666666667
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 77,
+            "predicted_mean": 0.4506723276209054,
+            "observed_rate": 0.33766233766233766
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 48,
+            "predicted_mean": 0.5447746013584865,
+            "observed_rate": 0.3333333333333333
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 32,
+            "predicted_mean": 0.6493917919769577,
+            "observed_rate": 0.25
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 18,
+            "predicted_mean": 0.7411557059046525,
+            "observed_rate": 0.4444444444444444
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 12,
+            "predicted_mean": 0.8584732010643107,
+            "observed_rate": 0.5833333333333334
+          },
+          {
+            "bucket": "0.9-1.0",
+            "n": 5,
+            "predicted_mean": 0.9518485642449092,
+            "observed_rate": 0.4
+          }
+        ],
+        "mean_winner_rank": 4.234349919743178,
+        "median_winner_rank": 3,
+        "mean_reciprocal_rank": 0.4501889774283416,
+        "winner_pairwise_accuracy": 0.6020457816217621
+      },
+      "pairwise_expanded_c10": {
+        "races": 623,
+        "top1_accuracy": 0.2520064205457464,
+        "top3_accuracy": 0.5329052969502408,
+        "multiclass_log_loss": 2.1063993390359976,
+        "multiclass_brier": 0.8713076964365092,
+        "flat_stake_roi": -0.06918138041733547,
+        "flat_stake_profit": -43.1,
+        "ece": 0.025062619021836853,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3758,
+            "predicted_mean": 0.058779420637459376,
+            "observed_rate": 0.07291112293773283
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1120,
+            "predicted_mean": 0.1368481690536422,
+            "observed_rate": 0.15178571428571427
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 354,
+            "predicted_mean": 0.2444651170065733,
+            "observed_rate": 0.19491525423728814
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 149,
+            "predicted_mean": 0.35062634986116986,
+            "observed_rate": 0.28859060402684567
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 77,
+            "predicted_mean": 0.45072693872511516,
+            "observed_rate": 0.33766233766233766
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 48,
+            "predicted_mean": 0.5448678481748908,
+            "observed_rate": 0.3333333333333333
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 32,
+            "predicted_mean": 0.6495057256545869,
+            "observed_rate": 0.25
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 18,
+            "predicted_mean": 0.741376405668726,
+            "observed_rate": 0.4444444444444444
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 12,
+            "predicted_mean": 0.8586946429320985,
+            "observed_rate": 0.5833333333333334
+          },
+          {
+            "bucket": "0.9-1.0",
+            "n": 5,
+            "predicted_mean": 0.9520170244618962,
+            "observed_rate": 0.4
+          }
+        ],
+        "mean_winner_rank": 4.234349919743178,
+        "median_winner_rank": 3,
+        "mean_reciprocal_rank": 0.4501889774283416,
+        "winner_pairwise_accuracy": 0.6020457816217621
+      }
+    }
+  },
+  "untouched_test": {
+    "stored_g": {
+      "races": 595,
+      "top1_accuracy": 0.2319327731092437,
+      "top3_accuracy": 0.5277310924369748,
+      "multiclass_log_loss": 2.1222591905353987,
+      "multiclass_brier": 0.852203445269582,
+      "flat_stake_roi": -0.20003361344537815,
+      "flat_stake_profit": -119.02,
+      "ece": 0.00838753625798653,
+      "calibration_curve": [
+        {
+          "bucket": "0.0-0.1",
+          "n": 3840,
+          "predicted_mean": 0.054382665893358904,
+          "observed_rate": 0.059375
+        },
+        {
+          "bucket": "0.1-0.2",
+          "n": 1654,
+          "predicted_mean": 0.13882359461663105,
+          "observed_rate": 0.12877871825876663
+        },
+        {
+          "bucket": "0.2-0.3",
+          "n": 439,
+          "predicted_mean": 0.23828265653517003,
+          "observed_rate": 0.21867881548974943
+        },
+        {
+          "bucket": "0.3-0.4",
+          "n": 114,
+          "predicted_mean": 0.34004891522820974,
+          "observed_rate": 0.35964912280701755
+        },
+        {
+          "bucket": "0.4-0.5",
+          "n": 23,
+          "predicted_mean": 0.4314631079009923,
+          "observed_rate": 0.6086956521739131
+        },
+        {
+          "bucket": "0.5-0.6",
+          "n": 6,
+          "predicted_mean": 0.5435039061526187,
+          "observed_rate": 0.5
+        }
+      ],
+      "mean_winner_rank": 4.238655462184874,
+      "median_winner_rank": 3,
+      "mean_reciprocal_rank": 0.43632506451092706,
+      "winner_pairwise_accuracy": 0.6480389011248968
+    },
+    "pairwise_core_c0.01": {
+      "races": 595,
+      "top1_accuracy": 0.253781512605042,
+      "top3_accuracy": 0.5546218487394958,
+      "multiclass_log_loss": 2.132909249821045,
+      "multiclass_brier": 0.8511065988067005,
+      "flat_stake_roi": -0.2590252100840336,
+      "flat_stake_profit": -154.12,
+      "ece": 0.009145693508874966,
+      "calibration_curve": [
+        {
+          "bucket": "0.0-0.1",
+          "n": 4294,
+          "predicted_mean": 0.06708047831987639,
+          "observed_rate": 0.06404285048905449
+        },
+        {
+          "bucket": "0.1-0.2",
+          "n": 1461,
+          "predicted_mean": 0.12624430885151952,
+          "observed_rate": 0.14236824093086928
+        },
+        {
+          "bucket": "0.2-0.3",
+          "n": 155,
+          "predicted_mean": 0.2380585780606405,
+          "observed_rate": 0.25806451612903225
+        },
+        {
+          "bucket": "0.3-0.4",
+          "n": 58,
+          "predicted_mean": 0.3517173152864149,
+          "observed_rate": 0.3103448275862069
+        },
+        {
+          "bucket": "0.4-0.5",
+          "n": 42,
+          "predicted_mean": 0.4493659116325849,
+          "observed_rate": 0.47619047619047616
+        },
+        {
+          "bucket": "0.5-0.6",
+          "n": 20,
+          "predicted_mean": 0.5514675093328274,
+          "observed_rate": 0.5
+        },
+        {
+          "bucket": "0.6-0.7",
+          "n": 17,
+          "predicted_mean": 0.6524427826078323,
+          "observed_rate": 0.47058823529411764
+        },
+        {
+          "bucket": "0.7-0.8",
+          "n": 13,
+          "predicted_mean": 0.7539816154915139,
+          "observed_rate": 0.6153846153846154
+        },
+        {
+          "bucket": "0.8-0.9",
+          "n": 6,
+          "predicted_mean": 0.8332675023773156,
+          "observed_rate": 0.6666666666666666
+        },
+        {
+          "bucket": "0.9-1.0",
+          "n": 10,
+          "predicted_mean": 0.9419195181157575,
+          "observed_rate": 0.4
+        }
+      ],
+      "mean_winner_rank": 4.132773109243698,
+      "median_winner_rank": 3,
+      "mean_reciprocal_rank": 0.45569424876765463,
+      "winner_pairwise_accuracy": 0.660466757074532
+    },
+    "pairwise_core_c0.1": {
+      "races": 595,
+      "top1_accuracy": 0.253781512605042,
+      "top3_accuracy": 0.5495798319327732,
+      "multiclass_log_loss": 2.131664836425105,
+      "multiclass_brier": 0.8503337157966077,
+      "flat_stake_roi": -0.26154621848739495,
+      "flat_stake_profit": -155.62,
+      "ece": 0.01042582894190712,
+      "calibration_curve": [
+        {
+          "bucket": "0.0-0.1",
+          "n": 4283,
+          "predicted_mean": 0.06757605325497763,
+          "observed_rate": 0.06327340649077749
+        },
+        {
+          "bucket": "0.1-0.2",
+          "n": 1478,
+          "predicted_mean": 0.12606411528212969,
+          "observed_rate": 0.14411366711772666
+        },
+        {
+          "bucket": "0.2-0.3",
+          "n": 155,
+          "predicted_mean": 0.23873270508063557,
+          "observed_rate": 0.2709677419354839
+        },
+        {
+          "bucket": "0.3-0.4",
+          "n": 54,
+          "predicted_mean": 0.35164695660251294,
+          "observed_rate": 0.3148148148148148
+        },
+        {
+          "bucket": "0.4-0.5",
+          "n": 42,
+          "predicted_mean": 0.4422554501782293,
+          "observed_rate": 0.42857142857142855
+        },
+        {
+          "bucket": "0.5-0.6",
+          "n": 22,
+          "predicted_mean": 0.5487479540577861,
+          "observed_rate": 0.5454545454545454
+        },
+        {
+          "bucket": "0.6-0.7",
+          "n": 13,
+          "predicted_mean": 0.6536391144015558,
+          "observed_rate": 0.38461538461538464
+        },
+        {
+          "bucket": "0.7-0.8",
+          "n": 14,
+          "predicted_mean": 0.75123470514872,
+          "observed_rate": 0.6428571428571429
+        },
+        {
+          "bucket": "0.8-0.9",
+          "n": 5,
+          "predicted_mean": 0.8387677893404548,
+          "observed_rate": 0.8
+        },
+        {
+          "bucket": "0.9-1.0",
+          "n": 10,
+          "predicted_mean": 0.9400879375147424,
+          "observed_rate": 0.4
+        }
+      ],
+      "mean_winner_rank": 4.142857142857143,
+      "median_winner_rank": 3,
+      "mean_reciprocal_rank": 0.45615651128132595,
+      "winner_pairwise_accuracy": 0.660306041587113
+    },
+    "pairwise_core_c1": {
+      "races": 595,
+      "top1_accuracy": 0.2504201680672269,
+      "top3_accuracy": 0.5495798319327732,
+      "multiclass_log_loss": 2.1318629032483303,
+      "multiclass_brier": 0.8503208077857883,
+      "flat_stake_roi": -0.2718487394957983,
+      "flat_stake_profit": -161.75,
+      "ece": 0.010258192177289516,
+      "calibration_curve": [
+        {
+          "bucket": "0.0-0.1",
+          "n": 4286,
+          "predicted_mean": 0.06750493101916567,
+          "observed_rate": 0.06322911805879608
+        },
+        {
+          "bucket": "0.1-0.2",
+          "n": 1475,
+          "predicted_mean": 0.12607131222985477,
+          "observed_rate": 0.14440677966101695
+        },
+        {
+          "bucket": "0.2-0.3",
+          "n": 151,
+          "predicted_mean": 0.2376187193798587,
+          "observed_rate": 0.26490066225165565
+        },
+        {
+          "bucket": "0.3-0.4",
+          "n": 56,
+          "predicted_mean": 0.3478868850968072,
+          "observed_rate": 0.32142857142857145
+        },
+        {
+          "bucket": "0.4-0.5",
+          "n": 44,
+          "predicted_mean": 0.4426080033885929,
+          "observed_rate": 0.4318181818181818
+        },
+        {
+          "bucket": "0.5-0.6",
+          "n": 22,
+          "predicted_mean": 0.5515379112591354,
+          "observed_rate": 0.5454545454545454
+        },
+        {
+          "bucket": "0.6-0.7",
+          "n": 12,
+          "predicted_mean": 0.6530364845715649,
+          "observed_rate": 0.4166666666666667
+        },
+        {
+          "bucket": "0.7-0.8",
+          "n": 15,
+          "predicted_mean": 0.7517026107767102,
+          "observed_rate": 0.6
+        },
+        {
+          "bucket": "0.8-0.9",
+          "n": 4,
+          "predicted_mean": 0.8283380625230671,
+          "observed_rate": 0.75
+        },
+        {
+          "bucket": "0.9-1.0",
+          "n": 11,
+          "predicted_mean": 0.9384247725126807,
+          "observed_rate": 0.45454545454545453
+        }
+      ],
+      "mean_winner_rank": 4.146218487394958,
+      "median_winner_rank": 3,
+      "mean_reciprocal_rank": 0.4545398646226624,
+      "winner_pairwise_accuracy": 0.6598260866817998
+    },
+    "pairwise_core_c10": {
+      "races": 595,
+      "top1_accuracy": 0.2504201680672269,
+      "top3_accuracy": 0.5495798319327732,
+      "multiclass_log_loss": 2.1318841105686266,
+      "multiclass_brier": 0.8503196542415459,
+      "flat_stake_roi": -0.2718487394957983,
+      "flat_stake_profit": -161.75,
+      "ece": 0.00999471019284063,
+      "calibration_curve": [
+        {
+          "bucket": "0.0-0.1",
+          "n": 4285,
+          "predicted_mean": 0.06748780599444436,
+          "observed_rate": 0.0632438739789965
+        },
+        {
+          "bucket": "0.1-0.2",
+          "n": 1476,
+          "predicted_mean": 0.12604895231268373,
+          "observed_rate": 0.1443089430894309
+        },
+        {
+          "bucket": "0.2-0.3",
+          "n": 150,
+          "predicted_mean": 0.2372521121375264,
+          "observed_rate": 0.26
+        },
+        {
+          "bucket": "0.3-0.4",
+          "n": 57,
+          "predicted_mean": 0.3472184607224042,
+          "observed_rate": 0.3333333333333333
+        },
+        {
+          "bucket": "0.4-0.5",
+          "n": 44,
+          "predicted_mean": 0.44284227179058927,
+          "observed_rate": 0.4318181818181818
+        },
+        {
+          "bucket": "0.5-0.6",
+          "n": 22,
+          "predicted_mean": 0.5518221648426356,
+          "observed_rate": 0.5454545454545454
+        },
+        {
+          "bucket": "0.6-0.7",
+          "n": 12,
+          "predicted_mean": 0.6533630003602309,
+          "observed_rate": 0.4166666666666667
+        },
+        {
+          "bucket": "0.7-0.8",
+          "n": 15,
+          "predicted_mean": 0.7521024411042809,
+          "observed_rate": 0.6
+        },
+        {
+          "bucket": "0.8-0.9",
+          "n": 4,
+          "predicted_mean": 0.828768900812667,
+          "observed_rate": 0.75
+        },
+        {
+          "bucket": "0.9-1.0",
+          "n": 11,
+          "predicted_mean": 0.9386466190015574,
+          "observed_rate": 0.45454545454545453
+        }
+      ],
+      "mean_winner_rank": 4.147899159663866,
+      "median_winner_rank": 3,
+      "mean_reciprocal_rank": 0.4544558310092171,
+      "winner_pairwise_accuracy": 0.6595859906433844
+    },
+    "pairwise_expanded_c0.01": {
+      "races": 595,
+      "top1_accuracy": 0.23865546218487396,
+      "top3_accuracy": 0.5092436974789916,
+      "multiclass_log_loss": 2.1328297805730956,
+      "multiclass_brier": 0.8511868384244596,
+      "flat_stake_roi": -0.2655126050420168,
+      "flat_stake_profit": -157.98,
+      "ece": 0.00872946765697628,
+      "calibration_curve": [
+        {
+          "bucket": "0.0-0.1",
+          "n": 4396,
+          "predicted_mean": 0.06236576350900279,
+          "observed_rate": 0.0646041856232939
+        },
+        {
+          "bucket": "0.1-0.2",
+          "n": 1227,
+          "predicted_mean": 0.13270169196818304,
+          "observed_rate": 0.1458842705786471
+        },
+        {
+          "bucket": "0.2-0.3",
+          "n": 226,
+          "predicted_mean": 0.23898530081007668,
+          "observed_rate": 0.19911504424778761
+        },
+        {
+          "bucket": "0.3-0.4",
+          "n": 108,
+          "predicted_mean": 0.3456854194681918,
+          "observed_rate": 0.3425925925925926
+        },
+        {
+          "bucket": "0.4-0.5",
+          "n": 53,
+          "predicted_mean": 0.4504890144457525,
+          "observed_rate": 0.2641509433962264
+        },
+        {
+          "bucket": "0.5-0.6",
+          "n": 34,
+          "predicted_mean": 0.5443734448853332,
+          "observed_rate": 0.5
+        },
+        {
+          "bucket": "0.6-0.7",
+          "n": 11,
+          "predicted_mean": 0.6419458424522683,
+          "observed_rate": 0.5454545454545454
+        },
+        {
+          "bucket": "0.7-0.8",
+          "n": 11,
+          "predicted_mean": 0.7427742387733645,
+          "observed_rate": 0.6363636363636364
+        },
+        {
+          "bucket": "0.8-0.9",
+          "n": 3,
+          "predicted_mean": 0.8316682758564046,
+          "observed_rate": 1.0
+        },
+        {
+          "bucket": "0.9-1.0",
+          "n": 7,
+          "predicted_mean": 0.9369833815776788,
+          "observed_rate": 0.42857142857142855
+        }
+      ],
+      "mean_winner_rank": 4.287394957983193,
+      "median_winner_rank": 3,
+      "mean_reciprocal_rank": 0.43571818220457553,
+      "winner_pairwise_accuracy": 0.6441066049097853
+    },
+    "pairwise_expanded_c0.1": {
+      "races": 595,
+      "top1_accuracy": 0.24033613445378152,
+      "top3_accuracy": 0.5058823529411764,
+      "multiclass_log_loss": 2.130897562011003,
+      "multiclass_brier": 0.8498948206376965,
+      "flat_stake_roi": -0.2739495798319328,
+      "flat_stake_profit": -163.0,
+      "ece": 0.007611153570910828,
+      "calibration_curve": [
+        {
+          "bucket": "0.0-0.1",
+          "n": 4388,
+          "predicted_mean": 0.06301621784652588,
+          "observed_rate": 0.06358249772105742
+        },
+        {
+          "bucket": "0.1-0.2",
+          "n": 1247,
+          "predicted_mean": 0.13291843262328837,
+          "observed_rate": 0.1491579791499599
+        },
+        {
+          "bucket": "0.2-0.3",
+          "n": 223,
+          "predicted_mean": 0.24019999656651211,
+          "observed_rate": 0.19730941704035873
+        },
+        {
+          "bucket": "0.3-0.4",
+          "n": 106,
+          "predicted_mean": 0.34540439679034657,
+          "observed_rate": 0.3490566037735849
+        },
+        {
+          "bucket": "0.4-0.5",
+          "n": 54,
+          "predicted_mean": 0.45075772371387324,
+          "observed_rate": 0.35185185185185186
+        },
+        {
+          "bucket": "0.5-0.6",
+          "n": 26,
+          "predicted_mean": 0.5433931041525939,
+          "observed_rate": 0.4230769230769231
+        },
+        {
+          "bucket": "0.6-0.7",
+          "n": 14,
+          "predicted_mean": 0.6476366314551493,
+          "observed_rate": 0.6428571428571429
+        },
+        {
+          "bucket": "0.7-0.8",
+          "n": 8,
+          "predicted_mean": 0.7440582473096176,
+          "observed_rate": 0.5
+        },
+        {
+          "bucket": "0.8-0.9",
+          "n": 4,
+          "predicted_mean": 0.8482968346419003,
+          "observed_rate": 0.75
+        },
+        {
+          "bucket": "0.9-1.0",
+          "n": 6,
+          "predicted_mean": 0.9460635613602776,
+          "observed_rate": 0.5
+        }
+      ],
+      "mean_winner_rank": 4.300840336134454,
+      "median_winner_rank": 3,
+      "mean_reciprocal_rank": 0.4346934538246946,
+      "winner_pairwise_accuracy": 0.6430779744444143
+    },
+    "pairwise_expanded_c1": {
+      "races": 595,
+      "top1_accuracy": 0.23865546218487396,
+      "top3_accuracy": 0.507563025210084,
+      "multiclass_log_loss": 2.131130492785079,
+      "multiclass_brier": 0.849854819464311,
+      "flat_stake_roi": -0.27899159663865547,
+      "flat_stake_profit": -166.0,
+      "ece": 0.006996805342187957,
+      "calibration_curve": [
+        {
+          "bucket": "0.0-0.1",
+          "n": 4384,
+          "predicted_mean": 0.06294294678427197,
+          "observed_rate": 0.0636405109489051
+        },
+        {
+          "bucket": "0.1-0.2",
+          "n": 1249,
+          "predicted_mean": 0.13274765946211745,
+          "observed_rate": 0.14731785428342675
+        },
+        {
+          "bucket": "0.2-0.3",
+          "n": 225,
+          "predicted_mean": 0.2399754322808037,
+          "observed_rate": 0.20444444444444446
+        },
+        {
+          "bucket": "0.3-0.4",
+          "n": 107,
+          "predicted_mean": 0.34624973298770173,
+          "observed_rate": 0.34579439252336447
+        },
+        {
+          "bucket": "0.4-0.5",
+          "n": 54,
+          "predicted_mean": 0.4525707900717761,
+          "observed_rate": 0.35185185185185186
+        },
+        {
+          "bucket": "0.5-0.6",
+          "n": 25,
+          "predicted_mean": 0.5458355231008378,
+          "observed_rate": 0.44
+        },
+        {
+          "bucket": "0.6-0.7",
+          "n": 14,
+          "predicted_mean": 0.6487544664533175,
+          "observed_rate": 0.6428571428571429
+        },
+        {
+          "bucket": "0.7-0.8",
+          "n": 8,
+          "predicted_mean": 0.7449813348102268,
+          "observed_rate": 0.5
+        },
+        {
+          "bucket": "0.8-0.9",
+          "n": 4,
+          "predicted_mean": 0.8501233445419112,
+          "observed_rate": 0.75
+        },
+        {
+          "bucket": "0.9-1.0",
+          "n": 6,
+          "predicted_mean": 0.9475806013848921,
+          "observed_rate": 0.5
+        }
+      ],
+      "mean_winner_rank": 4.304201680672269,
+      "median_winner_rank": 3,
+      "mean_reciprocal_rank": 0.43394042534057364,
+      "winner_pairwise_accuracy": 0.6427094059643907
+    },
+    "pairwise_expanded_c10": {
+      "races": 595,
+      "top1_accuracy": 0.23865546218487396,
+      "top3_accuracy": 0.507563025210084,
+      "multiclass_log_loss": 2.1311556855672755,
+      "multiclass_brier": 0.8498509405832276,
+      "flat_stake_roi": -0.27899159663865547,
+      "flat_stake_profit": -166.0,
+      "ece": 0.0070008398211029756,
+      "calibration_curve": [
+        {
+          "bucket": "0.0-0.1",
+          "n": 4385,
+          "predicted_mean": 0.06294744352130509,
+          "observed_rate": 0.06362599771949828
+        },
+        {
+          "bucket": "0.1-0.2",
+          "n": 1248,
+          "predicted_mean": 0.1327779717809025,
+          "observed_rate": 0.14743589743589744
+        },
+        {
+          "bucket": "0.2-0.3",
+          "n": 225,
+          "predicted_mean": 0.2399904664500112,
+          "observed_rate": 0.20444444444444446
+        },
+        {
+          "bucket": "0.3-0.4",
+          "n": 107,
+          "predicted_mean": 0.3462832668451039,
+          "observed_rate": 0.34579439252336447
+        },
+        {
+          "bucket": "0.4-0.5",
+          "n": 54,
+          "predicted_mean": 0.45255115292904696,
+          "observed_rate": 0.35185185185185186
+        },
+        {
+          "bucket": "0.5-0.6",
+          "n": 25,
+          "predicted_mean": 0.5459324170497779,
+          "observed_rate": 0.44
+        },
+        {
+          "bucket": "0.6-0.7",
+          "n": 14,
+          "predicted_mean": 0.648865146638142,
+          "observed_rate": 0.6428571428571429
+        },
+        {
+          "bucket": "0.7-0.8",
+          "n": 7,
+          "predicted_mean": 0.737213419813873,
+          "observed_rate": 0.42857142857142855
+        },
+        {
+          "bucket": "0.8-0.9",
+          "n": 5,
+          "predicted_mean": 0.8402609227758479,
+          "observed_rate": 0.8
+        },
+        {
+          "bucket": "0.9-1.0",
+          "n": 6,
+          "predicted_mean": 0.9477339304848137,
+          "observed_rate": 0.5
+        }
+      ],
+      "mean_winner_rank": 4.304201680672269,
+      "median_winner_rank": 3,
+      "mean_reciprocal_rank": 0.43394042534057364,
+      "winner_pairwise_accuracy": 0.6427094059643907
+    }
+  },
+  "selected_vs_stored_g_bootstrap_95pct": {
+    "top1_accuracy": [
+      0.0,
+      0.043697478991596636
+    ],
+    "multiclass_log_loss": [
+      -0.03384011888128736,
+      0.050201809062060336
+    ],
+    "multiclass_brier": [
+      -0.015488643214352355,
+      0.011527387961922065
+    ],
+    "flat_stake_roi": [
+      -0.2646890756302521,
+      0.11751260504201681
+    ]
+  },
+  "readout": {
+    "status": "PARTIAL_RANKING_LIFT_NOT_PROMOTABLE",
+    "selected_variant": "pairwise_core_c0.1"
+  },
+  "safety": {
+    "fitted_model_persisted": false,
+    "live_state_written": false,
+    "canonical_shadow_state_written": false,
+    "supabase_writes": false,
+    "production_model_weights_changed": false,
+    "production_scoring_changed": false,
+    "promotion_authorized": false
+  }
+}

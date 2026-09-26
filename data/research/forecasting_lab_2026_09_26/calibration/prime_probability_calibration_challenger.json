@@ -1,0 +1,807 @@
+{
+  "generated_at": "2026-09-26T10:08:27.392604+01:00",
+  "classification": "ANALYSIS_ONLY",
+  "time_contract": "whole-day chronological train/calibration/test; final test untouched until lock",
+  "market_contract": "latest strictly pre-off snapshot prices only; late-clock, not morning",
+  "source_diagnostics": {
+    "selection": {
+      "snapshot_files_seen": 174,
+      "snapshot_rows_seen": 64902,
+      "rows_contaminated_run": 807,
+      "candidate_race_runs": 6417,
+      "race_runs_missing_exact_time": 170,
+      "race_runs_post_off": 837,
+      "race_runs_too_small": 3,
+      "races_selected": 3113,
+      "superseded_pre_off_runs": 2294
+    },
+    "skipped": {
+      "field_or_winner_not_evaluable": 121,
+      "result_not_found": 747
+    }
+  },
+  "blocks": {
+    "train": {
+      "races": 1027,
+      "dates": 32,
+      "start": "2026-05-21",
+      "end": "2026-06-30",
+      "complete_market_races": 219
+    },
+    "calibration": {
+      "races": 623,
+      "dates": 16,
+      "start": "2026-07-05",
+      "end": "2026-08-03",
+      "complete_market_races": 623
+    },
+    "test": {
+      "races": 595,
+      "dates": 16,
+      "start": "2026-08-04",
+      "end": "2026-09-24",
+      "complete_market_races": 595
+    }
+  },
+  "fitted_on_train_only": {
+    "base_beta": 0.43,
+    "g_beta": 0.43,
+    "base_alpha_to_late_market": 0.73,
+    "g_alpha_to_late_market": 0.73,
+    "train_objectives": {
+      "base_temperature_log_loss": 2.119177423437893,
+      "g_temperature_log_loss": 2.1184089902334127,
+      "base_market_blend_log_loss": 2.0692947940406974,
+      "g_market_blend_log_loss": 2.069046775422989
+    }
+  },
+  "selected_on_calibration_only": {
+    "model_track": "g_temperature",
+    "late_market_track": "late_market",
+    "model_metrics": {
+      "raw_base": {
+        "races": 623,
+        "top1_accuracy": 0.2552166934189406,
+        "top3_accuracy": 0.5601926163723917,
+        "multiclass_log_loss": 2.390767073204433,
+        "multiclass_brier": 0.8995148550170682,
+        "flat_stake_roi": -0.044012841091492776,
+        "flat_stake_profit": -27.419999999999998,
+        "ece": 0.05375557610356747,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3701,
+            "predicted_mean": 0.030859250793679883,
+            "observed_rate": 0.0713320724128614
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 784,
+            "predicted_mean": 0.14367815246454435,
+            "observed_rate": 0.13903061224489796
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 466,
+            "predicted_mean": 0.24625492822251507,
+            "observed_rate": 0.17381974248927037
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 283,
+            "predicted_mean": 0.3485687390237895,
+            "observed_rate": 0.21554770318021202
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 152,
+            "predicted_mean": 0.44757693160121,
+            "observed_rate": 0.28289473684210525
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 98,
+            "predicted_mean": 0.5393456281621363,
+            "observed_rate": 0.2857142857142857
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 56,
+            "predicted_mean": 0.6419873686440166,
+            "observed_rate": 0.42857142857142855
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 22,
+            "predicted_mean": 0.7438924478601063,
+            "observed_rate": 0.4090909090909091
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 7,
+            "predicted_mean": 0.8393286723578581,
+            "observed_rate": 0.42857142857142855
+          },
+          {
+            "bucket": "0.9-1.0",
+            "n": 4,
+            "predicted_mean": 0.916674804549498,
+            "observed_rate": 0.25
+          }
+        ]
+      },
+      "base_temperature": {
+        "races": 623,
+        "top1_accuracy": 0.2552166934189406,
+        "top3_accuracy": 0.5601926163723917,
+        "multiclass_log_loss": 2.0353199549409458,
+        "multiclass_brier": 0.8422814769912844,
+        "flat_stake_roi": -0.044012841091492776,
+        "flat_stake_profit": -27.419999999999998,
+        "ece": 0.015065693254083207,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3222,
+            "predicted_mean": 0.053319240435207006,
+            "observed_rate": 0.06548727498448169
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1492,
+            "predicted_mean": 0.14101006642096195,
+            "observed_rate": 0.13136729222520108
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 612,
+            "predicted_mean": 0.24430086092761422,
+            "observed_rate": 0.20751633986928106
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 185,
+            "predicted_mean": 0.3409838727582719,
+            "observed_rate": 0.32432432432432434
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 51,
+            "predicted_mean": 0.4357814326521599,
+            "observed_rate": 0.49019607843137253
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 11,
+            "predicted_mean": 0.5453992549497657,
+            "observed_rate": 0.36363636363636365
+          }
+        ]
+      },
+      "g_temperature": {
+        "races": 623,
+        "top1_accuracy": 0.26163723916532905,
+        "top3_accuracy": 0.5746388443017657,
+        "multiclass_log_loss": 2.0273432584634565,
+        "multiclass_brier": 0.8403792618558511,
+        "flat_stake_roi": -0.015730337078651683,
+        "flat_stake_profit": -9.799999999999999,
+        "ece": 0.014124706257678981,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3228,
+            "predicted_mean": 0.05284164441227722,
+            "observed_rate": 0.0647459727385378
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1473,
+            "predicted_mean": 0.1408747163863074,
+            "observed_rate": 0.13306177868295996
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 619,
+            "predicted_mean": 0.24445809769221388,
+            "observed_rate": 0.20193861066235863
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 188,
+            "predicted_mean": 0.3403106267096938,
+            "observed_rate": 0.3404255319148936
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 53,
+            "predicted_mean": 0.4356656609193249,
+            "observed_rate": 0.4528301886792453
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 12,
+            "predicted_mean": 0.5442061898759387,
+            "observed_rate": 0.4166666666666667
+          }
+        ]
+      }
+    },
+    "late_market_metrics": {
+      "late_market": {
+        "races": 623,
+        "top1_accuracy": 0.32102728731942215,
+        "top3_accuracy": 0.6500802568218299,
+        "multiclass_log_loss": 1.8353078140733017,
+        "multiclass_brier": 0.7930373755140158,
+        "flat_stake_roi": -0.09495987158908507,
+        "flat_stake_profit": -59.16,
+        "ece": 0.005682717049703056,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3418,
+            "predicted_mean": 0.048747145945471845,
+            "observed_rate": 0.051492100643651256
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1287,
+            "predicted_mean": 0.14072515036329866,
+            "observed_rate": 0.13908313908313907
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 471,
+            "predicted_mean": 0.24378544548223247,
+            "observed_rate": 0.23779193205944799
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 223,
+            "predicted_mean": 0.3443785655114601,
+            "observed_rate": 0.30493273542600896
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 116,
+            "predicted_mean": 0.4498554638094962,
+            "observed_rate": 0.49137931034482757
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 50,
+            "predicted_mean": 0.5272826059495624,
+            "observed_rate": 0.56
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 6,
+            "predicted_mean": 0.6090433815513595,
+            "observed_rate": 0.5
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 2,
+            "predicted_mean": 0.723998660468471,
+            "observed_rate": 0.0
+          }
+        ]
+      },
+      "base_late_market_blend": {
+        "races": 623,
+        "top1_accuracy": 0.32263242375601925,
+        "top3_accuracy": 0.6532905296950241,
+        "multiclass_log_loss": 1.843641635510153,
+        "multiclass_brier": 0.79392836854549,
+        "flat_stake_roi": -0.08012841091492777,
+        "flat_stake_profit": -49.92,
+        "ece": 0.004954690435800083,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3326,
+            "predicted_mean": 0.05243517447751347,
+            "observed_rate": 0.04960914010823812
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1418,
+            "predicted_mean": 0.13936745088754204,
+            "observed_rate": 0.14033850493653033
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 486,
+            "predicted_mean": 0.24191087050371793,
+            "observed_rate": 0.2448559670781893
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 212,
+            "predicted_mean": 0.34182632822897874,
+            "observed_rate": 0.330188679245283
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 108,
+            "predicted_mean": 0.4472162841586627,
+            "observed_rate": 0.5370370370370371
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 20,
+            "predicted_mean": 0.5351333994082981,
+            "observed_rate": 0.6
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 3,
+            "predicted_mean": 0.6465576675345437,
+            "observed_rate": 0.0
+          }
+        ]
+      },
+      "g_late_market_blend": {
+        "races": 623,
+        "top1_accuracy": 0.32263242375601925,
+        "top3_accuracy": 0.6532905296950241,
+        "multiclass_log_loss": 1.8431062007644452,
+        "multiclass_brier": 0.7938187397227625,
+        "flat_stake_roi": -0.08012841091492777,
+        "flat_stake_profit": -49.92,
+        "ece": 0.004896286087485689,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3318,
+            "predicted_mean": 0.05200875093461126,
+            "observed_rate": 0.04972875226039783
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1423,
+            "predicted_mean": 0.1393742273958807,
+            "observed_rate": 0.13914265635980325
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 487,
+            "predicted_mean": 0.2420232598432521,
+            "observed_rate": 0.2464065708418891
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 212,
+            "predicted_mean": 0.3415483378915443,
+            "observed_rate": 0.32075471698113206
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 109,
+            "predicted_mean": 0.446493825664352,
+            "observed_rate": 0.5504587155963303
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 22,
+            "predicted_mean": 0.5374247398246815,
+            "observed_rate": 0.5454545454545454
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 2,
+            "predicted_mean": 0.6703461821965415,
+            "observed_rate": 0.0
+          }
+        ]
+      }
+    }
+  },
+  "untouched_test": {
+    "model_track": {
+      "raw_base": {
+        "races": 595,
+        "top1_accuracy": 0.2319327731092437,
+        "top3_accuracy": 0.5176470588235295,
+        "multiclass_log_loss": 2.3884206241034214,
+        "multiclass_brier": 0.9028882159954681,
+        "flat_stake_roi": -0.20003361344537815,
+        "flat_stake_profit": -119.02,
+        "ece": 0.0462772655961968,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 4245,
+            "predicted_mean": 0.03142748342020121,
+            "observed_rate": 0.06454652532391049
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 854,
+            "predicted_mean": 0.142249869781494,
+            "observed_rate": 0.13934426229508196
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 462,
+            "predicted_mean": 0.2444243867408267,
+            "observed_rate": 0.14935064935064934
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 241,
+            "predicted_mean": 0.34495277282884673,
+            "observed_rate": 0.1825726141078838
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 140,
+            "predicted_mean": 0.44046415119564636,
+            "observed_rate": 0.2714285714285714
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 72,
+            "predicted_mean": 0.5418599035340086,
+            "observed_rate": 0.3888888888888889
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 38,
+            "predicted_mean": 0.6444589043231369,
+            "observed_rate": 0.34210526315789475
+          },
+          {
+            "bucket": "0.7-0.8",
+            "n": 16,
+            "predicted_mean": 0.752482462705223,
+            "observed_rate": 0.4375
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 8,
+            "predicted_mean": 0.855400896554259,
+            "observed_rate": 0.375
+          }
+        ]
+      },
+      "base_temperature": {
+        "races": 595,
+        "top1_accuracy": 0.2319327731092437,
+        "top3_accuracy": 0.5176470588235295,
+        "multiclass_log_loss": 2.128805062313693,
+        "multiclass_brier": 0.8536343230352111,
+        "flat_stake_roi": -0.20003361344537815,
+        "flat_stake_profit": -119.02,
+        "ece": 0.00878729604507963,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3844,
+            "predicted_mean": 0.05506571809368891,
+            "observed_rate": 0.060353798126951096
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1668,
+            "predicted_mean": 0.13900478723975424,
+            "observed_rate": 0.12949640287769784
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 428,
+            "predicted_mean": 0.23856737671302544,
+            "observed_rate": 0.21495327102803738
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 110,
+            "predicted_mean": 0.340322264535265,
+            "observed_rate": 0.36363636363636365
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 21,
+            "predicted_mean": 0.437910722096608,
+            "observed_rate": 0.6190476190476191
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 5,
+            "predicted_mean": 0.5457966071733897,
+            "observed_rate": 0.4
+          }
+        ]
+      },
+      "g_temperature": {
+        "races": 595,
+        "top1_accuracy": 0.2319327731092437,
+        "top3_accuracy": 0.5277310924369748,
+        "multiclass_log_loss": 2.1222591905353987,
+        "multiclass_brier": 0.852203445269582,
+        "flat_stake_roi": -0.20003361344537815,
+        "flat_stake_profit": -119.02,
+        "ece": 0.00838753625798653,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3840,
+            "predicted_mean": 0.054382665893358904,
+            "observed_rate": 0.059375
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1654,
+            "predicted_mean": 0.13882359461663105,
+            "observed_rate": 0.12877871825876663
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 439,
+            "predicted_mean": 0.23828265653517003,
+            "observed_rate": 0.21867881548974943
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 114,
+            "predicted_mean": 0.34004891522820974,
+            "observed_rate": 0.35964912280701755
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 23,
+            "predicted_mean": 0.4314631079009923,
+            "observed_rate": 0.6086956521739131
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 6,
+            "predicted_mean": 0.5435039061526187,
+            "observed_rate": 0.5
+          }
+        ]
+      }
+    },
+    "late_market_track": {
+      "late_market": {
+        "races": 595,
+        "top1_accuracy": 0.30084033613445377,
+        "top3_accuracy": 0.5915966386554622,
+        "multiclass_log_loss": 1.9830921844853415,
+        "multiclass_brier": 0.8143606037840824,
+        "flat_stake_roi": -0.126,
+        "flat_stake_profit": -74.97,
+        "ece": 0.006087274448629609,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3961,
+            "predicted_mean": 0.051427725786760886,
+            "observed_rate": 0.049987376925018936
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1505,
+            "predicted_mean": 0.1403955738448949,
+            "observed_rate": 0.132890365448505
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 389,
+            "predicted_mean": 0.24014262857420884,
+            "observed_rate": 0.2519280205655527
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 145,
+            "predicted_mean": 0.3415231353958421,
+            "observed_rate": 0.4
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 51,
+            "predicted_mean": 0.44624021060728036,
+            "observed_rate": 0.5490196078431373
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 18,
+            "predicted_mean": 0.5340096086456516,
+            "observed_rate": 0.5
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 6,
+            "predicted_mean": 0.6353787227212639,
+            "observed_rate": 0.6666666666666666
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 1,
+            "predicted_mean": 0.8804063413883331,
+            "observed_rate": 0.0
+          }
+        ]
+      },
+      "base_late_market_blend": {
+        "races": 595,
+        "top1_accuracy": 0.3025210084033613,
+        "top3_accuracy": 0.5915966386554622,
+        "multiclass_log_loss": 1.9886000727590192,
+        "multiclass_brier": 0.8166578892605256,
+        "flat_stake_roi": -0.12436974789915967,
+        "flat_stake_profit": -74.0,
+        "ece": 0.00844614502986734,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3958,
+            "predicted_mean": 0.05484198843424135,
+            "observed_rate": 0.05027791814047499
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1565,
+            "predicted_mean": 0.13979086114021264,
+            "observed_rate": 0.13546325878594248
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 368,
+            "predicted_mean": 0.24064479809518444,
+            "observed_rate": 0.26358695652173914
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 126,
+            "predicted_mean": 0.3384797345209445,
+            "observed_rate": 0.42063492063492064
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 44,
+            "predicted_mean": 0.4403145448046974,
+            "observed_rate": 0.5681818181818182
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 11,
+            "predicted_mean": 0.5372240162249576,
+            "observed_rate": 0.6363636363636364
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 3,
+            "predicted_mean": 0.6171916669049743,
+            "observed_rate": 0.6666666666666666
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 1,
+            "predicted_mean": 0.8221006935769273,
+            "observed_rate": 0.0
+          }
+        ]
+      },
+      "g_late_market_blend": {
+        "races": 595,
+        "top1_accuracy": 0.3025210084033613,
+        "top3_accuracy": 0.5915966386554622,
+        "multiclass_log_loss": 1.9882576233848783,
+        "multiclass_brier": 0.8165465591251264,
+        "flat_stake_roi": -0.12436974789915967,
+        "flat_stake_profit": -74.0,
+        "ece": 0.007972387202842436,
+        "calibration_curve": [
+          {
+            "bucket": "0.0-0.1",
+            "n": 3947,
+            "predicted_mean": 0.05439830720972335,
+            "observed_rate": 0.05016468203699012
+          },
+          {
+            "bucket": "0.1-0.2",
+            "n": 1571,
+            "predicted_mean": 0.13983784016964357,
+            "observed_rate": 0.13558243157224698
+          },
+          {
+            "bucket": "0.2-0.3",
+            "n": 373,
+            "predicted_mean": 0.24082218926273133,
+            "observed_rate": 0.26005361930294907
+          },
+          {
+            "bucket": "0.3-0.4",
+            "n": 126,
+            "predicted_mean": 0.33929288918273015,
+            "observed_rate": 0.42063492063492064
+          },
+          {
+            "bucket": "0.4-0.5",
+            "n": 44,
+            "predicted_mean": 0.44151379428292914,
+            "observed_rate": 0.5681818181818182
+          },
+          {
+            "bucket": "0.5-0.6",
+            "n": 11,
+            "predicted_mean": 0.5383664649938047,
+            "observed_rate": 0.6363636363636364
+          },
+          {
+            "bucket": "0.6-0.7",
+            "n": 3,
+            "predicted_mean": 0.6178896607870553,
+            "observed_rate": 0.6666666666666666
+          },
+          {
+            "bucket": "0.8-0.9",
+            "n": 1,
+            "predicted_mean": 0.8247468589472234,
+            "observed_rate": 0.0
+          }
+        ]
+      }
+    },
+    "uniform": {
+      "races": 595,
+      "multiclass_log_loss": 2.254527197744363,
+      "multiclass_brier": 0.8869667423570049
+    }
+  },
+  "readout": {
+    "model_track": "CALIBRATION_CHALLENGER_BEATS_RAW_BASE_ON_HOLDOUT",
+    "late_market_track": "LATE_MARKET_REMAINS_CHAMPION",
+    "selected_model": "g_temperature",
+    "selected_late_market": "late_market"
+  },
+  "paired_bootstrap_95pct": {
+    "selected_model_minus_raw_base": {
+      "top1_accuracy": [
+        0.0,
+        0.0
+      ],
+      "multiclass_log_loss": [
+        -0.3304534248441588,
+        -0.20527225147684938
+      ],
+      "multiclass_brier": [
+        -0.06557103329325359,
+        -0.03551587647680376
+      ],
+      "flat_stake_roi": [
+        0.0,
+        0.0
+      ]
+    },
+    "selected_market_minus_late_market": {
+      "top1_accuracy": [
+        0.0,
+        0.0
+      ],
+      "multiclass_log_loss": [
+        0.0,
+        0.0
+      ],
+      "multiclass_brier": [
+        0.0,
+        0.0
+      ],
+      "flat_stake_roi": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "safety": {
+    "live_state_written": false,
+    "canonical_shadow_state_written": false,
+    "supabase_writes": false,
+    "model_weights_changed": false,
+    "production_scoring_changed": false,
+    "promotion_authorized": false
+  }
+}

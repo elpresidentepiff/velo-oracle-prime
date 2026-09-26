@@ -530,6 +530,11 @@ def main() -> int:
     # Must run before the canonical scorecard build below, which reads its packet.
     run("Step 9.1c: MDS-Heavy Blend Shadow",
         [PY, "scripts/ops/run_mds_heavy_shadow_today.py", "--date", date], critical=False, results=results)
+    # Forward-only research package selected by the 2026-09-26 chronological
+    # lab: calibrated Prime/G, SQPE+MDS, and frozen market-blind core ranker.
+    # Measurement only and non-critical; it cannot alter the live verdict.
+    run("Step 9.1d: Forecasting Shadow Package",
+        [PY, "scripts/ops/run_forecasting_shadow_package.py", "--date", date], critical=False, results=results)
     run("Step 9.2: Tri-Lane Stress Test",
         [PY, "scripts/ops/run_tri_lane_stress_test.py", "--date", date, "--ruleset", "v2"], critical=False, results=results)
     tri_lane_json = ROOT / "data" / "reports" / f"tri_lane_stress_test_{date.replace('-', '_')}_v2.json"
