@@ -535,6 +535,11 @@ def main() -> int:
     # Measurement only and non-critical; it cannot alter the live verdict.
     run("Step 9.1d: Forecasting Shadow Package",
         [PY, "scripts/ops/run_forecasting_shadow_package.py", "--date", date], critical=False, results=results)
+    # Selective value challenger: reads the latest strictly pre-off runner
+    # snapshot, may abstain, and emits only a PAPER/SIM shadow packet. It must
+    # run before the canonical scorecard so forward selections settle at EOD.
+    run("Step 9.1e: Captain Velo Value Shadow",
+        [PY, "scripts/ops/run_captain_velo_shadow.py", "--date", date], critical=False, results=results)
     run("Step 9.2: Tri-Lane Stress Test",
         [PY, "scripts/ops/run_tri_lane_stress_test.py", "--date", date, "--ruleset", "v2"], critical=False, results=results)
     tri_lane_json = ROOT / "data" / "reports" / f"tri_lane_stress_test_{date.replace('-', '_')}_v2.json"
