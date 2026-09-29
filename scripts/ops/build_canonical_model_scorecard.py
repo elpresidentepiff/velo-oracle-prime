@@ -16,20 +16,30 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import re
 import sys
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, time, timezone
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.velo.verdict_loader import load_verdicts  # noqa: E402
+from src.velo.learning.result_source_selector import (  # noqa: E402
+    OUTCOME_FINISHED,
+    OUTCOME_NON_RUNNER,
+    OUTCOME_TERMINAL,
+    OUTCOME_UNKNOWN,
+    runner_outcome_status,
+    select_result_source,
+)
 
 
 def _date_tag(date: str) -> str:
@@ -89,22 +99,72 @@ def _load_results(date: str) -> dict[str, dict]:
     return {str(r.get("race_id") or ""): r for r in payload.get("results") or [] if r.get("race_id")}
 
 
+def _result_source_hash(date: str) -> str | None:
+    path = ROOT / "data" / "results" / f"rp_results_{_date_tag(date)}.json"
+    if not path.exists():
+        return None
+    raw = path.read_bytes()
+    return hashlib.sha256(raw).hexdigest()
+
+
 def _runner_lookup(result_race: dict, horse_name: str) -> dict:
-    """Find a runner's horse_id/sp_dec/position/win/frame from a results race dict, by name."""
+    """Resolve result truth using the shared runner-outcome vocabulary."""
     if not result_race:
         return {}
     key = _norm(horse_name)
     for runner in result_race.get("runners") or []:
         if _norm(runner.get("horse")) == key:
-            pos = str(runner.get("position") or runner.get("pos") or "").upper()
+            pos = str(runner.get("position") or runner.get("position_text") or runner.get("pos") or "").upper()
+            outcome_status = runner_outcome_status(pos)
+            if outcome_status == OUTCOME_UNKNOWN and key in {
+                _norm(name) for name in result_race.get("non_runners") or []
+            }:
+                outcome_status = OUTCOME_NON_RUNNER
             return {
                 "horse_id": runner.get("horse_id"),
-                "sp_dec": runner.get("sp_dec"),
+                "sp_dec": None if outcome_status == OUTCOME_NON_RUNNER else runner.get("sp_dec"),
                 "position": pos,
-                "win": pos == "1",
-                "frame": pos in {"1", "2", "3"},
+                "outcome_code": pos or None,
+                "outcome_status": outcome_status,
+                "subject_is_non_runner": outcome_status == OUTCOME_NON_RUNNER,
+                "settlement_status": "VOID" if outcome_status == OUTCOME_NON_RUNNER else (
+                    "SETTLED" if outcome_status in {OUTCOME_FINISHED, OUTCOME_TERMINAL} else "UNSETTLED"
+                ),
+                "stake_void": outcome_status == OUTCOME_NON_RUNNER,
+                "win": pos == "1" if outcome_status in {OUTCOME_FINISHED, OUTCOME_TERMINAL} else None,
+                "frame": pos in {"1", "2", "3"} if outcome_status == OUTCOME_FINISHED else (
+                    False if outcome_status == OUTCOME_TERMINAL else None
+                ),
             }
+    if key in {_norm(name) for name in result_race.get("non_runners") or []}:
+        return {
+            "position": "NR", "outcome_code": "NR", "outcome_status": OUTCOME_NON_RUNNER,
+            "subject_is_non_runner": True, "settlement_status": "VOID",
+            "stake_void": True, "win": None, "frame": None,
+        }
     return {}
+
+
+def _captured_before_off(date: str, off_time: Any, captured_at: Any) -> bool:
+    """Fail closed unless both timestamps parse and capture strictly precedes off."""
+    if not off_time or not captured_at:
+        return False
+    try:
+        captured = datetime.fromisoformat(str(captured_at).replace("Z", "+00:00"))
+        if captured.tzinfo is None:
+            return False
+        raw = str(off_time).strip().replace(".", ":")
+        hour, minute = (int(part) for part in raw.split(":", 1))
+        # RP race cards use unqualified clock times; 8:00/8:30/9:00 are
+        # evening races in this domain, not morning starts.
+        if hour < 10:
+            hour += 12
+        off = datetime.combine(
+            datetime.fromisoformat(date).date(), time(hour, minute), ZoneInfo("Europe/London")
+        )
+        return captured.astimezone(timezone.utc) < off.astimezone(timezone.utc)
+    except (TypeError, ValueError, OverflowError):
+        return False
 
 
 def _tie_status(values: list[float]) -> str:
@@ -120,6 +180,7 @@ def _tie_status(values: list[float]) -> str:
 def build_scorecard(date: str) -> tuple[list[dict], dict]:
     tag = _date_tag(date)
     results = _load_results(date)
+    result_source_hash = _result_source_hash(date)
 
     rows: list[dict] = []
     audit: dict[str, Any] = {
@@ -137,12 +198,45 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
             "model_name": None, "lane_name": None, "source_path": None,
             "source_field": None, "sort_direction": None, "rank": None,
             "horse": None, "horse_id": None, "score": None, "sp_dec": None,
+            "captured_odds_dec": None, "odds_capture_ts": None,
+            "price_source": None, "settled_sp_dec": None, "bsp_dec": None,
+            "odds_timestamp_before_off": None,
             "result_position": None, "win": None, "frame": None,
+            "subject_outcome_code": None,
+            "subject_outcome_status": OUTCOME_UNKNOWN,
+            "subject_is_non_runner": False, "settlement_status": "UNSETTLED",
+            "stake_void": False, "result_source_hash": result_source_hash,
+            "result_source_complete": False,
+            "official_evaluation_eligible": False,
+            "dashboard_metrics_eligible": False,
+            "evaluation_ineligible_reason": None,
+            "truth_contract_version": "CANONICAL_TRUTH_V2",
             "policy_decision": None, "stake_authorised": None,
             "dashboard_visible": None, "learning_class": None,
             "tie_status": "N/A", "notes": "",
         }
         base.update(kw)
+        inferred_status = runner_outcome_status(base.get("result_position"))
+        base["subject_outcome_code"] = base.get("subject_outcome_code") or base.get("result_position") or None
+        if base.get("subject_outcome_status") == OUTCOME_UNKNOWN and inferred_status != OUTCOME_UNKNOWN:
+            base["subject_outcome_status"] = inferred_status
+            base["subject_is_non_runner"] = inferred_status == OUTCOME_NON_RUNNER
+            base["settlement_status"] = "VOID" if inferred_status == OUTCOME_NON_RUNNER else "SETTLED"
+            base["stake_void"] = inferred_status == OUTCOME_NON_RUNNER
+        # sp_dec remains a backwards-compatible alias for settled SP only.
+        base["settled_sp_dec"] = base.get("settled_sp_dec") or base.get("sp_dec")
+        base["sp_dec"] = base.get("settled_sp_dec")
+        if base.get("tie_status") not in {None, "N/A", "CLEAN"}:
+            base["learning_class"] = "TIE_UNRESOLVED"
+            base["official_evaluation_eligible"] = False
+            base["dashboard_metrics_eligible"] = False
+            base["evaluation_ineligible_reason"] = "UNRESOLVED_TOP_RANK_TIE"
+        elif base.get("subject_outcome_status") == OUTCOME_NON_RUNNER:
+            base["learning_class"] = "NON_RUNNER_VOID"
+        elif base.get("subject_outcome_status") == OUTCOME_UNKNOWN:
+            base["learning_class"] = "UNSETTLED_UNKNOWN"
+        elif base.get("subject_outcome_status") == OUTCOME_TERMINAL:
+            base["learning_class"] = "TERMINAL_LOSS"
         rows.append(base)
 
     # ── Main VELO Prime + No-RPR shadow (Supabase, read-only) ──────────────
@@ -326,7 +420,7 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                     sort_direction="descending", rank=1,
                     horse=pick.get("horse"), horse_id=outcome.get("horse_id") or pick.get("horse_id"),
                     score=pick.get("velo_prime_prob") if pick.get("role") == "WIN" else pick.get("place_prob") if pick.get("role") == "PLACE" else pick.get("longshot_role_score"),
-                    sp_dec=outcome.get("sp_dec") or pick.get("sp_dec"),
+                    sp_dec=outcome.get("sp_dec"),
                     result_position=outcome.get("position"), win=outcome.get("win"), frame=outcome.get("frame"),
                     policy_decision="N/A (Old VELO has no policy layer)",
                     stake_authorised=False, dashboard_visible=False,
@@ -446,7 +540,7 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                     source_field="midprice_prob", sort_direction="descending",
                     rank=idx, horse=horse,
                     horse_id=outcome.get("horse_id") or _mp_ids.get(horse.strip().lower()),
-                    score=prob, sp_dec=outcome.get("sp_dec") or mp_runner.get("odds_decimal"),
+                    score=prob, sp_dec=outcome.get("sp_dec"),
                     result_position=outcome.get("position"), win=outcome.get("win"),
                     frame=outcome.get("frame"),
                     policy_decision=mp_packet.get("trust_policy") or "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
@@ -491,7 +585,7 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                     source_field="mds_heavy_blend", sort_direction="descending",
                     rank=r.get("rank"), horse=r.get("horse"),
                     horse_id=outcome.get("horse_id") or r.get("horse_id"),
-                    score=r.get("score"), sp_dec=outcome.get("sp_dec") or r.get("odds_decimal"),
+                    score=r.get("score"), sp_dec=outcome.get("sp_dec"),
                     result_position=outcome.get("position"), win=outcome.get("win"), frame=outcome.get("frame"),
                     policy_decision=mds_packet.get("trust_policy") or "ARCHIVE_CONTEXT_ONLY_NOT_SCORING",
                     stake_authorised=False, dashboard_visible=True,
@@ -571,9 +665,21 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                 rank=1, horse=selection.get("horse"),
                 horse_id=outcome.get("horse_id") or selection.get("horse_id"),
                 score=selection.get("quoted_expected_edge"),
-                sp_dec=outcome.get("sp_dec") or selection.get("decimal_odds"),
+                sp_dec=outcome.get("sp_dec"),
+                settled_sp_dec=outcome.get("sp_dec"),
+                captured_odds_dec=selection.get("decimal_odds"),
+                odds_capture_ts=captain_packet.get("generated_at"),
+                price_source="CAPTAIN_FORWARD_PACKET_DECIMAL_ODDS",
+                odds_timestamp_before_off=_captured_before_off(
+                    date, captain_race.get("off_time"), captain_packet.get("generated_at")
+                ),
                 result_position=outcome.get("position"), win=outcome.get("win"),
                 frame=outcome.get("frame"),
+                subject_outcome_code=outcome.get("outcome_code"),
+                subject_outcome_status=outcome.get("outcome_status", OUTCOME_UNKNOWN),
+                subject_is_non_runner=outcome.get("subject_is_non_runner", False),
+                settlement_status=outcome.get("settlement_status", "UNSETTLED"),
+                stake_void=outcome.get("stake_void", False),
                 policy_decision="SHADOW_SELECTION", stake_authorised=False,
                 dashboard_visible=False,
                 learning_class=("MODEL_HIT_POLICY_BLOCKED" if outcome.get("win") else "MODEL_MISS"),
@@ -587,6 +693,47 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
                 ),
             )
 
+    expected_race_ids = {str(row["race_id"]) for row in rows if row.get("race_id")}
+    expected_runners_by_race: dict[str, set[str]] = {}
+    for row in rows:
+        if row.get("race_id") and row.get("horse_id"):
+            expected_runners_by_race.setdefault(str(row["race_id"]), set()).add(str(row["horse_id"]))
+    source_selection = select_result_source(
+        date,
+        results_dir=ROOT / "data" / "results",
+        expected_race_ids=expected_race_ids,
+        expected_runners_by_race=expected_runners_by_race,
+    )
+    result_source_complete = bool(
+        source_selection.completeness.get("full_universe_complete")
+        and rows
+        and all(row.get("subject_outcome_status") != OUTCOME_UNKNOWN for row in rows)
+    )
+    for row in rows:
+        row["result_source_hash"] = source_selection.source_hash or result_source_hash
+        row["result_source_complete"] = result_source_complete
+        tie_clean = row.get("tie_status") in {None, "N/A", "CLEAN"}
+        has_captured_price = row.get("captured_odds_dec") is not None
+        timing_safe = (not has_captured_price) or row.get("odds_timestamp_before_off") is True
+        settled = row.get("settlement_status") == "SETTLED"
+        void = row.get("settlement_status") == "VOID"
+        governed_truth = result_source_complete and tie_clean and timing_safe
+        row["official_evaluation_eligible"] = bool(governed_truth and settled)
+        row["dashboard_metrics_eligible"] = bool(governed_truth and (settled or void))
+        if not result_source_complete:
+            row["evaluation_ineligible_reason"] = "RESULT_SOURCE_INCOMPLETE"
+        elif not tie_clean:
+            row["evaluation_ineligible_reason"] = "UNRESOLVED_TOP_RANK_TIE"
+        elif not timing_safe:
+            row["evaluation_ineligible_reason"] = "CAPTURE_TIMESTAMP_NOT_STRICTLY_PRE_OFF"
+        elif void:
+            row["evaluation_ineligible_reason"] = "NON_RUNNER_VOID_ACCOUNTING_ONLY"
+        elif not settled:
+            row["evaluation_ineligible_reason"] = "UNSETTLED_UNKNOWN"
+        else:
+            row["evaluation_ineligible_reason"] = None
+    audit["result_source_classification"] = source_selection.classification
+    audit["result_source_complete"] = result_source_complete
     audit["row_count"] = len(rows)
     return rows, audit
 
@@ -594,7 +741,13 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
 CSV_COLUMNS = [
     "date", "race_id", "course", "off_time", "model_name", "lane_name",
     "source_path", "source_field", "sort_direction", "rank", "horse",
-    "horse_id", "score", "sp_dec", "result_position", "win", "frame",
+    "horse_id", "score", "sp_dec", "captured_odds_dec", "odds_capture_ts",
+    "price_source", "settled_sp_dec", "bsp_dec", "odds_timestamp_before_off",
+    "result_position", "win", "frame", "subject_outcome_code", "subject_outcome_status",
+    "subject_is_non_runner", "settlement_status", "stake_void",
+    "result_source_hash", "result_source_complete",
+    "official_evaluation_eligible", "dashboard_metrics_eligible",
+    "evaluation_ineligible_reason", "truth_contract_version",
     "policy_decision", "stake_authorised", "dashboard_visible",
     "learning_class", "tie_status", "notes",
 ]

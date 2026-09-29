@@ -3415,9 +3415,33 @@ async function loadCard() {
   loadRpdcGateCard(dateParam);
 }
 
-// Canonical model performance -- added 2026-07-16. Reads public.canonical_model_scorecards
-// (the same source Multi-Model Sigma joins through) and computes today's rank=1 win/frame
-// per model. This is a per-day snapshot, not a rolling leaderboard.
+function summarizeCanonicalPerformanceRows(rows) {
+  const explicitTrue = value => value === true || value === 'True' || value === 'true';
+  const byModel = {};
+  (rows || []).forEach(r => {
+    if (parseInt(r.rank) !== 1) return;
+    // Fail closed: old rows and incomplete/unknown/tied rows are excluded until
+    // a governed rebuild explicitly marks them dashboard-safe. VOID rows may be
+    // included for selection accounting, but never enter the settled denominator.
+    if (!explicitTrue(r.dashboard_metrics_eligible)) return;
+    const m = r.model_name || 'UNKNOWN';
+    if (!byModel[m]) byModel[m] = { selections: 0, settled: 0, voids: 0, wins: 0, frames: 0 };
+    const s = byModel[m];
+    s.selections += 1;
+    if (r.settlement_status === 'VOID') {
+      s.voids += 1;
+      return;
+    }
+    if (r.settlement_status !== 'SETTLED') return;
+    s.settled += 1;
+    if (explicitTrue(r.win)) s.wins += 1;
+    if (explicitTrue(r.frame)) s.frames += 1;
+  });
+  return byModel;
+}
+
+// Canonical model performance -- reads only governed, dashboard-eligible
+// rank-one rows. Selection, settled and void denominators remain distinct.
 async function loadCanonicalPerformance(dateParam) {
   const tableEl = document.getElementById('cmp-table');
   if (!tableEl) return;
@@ -3426,28 +3450,19 @@ async function loadCanonicalPerformance(dateParam) {
     if (!res.ok) throw new Error(`canonical-scorecard ${res.status}`);
     const data = await res.json();
     const rows = data.rows || [];
-    const byModel = {};
-    rows.forEach(r => {
-      const rank = parseInt(r.rank);
-      if (rank !== 1) return; // top pick only
-      const m = r.model_name || 'UNKNOWN';
-      if (!byModel[m]) byModel[m] = { n: 0, wins: 0, frames: 0 };
-      byModel[m].n += 1;
-      if (r.win === true || r.win === 'True' || r.win === 'true') byModel[m].wins += 1;
-      if (r.frame === true || r.frame === 'True' || r.frame === 'true') byModel[m].frames += 1;
-    });
+    const byModel = summarizeCanonicalPerformanceRows(rows);
     const names = Object.keys(byModel).sort();
     if (!names.length) {
       tableEl.innerHTML = '<div style="color:var(--fg-muted)">No canonical rows for this date.</div>';
       return;
     }
     let html = '<table style="width:100%;border-collapse:collapse;">';
-    html += '<tr style="color:var(--fg-muted);text-align:left;"><th style="padding:2px 8px 2px 0;">MODEL</th><th style="padding:2px 8px;">N</th><th style="padding:2px 8px;">WINS</th><th style="padding:2px 8px;">SR</th><th style="padding:2px 8px;">FRAME</th></tr>';
+    html += '<tr style="color:var(--fg-muted);text-align:left;"><th style="padding:2px 8px 2px 0;">MODEL</th><th style="padding:2px 8px;">SELECTED</th><th style="padding:2px 8px;">SETTLED</th><th style="padding:2px 8px;">VOID</th><th style="padding:2px 8px;">WINS</th><th style="padding:2px 8px;">SR</th><th style="padding:2px 8px;">FRAME</th></tr>';
     names.forEach(m => {
       const s = byModel[m];
-      const sr = s.n ? (s.wins / s.n * 100).toFixed(1) : '—';
-      const fr = s.n ? (s.frames / s.n * 100).toFixed(1) : '—';
-      html += `<tr><td style="padding:2px 8px 2px 0;color:var(--fg-primary);">${esc(m)}</td><td style="padding:2px 8px;">${s.n}</td><td style="padding:2px 8px;">${s.wins}</td><td style="padding:2px 8px;color:var(--gold);">${sr}%</td><td style="padding:2px 8px;color:#5599ff;">${fr}%</td></tr>`;
+      const sr = s.settled ? (s.wins / s.settled * 100).toFixed(1) : '—';
+      const fr = s.settled ? (s.frames / s.settled * 100).toFixed(1) : '—';
+      html += `<tr><td style="padding:2px 8px 2px 0;color:var(--fg-primary);">${esc(m)}</td><td style="padding:2px 8px;">${s.selections}</td><td style="padding:2px 8px;">${s.settled}</td><td style="padding:2px 8px;">${s.voids}</td><td style="padding:2px 8px;">${s.wins}</td><td style="padding:2px 8px;color:var(--gold);">${sr}%</td><td style="padding:2px 8px;color:#5599ff;">${fr}%</td></tr>`;
     });
     html += '</table>';
     tableEl.innerHTML = html;
