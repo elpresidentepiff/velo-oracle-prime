@@ -66,6 +66,12 @@ PRED_DIR = NEW_BUILD_ROOT / "paper_predictions"
 
 app = FastAPI(title="New Build Dashboard", docs_url=None, redoc_url=None)
 
+# A strict canonical dashboard read may paginate, but it must never consume an
+# unbounded history or silently truncate.  The ceiling is deliberately static
+# and comfortably above the present governed corpus; crossing it is a 503 until
+# an operator-approved bounded query/index strategy is implemented.
+STRICT_CANONICAL_MAX_ROWS = 100_000
+
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -86,7 +92,7 @@ def _read_jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def _sb_get(path: str) -> list[dict]:
+def _sb_get(path: str, *, strict: bool = False) -> list[dict]:
     """Read-only Supabase REST fetch. No write path exists in this file.
 
     Paginates via PostgREST Range headers -- the default max-rows (1000)
@@ -103,6 +109,8 @@ def _sb_get(path: str) -> list[dict]:
     url = os.environ.get("SUPABASE_URL")
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
     if not url or not key:
+        if strict:
+            raise RuntimeError("Supabase credentials unavailable for canonical dashboard read")
         return []
     page_size = 1000
     all_rows: list[dict] = []
@@ -120,10 +128,24 @@ def _sb_get(path: str) -> list[dict]:
         try:
             with urllib.request.urlopen(req, timeout=30) as r:
                 page = json.loads(r.read().decode())
-        except Exception:
+        except Exception as exc:
+            if strict:
+                raise RuntimeError(
+                    f"Supabase canonical pagination failed at offset {offset}"
+                ) from exc
+            break
+        if not isinstance(page, list):
+            if strict:
+                raise RuntimeError(
+                    f"Supabase canonical pagination returned a non-list payload at offset {offset}"
+                )
             break
         if not page:
             break
+        if strict and len(all_rows) + len(page) > STRICT_CANONICAL_MAX_ROWS:
+            raise RuntimeError(
+                f"Supabase canonical pagination exceeded safety ceiling of {STRICT_CANONICAL_MAX_ROWS} rows"
+            )
         all_rows.extend(page)
         if len(page) < page_size:
             break
@@ -139,6 +161,44 @@ def fetch_canonical_scorecard(date: str) -> list[dict]:
 def fetch_canonical_learning_events(date: str) -> list[dict]:
     """Read-only fetch from public.canonical_learning_events for one run_date."""
     return _sb_get(f"/canonical_learning_events?select=*&run_date=eq.{date}&order=race_id,model_name")
+
+
+def fetch_canonical_scorecard_window(through_date: str) -> list[dict]:
+    """Read the canonical chronological evaluation window through a race day."""
+    columns = (
+        "run_date,race_id,course,off_time,model_name,lane_name,source_path,rank,"
+        "horse,horse_id,captured_odds_dec,odds_capture_ts,price_source,settled_sp_dec,"
+        "odds_timestamp_before_off,win,frame,subject_outcome_code,settlement_status,"
+        "dashboard_metrics_eligible,evaluation_ineligible_reason,truth_contract_version"
+    )
+    return _sb_get(
+        f"/canonical_model_scorecards?select={columns}&run_date=lte.{through_date}"
+        "&rank=eq.1&truth_contract_version=eq.CANONICAL_TRUTH_V2"
+        "&order=run_date,race_id,model_name",
+        strict=True,
+    )
+
+
+def fetch_final_mission_control(date: str) -> dict:
+    """Read the persisted final Mission Control object for one race day."""
+    rows = _sb_get(
+        "/velo_mission_control?select=run_date,generated_at,learning_gate_status,"
+        f"promotion_gate_status,council_verdict,payload,source_sha256&run_date=eq.{date}&limit=1",
+        strict=True,
+    )
+    return rows[0] if rows else {}
+
+
+def _validated_dashboard_date(value: str | None) -> str:
+    """Return a strict ISO race date or reject the request."""
+    target = value or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    try:
+        parsed = datetime.strptime(target, "%Y-%m-%d")
+    except ValueError as exc:
+        raise ValueError("date must be an ISO YYYY-MM-DD race date") from exc
+    if parsed.strftime("%Y-%m-%d") != target:
+        raise ValueError("date must be an ISO YYYY-MM-DD race date")
+    return target
 
 
 def _fmt_time(val: str | None) -> str | None:
@@ -1137,6 +1197,29 @@ async def canonical_learning_events(date: str = Query(default=None)):
         "rows": rows,
         "no_supabase_write": True,
     })
+
+
+@app.get("/api/canonical-performance")
+async def canonical_performance(date: str = Query(default=None)):
+    """Canonical, read-only performance and final Mission Control view."""
+    from app.core.canonical_dashboard_metrics import build_canonical_dashboard_payload
+
+    try:
+        target = _validated_dashboard_date(date)
+        payload = build_canonical_dashboard_payload(
+            fetch_canonical_scorecard_window(target),
+            target,
+            fetch_final_mission_control(target),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=f"Canonical performance unavailable: {exc}") from exc
+    payload["source_tables"] = [
+        "public.canonical_model_scorecards",
+        "public.velo_mission_control",
+    ]
+    return JSONResponse(payload)
 
 
 @app.get("/api/canonical-race-truth")

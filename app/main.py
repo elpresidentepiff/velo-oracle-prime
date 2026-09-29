@@ -1544,6 +1544,36 @@ async def canonical_learning_events_proxy(date: str = Query(default=None)):
     )
 
 
+@app.get("/api/canonical-performance")
+async def canonical_performance_proxy(date: str = Query(default=None)):
+    """Read-only canonical evaluation window plus final Mission Control state."""
+    import datetime as _dt
+
+    from app.core.canonical_dashboard_metrics import build_canonical_dashboard_payload
+    from scripts.ops.new_build_dashboard_server import (
+        _validated_dashboard_date,
+        fetch_canonical_scorecard_window,
+        fetch_final_mission_control,
+    )
+
+    try:
+        target = _validated_dashboard_date(date or _dt.date.today().isoformat())
+        payload = build_canonical_dashboard_payload(
+            fetch_canonical_scorecard_window(target),
+            target,
+            fetch_final_mission_control(target),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=f"Canonical performance unavailable: {exc}") from exc
+    payload["source_tables"] = [
+        "public.canonical_model_scorecards",
+        "public.velo_mission_control",
+    ]
+    return JSONResponse(payload)
+
+
 @app.get("/api/canonical-race-truth")
 async def canonical_race_truth_proxy(date: str = Query(default=None), race_id: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""

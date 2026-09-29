@@ -2964,11 +2964,14 @@ table.mdl-table tr:hover { background: var(--bg-hover); }
 <div id="cmp-wrap" style="margin:8px 12px;border:1px solid var(--border);border-radius:6px;background:#111;">
   <div id="cmp-header" style="padding:8px 14px;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:0.05em;color:var(--fg-secondary);display:flex;justify-content:space-between;align-items:center;"
        onclick="document.getElementById('cmp-body').classList.toggle('open')">
-    <span>CANONICAL MODEL PERFORMANCE — TODAY'S TOP PICKS ONLY</span>
+    <span>CANONICAL MODEL PERFORMANCE — GOVERNED TRUTH</span>
     <span class="sib-toggle">[ EXPAND ]</span>
   </div>
   <div id="cmp-body" style="padding:6px 14px 12px;">
-    <div id="cmp-table" style="font-family:var(--font-mono);font-size:11px;color:var(--fg-secondary);"></div>
+    <div id="cmp-window" style="font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);margin-bottom:8px;"></div>
+    <div id="cmp-table" style="font-family:var(--font-mono);font-size:11px;color:var(--fg-secondary);overflow-x:auto;"></div>
+    <div id="captain-panel" style="font-family:var(--font-mono);font-size:11px;color:var(--fg-secondary);margin-top:12px;"></div>
+    <div id="mission-control-panel" style="font-family:var(--font-mono);font-size:11px;color:var(--fg-secondary);margin-top:12px;"></div>
   </div>
 </div>
 <style>#cmp-body { display: none; } #cmp-body.open { display: block; }</style>
@@ -3440,34 +3443,95 @@ function summarizeCanonicalPerformanceRows(rows) {
   return byModel;
 }
 
-// Canonical model performance -- reads only governed, dashboard-eligible
-// rank-one rows. Selection, settled and void denominators remain distinct.
+// Canonical model performance renderers consume the governed aggregate API.
+function canonicalMetricText(metric, key, suffix='') {
+  if (!metric || metric.status !== 'AVAILABLE' || metric[key] === null || metric[key] === undefined) return 'UNAVAILABLE';
+  return `${Number(metric[key]).toFixed(2)}${suffix}`;
+}
+
+function renderCanonicalModelPerformance(data) {
+  const tableEl = document.getElementById('cmp-table');
+  const windowEl = document.getElementById('cmp-window');
+  const models = data.models || [];
+  const families = data.correlated_families || [];
+  const w = data.window || {};
+  if (windowEl) windowEl.textContent = `${w.mode || 'UNKNOWN'} · ${w.start_date || '—'} → ${w.end_date || '—'} · ${w.days || 0} race days · whole-window forward proof: ${w.forward_evidence_status || 'UNAVAILABLE_NOT_PROVEN'}`;
+  if (!models.length) {
+    tableEl.innerHTML = '<div style="color:var(--fg-muted)">Canonical performance unavailable or insufficient evidence.</div>';
+    return;
+  }
+  let html = '<div style="color:var(--fg-muted);margin-bottom:6px">FAMILY GROUPS ARE NON-INDEPENDENT. Expand a family to inspect member lanes; member hits are not votes.</div>';
+  const byName = Object.fromEntries(models.map(m => [m.model_name, m]));
+  families.forEach(family => {
+    const familySr = family.strike_rate_pct === null ? '—' : `${family.strike_rate_pct.toFixed(1)}%`;
+    html += `<details style="border-top:1px solid var(--border);padding:5px 0"><summary style="cursor:pointer;color:var(--fg-primary)">${esc(family.family)} · ${family.member_count} member(s) · ${family.wins}/${family.settled} member-row observations (${familySr}) · ${family.non_independent ? 'CORRELATED / NOT INDEPENDENT' : 'SINGLE LANE'}</summary>`;
+    html += '<table style="width:100%;border-collapse:collapse;white-space:nowrap;"><tr style="color:var(--fg-muted);text-align:left;"><th>MODEL / TYPE / PROVENANCE</th><th>SEL</th><th>SET</th><th>VOID</th><th>UNR</th><th>W</th><th>FR</th><th>SR</th><th>CAP P&amp;L / ROI</th><th>SP P&amp;L / ROI</th><th>CLV RATIO</th><th>EX-BIG</th><th>MAX DD</th><th>95% ROI</th><th>VS PROD</th></tr>';
+    (family.members || []).forEach(name => {
+    const m = byName[name];
+    if (!m) return;
+    const cap = m.captured_price || {};
+    const sp = m.settled_sp || {};
+    const ci = cap.uncertainty || {};
+    const clv = m.clv_price_ratio || {};
+    const cohort = m.production_cohort || {};
+    const capText = `${canonicalMetricText(cap, 'profit')} / ${canonicalMetricText(cap, 'roi_pct', '%')}`;
+    const spText = `${canonicalMetricText(sp, 'profit')} / ${canonicalMetricText(sp, 'roi_pct', '%')}`;
+    const ciText = ci.status === 'AVAILABLE' ? `${ci.roi_95pct[0].toFixed(1)}…${ci.roi_95pct[1].toFixed(1)}% (${ci.days}d)` : `INSUFFICIENT (${ci.days || 0}d)`;
+    html += `<tr><td style="padding:3px 10px 3px 0;color:var(--fg-primary)">${esc(m.model_name)}<br><span style="color:var(--fg-muted)">${esc(m.lane_type)} · ${esc(m.forward_evidence_status)}</span></td>`
+      + `<td>${m.selections}</td><td>${m.settled}</td><td>${m.voids}</td><td>${m.unresolved}</td><td>${m.wins}</td><td>${m.frames}</td>`
+      + `<td style="color:var(--gold)">${m.strike_rate_pct === null ? '—' : m.strike_rate_pct.toFixed(1)+'%'}</td>`
+      + `<td>${capText}</td><td>${spText}</td><td>${canonicalMetricText(clv, 'mean_captured_over_sp')}</td>`
+      + `<td>${canonicalMetricText(cap, 'profit_ex_biggest_winner')}</td><td>${canonicalMetricText(cap, 'max_drawdown')}</td>`
+      + `<td>${esc(ciText)}</td><td>${(cohort.overlap || {}).wins || 0}/${(cohort.overlap || {}).settled || 0} agree · ${(cohort.disagreement || {}).wins || 0}/${(cohort.disagreement || {}).settled || 0} differ</td></tr>`;
+    });
+    html += '</table></details>';
+  });
+  tableEl.innerHTML = html + '<div style="color:var(--fg-muted);margin-top:6px">Captured and SP accounting are independent. Missing or unsafe capture prices remain UNAVAILABLE. ' + esc(data.small_sample_warning || '') + '</div>';
+}
+
+function renderCaptainPanel(data) {
+  const el = document.getElementById('captain-panel');
+  if (!el) return;
+  const rows = ((data.captain || {}).canonical_selections || []);
+  if (!rows.length) {
+    el.innerHTML = '<div style="color:var(--fg-muted)">CAPTAIN VELO — no canonical selections for this date.</div>';
+    return;
+  }
+  let html = '<div style="color:var(--gold);margin-bottom:4px">CAPTAIN VELO — CANONICAL SELECTIONS</div><table style="width:100%;border-collapse:collapse"><tr style="color:var(--fg-muted);text-align:left"><th>RACE</th><th>HORSE</th><th>STATUS</th><th>WIN / FRAME</th><th>CAPTURED</th><th>SP</th><th>FORWARD PROVENANCE</th></tr>';
+  rows.forEach(r => {
+    const captured = r.captured_price_status === 'AVAILABLE' ? Number(r.captured_odds_dec).toFixed(2) : 'UNAVAILABLE';
+    const sp = r.settled_sp_dec === null || r.settled_sp_dec === undefined ? 'UNAVAILABLE' : Number(r.settled_sp_dec).toFixed(2);
+    html += `<tr><td>${esc(`${r.course || ''} ${r.off_time || ''}`)}</td><td>${esc(r.horse || '')}</td><td>${esc(r.settlement_status || 'UNRESOLVED')} ${esc(r.outcome_code || '')}</td><td>${r.win === true ? 'W' : '—'} / ${r.frame === true ? 'F' : '—'}</td><td>${captured}</td><td>${sp}</td><td>${esc(r.forward_evidence_status)}</td></tr>`;
+  });
+  el.innerHTML = html + '</table>';
+}
+
+function renderMissionControlPanel(data) {
+  const el = document.getElementById('mission-control-panel');
+  if (!el) return;
+  const mc = data.post_learning_mission_control || {};
+  if (mc.status !== 'AVAILABLE') {
+    el.innerHTML = '<div style="color:var(--fg-muted)">FINAL POST-LEARNING MISSION CONTROL — UNAVAILABLE</div>';
+    return;
+  }
+  el.innerHTML = `<div style="color:var(--gold);margin-bottom:4px">FINAL POST-LEARNING MISSION CONTROL</div><div>generated ${esc(mc.generated_at || '—')} · learning gate ${esc(mc.learning_gate_status || 'UNKNOWN')} · admission ${esc(mc.learning_admission_status || 'UNKNOWN')} · eligible/excluded ${esc(mc.learning_eligible_rows ?? 'UNAVAILABLE')}/${esc(mc.learning_excluded_rows ?? 'UNAVAILABLE')} · promotion ${esc(mc.promotion_gate_status || 'UNKNOWN')} · council ${esc(mc.council_verdict || 'UNKNOWN')}</div>`;
+}
+
+// Read-only canonical aggregate. No local fallback and no browser write calls.
 async function loadCanonicalPerformance(dateParam) {
   const tableEl = document.getElementById('cmp-table');
   if (!tableEl) return;
   try {
-    const res = await fetch(`/api/canonical-scorecard?date=${encodeURIComponent(dateParam)}`);
-    if (!res.ok) throw new Error(`canonical-scorecard ${res.status}`);
+    const res = await fetch(`/api/canonical-performance?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`canonical-performance ${res.status}`);
     const data = await res.json();
-    const rows = data.rows || [];
-    const byModel = summarizeCanonicalPerformanceRows(rows);
-    const names = Object.keys(byModel).sort();
-    if (!names.length) {
-      tableEl.innerHTML = '<div style="color:var(--fg-muted)">No canonical rows for this date.</div>';
-      return;
-    }
-    let html = '<table style="width:100%;border-collapse:collapse;">';
-    html += '<tr style="color:var(--fg-muted);text-align:left;"><th style="padding:2px 8px 2px 0;">MODEL</th><th style="padding:2px 8px;">SELECTED</th><th style="padding:2px 8px;">SETTLED</th><th style="padding:2px 8px;">VOID</th><th style="padding:2px 8px;">WINS</th><th style="padding:2px 8px;">SR</th><th style="padding:2px 8px;">FRAME</th></tr>';
-    names.forEach(m => {
-      const s = byModel[m];
-      const sr = s.settled ? (s.wins / s.settled * 100).toFixed(1) : '—';
-      const fr = s.settled ? (s.frames / s.settled * 100).toFixed(1) : '—';
-      html += `<tr><td style="padding:2px 8px 2px 0;color:var(--fg-primary);">${esc(m)}</td><td style="padding:2px 8px;">${s.selections}</td><td style="padding:2px 8px;">${s.settled}</td><td style="padding:2px 8px;">${s.voids}</td><td style="padding:2px 8px;">${s.wins}</td><td style="padding:2px 8px;color:var(--gold);">${sr}%</td><td style="padding:2px 8px;color:#5599ff;">${fr}%</td></tr>`;
-    });
-    html += '</table>';
-    tableEl.innerHTML = html;
+    renderCanonicalModelPerformance(data);
+    renderCaptainPanel(data);
+    renderMissionControlPanel(data);
   } catch (e) {
     tableEl.innerHTML = `<div style="color:var(--fg-muted)">Canonical performance unavailable: ${esc(String(e))}</div>`;
+    renderCaptainPanel({});
+    renderMissionControlPanel({});
   }
 }
 
@@ -3697,7 +3761,7 @@ function buildSidecarHtml(row) {
 }
 
 function esc(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function fmtTime(t) {
