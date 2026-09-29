@@ -47,12 +47,23 @@ EVENT_TYPE_MAP = {
     "SHADOW_INTENT_SIGNAL": "SHADOW_INTENT_CONTEXT_ONLY",
     "RUNTIME_RACEDAY_MODEL_SUGGESTION": "RUNTIME_SUGGESTION_CONTEXT_ONLY",
     "MODEL_HIT_POLICY_CLEARED": "MODEL_HIT_POLICY_CLEARED_SHADOW",
+    "NON_RUNNER_VOID": "NON_RUNNER_VOID",
+    "UNSETTLED_UNKNOWN": "UNSETTLED_UNKNOWN",
+    "TERMINAL_LOSS": "TERMINAL_LOSS",
 }
+
+EVENT_CONFLICT_COLUMNS = ("event_identity_key",)
 
 CSV_COLUMNS = [
     "run_date", "race_id", "model_name", "lane_name", "horse", "horse_id",
-    "source_scorecard_id", "source_field", "rank", "score", "sp_dec",
-    "result_position", "win", "frame", "policy_decision", "stake_authorised",
+    "source_scorecard_id", "event_identity_key", "source_field", "rank", "score", "sp_dec",
+    "captured_odds_dec", "odds_capture_ts", "price_source", "settled_sp_dec",
+    "bsp_dec", "odds_timestamp_before_off", "result_position", "win", "frame",
+    "subject_outcome_code", "subject_outcome_status", "subject_is_non_runner", "settlement_status",
+    "stake_void", "result_source_hash", "result_source_complete",
+    "official_evaluation_eligible", "dashboard_metrics_eligible",
+    "evaluation_ineligible_reason", "truth_contract_version",
+    "policy_decision", "stake_authorised",
     "dashboard_visible", "learning_class", "event_type", "promotion_eligible",
     "promotion_block_reason", "lesson", "evidence", "generated_from_commit",
 ]
@@ -163,6 +174,12 @@ def _lesson_for(row: dict) -> str:
         return f"{model} is a feature-engineering input, not a calibrated model output -- context only, never a model claim."
     if learning_class == "TIE_UNRESOLVED":
         return f"{model}'s ranking field produced a tie for this race -- no principled top pick exists; a ranking-integrity bug, not a prediction."
+    if learning_class == "NON_RUNNER_VOID":
+        return f"{model}'s selection {horse} was a verified non-runner; the stake and outcome are void, never a model miss."
+    if learning_class == "UNSETTLED_UNKNOWN":
+        return f"{model}'s selection {horse} has no complete recognised result; evaluation remains unsettled and fails closed."
+    if learning_class == "TERMINAL_LOSS":
+        return f"{model}'s selection {horse} started and recorded terminal outcome {row.get('result_position')}; this is a settled loss, never a void."
     if learning_class == "MODEL_HIT":
         return f"{model} picked {horse} (SP {sp}) and it won."
     if learning_class == "MODEL_MISS":
@@ -175,6 +192,9 @@ def build_events(date: str) -> tuple[list[dict], dict]:
     commit_sha = _get_commit_sha()
     events: list[dict] = []
     for row in scorecard_rows:
+        source_scorecard_id = row.get("id")
+        if source_scorecard_id is None:
+            raise ValueError("canonical event missing stable source_scorecard_id")
         learning_class = row.get("learning_class") or "UNKNOWN"
         event_type = EVENT_TYPE_MAP.get(learning_class, "UNCLASSIFIED")
         promotion_eligible = False  # every event on every date is gated in this mission
@@ -189,14 +209,32 @@ def build_events(date: str) -> tuple[list[dict], dict]:
             "lane_name": row.get("lane_name"),
             "horse": row.get("horse"),
             "horse_id": row.get("horse_id"),
-            "source_scorecard_id": row.get("id"),
+            "source_scorecard_id": source_scorecard_id,
+            "event_identity_key": f"{row.get('run_date') or date}:{source_scorecard_id}",
             "source_field": row.get("source_field"),
             "rank": row.get("rank"),
             "score": row.get("score"),
             "sp_dec": row.get("sp_dec"),
+            "captured_odds_dec": row.get("captured_odds_dec"),
+            "odds_capture_ts": row.get("odds_capture_ts"),
+            "price_source": row.get("price_source"),
+            "settled_sp_dec": row.get("settled_sp_dec"),
+            "bsp_dec": row.get("bsp_dec"),
+            "odds_timestamp_before_off": row.get("odds_timestamp_before_off"),
             "result_position": row.get("result_position"),
             "win": row.get("win"),
             "frame": row.get("frame"),
+            "subject_outcome_code": row.get("subject_outcome_code"),
+            "subject_outcome_status": row.get("subject_outcome_status") or "UNKNOWN",
+            "subject_is_non_runner": bool(row.get("subject_is_non_runner")),
+            "settlement_status": row.get("settlement_status") or "UNSETTLED",
+            "stake_void": bool(row.get("stake_void")),
+            "result_source_hash": row.get("result_source_hash"),
+            "result_source_complete": bool(row.get("result_source_complete")),
+            "official_evaluation_eligible": bool(row.get("official_evaluation_eligible")),
+            "dashboard_metrics_eligible": bool(row.get("dashboard_metrics_eligible")),
+            "evaluation_ineligible_reason": row.get("evaluation_ineligible_reason"),
+            "truth_contract_version": row.get("truth_contract_version") or "CANONICAL_TRUTH_V2",
             "policy_decision": row.get("policy_decision"),
             "stake_authorised": row.get("stake_authorised"),
             "dashboard_visible": row.get("dashboard_visible"),
@@ -205,7 +243,10 @@ def build_events(date: str) -> tuple[list[dict], dict]:
             "promotion_eligible": promotion_eligible,
             "promotion_block_reason": block_reason,
             "lesson": _lesson_for(row),
-            "evidence": json.dumps({"source_path": row.get("source_path"), "notes": row.get("notes")}),
+            "evidence": json.dumps({
+                "source_path": row.get("source_path"), "notes": row.get("notes"),
+                "tie_status": row.get("tie_status"),
+            }),
             "generated_from_commit": commit_sha,
         })
 
@@ -229,6 +270,28 @@ def build_events(date: str) -> tuple[list[dict], dict]:
         "target_table": "public.canonical_learning_events",
     }
     return events, audit
+
+
+def _dedupe_events(events: list[dict]) -> tuple[list[dict], int]:
+    """One current event per immutable source scorecard row.
+
+    Classification and event type are deliberately excluded: a rerun that
+    corrects settlement must update the same logical event, not create a
+    superseded duplicate beside it.
+    """
+    missing_source_ids = [event for event in events if not event.get("event_identity_key")]
+    if missing_source_ids:
+        raise ValueError("canonical event missing stable event_identity_key")
+    unique = {tuple(event.get(column) for column in EVENT_CONFLICT_COLUMNS): event for event in events}
+    return list(unique.values()), len(events) - len(unique)
+
+
+def _persist_events(events: list[dict]) -> tuple[int, str | None, int]:
+    unique, collapsed = _dedupe_events(events)
+    written, error = _sb_upsert(
+        "canonical_learning_events", unique, ",".join(EVENT_CONFLICT_COLUMNS)
+    )
+    return written, error, collapsed
 
 
 def _write_csv(rows: list[dict], path: Path) -> None:
@@ -287,13 +350,8 @@ def main() -> None:
     print(f"Promotion-eligible events: {audit['promotion_eligible_count']} (must be 0)")
 
     if execute:
-        # Tied ranks can emit two events with the same conflict key; Postgres rejects the
-        # whole batch (21000 "cannot affect row a second time"). 2026-06-10 lost all 755
-        # events this way while the script exited 0. Collapse to the last row per key.
-        conflict = ("run_date", "race_id", "model_name", "lane_name", "horse_id", "learning_class", "event_type")
-        unique = {tuple(e.get(c) for c in conflict): e for e in events}
-        audit["duplicate_conflict_keys_collapsed"] = len(events) - len(unique)
-        written, error = _sb_upsert("canonical_learning_events", list(unique.values()), ",".join(conflict))
+        written, error, collapsed = _persist_events(events)
+        audit["duplicate_conflict_keys_collapsed"] = collapsed
         audit["rows_written"] = written
         audit["write_error"] = error
         if error:
