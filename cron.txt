@@ -1,16 +1,18 @@
-# VELO Oracle - Cron Schedule Reference
-# =======================================
-# NOTE: The authoritative schedule is in .github/workflows/score-daily.yml
-# (GitHub Actions owns the cron — Railway cron is NOT configured separately)
+# VELO Oracle - Production Schedule Reference
+# ============================================
+# AUTHORITATIVE MORNING SCORING:
+#   Railway service: velo-prime-scoring
+#   Schedule: 09:00 UTC every day
+#   Command: PYTHONPATH=. python scripts/ops/run_cloud_raceday.py
+#   Config: railway.scoring.toml
 #
-# For local/manual reference only:
+# The Railway web service remains always-on and is NOT the scheduler.
+# GitHub Actions .github/workflows/score-daily.yml retains:
+#   - manual workflow_dispatch score fallback via /api/trigger/score-daily
+#   - 21:00 UTC daily sigma schedule
 #
-# Morning scoring: 09:00 UTC daily
-# 0 9 * * *  cd /path/to/velo-oracle-prime && PYTHONPATH=. python scripts/ops/run_prime_today.py
-#
-# Evening sigma: 21:00 UTC daily
-# 0 21 * * *  cd /path/to/velo-oracle-prime && PYTHONPATH=. python scripts/ops/run_results_sigma.py --notify-telegram
-#
-# Full raceday (morning + evening combined via Railway trigger):
-# Triggered by GitHub Actions -> POST /api/trigger/score-daily
-# Triggered by GitHub Actions -> POST /api/trigger/sigma
+# Morning scoring (Railway, daily)
+0 9 * * *  PYTHONPATH=. python scripts/ops/run_cloud_raceday.py
+
+# Evening sigma (GitHub Actions, daily)
+0 21 * * *  PYTHONPATH=. python scripts/ops/run_results_sigma.py --notify-telegram
