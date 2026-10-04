@@ -231,7 +231,8 @@ def test_disable_api_raises_when_no_local_source(tmp_path):
 def test_api_401_raises_clearly_when_no_local_source(tmp_path):
     import pytest
     http_err = urllib.error.HTTPError(url="", code=401, msg="Unauthorized", hdrs=None, fp=None)
-    with patch("urllib.request.urlopen", side_effect=http_err):
+    with patch("src.velo.racecard_loader._standard_day_for_date", return_value="today"), \
+         patch("urllib.request.urlopen", side_effect=http_err):
         with pytest.raises(RuntimeError, match="401"):
             load_racecards(
                 date_tag=_DATE_TAG,
