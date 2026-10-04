@@ -4,15 +4,16 @@ VÉLØ Racecard Loader — source-contract fix (Issue #83).
 Provides load_racecards() with a strict priority order and clear fallback doctrine:
 
   Source order (auto):
-    1. data/racecards_{date_tag}_standard.json     → 'cache'
-    2. data/racecard_merged/racecard_*_{date}.json → 'rp_merged'
+    1. data/racecards_{date_tag}_standard.json      → 'cache' or 'api' (provenance)
+    2. data/racecard_merged/racecard_*_{date}.json  → 'rp_merged'
+    3. Racing API Standard (with Railway credentials) → 'api'
 
   CLI / env overrides:
-    --source cache|rp|auto
-    VELO_RACECARD_SOURCE=cache|rp|auto
+    --source cache|rp|api|auto
+    VELO_RACECARD_SOURCE=cache|rp|api|auto
 
-Hard constraints:
-  No scoring changes. No routing changes. No execution changes.
+The loader preserves source provenance so observability can distinguish an
+API-backed scratch cache from a local/manual cache.
 """
 
 from __future__ import annotations
@@ -23,8 +24,10 @@ import os
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 # Known Irish venue codes — everything else is treated as GB
 _IRE_VENUE_CODES = frozenset({
@@ -50,6 +53,20 @@ def _cache_races_and_source(cache_path: Path) -> tuple[list[dict[str, Any]], str
     return races, source_label
 
 
+def _standard_day_for_date(date_str: str) -> str:
+    """Map a London race date to the Standard API's supported day token."""
+    target = datetime.strptime(date_str, "%Y-%m-%d").date()
+    today = datetime.now(ZoneInfo("Europe/London")).date()
+    if target == today:
+        return "today"
+    if target == today + timedelta(days=1):
+        return "tomorrow"
+    raise RuntimeError(
+        "Racing API Standard supports only today/tomorrow racecards; "
+        f"requested {date_str}. Historical/future dated cards require Pro."
+    )
+
+
 def fetch_api_racecards(
     date_str: str,
     racing_base: str = "",
@@ -59,8 +76,8 @@ def fetch_api_racecards(
     """Fetch the Standard-plan racecard for a date from The Racing API.
 
     This is an explicit cloud production source. Credentials come from args or
-    environment variables and are never logged. Standard-plan doctrine is one
-    daily request to /racecards/standard?day=YYYY-MM-DD.
+    environment variables and are never logged. The Standard endpoint accepts
+    day=today|tomorrow; arbitrary dated cards require the Pro endpoint.
     """
     if os.getenv("VELO_DISABLE_RACING_API", "").strip() == "1":
         raise RuntimeError("VELO_DISABLE_RACING_API=1 — Racing API source is disabled")
@@ -71,7 +88,8 @@ def fetch_api_racecards(
     if not user or not password:
         raise RuntimeError("Racing API credentials missing (RACING_API_USERNAME/RACING_API_PASSWORD)")
 
-    query = urllib.parse.urlencode({"day": date_str})
+    day_token = _standard_day_for_date(date_str)
+    query = urllib.parse.urlencode({"day": day_token})
     url = f"{base}/racecards/standard?{query}"
     token = base64.b64encode(f"{user}:{password}".encode()).decode()
     req = urllib.request.Request(
@@ -329,13 +347,14 @@ def load_racecards(
     Return (races_list, source_label) for the given date.
 
     Source priority (auto):
-      1. data/racecards_{date_tag}_standard.json  → 'cache'
+      1. data/racecards_{date_tag}_standard.json  → cache provenance
       2. data/racecard_merged/racecard_*_{date_str}.json  → 'rp_merged'
+      3. Racing API Standard when credentials are present → 'api'
 
     Env overrides:
-      VELO_RACECARD_SOURCE=cache|rp|auto
+      VELO_RACECARD_SOURCE=cache|rp|api|auto
 
-    source labels returned: 'cache' | 'rp_merged'
+    source labels returned: 'cache' | 'rp_merged' | 'api'
     """
     _source = (source or os.getenv("VELO_RACECARD_SOURCE", "auto")).lower()
     cache_path = data_root / f"racecards_{date_tag}_standard.json"
