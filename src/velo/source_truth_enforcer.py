@@ -17,7 +17,8 @@ Source truth labels (canonical):
   RP_MERGED_CLEAN     — full RP PDF set, all features present
   RP_MERGED_DEGRADED  — partial RP PDFs, feature degradation active
   LOCAL_JSON_FALLBACK — verified local standard cache
-  RACING_API_BLOCKED  — legacy Racing API path; execution must be blocked
+  RACING_API_STANDARD_CLEAN — authenticated Standard-plan Racing API card
+  RACING_API_BLOCKED  — retained historical label for old observability packets
   SOURCE_UNKNOWN_BLOCK — unknown origin; execution must be blocked
 """
 from __future__ import annotations
@@ -33,6 +34,7 @@ class SourceLabel:
     RP_MERGED_CLEAN = "RP_MERGED_CLEAN"
     RP_MERGED_DEGRADED = "RP_MERGED_DEGRADED"
     LOCAL_JSON_FALLBACK = "LOCAL_JSON_FALLBACK"
+    RACING_API_STANDARD_CLEAN = "RACING_API_STANDARD_CLEAN"
     RACING_API_BLOCKED = "RACING_API_BLOCKED"
     SOURCE_UNKNOWN_BLOCK = "SOURCE_UNKNOWN_BLOCK"
 
@@ -40,12 +42,13 @@ class SourceLabel:
         RP_MERGED_CLEAN,
         RP_MERGED_DEGRADED,
         LOCAL_JSON_FALLBACK,
+        RACING_API_STANDARD_CLEAN,
         RACING_API_BLOCKED,
         SOURCE_UNKNOWN_BLOCK,
     })
 
     # Labels that allow execution to proceed
-    ALLOWED = frozenset({RP_MERGED_CLEAN, RP_MERGED_DEGRADED, LOCAL_JSON_FALLBACK})
+    ALLOWED = frozenset({RP_MERGED_CLEAN, RP_MERGED_DEGRADED, LOCAL_JSON_FALLBACK, RACING_API_STANDARD_CLEAN})
 
     # Labels that must block execution
     BLOCKED = frozenset({SOURCE_UNKNOWN_BLOCK, RACING_API_BLOCKED})
@@ -92,11 +95,12 @@ class SourceTruthResult:
 _LOADER_TO_CANONICAL: dict[str, str] = {
     "cache": SourceLabel.LOCAL_JSON_FALLBACK,
     "rp_merged": SourceLabel.RP_MERGED_CLEAN,
-    "api": SourceLabel.RACING_API_BLOCKED,
-    "api_clean": SourceLabel.RACING_API_BLOCKED,
-    "racing_api": SourceLabel.RACING_API_BLOCKED,
-    "racing api": SourceLabel.RACING_API_BLOCKED,
-    "theracingapi": SourceLabel.RACING_API_BLOCKED,
+    "api": SourceLabel.RACING_API_STANDARD_CLEAN,
+    "api_clean": SourceLabel.RACING_API_STANDARD_CLEAN,
+    "racing_api": SourceLabel.RACING_API_STANDARD_CLEAN,
+    "racing_api_standard": SourceLabel.RACING_API_STANDARD_CLEAN,
+    "racing api": SourceLabel.RACING_API_STANDARD_CLEAN,
+    "theracingapi": SourceLabel.RACING_API_STANDARD_CLEAN,
 }
 
 
@@ -134,11 +138,10 @@ def enforce_source_truth(
             f"SOURCE_UNKNOWN_BLOCK: loader returned unrecognised label '{loader_label}'. "
             "Execution is blocked until source is declared."
         )
-    elif canonical == SourceLabel.RACING_API_BLOCKED:
-        warnings.append(
-            "RACING_API_BLOCKED: Racing API is decommissioned for live VELO. "
-            "Use Racing Post HTML/RP scraper artifacts only."
-        )
+    elif canonical == SourceLabel.RACING_API_STANDARD_CLEAN:
+        # Cloud-native production source. RP remains an enrichment layer, not
+        # an execution dependency. The API source is explicit in observability.
+        pass
 
     # RP merged truth is built from the validated Racing Post HTML injection.
     # Legacy PDF-only fields are optional and must not downgrade an HTML-clean day.
