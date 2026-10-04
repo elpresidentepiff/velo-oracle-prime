@@ -1,0 +1,9 @@
+# Dedicated Railway cron worker for VELO morning scoring.
+# The always-on web service continues to use railway.toml.
+[build]
+builder = "NIXPACKS"
+buildCommand = "pip install -r requirements_production.txt"
+
+[deploy]
+startCommand = "PYTHONPATH=. python scripts/ops/run_cloud_raceday.py"
+restartPolicyType = "NEVER"
