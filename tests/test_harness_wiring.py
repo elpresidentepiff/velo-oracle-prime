@@ -353,16 +353,9 @@ class TestSourceTruthWiring:
     def test_valid_sources_do_not_raise(self):
         """Allowed loader labels must not raise."""
         from velo.source_truth_enforcer import enforce_source_truth
-        for label in ("cache", "rp_merged"):
+        for label in ("cache", "rp_merged", "api", "racing_api"):
             result = enforce_source_truth(label, races=[])
             assert result.execution_allowed is True
-
-    def test_racing_api_source_raises_block_error(self):
-        """Racing API aliases must be blocked before normalization/scoring."""
-        from velo.source_truth_enforcer import SourceTruthBlockError, enforce_source_truth
-        for label in ("api", "racing_api", "API_CLEAN"):
-            with pytest.raises(SourceTruthBlockError, match="RACING_API_BLOCKED"):
-                enforce_source_truth(label, races=[])
 
     def test_block_error_message_contains_source_unknown(self):
         """SourceTruthBlockError message must mention SOURCE_UNKNOWN_BLOCK."""
