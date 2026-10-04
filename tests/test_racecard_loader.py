@@ -231,7 +231,8 @@ def test_disable_api_raises_when_no_local_source(tmp_path):
 def test_api_401_raises_clearly_when_no_local_source(tmp_path):
     import pytest
     http_err = urllib.error.HTTPError(url="", code=401, msg="Unauthorized", hdrs=None, fp=None)
-    with patch("urllib.request.urlopen", side_effect=http_err):
+    with patch("src.velo.racecard_loader._standard_day_for_date", return_value="today"), \
+         patch("urllib.request.urlopen", side_effect=http_err):
         with pytest.raises(RuntimeError, match="401"):
             load_racecards(
                 date_tag=_DATE_TAG,
@@ -250,6 +251,33 @@ def test_api_not_called_when_rp_exists_in_auto(tmp_path):
         # Should use RP merged, never reach the API
         races, src = _loader(tmp_path)
     assert src == "rp_merged"
+
+
+
+
+def test_api_provenance_cache_reports_api_source(tmp_path):
+    payload = {
+        "_velo_source": "racing_api_standard",
+        "racecards": _CACHE_RACES,
+    }
+    (tmp_path / f"racecards_{_DATE_TAG}_standard.json").write_text(json.dumps(payload))
+    races, src = _loader(tmp_path, source="cache")
+    assert src == "api"
+    assert races[0]["race_id"] == "rac_cache_001"
+
+
+def test_explicit_api_source_fetches_standard_plan(tmp_path):
+    response = MagicMock()
+    response.__enter__.return_value.read.return_value = json.dumps({"racecards": _CACHE_RACES}).encode()
+    response.__exit__.return_value = False
+    with patch("src.velo.racecard_loader._standard_day_for_date", return_value="today"), \
+         patch("urllib.request.urlopen", return_value=response) as mock_open:
+        races, src = _loader(tmp_path, source="api")
+    assert src == "api"
+    assert races[0]["race_id"] == "rac_cache_001"
+    requested_url = mock_open.call_args.args[0].full_url
+    assert "/racecards/standard" in requested_url
+    assert "day=today" in requested_url
 
 
 # ── Explicit source flags ─────────────────────────────────────────────────────

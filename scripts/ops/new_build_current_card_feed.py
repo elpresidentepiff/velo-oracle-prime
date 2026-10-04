@@ -25,7 +25,11 @@ def main() -> None:
         # produced a stale-dated feed on 2026-06-11 — 9,538 runners labelled
         # 2026_05_26). Normalize into a temp copy; source file untouched.
         rows = json.loads(racecard_path.read_text())
-        races = rows if isinstance(rows, list) else rows.get("races", [])
+        races = (
+            rows
+            if isinstance(rows, list)
+            else rows.get("racecards", rows.get("races", []))
+        )
         for r in races:
             if not r.get("race_date") and r.get("date"):
                 r["race_date"] = r["date"]

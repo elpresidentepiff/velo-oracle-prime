@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 def run(target_date: str | None = None, trigger_source: str = "manual", run_id: str | None = None):
-    script_path = ROOT / "scripts" / "ops" / "run_prime_today.py"
+    script_path = ROOT / "scripts" / "ops" / "run_cloud_raceday.py"
     if not script_path.exists():
         raise FileNotFoundError(f"Scoring script not found: {script_path}")
 

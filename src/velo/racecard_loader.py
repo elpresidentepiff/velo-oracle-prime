@@ -4,23 +4,30 @@ VÉLØ Racecard Loader — source-contract fix (Issue #83).
 Provides load_racecards() with a strict priority order and clear fallback doctrine:
 
   Source order (auto):
-    1. data/racecards_{date_tag}_standard.json     → 'cache'
-    2. data/racecard_merged/racecard_*_{date}.json → 'rp_merged'
+    1. data/racecards_{date_tag}_standard.json      → 'cache' or 'api' (provenance)
+    2. data/racecard_merged/racecard_*_{date}.json  → 'rp_merged'
+    3. Racing API Standard (with Railway credentials) → 'api'
 
   CLI / env overrides:
-    --source cache|rp|auto
-    VELO_RACECARD_SOURCE=cache|rp|auto
+    --source cache|rp|api|auto
+    VELO_RACECARD_SOURCE=cache|rp|api|auto
 
-Hard constraints:
-  No scoring changes. No routing changes. No execution changes.
+The loader preserves source provenance so observability can distinguish an
+API-backed scratch cache from a local/manual cache.
 """
 
 from __future__ import annotations
 
+import base64
 import json
 import os
+import urllib.error
+import urllib.parse
+import urllib.request
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 # Known Irish venue codes — everything else is treated as GB
 _IRE_VENUE_CODES = frozenset({
@@ -29,6 +36,85 @@ _IRE_VENUE_CODES = frozenset({
     "WEX", "NAS", "DRO", "MUS", "SAL", "CAR", "FFA", "GRA", "KIG",
     "PTK", "DPT", "DOW",
 })
+
+_API_PROVENANCE_VALUES = frozenset({
+    "api", "racing_api", "racing_api_standard", "theracingapi",
+})
+
+
+def _cache_races_and_source(cache_path: Path) -> tuple[list[dict[str, Any]], str]:
+    """Load a standard cache and preserve its declared source provenance."""
+    raw = json.loads(cache_path.read_text())
+    races = raw if isinstance(raw, list) else raw.get("racecards", raw.get("races", []))
+    declared = ""
+    if isinstance(raw, dict):
+        declared = str(raw.get("_velo_source") or raw.get("source") or "").strip().lower()
+    source_label = "api" if declared in _API_PROVENANCE_VALUES else "cache"
+    return races, source_label
+
+
+def _standard_day_for_date(date_str: str) -> str:
+    """Map a London race date to the Standard API's supported day token."""
+    target = datetime.strptime(date_str, "%Y-%m-%d").date()
+    today = datetime.now(ZoneInfo("Europe/London")).date()
+    if target == today:
+        return "today"
+    if target == today + timedelta(days=1):
+        return "tomorrow"
+    raise RuntimeError(
+        "Racing API Standard supports only today/tomorrow racecards; "
+        f"requested {date_str}. Historical/future dated cards require Pro."
+    )
+
+
+def fetch_api_racecards(
+    date_str: str,
+    racing_base: str = "",
+    racing_user: str = "",
+    racing_pass: str = "",
+) -> list[dict[str, Any]]:
+    """Fetch the Standard-plan racecard for a date from The Racing API.
+
+    This is an explicit cloud production source. Credentials come from args or
+    environment variables and are never logged. The Standard endpoint accepts
+    day=today|tomorrow; arbitrary dated cards require the Pro endpoint.
+    """
+    if os.getenv("VELO_DISABLE_RACING_API", "").strip() == "1":
+        raise RuntimeError("VELO_DISABLE_RACING_API=1 — Racing API source is disabled")
+
+    base = (racing_base or os.getenv("RACING_API_BASE_URL") or "https://api.theracingapi.com/v1").rstrip("/")
+    user = racing_user or os.getenv("RACING_API_USERNAME", "")
+    password = racing_pass or os.getenv("RACING_API_PASSWORD", "")
+    if not user or not password:
+        raise RuntimeError("Racing API credentials missing (RACING_API_USERNAME/RACING_API_PASSWORD)")
+
+    day_token = _standard_day_for_date(date_str)
+    query = urllib.parse.urlencode({"day": day_token})
+    url = f"{base}/racecards/standard?{query}"
+    token = base64.b64encode(f"{user}:{password}".encode()).decode()
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Authorization": f"Basic {token}",
+            "User-Agent": "VELO-Oracle-Prime/railway",
+            "Accept": "application/json",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=45) as response:
+            payload = json.loads(response.read())
+    except urllib.error.HTTPError as exc:
+        if exc.code == 401:
+            raise RuntimeError("Racing API 401 Unauthorized — verify Railway Racing API credentials") from exc
+        raise RuntimeError(f"Racing API HTTP {exc.code}") from exc
+    except Exception as exc:
+        raise RuntimeError(f"Racing API request failed: {type(exc).__name__}: {exc}") from exc
+
+    races = payload if isinstance(payload, list) else payload.get("racecards", payload.get("races", []))
+    if not races:
+        raise RuntimeError(f"Racing API returned zero racecards for {date_str}")
+    return races
+
 
 
 def _parse_betting_forecast(forecast_str: str | None) -> dict[str, float]:
@@ -261,13 +347,14 @@ def load_racecards(
     Return (races_list, source_label) for the given date.
 
     Source priority (auto):
-      1. data/racecards_{date_tag}_standard.json  → 'cache'
+      1. data/racecards_{date_tag}_standard.json  → cache provenance
       2. data/racecard_merged/racecard_*_{date_str}.json  → 'rp_merged'
+      3. Racing API Standard when credentials are present → 'api'
 
     Env overrides:
-      VELO_RACECARD_SOURCE=cache|rp|auto
+      VELO_RACECARD_SOURCE=cache|rp|api|auto
 
-    source labels returned: 'cache' | 'rp_merged'
+    source labels returned: 'cache' | 'rp_merged' | 'api'
     """
     _source = (source or os.getenv("VELO_RACECARD_SOURCE", "auto")).lower()
     cache_path = data_root / f"racecards_{date_tag}_standard.json"
@@ -275,9 +362,13 @@ def load_racecards(
     if _source == "cache":
         if not cache_path.exists():
             raise RuntimeError(f"--source cache specified but {cache_path} not found")
-        raw = json.loads(cache_path.read_text())
-        races = raw if isinstance(raw, list) else raw.get("racecards", [])
-        return races, "cache"
+        return _cache_races_and_source(cache_path)
+
+    if _source == "api":
+        return (
+            fetch_api_racecards(date_str, racing_base, racing_user, racing_pass),
+            "api",
+        )
 
     if _source == "rp":
         races = load_rp_merged_as_racecards(date_str, data_root)
@@ -290,16 +381,28 @@ def load_racecards(
 
     # ── Auto: cache → rp_merged ─────────────────────────────────────────
     if cache_path.exists():
-        raw = json.loads(cache_path.read_text())
-        races = raw if isinstance(raw, list) else raw.get("racecards", [])
-        return races, "cache"
+        return _cache_races_and_source(cache_path)
 
     rp_races = load_rp_merged_as_racecards(date_str, data_root)
     if rp_races:
         return rp_races, "rp_merged"
 
+    if os.getenv("VELO_DISABLE_RACING_API", "").strip() == "1":
+        raise RuntimeError(
+            f"No local racecard source available for {date_str}; "
+            "VELO_DISABLE_RACING_API=1 prevents cloud fallback"
+        )
+
+    if (racing_user or os.getenv("RACING_API_USERNAME")) and (
+        racing_pass or os.getenv("RACING_API_PASSWORD")
+    ):
+        return (
+            fetch_api_racecards(date_str, racing_base, racing_user, racing_pass),
+            "api",
+        )
+
     raise RuntimeError(
         f"No racecard source available for {date_str}.\n"
-        f"  Tried: cache ({cache_path.name}) → RP merged\n"
-        "  Fix: supply a cache file or run RP PDF ingestion."
+        f"  Tried: cache ({cache_path.name}) → RP merged → Racing API Standard\n"
+        "  Fix: provide a valid local source or Railway Racing API credentials."
     )
