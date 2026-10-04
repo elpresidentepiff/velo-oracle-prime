@@ -1,0 +1,31 @@
+name: VELO Rescue Score 2026-10-04
+
+on:
+  push:
+    branches:
+      - ops/rescue-score-20261004
+
+permissions:
+  contents: read
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger Railway cloud scoring for 2026-10-04
+        run: |
+          set -euo pipefail
+          HTTP=$(curl -sS -o /tmp/response.json -w "%{http_code}" \
+            --max-time 30 \
+            -X POST \
+            "https://velo-oracle-production.up.railway.app/api/trigger/score-daily" \
+            -H "Content-Type: application/json" \
+            -H "X-Trigger-Secret: ${{ secrets.TRIGGER_SCORE_SECRET }}" \
+            -d '{"trigger_source":"github_actions_rescue","target_date":"2026-10-04"}')
+          echo "HTTP status: $HTTP"
+          cat /tmp/response.json
+          echo
+          if [ "$HTTP" != "202" ] && [ "$HTTP" != "409" ]; then
+            exit 1
+          fi
