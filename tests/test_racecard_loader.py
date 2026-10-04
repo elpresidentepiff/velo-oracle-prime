@@ -269,13 +269,14 @@ def test_explicit_api_source_fetches_standard_plan(tmp_path):
     response = MagicMock()
     response.__enter__.return_value.read.return_value = json.dumps({"racecards": _CACHE_RACES}).encode()
     response.__exit__.return_value = False
-    with patch("urllib.request.urlopen", return_value=response) as mock_open:
+    with patch("src.velo.racecard_loader._standard_day_for_date", return_value="today"), \
+         patch("urllib.request.urlopen", return_value=response) as mock_open:
         races, src = _loader(tmp_path, source="api")
     assert src == "api"
     assert races[0]["race_id"] == "rac_cache_001"
     requested_url = mock_open.call_args.args[0].full_url
     assert "/racecards/standard" in requested_url
-    assert "day=2026-05-20" in requested_url
+    assert "day=today" in requested_url
 
 
 # ── Explicit source flags ─────────────────────────────────────────────────────
