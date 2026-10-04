@@ -88,3 +88,40 @@ jobs:
             --disable-error-code=no-any-return \
             --disable-error-code=call-overload
 
+
+
+  cloud-raceday-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile cloud race-day path
+        run: |
+          python -m py_compile \
+            src/velo/racecard_loader.py \
+            src/velo/source_truth_enforcer.py \
+            scripts/ops/run_cloud_raceday.py \
+            app/pipelines/score_daily_runner.py \
+            scripts/ops/write_velo_run_observability.py
+
+      - name: Test racecard source contract
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          pytest tests/test_racecard_loader.py -q
+
+      - name: Verify Racing API source truth
+        run: |
+          python - <<'PY'
+          from src.velo.source_truth_enforcer import SourceLabel, enforce_source_truth
+          result = enforce_source_truth("api", raise_on_block=False)
+          assert result.canonical_label == SourceLabel.RACING_API_STANDARD_CLEAN
+          assert result.execution_allowed is True
+          assert result.blocked is False
+          print("RACING_API_STANDARD_CLEAN OK")
+          PY
