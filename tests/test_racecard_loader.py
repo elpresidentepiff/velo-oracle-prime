@@ -252,6 +252,32 @@ def test_api_not_called_when_rp_exists_in_auto(tmp_path):
     assert src == "rp_merged"
 
 
+
+
+def test_api_provenance_cache_reports_api_source(tmp_path):
+    payload = {
+        "_velo_source": "racing_api_standard",
+        "racecards": _CACHE_RACES,
+    }
+    (tmp_path / f"racecards_{_DATE_TAG}_standard.json").write_text(json.dumps(payload))
+    races, src = _loader(tmp_path, source="cache")
+    assert src == "api"
+    assert races[0]["race_id"] == "rac_cache_001"
+
+
+def test_explicit_api_source_fetches_standard_plan(tmp_path):
+    response = MagicMock()
+    response.__enter__.return_value.read.return_value = json.dumps({"racecards": _CACHE_RACES}).encode()
+    response.__exit__.return_value = False
+    with patch("urllib.request.urlopen", return_value=response) as mock_open:
+        races, src = _loader(tmp_path, source="api")
+    assert src == "api"
+    assert races[0]["race_id"] == "rac_cache_001"
+    requested_url = mock_open.call_args.args[0].full_url
+    assert "/racecards/standard" in requested_url
+    assert "day=2026-05-20" in requested_url
+
+
 # ── Explicit source flags ─────────────────────────────────────────────────────
 
 
