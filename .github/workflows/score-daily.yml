@@ -1,7 +1,9 @@
 name: VELO Score Daily
 
-# SOURCE-CONTROLLED SCHEDULER — owns both scoring and sigma cadence.
-# Railway cron is intentionally NOT configured — this file IS the schedule.
+# SCHEDULER OWNERSHIP
+# - Morning scoring: Railway cron service "velo-prime-scoring" (authoritative).
+# - Evening sigma: this GitHub Actions workflow (temporary authority).
+# - Manual score/sigma fallback: workflow_dispatch calls the Railway web trigger.
 #
 # Required GitHub secret : TRIGGER_SCORE_SECRET
 # Required Railway env   : TRIGGER_SCORE_SECRET (same value)
@@ -9,9 +11,8 @@ name: VELO Score Daily
 
 on:
   schedule:
-    # 09:00 UTC daily — predictions before UK racing starts
-    - cron: '0 9 * * *'
-    # 21:00 UTC daily — sigma reconciliation after last UK race
+    # 21:00 UTC daily — sigma reconciliation after last UK race.
+    # Morning scoring is owned by Railway cron, not GitHub Actions.
     - cron: '0 21 * * *'
 
   workflow_dispatch:
@@ -40,8 +41,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: |
-      (github.event_name == 'schedule' && github.event.schedule == '0 9 * * *') ||
-      (github.event_name == 'workflow_dispatch' && (inputs.job == 'score' || inputs.job == 'both'))
+      github.event_name == 'workflow_dispatch' &&
+      (inputs.job == 'score' || inputs.job == 'both')
 
     steps:
       - name: Set trigger metadata
