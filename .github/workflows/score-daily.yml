@@ -9,10 +9,10 @@ name: VELO Score Daily
 
 on:
   schedule:
-    # 09:00 UTC Mon–Sat — predictions before UK racing starts
-    - cron: '0 9 * * 1-6'
-    # 21:00 UTC Mon–Sat — sigma reconciliation after last UK race
-    - cron: '0 21 * * 1-6'
+    # 09:00 UTC daily — predictions before UK racing starts
+    - cron: '0 9 * * *'
+    # 21:00 UTC daily — sigma reconciliation after last UK race
+    - cron: '0 21 * * *'
 
   workflow_dispatch:
     inputs:
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: |
-      (github.event_name == 'schedule' && github.event.schedule == '0 9 * * 1-6') ||
+      (github.event_name == 'schedule' && github.event.schedule == '0 9 * * *') ||
       (github.event_name == 'workflow_dispatch' && (inputs.job == 'score' || inputs.job == 'both'))
 
     steps:
@@ -115,7 +115,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: |
-      (github.event_name == 'schedule' && github.event.schedule == '0 21 * * 1-6') ||
+      (github.event_name == 'schedule' && github.event.schedule == '0 21 * * *') ||
       (github.event_name == 'workflow_dispatch' && (inputs.job == 'sigma' || inputs.job == 'both'))
 
     steps:
