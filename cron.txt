@@ -5,11 +5,11 @@
 #
 # For local/manual reference only:
 #
-# Morning scoring: 09:00 UTC Mon-Sat
-# 0 9 * * 1-6  cd /path/to/velo-oracle-prime && PYTHONPATH=. python scripts/ops/run_prime_today.py
+# Morning scoring: 09:00 UTC daily
+# 0 9 * * *  cd /path/to/velo-oracle-prime && PYTHONPATH=. python scripts/ops/run_prime_today.py
 #
-# Evening sigma: 21:00 UTC Mon-Sat
-# 0 21 * * 1-6  cd /path/to/velo-oracle-prime && PYTHONPATH=. python scripts/ops/run_results_sigma.py --notify-telegram
+# Evening sigma: 21:00 UTC daily
+# 0 21 * * *  cd /path/to/velo-oracle-prime && PYTHONPATH=. python scripts/ops/run_results_sigma.py --notify-telegram
 #
 # Full raceday (morning + evening combined via Railway trigger):
 # Triggered by GitHub Actions -> POST /api/trigger/score-daily
