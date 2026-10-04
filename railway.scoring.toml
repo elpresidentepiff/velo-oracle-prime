@@ -1,0 +1,7 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "pip install -r requirements_production.txt"
+
+[deploy]
+startCommand = "PYTHONPATH=. python scripts/ops/run_cloud_raceday.py"
+restartPolicyType = "NEVER"
