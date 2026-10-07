@@ -8,11 +8,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.velo.learning.result_source_selector import (
+    load_race_status_evidence,
+    merge_result_and_status_rows,
+)
+
+
 DATA = ROOT / "data"
 
 
@@ -55,11 +64,40 @@ def _race_ids_from_new_build(date_slug: str) -> set[str]:
     return {_race_id(r.get("race_id")) for r in payload.get("race_day_scorecards", []) if _race_id(r.get("race_id"))}
 
 
-def _race_ids_from_results(date_slug: str) -> set[str]:
+def _resolve_injection_path(date: str) -> Path | None:
+    """Resolve the supported RP injection layouts without guessing.
+
+    Both layouts have existed in the governed runtime.  More than one file is
+    ambiguous even when its current bytes happen to match: either copy could
+    later become stale, so the mandatory gate must fail rather than silently
+    pick one.
+    """
+    root = DATA / "racing_post_account_parsed"
+    candidates = (
+        root / date / "racecard_injection.json",
+        root / f"live-full-racepages-{date}" / "racecard_injection.json",
+    )
+    existing = [path for path in candidates if path.is_file()]
+    if len(existing) > 1:
+        rendered = ", ".join(str(path) for path in existing)
+        raise ValueError(f"ambiguous RP injection artifacts for {date}: {rendered}")
+    return existing[0] if existing else None
+
+
+def _race_ids_from_results(date: str) -> set[str]:
+    date_slug = date.replace("-", "_")
     payload = _load_json(DATA / "results" / f"rp_results_{date_slug}.json")
-    if payload is None:
-        return set()
-    return {_race_id(r.get("race_id")) for r in payload.get("results", []) if _race_id(r.get("race_id"))}
+    if payload is not None and not isinstance(payload, dict):
+        raise ValueError(f"invalid RP results document for {date}")
+    result_rows = payload.get("results", []) if payload is not None else []
+    if not isinstance(result_rows, list) or not all(isinstance(row, dict) for row in result_rows):
+        raise ValueError(f"invalid RP results rows for {date}")
+    result_ids = [_race_id(row.get("race_id")) for row in result_rows]
+    if any(not race_id for race_id in result_ids):
+        raise ValueError(f"blank race_id in RP results for {date}")
+    status_rows = load_race_status_evidence(date, DATA / "results")
+    accounted_rows = merge_result_and_status_rows(result_rows, status_rows)
+    return {_race_id(row.get("race_id")) for row in accounted_rows if _race_id(row.get("race_id"))}
 
 
 def _compare(name: str, expected: set[str], actual: set[str]) -> dict[str, Any]:
@@ -72,39 +110,76 @@ def _compare(name: str, expected: set[str], actual: set[str]) -> dict[str, Any]:
     }
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description="Verify race-day artifact universe consistency")
-    ap.add_argument("--date", required=True, help="YYYY-MM-DD")
-    ap.add_argument("--execute", action="store_true", help="Write report JSON/MD")
-    args = ap.parse_args()
+def build_report(date: str, *, require_results: bool = False) -> dict[str, Any]:
+    """Build the universe report for morning or EOD stage.
 
-    date = args.date
+    Morning callers leave ``require_results`` false because result capture has
+    not happened yet.  EOD callers must set it true; an empty required result
+    universe then participates in the comparison and fails closed.
+    """
     date_slug = date.replace("-", "_")
 
-    injection_path = DATA / "racing_post_account_parsed" / f"live-full-racepages-{date}" / "racecard_injection.json"
+    injection_path = _resolve_injection_path(date)
     standard_path = DATA / f"racecards_{date_slug}_standard.json"
 
     sources = {
-        "rp_injection": _race_ids_from_races(_load_json(injection_path)),
+        "rp_injection": _race_ids_from_races(_load_json(injection_path)) if injection_path else set(),
         "standard_cache": _race_ids_from_races(_load_json(standard_path)),
         "old_velo_rp_merged": _race_ids_from_old_velo(date),
         "new_build_readiness": _race_ids_from_new_build(date_slug),
-        "rp_results": _race_ids_from_results(date_slug),
+        "rp_results": _race_ids_from_results(date),
     }
 
     expected = sources["rp_injection"] or sources["standard_cache"]
-    comparisons = [_compare(name, expected, ids) for name, ids in sources.items()]
-    status = "PASS" if expected and all(c["matches_expected"] for c in comparisons if c["count"] > 0) else "FAIL"
+    expected_name = "rp_injection" if sources["rp_injection"] else "standard_cache"
+    required_names = {expected_name}
+    if require_results:
+        required_names.add("rp_results")
+    comparisons = []
+    for name, ids in sources.items():
+        comparison = _compare(name, expected, ids)
+        comparison["required"] = name in required_names
+        comparisons.append(comparison)
+    status = (
+        "PASS"
+        if expected
+        and all(
+            comparison["matches_expected"]
+            for comparison in comparisons
+            if comparison["required"] or comparison["count"] > 0
+        )
+        else "FAIL"
+    )
 
-    payload = {
+    return {
         "date": date,
         "status": status,
-        "expected_source": "rp_injection" if sources["rp_injection"] else "standard_cache",
+        "expected_source": expected_name,
         "expected_count": len(expected),
+        "require_results": require_results,
         "sources": {k: sorted(v) for k, v in sources.items()},
         "comparisons": comparisons,
         "rule": "All scoring/learning artifacts must match the RP injection race_id universe before use.",
     }
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="Verify race-day artifact universe consistency")
+    ap.add_argument("--date", required=True, help="YYYY-MM-DD")
+    ap.add_argument("--execute", action="store_true", help="Write report JSON/MD")
+    ap.add_argument(
+        "--require-results",
+        action="store_true",
+        help="EOD mode: require results/status truth to account for the full prediction universe",
+    )
+    args = ap.parse_args()
+
+    date = args.date
+    date_slug = date.replace("-", "_")
+    payload = build_report(date, require_results=args.require_results)
+    status = payload["status"]
+    expected = set(payload["sources"][payload["expected_source"]])
+    comparisons = payload["comparisons"]
 
     if args.execute:
         out_json = DATA / "reports" / f"raceday_universe_check_{date_slug}.json"
