@@ -37,6 +37,9 @@ from src.velo.learning.result_source_selector import (  # noqa: E402
     OUTCOME_NON_RUNNER,
     OUTCOME_TERMINAL,
     OUTCOME_UNKNOWN,
+    authoritative_race_void,
+    load_race_status_evidence,
+    merge_result_and_status_rows,
     runner_outcome_status,
     select_result_source,
 )
@@ -96,7 +99,10 @@ def _sb_get(path: str) -> list[dict]:
 def _load_results(date: str) -> dict[str, dict]:
     path = ROOT / "data" / "results" / f"rp_results_{_date_tag(date)}.json"
     payload = _load_json(path, {})
-    return {str(r.get("race_id") or ""): r for r in payload.get("results") or [] if r.get("race_id")}
+    rows = merge_result_and_status_rows(
+        list(payload.get("results") or []), load_race_status_evidence(date, path.parent)
+    )
+    return {str(r.get("race_id") or ""): r for r in rows if r.get("race_id")}
 
 
 def _result_source_hash(date: str) -> str | None:
@@ -111,6 +117,13 @@ def _runner_lookup(result_race: dict, horse_name: str) -> dict:
     """Resolve result truth using the shared runner-outcome vocabulary."""
     if not result_race:
         return {}
+    if authoritative_race_void(result_race):
+        status = str(result_race.get("race_status") or result_race.get("status")).upper()
+        return {
+            "position": None, "outcome_code": status, "outcome_status": OUTCOME_UNKNOWN,
+            "subject_is_non_runner": False, "settlement_status": "VOID",
+            "stake_void": True, "win": None, "frame": None,
+        }
     key = _norm(horse_name)
     for runner in result_race.get("runners") or []:
         if _norm(runner.get("horse")) == key:
@@ -216,6 +229,22 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
             "tie_status": "N/A", "notes": "",
         }
         base.update(kw)
+        race_truth = results.get(str(base.get("race_id") or ""))
+        if authoritative_race_void(race_truth):
+            base.update({
+                "result_position": None,
+                "win": None,
+                "frame": None,
+                "subject_outcome_code": str(race_truth.get("race_status")).upper(),
+                "subject_outcome_status": OUTCOME_UNKNOWN,
+                "subject_is_non_runner": False,
+                "settlement_status": "VOID",
+                "stake_void": True,
+                "official_evaluation_eligible": False,
+                "dashboard_metrics_eligible": False,
+                "evaluation_ineligible_reason": "RACE_ABANDONED_VOID_NO_SUBJECT_OUTCOME",
+                "learning_class": "RACE_ABANDONED_VOID",
+            })
         inferred_status = runner_outcome_status(base.get("result_position"))
         base["subject_outcome_code"] = base.get("subject_outcome_code") or base.get("result_position") or None
         if base.get("subject_outcome_status") == OUTCOME_UNKNOWN and inferred_status != OUTCOME_UNKNOWN:
@@ -226,7 +255,10 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
         # sp_dec remains a backwards-compatible alias for settled SP only.
         base["settled_sp_dec"] = base.get("settled_sp_dec") or base.get("sp_dec")
         base["sp_dec"] = base.get("settled_sp_dec")
-        if base.get("tie_status") not in {None, "N/A", "CLEAN"}:
+        if base.get("settlement_status") == "VOID" and base.get("subject_outcome_code") in {"ABANDONED", "VOID"}:
+            base["learning_class"] = "RACE_ABANDONED_VOID"
+            base["tie_status"] = "N/A"
+        elif base.get("tie_status") not in {None, "N/A", "CLEAN"}:
             base["learning_class"] = "TIE_UNRESOLVED"
             base["official_evaluation_eligible"] = False
             base["dashboard_metrics_eligible"] = False
@@ -707,7 +739,11 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
     result_source_complete = bool(
         source_selection.completeness.get("full_universe_complete")
         and rows
-        and all(row.get("subject_outcome_status") != OUTCOME_UNKNOWN for row in rows)
+        and all(
+            row.get("subject_outcome_status") != OUTCOME_UNKNOWN
+            or row.get("learning_class") == "RACE_ABANDONED_VOID"
+            for row in rows
+        )
     )
     for row in rows:
         row["result_source_hash"] = source_selection.source_hash or result_source_hash
@@ -717,15 +753,18 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
         timing_safe = (not has_captured_price) or row.get("odds_timestamp_before_off") is True
         settled = row.get("settlement_status") == "SETTLED"
         void = row.get("settlement_status") == "VOID"
+        race_void = row.get("learning_class") == "RACE_ABANDONED_VOID"
         governed_truth = result_source_complete and tie_clean and timing_safe
         row["official_evaluation_eligible"] = bool(governed_truth and settled)
-        row["dashboard_metrics_eligible"] = bool(governed_truth and (settled or void))
+        row["dashboard_metrics_eligible"] = bool(governed_truth and (settled or void) and not race_void)
         if not result_source_complete:
             row["evaluation_ineligible_reason"] = "RESULT_SOURCE_INCOMPLETE"
         elif not tie_clean:
             row["evaluation_ineligible_reason"] = "UNRESOLVED_TOP_RANK_TIE"
         elif not timing_safe:
             row["evaluation_ineligible_reason"] = "CAPTURE_TIMESTAMP_NOT_STRICTLY_PRE_OFF"
+        elif race_void:
+            row["evaluation_ineligible_reason"] = "RACE_ABANDONED_VOID_NO_SUBJECT_OUTCOME"
         elif void:
             row["evaluation_ineligible_reason"] = "NON_RUNNER_VOID_ACCOUNTING_ONLY"
         elif not settled:

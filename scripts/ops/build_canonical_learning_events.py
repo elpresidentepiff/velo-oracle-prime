@@ -48,6 +48,7 @@ EVENT_TYPE_MAP = {
     "RUNTIME_RACEDAY_MODEL_SUGGESTION": "RUNTIME_SUGGESTION_CONTEXT_ONLY",
     "MODEL_HIT_POLICY_CLEARED": "MODEL_HIT_POLICY_CLEARED_SHADOW",
     "NON_RUNNER_VOID": "NON_RUNNER_VOID",
+    "RACE_ABANDONED_VOID": "RACE_ABANDONED_VOID",
     "UNSETTLED_UNKNOWN": "UNSETTLED_UNKNOWN",
     "TERMINAL_LOSS": "TERMINAL_LOSS",
 }
@@ -176,6 +177,8 @@ def _lesson_for(row: dict) -> str:
         return f"{model}'s ranking field produced a tie for this race -- no principled top pick exists; a ranking-integrity bug, not a prediction."
     if learning_class == "NON_RUNNER_VOID":
         return f"{model}'s selection {horse} was a verified non-runner; the stake and outcome are void, never a model miss."
+    if learning_class == "RACE_ABANDONED_VOID":
+        return f"{model}'s race was authoritatively abandoned; there is no subject outcome and this row is ineligible for model learning."
     if learning_class == "UNSETTLED_UNKNOWN":
         return f"{model}'s selection {horse} has no complete recognised result; evaluation remains unsettled and fails closed."
     if learning_class == "TERMINAL_LOSS":

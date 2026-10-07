@@ -33,8 +33,10 @@ import re
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 RESULTS_DIR_DEFAULT = Path("data/results")
 
@@ -60,6 +62,12 @@ OUTCOME_TERMINAL = "TERMINAL"
 OUTCOME_NON_RUNNER = "NON_RUNNER"
 OUTCOME_UNKNOWN = "UNKNOWN"
 
+RACE_STATUS_ABANDONED = "ABANDONED"
+RACE_STATUS_VOID = "VOID"
+_RACE_VOID_STATUSES = {RACE_STATUS_ABANDONED, RACE_STATUS_VOID}
+_REQUIRED_RACE_STATUS_EVIDENCE = {"source_name", "source_url", "observed_at"}
+_RACE_STATUS_CONTRACT = "GOVERNED_RACE_STATUS_V1"
+
 
 def _norm(value: str | None) -> str:
     return re.sub(r"[^a-z0-9]", "", str(value or "").lower())
@@ -76,6 +84,76 @@ def runner_outcome_status(position_value: str | None) -> str:
     return OUTCOME_UNKNOWN  # blank or unrecognised -- never automatically NR
 
 
+def authoritative_race_void(race: dict | None) -> bool:
+    """Recognise only explicitly evidenced whole-race abandonments/voids."""
+    if not isinstance(race, dict):
+        return False
+    status = str(race.get("race_status") or "").strip().upper()
+    evidence = race.get("race_status_evidence")
+    if status not in _RACE_VOID_STATUSES or not isinstance(evidence, dict):
+        return False
+    if set(evidence) != _REQUIRED_RACE_STATUS_EVIDENCE:
+        return False
+    if not all(str(evidence.get(field) or "").strip() for field in _REQUIRED_RACE_STATUS_EVIDENCE):
+        return False
+    parsed_url = urlparse(str(evidence["source_url"]).strip())
+    if parsed_url.scheme not in {"http", "https"} or not parsed_url.netloc:
+        return False
+    try:
+        observed = datetime.fromisoformat(str(evidence["observed_at"]).strip().replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    return observed.tzinfo is not None and observed.utcoffset() is not None
+
+
+def load_race_status_evidence(date: str, results_dir: Path = RESULTS_DIR_DEFAULT) -> list[dict]:
+    """Load governed race-status evidence; malformed claims fail closed."""
+    try:
+        parsed_date = datetime.strptime(date, "%Y-%m-%d")
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"invalid requested race date: {date!r}") from exc
+    if parsed_date.strftime("%Y-%m-%d") != date:
+        raise ValueError(f"invalid requested race date: {date!r}")
+    path = results_dir / f"race_status_{date.replace('-', '_')}.json"
+    if not path.exists():
+        path = Path(__file__).resolve().parents[3] / "config" / "race_status" / path.name
+    if not path.exists():
+        return []
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or set(payload) - {"date", "contract", "races", "corroboration"}:
+        raise ValueError(f"invalid race-status document shape in {path}")
+    if payload.get("date") != date or payload.get("contract") != _RACE_STATUS_CONTRACT:
+        raise ValueError(f"race-status contract/date mismatch in {path}")
+    rows = payload.get("races")
+    if not isinstance(rows, list) or not rows:
+        raise ValueError(f"race-status races must be a non-empty list in {path}")
+    seen: set[str] = set()
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ValueError(f"invalid race-status row in {path}")
+        race_id = str(row.get("race_id") or "").strip()
+        if not race_id or race_id in seen or row.get("race_id") != race_id:
+            raise ValueError(f"blank, non-canonical, or duplicate race_id in {path}")
+        seen.add(race_id)
+        if set(row) - {"race_id", "course", "off", "race_status", "race_status_evidence"}:
+            raise ValueError(f"unexpected race-status row fields in {path}")
+        if row.get("race_status") not in _RACE_VOID_STATUSES or not authoritative_race_void(row):
+            raise ValueError(f"invalid or unauthoritative race-status evidence in {path}")
+    return rows
+
+
+def merge_result_and_status_rows(result_rows: list[dict], status_rows: list[dict]) -> list[dict]:
+    """Merge independent status truth while refusing result/status collisions."""
+    result_ids = [str(row.get("race_id") or "").strip() for row in result_rows if isinstance(row, dict)]
+    status_ids = [str(row.get("race_id") or "").strip() for row in status_rows]
+    if len(result_ids) != len(set(result_ids)):
+        raise ValueError("duplicate race_id in parsed results")
+    collisions = sorted(set(result_ids) & set(status_ids))
+    if collisions:
+        raise ValueError(f"race status/result collision for race_id(s): {', '.join(collisions)}")
+    return list(result_rows) + list(status_rows)
+
+
 @dataclass
 class RaceCompleteness:
     race_id: str
@@ -85,6 +163,8 @@ class RaceCompleteness:
 
 
 def _race_completeness(race: dict, expected_horse_ids: set[str] | None) -> RaceCompleteness:
+    if authoritative_race_void(race):
+        return RaceCompleteness(race_id=race.get("race_id", ""), accounted=True)
     runners = race.get("runners", [])
     non_runner_names = {_norm(n) for n in race.get("non_runners", []) if isinstance(n, str)}
 
@@ -152,12 +232,28 @@ def _load_local_rp_file(date: str, results_dir: Path) -> tuple[list[dict], str |
     if not path.exists():
         return [], None, {"exists": False, "races_parsed": 0, "races_with_runners": 0, "races_total": 0}
     raw = path.read_text(encoding="utf-8")
-    source_hash = _sha256_of_text(raw)
+    status_rows = load_race_status_evidence(date, results_dir)
+    status_raw = json.dumps(status_rows, sort_keys=True, ensure_ascii=False)
+    source_hash = _sha256_of_text(raw + "\n--RACE-STATUS-EVIDENCE--\n" + status_raw)
     data = json.loads(raw)
-    races = data.get("results", []) if isinstance(data, dict) else data
+    result_rows = list(data.get("results", []) if isinstance(data, dict) else data)
+    if not all(isinstance(row, dict) for row in result_rows):
+        raise ValueError(f"invalid result row in {path}")
+    races = merge_result_and_status_rows(result_rows, status_rows)
     status = data.get("status") if isinstance(data, dict) else None
-    races_parsed = data.get("races_parsed") if isinstance(data, dict) else len(races)
-    races_with_runners = [r for r in races if r.get("runners")]
+    races_parsed = data.get("races_parsed", len(result_rows)) if isinstance(data, dict) else len(result_rows)
+    if isinstance(races_parsed, bool) or not isinstance(races_parsed, int) or races_parsed != len(result_rows):
+        raise ValueError(f"impossible races_parsed count in {path}")
+    parse_errors = data.get("parse_errors", 0) if isinstance(data, dict) else 0
+    html_files_seen = data.get("html_files_seen") if isinstance(data, dict) else None
+    if isinstance(parse_errors, bool) or not isinstance(parse_errors, int) or parse_errors < 0:
+        raise ValueError(f"impossible parse_errors count in {path}")
+    if html_files_seen is not None:
+        if isinstance(html_files_seen, bool) or not isinstance(html_files_seen, int) or html_files_seen < 0:
+            raise ValueError(f"impossible html_files_seen count in {path}")
+        if races_parsed + parse_errors > html_files_seen:
+            raise ValueError(f"impossible result coverage counts in {path}")
+    races_with_runners = [r for r in races if r.get("runners") or authoritative_race_void(r)]
     completeness = {
         "exists": True,
         "status": status,

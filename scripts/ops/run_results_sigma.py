@@ -46,6 +46,29 @@ from src.constants import (  # noqa: E402
     validate_tier,
 )
 from src.velo.verdict_loader import load_verdicts  # noqa: E402
+from src.velo.learning.result_source_selector import (  # noqa: E402
+    authoritative_race_void,
+    load_race_status_evidence,
+    merge_result_and_status_rows,
+)
+
+
+def _coverage_after_race_voids(total_resolved: int, prediction_count: int, abandoned_count: int) -> tuple[int, float]:
+    """Return the races that ran and their result coverage."""
+    counts = (total_resolved, prediction_count, abandoned_count)
+    if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in counts):
+        raise ValueError("Sigma coverage counts must be non-negative integers")
+    if abandoned_count > prediction_count:
+        raise ValueError("abandoned race count exceeds prediction count")
+    expected_to_run = prediction_count - abandoned_count
+    if total_resolved > expected_to_run:
+        raise ValueError("resolved race count exceeds races expected to run")
+    return expected_to_run, (total_resolved / expected_to_run if expected_to_run else 0.0)
+
+
+def _merge_sigma_results_with_status(results: list[dict], status_rows: list[dict]) -> list[dict]:
+    """Apply governed status evidence without permitting identity collisions."""
+    return merge_result_and_status_rows(results, status_rows)
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
@@ -755,7 +778,13 @@ def main():
         import json as _json
         _raw = _json.loads(results_path.read_text())
         # Handle SL scraper format: {"results": [...]} wrapper
-        results_list = _raw if isinstance(_raw, list) else _raw.get("results", [])
+        results_list = list(_raw if isinstance(_raw, list) else _raw.get("results", []))
+        # Governed whole-race statuses live beside the parser output so a
+        # capture/parser rerun cannot silently erase independently verified
+        # abandonment evidence.
+        results_list = _merge_sigma_results_with_status(
+            results_list, load_race_status_evidence(race_date, results_path.parent)
+        )
         # Normalise SL-format results: derive winner/top3/off_time if missing
         for _r in results_list:
             if "winner_id" not in _r and "runners" in _r:
@@ -826,6 +855,7 @@ def main():
     misses = []  # top pick outside top 3
     no_result = []  # race result not found
     non_runners = []  # predicted horse did not participate (NR/WD only)
+    abandoned_races = []  # whole race did not take place; no subject outcome
     all_matched = []
 
     # Positions that mean "did not finish / was not a runner" — exclude from stats
@@ -859,6 +889,11 @@ def main():
         
         if not result:
             no_result.append(race_id)
+            continue
+
+        if authoritative_race_void(result):
+            abandoned_races.append(race_id)
+            print(f"  [VOID] {race_id}: race abandoned — excluded from evaluation and coverage denominator")
             continue
 
         # ── Step 3.2: Integrity Gate ──────────────────────────────────────────
@@ -1010,8 +1045,9 @@ def main():
     # Below threshold: write DIAGNOSTIC artifact only. NO sigma_audits. NO learning.
     # NO Telegram final. NO Council/Mission Control finalization.
     COMPLETENESS_THRESHOLD = args.min_coverage if args.min_coverage is not None else 0.95
-    expected_races = len(predictions)
-    coverage_ratio = total_resolved / expected_races if expected_races else 0
+    expected_races, coverage_ratio = _coverage_after_race_voids(
+        total_resolved, len(predictions), len(abandoned_races)
+    )
     is_incomplete = coverage_ratio < COMPLETENESS_THRESHOLD
 
     if is_incomplete:
@@ -1023,6 +1059,7 @@ def main():
         print(f"  Resolved:        {total_resolved} ({_coverage_pct})")
         print(f"  Matched:         {total_matched}")
         print(f"  Non-runners:     {total_nr}")
+        print(f"  Abandoned/void:  {len(abandoned_races)} (excluded from denominator)")
         print(f"  Threshold:       {COMPLETENESS_THRESHOLD:.0%} (need >={_needed})")
         print(f"  Status:          SIGMA_RESULTS_INCOMPLETE_BLOCKED")
         print(f"  Learning:        BLOCKED")
@@ -1054,6 +1091,8 @@ def main():
             "resolved": total_resolved,
             "matched": total_matched,
             "non_runners": total_nr,
+            "abandoned_race_count": len(abandoned_races),
+            "abandoned_race_ids": sorted(abandoned_races),
             "coverage_ratio": round(coverage_ratio, 4),
             "threshold": COMPLETENESS_THRESHOLD,
             "no_result_count": no_result_ct,
@@ -1530,6 +1569,8 @@ def main():
         "frames": total_frames,
         "misses": total_misses,
         "true_non_runners": total_nr,
+        "abandoned_race_count": len(abandoned_races),
+        "abandoned_race_ids": sorted(abandoned_races),
         "identity_failures": 0,
         "no_result_count": no_result_ct,
         "total_reviewed": total_matched,
