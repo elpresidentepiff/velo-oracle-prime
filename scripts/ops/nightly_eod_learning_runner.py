@@ -27,6 +27,11 @@ if str(ROOT) not in sys.path:
 
 from app.playbooks.playbook_g_sentient_loopback import SentientLoopbackEngine
 from scripts.playbook_g_shadow_adapter import PlaybookGShadowAdapter
+from src.velo.learning.result_source_selector import (
+    authoritative_race_void,
+    load_race_status_evidence,
+    merge_result_and_status_rows,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("nightly_runner")
@@ -328,6 +333,17 @@ class NightlyEODRunner:
             preds = [row for row in preds if str(row.get("race_id", "")) not in duplicate_alias_ids]
         results_raw = json.loads(self.res_file.read_text())
         results_list = results_raw.get("results", []) if isinstance(results_raw, dict) else results_raw
+        try:
+            results_list = merge_result_and_status_rows(
+                list(results_list),
+                load_race_status_evidence(self.date_str, self.res_file.parent),
+            )
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            self.failures.append({
+                "type": "INVALID_RACE_STATUS_EVIDENCE",
+                "reason": str(exc),
+            })
+            return self._finalize("FAIL")
 
         # Primary index: RP numeric race_id (e.g. "919896")
         results_map = {r.get("race_id") or r.get("id"): r for r in results_list}
@@ -377,6 +393,39 @@ class NightlyEODRunner:
                 self.failures.append({"type": "MISSING_RESULT", "race_id": rid})
                 continue
             self.stats["matched_races"] += 1
+
+            if authoritative_race_void(r_race):
+                event = {
+                    "event_type": "RACE_ABANDONED_VOID",
+                    "learning_mode": "OUTCOME_ONLY_EOD_REPLAY",
+                    "learning_allowed": False,
+                    "learning_permission_reason": "RACE_ABANDONED_VOID_NO_LEARNING",
+                    "hfs_training_safe": False,
+                    "hfs_features_used": False,
+                    "sentient_state_target": str(self.state_path),
+                    "idempotency_key": f"{rid}:{self.date_str}",
+                    "race_id": rid,
+                    "event_date": self.date_str,
+                    "prediction_snapshot": p_race.get("top", {}),
+                    "result_snapshot": {
+                        "race_status": str(r_race.get("race_status")).upper(),
+                        "race_status_evidence": r_race.get("race_status_evidence"),
+                        "outcome_known": False,
+                    },
+                    "market_snapshot": {},
+                    "prediction_result": "VOID",
+                    "loss_type": "NONE",
+                    "confidence_error": None,
+                    "learning_class": "RACE_ABANDONED_VOID",
+                    "settlement_status": "VOID",
+                    "source_prediction": str(self.pred_file),
+                    "source_result": str(self.res_file),
+                }
+                with open(self.events_path, "a") as f:
+                    f.write(json.dumps(event) + "\n")
+                self.stats["events_created"] += 1
+                self.stats["void_or_unknown"] += 1
+                continue
             
             top_pick = p_race.get("top", {})
             top_horse_id = (top_pick.get("horse_id") or "")
