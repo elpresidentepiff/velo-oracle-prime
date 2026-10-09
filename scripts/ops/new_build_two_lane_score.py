@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import json
 import pickle
+import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -28,6 +29,11 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.velo.jurisdiction import is_uk_ire_race  # noqa: E402
+
 PARSED_ROOT = ROOT / "data" / "racing_post_account_parsed"
 NEW_BUILD_ROOT = ROOT / "data" / "new_build"
 REPORT_DIR = NEW_BUILD_ROOT / "reports"
@@ -41,7 +47,6 @@ REGISTRY_PATH = NEW_BUILD_ROOT / "models" / "champion" / "champion_registry.json
 
 INTENT_COVERAGE_GATE = 80.0  # percent; below this → Lane A is operational
 BANNED_SUBSTRINGS = ("rpr", "sp_dec", "log_sp", "implied_prob", "sp_rank", "is_fav")
-
 INTENT_FEATURES = [
     "mark_compression_score", "curr_or_minus_last_win_or", "curr_or_minus_best_or",
     "runs_since_win", "runs_since_place", "runs_since_mkt_support",
@@ -65,6 +70,51 @@ def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def _resolve_injection_path(target_date: str) -> Path | None:
+    """Resolve the newest RP injection for a target date."""
+    exact = PARSED_ROOT / target_date / "racecard_injection.json"
+    if exact.exists():
+        return exact
+    candidates = list(PARSED_ROOT.glob(f"*{target_date}*/racecard_injection.json"))
+    if not candidates:
+        return None
+    return max(candidates, key=lambda path: (path.stat().st_mtime_ns, path.parent.name))
+
+
+def _load_uk_ire_race_ids(
+    target_date: str, injection_path: Path | None = None
+) -> set[str]:
+    """Return the fail-closed UK/IRE race universe from RP race metadata.
+
+    ``velo_scoring_allowed`` is false for every New Build shadow row by design;
+    it prevents live Velo use rather than encoding meeting jurisdiction.  The
+    race-level country/region fields are the authority for this boundary.
+    """
+    path = injection_path or _resolve_injection_path(target_date)
+    if path is None or not path.exists():
+        return set()
+    injection = _load_json(path, {}) or {}
+    return {
+        str(race.get("race_id") or "").strip()
+        for race in injection.get("races") or []
+        if str(race.get("race_id") or "").strip()
+        and is_uk_ire_race(race)
+    }
+
+
+def _filter_scoring_rows(
+    rows: list[dict], target_date: str, injection_path: Path | None = None
+) -> list[dict]:
+    """Keep target-date rows whose authoritative RP race is UK or Ireland."""
+    allowed_race_ids = _load_uk_ire_race_ids(target_date, injection_path)
+    return [
+        row
+        for row in rows
+        if str(row.get("race_date", ""))[:10] == target_date
+        and str(row.get("race_id") or "").strip() in allowed_race_ids
+    ]
 
 
 def _write_json(path: Path, payload) -> None:
@@ -215,8 +265,10 @@ def score_date(target_date: str, execute: bool = False) -> dict:
     if not all_rows:
         raise RuntimeError("Feed JSONL is empty. Run: python scripts/ops/new_build_current_card_feed.py --execute first.")
 
-    # Filter to target date ONLY
-    target_rows = [r for r in all_rows if str(r.get("race_date", ""))[:10] == target_date]
+    # Filter to the target date and the authoritative UK/IRE race universe.
+    # Foreign/unknown races remain in source archives and passport context but
+    # must not cross into New Build prediction rows.
+    target_rows = _filter_scoring_rows(all_rows, target_date)
 
     # Date capture status
     capture_status = _date_status(target_date)

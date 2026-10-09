@@ -22,6 +22,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from src.velo.jurisdiction import is_uk_ire_race
+
 # ── Thresholds ────────────────────────────────────────────────────────────────
 # Derived from operational history: bad 2026-05-26 cache had 8 races / 70 runners.
 # Legitimate UK day minimums well exceed these.
@@ -33,9 +35,6 @@ METADATA_COVERAGE_MIN = 0.90
 # rp_merged captures happen before jockey declarations — only horse_id+trainer required
 METADATA_REQUIRED_FIELDS_RP_MERGED = ("horse_id", "trainer")
 METADATA_COVERAGE_MIN_RP_MERGED = 0.85
-
-# Jurisdictions scored by VÉLØ
-_UK_IRE_REGIONS = {"GB", "IRE", "gb", "ire", "uk"}
 
 REPORT_ROOT = Path(__file__).resolve().parents[2] / "data" / "reports"
 
@@ -70,9 +69,7 @@ class CacheGateResult:
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
 def _is_uk_ire(race: dict) -> bool:
-    region = (race.get("region") or "").upper()
-    country = (race.get("country") or "").upper()
-    return region in _UK_IRE_REGIONS or country in ("GB", "IRE", "UK", "IRELAND")
+    return is_uk_ire_race(race)
 
 
 def _collect_uk_ire_races(raw_races: list[dict]) -> list[dict]:

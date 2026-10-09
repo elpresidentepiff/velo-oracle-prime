@@ -16,6 +16,7 @@ import argparse
 import json
 import logging
 import os
+import sys
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
@@ -24,6 +25,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.velo.jurisdiction import is_uk_ire_race  # noqa: E402
+
 load_dotenv(ROOT / ".env")
 
 log = logging.getLogger("velo.build_rpdc_daily")
@@ -59,7 +65,6 @@ TAG_WEIGHTS = {
 
 CASH_WINDOW_THRESHOLD = 3.0   # release_score >= this → cash_window=True
 
-
 def _to_float(v) -> float | None:
     try:
         f = float(str(v).replace("f", "").strip())
@@ -73,6 +78,11 @@ def _to_int(v) -> int | None:
         return int(float(str(v).strip()))
     except (TypeError, ValueError):
         return None
+
+
+def _race_is_uk_ire(race: dict) -> bool:
+    """Whether a race may cross the UK/IRE RPDC release boundary."""
+    return is_uk_ire_race(race)
 
 
 def _resolve_injection_path(date_str: str, injection_path: str | Path | None = None) -> Path | None:
@@ -95,11 +105,20 @@ def _resolve_injection_path(date_str: str, injection_path: str | Path | None = N
 
 
 def _load_injection_runners(injection_path: Path) -> tuple[list[dict], set[str]]:
-    """Load active runners and their race identities from an RP injection."""
+    """Load active UK/IRE runners and race identities from an RP injection.
+
+    Foreign or jurisdiction-unknown races remain valid archive/passport input,
+    but cannot become ``runner_release_candidates``.  The injection's
+    ``velo_scoring_allowed`` field is archive-governance metadata and is false
+    for both UK/IRE and foreign RP pages; race country/region is therefore the
+    authoritative jurisdiction boundary.
+    """
     injection = json.loads(injection_path.read_text(encoding="utf-8"))
     runners: list[dict] = []
     race_ids: set[str] = set()
     for race in injection.get("races") or []:
+        if not _race_is_uk_ire(race):
+            continue
         race_id = str(race.get("race_id") or "").strip()
         if not race_id:
             continue

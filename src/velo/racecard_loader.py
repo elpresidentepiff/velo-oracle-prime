@@ -22,13 +22,72 @@ import os
 from pathlib import Path
 from typing import Any
 
-# Known Irish venue codes — everything else is treated as GB
+from src.velo.jurisdiction import (
+    normalize_jurisdiction_code,
+    resolve_jurisdiction_values,
+)
+
+# Venue-code fallback is deliberately allowlisted.  RP's per-race country/region
+# metadata is authoritative; these sets are used only for older merged files that
+# genuinely pre-date that metadata.  An unrecognised venue must remain unknown so
+# the downstream UK/IRE jurisdiction filter fails closed.
 _IRE_VENUE_CODES = frozenset({
     "GOW", "LEO", "NAV", "CUR", "TIP", "GAL", "KIL", "KLN", "BAL", "BEL",
     "CLO", "DUN", "FAI", "LIM", "NAA", "PAR", "ROS", "SLI", "THU",
-    "WEX", "NAS", "DRO", "MUS", "SAL", "CAR", "FFA", "GRA", "KIG",
-    "PTK", "DPT", "DOW",
+    "WEX", "NAS", "DRO", "DWR", "FFA", "GRA", "KIG",
+    "PTK", "DPT", "DOW", "COR", "KLB", "PUN", "TRA", "TRM", "TRAMORE",
+    "LIT", "SLIGO", "WEXFORD",
 })
+
+_GB_VENUE_CODES = frozenset({
+    "AIN", "ASC", "AYR", "BAN", "BANGOR-ON-DEE", "BAT", "BATH_GB", "BEV",
+    "BRI", "BRIGHTON", "CAR", "CARLISLE", "CARTMEL", "CAT", "CHE", "CHEPSTOW_GB",
+    "CHESTER", "CHM", "CHP", "CHS", "CMS", "CRL", "CRT", "DON", "EPS", "EXE",
+    "FAK", "FFO", "FLK", "FOL", "FON", "GOO", "HAM", "HAY", "HER", "HEX",
+    "HUN", "HUNTINGDON",
+    "KEL", "KELSO", "KEM", "LEI", "LIN", "LINAW", "LINGFIELD_AW_GB", "LUD",
+    "MAR", "MUS", "NAB", "NBY", "NCS", "NEW", "NEWCASTLE_AW", "NEWMARKET_JULY",
+    "NEWTON_ABBOT", "NMK", "NOT", "PER", "PLU", "PON", "RED", "REDCAR",
+    "RIP", "SAL", "SALISBURY", "SAN", "SEDGEFIELD", "SOUTHWELL", "STH", "STR",
+    "TAU", "THI", "UTT", "UTTOXETER", "WAR", "WARWICK", "WDR", "WET", "WIN",
+    "WINDSOR", "WOL", "WOR", "YAR", "YOR",
+})
+
+
+def _normalise_region_code(value: Any) -> str:
+    """Return a normalizer-compatible region code without guessing jurisdiction."""
+    return normalize_jurisdiction_code(value)
+
+
+def _resolve_rp_merged_region(
+    rp: dict[str, Any], race_data: dict[str, Any], venue_code: str
+) -> str:
+    """Resolve jurisdiction from RP metadata, using venue codes only as fallback.
+
+    The most granular race-level metadata wins.  In particular, a non-GB/IRE
+    country such as ``FR`` must survive even when ``region`` is blank.  Venue
+    fallback is used only when every authoritative field is empty, and unknown
+    venues stay blank so ``normalize_race`` classifies them as ``unknown``.
+    """
+    race_info = race_data.get("race_info")
+    metadata_sources = (
+        race_info if isinstance(race_info, dict) else {},
+        race_data,
+        rp,
+    )
+    metadata_values = [
+        source.get(key)
+        for source in metadata_sources
+        for key in ("region", "country")
+    ]
+    if any(_normalise_region_code(value) for value in metadata_values):
+        return resolve_jurisdiction_values(metadata_values)
+
+    if venue_code in _IRE_VENUE_CODES:
+        return "IRE"
+    if venue_code in _GB_VENUE_CODES:
+        return "GB"
+    return ""
 
 
 def _parse_betting_forecast(forecast_str: str | None) -> dict[str, float]:
@@ -112,7 +171,8 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
         so _build_live_features() reads them on the first pass
       - going and race_class extracted from race_info when present
 
-    Fields absent from RP data remain None. Sets region="IRE" for Irish venues.
+    Fields absent from RP data remain None. RP race country/region metadata is
+    authoritative; known venue-code fallback is used only when it is absent.
     Returns an empty list if no RP merged files exist for the date.
     """
     import re as _re
@@ -130,13 +190,19 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
             continue
 
         venue_name: str = rp.get("venue", rp_path.stem.split("_")[1])
-        venue_code: str = rp_path.stem.split("_")[1].upper()
-        region = "IRE" if venue_code in _IRE_VENUE_CODES else "GB"
-
+        filename_prefix = "racecard_"
+        filename_suffix = f"_{date_str}"
+        stem = rp_path.stem
+        if stem.startswith(filename_prefix) and stem.endswith(filename_suffix):
+            venue_code = stem[len(filename_prefix):-len(filename_suffix)].upper()
+        else:
+            venue_code = str(rp.get("venue_code") or "").strip().upper()
         for race_time, race_data in rp.get("races", {}).items():
             horses = race_data.get("horses", [])
             if not horses:
                 continue
+
+            region = _resolve_rp_merged_region(rp, race_data, venue_code)
 
             # ── Betting forecast → per-horse odds ────────────────────────────
             forecast_raw = race_data.get("betting_forecast", "")

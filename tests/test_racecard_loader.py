@@ -7,7 +7,9 @@ Validates:
   - VELO_DISABLE_RACING_API=1 prevents API call
   - API 401 fails clearly when no local source exists
   - load_rp_merged_as_racecards: synthesises races with region and runners
-  - Irish venues get region=IRE; GB venues get region=GB
+  - authoritative country/region metadata wins over venue-code fallback
+  - Irish venues get region=IRE; known GB venues get region=GB
+  - unknown venues remain unknown instead of being guessed as GB
   - Explicit --source cache / rp / api flags behave correctly
 """
 
@@ -16,6 +18,8 @@ import sys
 import urllib.error
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -88,10 +92,9 @@ def _loader(tmp_path, source=None, disable_api=False):
 # fetch_api_racecards was removed from racecard_loader with the Racing API
 # live path (ONE_TRUTH law 2026-06-10). These source-fallback tests are
 # quarantined, not deleted — they resume automatically if the symbol returns.
-import pytest as _pytest  # noqa: E402
 import src.velo.racecard_loader as _loader_mod  # noqa: E402
 
-_stale_api_fetch = _pytest.mark.skipif(
+_stale_api_fetch = pytest.mark.skipif(
     not hasattr(_loader_mod, "fetch_api_racecards"),
     reason="STALE_LIVE_PATH: fetch_api_racecards removed with Racing API live path "
     "(ONE_TRUTH law 2026-06-10) — RP-only source order is covered by rp_merged tests",
@@ -196,6 +199,157 @@ def test_ire_venue_gets_ire_region(tmp_path):
         assert race["region"] == "IRE", f"Expected IRE, got {race['region']}"
 
 
+@pytest.mark.parametrize(
+    ("venue_code", "venue_name", "expected"),
+    [
+        ("CAR", "Carlisle", "GB"),
+        ("CARLISLE", "Carlisle", "GB"),
+        ("NAB", "Newton Abbot", "GB"),
+        ("NEWTON_ABBOT", "Newton Abbot", "GB"),
+        ("DWR", "Down Royal", "IRE"),
+        ("SLI", "Sligo", "IRE"),
+        ("SLIGO", "Sligo", "IRE"),
+        ("TRM", "Tramore", "IRE"),
+        ("TRA", "Tramore", "IRE"),
+        ("TRAMORE", "Tramore", "IRE"),
+        ("WEX", "Wexford", "IRE"),
+        ("WEXFORD", "Wexford", "IRE"),
+    ],
+)
+def test_real_metadata_less_venue_fallbacks_are_explicitly_allowlisted(
+    tmp_path, venue_code, venue_name, expected
+):
+    content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    content["venue"] = venue_name
+    _make_rp_file(tmp_path, venue_code=venue_code, content=content)
+
+    races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+
+    assert races
+    assert {race["region"] for race in races} == {expected}
+
+
+@pytest.mark.parametrize(
+    ("region", "country"),
+    [("GB", "FR"), ("FR", "GB"), ("IRE", "GB"), ("GB", "IRE")],
+)
+def test_conflicting_authoritative_fields_fail_closed(
+    tmp_path, region, country
+):
+    content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    for race in content["races"].values():
+        race["race_info"] = {"region": region, "country": country}
+    _make_rp_file(tmp_path, venue_code="YAR", content=content)
+
+    races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+
+    assert races
+    assert {race["region"] for race in races} == {""}
+
+
+def test_conflict_across_nested_metadata_sources_fails_closed(tmp_path):
+    content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    content["country"] = "FR"
+    for race in content["races"].values():
+        race["race_info"] = {"region": "GB"}
+    _make_rp_file(tmp_path, venue_code="YAR", content=content)
+
+    races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+
+    assert races
+    assert {race["region"] for race in races} == {""}
+
+
+@pytest.mark.parametrize(
+    ("venue_code", "venue_name"),
+    (("COMPIEGNE", "Compiegne"), ("TOULOUSE", "Toulouse")),
+)
+def test_authoritative_fr_country_wins_when_region_blank(
+    tmp_path, venue_code, venue_name
+):
+    content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    content["venue"] = venue_name
+    for race in content["races"].values():
+        race["race_info"] = {
+            "race_title": "International race",
+            "country": "FR",
+            "region": "",
+        }
+    _make_rp_file(tmp_path, venue_code=venue_code, content=content)
+
+    races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+
+    assert races
+    assert {race["region"] for race in races} == {"FR"}
+
+
+def test_authoritative_country_aliases_normalize_for_gb_and_ire(tmp_path):
+    gb_content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    gb_content["venue"] = "York"
+    for race in gb_content["races"].values():
+        race["race_info"] = {"country": "gbr", "region": ""}
+    _make_rp_file(tmp_path, venue_code="YOR", content=gb_content)
+
+    ire_content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    ire_content["venue"] = "Downpatrick"
+    for race in ire_content["races"].values():
+        race["race_info"] = {"country": "ie", "region": ""}
+    _make_rp_file(tmp_path, venue_code="DPT", content=ire_content)
+
+    races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+
+    by_course = {race["course"]: race["region"] for race in races}
+    assert by_course == {"York": "GB", "Downpatrick": "IRE"}
+
+
+def test_unknown_venue_without_country_is_not_guessed_as_gb(tmp_path):
+    content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    content["venue"] = "Mystery Downs"
+    for race in content["races"].values():
+        race["race_info"] = {"country": "", "region": ""}
+    _make_rp_file(tmp_path, venue_code="MYSTERY_DOWNS", content=content)
+
+    races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+
+    assert races
+    assert {race["region"] for race in races} == {""}
+
+
+def test_normalizer_scoring_filter_keeps_only_gb_and_ire(tmp_path):
+    from workers.racing_api_normalizer import normalize_race
+
+    fixtures = (
+        ("YOR", "York", "GB"),
+        ("DPT", "Downpatrick", "IRE"),
+        ("COMPIEGNE", "Compiegne", "FR"),
+        ("MYSTERY_DOWNS", "Mystery Downs", ""),
+    )
+    for venue_code, venue_name, country in fixtures:
+        content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+        content["venue"] = venue_name
+        for race in content["races"].values():
+            race["race_info"] = {"country": country, "region": ""}
+        _make_rp_file(tmp_path, venue_code=venue_code, content=content)
+
+    normalized = [
+        normalize_race(race)
+        for race in load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+    ]
+    scored = [
+        race for race in normalized if race["jurisdiction"] in ("uk", "ire")
+    ]
+
+    assert {race["course"] for race in scored} == {"York", "Downpatrick"}
+    assert {
+        race["course"]: race["jurisdiction"] for race in normalized
+    } == {
+        "York": "uk",
+        "Downpatrick": "ire",
+        "Compiegne": "other",
+        "Mystery Downs": "unknown",
+    }
+
+
 def test_rp_runners_have_horse_name(tmp_path):
     _make_rp_file(tmp_path)
     races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
@@ -288,8 +442,6 @@ def test_explicit_source_rp_fails_clearly_when_absent(tmp_path):
 # 2026-05-26) and removed when the Racing API live path was retired
 # (RP-only law: docs/current/ONE_TRUTH.md, 2026-06-10). The tests below are
 # quarantined, not deleted: if the function returns, they resume automatically.
-import pytest  # noqa: E402
-
 try:
     from src.velo.racecard_loader import _sanitize_api_rpr  # noqa: E402
     _HAS_SANITIZER = True

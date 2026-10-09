@@ -46,6 +46,8 @@ from __future__ import annotations
 import logging
 from typing import Any, Optional
 
+from src.velo.jurisdiction import resolve_jurisdiction_values
+
 log = logging.getLogger("velo.normalizer")
 
 
@@ -93,28 +95,26 @@ def _safe_int(val: Any, default: int = 0) -> int:
     return int(_safe_float(val, default))
 
 
-def _resolve_jurisdiction(region: Any) -> str:
+def _resolve_jurisdiction(region: Any, country: Any = None) -> str:
     """
     Map raw Racing API region code to a canonical closed-set jurisdiction.
 
     Returns one of:
-      "uk"      — GB races (region == "GB")
-      "ire"     — Irish races (region == "IRE" or "IE")
+      "uk"      — unconflicted GB/GBR/UK metadata
+      "ire"     — unconflicted IE/IRL/IRE/IRELAND metadata
       "other"   — any other non-empty region code
-      "unknown" — absent or blank region
+      "unknown" — absent, blank, or conflicting region/country metadata
 
     Never returns None. Never leaks raw strings downstream.
     """
-    if not region:
+    code = resolve_jurisdiction_values((region, country))
+    if not code:
         return "unknown"
-    r = str(region).strip().upper()
-    if r == "GB":
+    if code == "GB":
         return "uk"
-    if r in ("IRE", "IE"):
+    if code == "IRE":
         return "ire"
-    if r:
-        return "other"
-    return "unknown"
+    return "other"
 
 
 def _safe_str(val: Any, default: str = "") -> str:
@@ -282,7 +282,7 @@ def normalize_race(raw: dict) -> dict:
         "prize":       _safe_str(raw.get("prize")),
         "field_size":  _safe_int(raw.get("field_size")),
         "region":      _safe_str(raw.get("region")),        # raw API value, e.g. "GB"
-        "jurisdiction": _resolve_jurisdiction(raw.get("region") or raw.get("country")),  # canonical: "uk"|"ire"|"other"|"unknown"
+        "jurisdiction": _resolve_jurisdiction(raw.get("region"), raw.get("country")),  # canonical: "uk"|"ire"|"other"|"unknown"
         "jumps":       raw.get("jumps"),
         "runners":     normalized_runners,
         "_raw":        raw,
