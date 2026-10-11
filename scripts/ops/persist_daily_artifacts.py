@@ -51,6 +51,7 @@ REPORTS = {
     "velo_prime_verdicts":        ("data/velo_prime_verdicts_{tag}.json", None),
     "doctrine_scorecard":         (None, "data/doctrine_scorecard_latest.json"),
     "sidecar_stack":              (None, "app/static/dashboard/sidecar_stack_latest.json"),
+    "formfav_enrichment":         ("data/reports/formfav_enrichment_{tag}.json", None),
 }
 
 LEDGER_NUMERIC = {"norpr_prob", "nb_prob", "champion_prob", "mp_prob", "nbc_prob", "winner_sp"}
