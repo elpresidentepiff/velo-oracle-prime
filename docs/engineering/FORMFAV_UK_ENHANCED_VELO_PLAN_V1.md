@@ -6,7 +6,7 @@ Production rule: **no new FormFav feature changes VÉLØ Prime until it wins chr
 
 ## Why UK first
 
-VÉLØ's strongest existing training, doctrine, Racing API fields, BHA context, RP history and specialist models are UK-centric. FormFav is therefore used first as a second-source feature expansion on races VÉLØ already understands.
+VÉLØ's strongest existing training, doctrine, Racing Post capture/merged cards, BHA context, RP history and specialist models are UK-centric. FormFav is therefore used first as a second-source feature expansion on races VÉLØ already understands.
 
 The US experiment proved two rules: cross-jurisdiction transfer without calibration is unsafe; and provider history/completeness must be quality-gated before it is trusted.
 
@@ -32,7 +32,7 @@ Ireland currently has useful form/speed/class-profile coverage but much weaker c
 
 ## Source architecture
 
-Existing Racing API / RP / BHA / VÉLØ history remains canonical truth. FormFav is attached under source-specific fields with raw payload, timestamp, sample size and conflict flags. Disagreement is recorded; nothing is silently overwritten.
+The canonical Racing Post capture/injection/merged-card pipeline, plus BHA and VÉLØ history, remains source truth. FormFav is attached under source-specific fields with raw payload, timestamp, sample size and conflict flags. Disagreement is recorded; nothing is silently overwritten.
 
 ## Lane 1 — Pace / speed map
 
@@ -100,7 +100,7 @@ A lane is promoted only with a minimum sample, chronological holdout lift, clean
 - UK enhanced shadow-card builder
 - durable formfav_uk_shadow_features report registration
 
-Production VÉLØ Prime does **not** consume these new fields yet.
+Production VÉLØ Prime does **not** consume these new fields yet. The UK shadow builder now loads the same `rp_merged` cards used by `run_prime_today.py --source rp`; Racing API is not part of this UK live path.
 
 ## Next sequence
 
