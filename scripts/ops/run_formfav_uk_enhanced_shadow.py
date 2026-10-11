@@ -24,7 +24,7 @@ if str(ROOT) not in sys.path:
 
 from src.velo.formfav_enrichment import enrich_existing_racecards
 from src.velo.formfav_uk_features import FEATURE_SCHEMA_VERSION, build_race_shadow_packet
-from src.velo.racecard_loader import fetch_api_racecards
+from src.velo.racecard_loader import load_racecards
 
 LONDON = ZoneInfo("Europe/London")
 
@@ -43,7 +43,18 @@ def main() -> int:
     date_str = args.date or _default_date()
     countries = {c.strip().lower() for c in args.countries.split(",") if c.strip()}
 
-    races = fetch_api_racecards(date_str)
+    date_tag = date_str.replace("-", "_")
+    races, source_label = load_racecards(
+        date_tag,
+        date_str,
+        ROOT / "data",
+        source="rp",
+    )
+    if source_label != "rp_merged":
+        raise RuntimeError(
+            f"UK enhanced shadow requires the canonical RP merged source; got {source_label!r}"
+        )
+
     enriched, enrich_report = enrich_existing_racecards(
         date_str=date_str,
         races=races,
@@ -70,7 +81,7 @@ def main() -> int:
         "status": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
         "feature_schema_version": FEATURE_SCHEMA_VERSION,
         "countries": sorted(countries),
-        "primary_source": "racing_api_standard",
+        "primary_source": source_label,
         "enrichment_source": "formfav",
         "races_primary": len(races),
         "races_enriched": len(packets),
