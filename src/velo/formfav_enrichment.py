@@ -49,7 +49,15 @@ def _race_local_minutes(race: dict[str, Any], date_str: str) -> int | None:
         return int(m.group(1)) * 60 + int(m.group(2))
     m = re.search(r"^(\d{1,2})[\.:](\d{2})$", raw)
     if m:
-        return int(m.group(1)) * 60 + int(m.group(2))
+        hour = int(m.group(1))
+        minute = int(m.group(2))
+        # Racing Post's compact display time uses a 12-hour clock without an
+        # AM/PM suffix (for example ``4.12`` means 16:12). UK/IRE cards are
+        # afternoon/evening fixtures, so normalise the compact form before
+        # comparing it with FormFav's timezone-aware ISO timestamp.
+        if hour < 12:
+            hour += 12
+        return hour * 60 + minute
     return None
 
 

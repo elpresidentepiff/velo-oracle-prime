@@ -3,11 +3,26 @@ import json
 import subprocess
 import os
 from pathlib import Path
+import scripts.ops.task_contract_runner as task_contract_runner
 from scripts.ops.task_contract_runner import (
     TASK_CONTRACT_OK, TASK_CONTRACT_MISSING, TASK_CONTRACT_INVALID_JSON,
     TASK_CONTRACT_FORBIDDEN_PATH_TOUCHED, TASK_CONTRACT_OUT_OF_SCOPE_PATH_TOUCHED,
     TASK_CONTRACT_FORBIDDEN_KEYWORD_FOUND, TASK_CONTRACT_CLASSIFICATION_MISSING
 )
+
+
+def test_git_stderr_warnings_are_not_parsed_as_command_output(monkeypatch, tmp_path):
+    completed = subprocess.CompletedProcess(
+        args=["git", "diff", "--name-only", "HEAD"],
+        returncode=0,
+        stdout="allowed.py\n",
+        stderr="warning: LF will be replaced by CRLF\n",
+    )
+    monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: completed)
+
+    assert task_contract_runner._run_git(
+        ["diff", "--name-only", "HEAD"], cwd=tmp_path
+    ) == "allowed.py"
 
 @pytest.fixture
 def temp_git_repo(tmp_path):

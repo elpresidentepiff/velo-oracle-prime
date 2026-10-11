@@ -35,12 +35,23 @@ TASK_CONTRACT_FAILED = "TASK_CONTRACT_FAILED"
 
 def _run_git(args: List[str], cwd: Path = ROOT) -> str:
     try:
-        return subprocess.check_output(
-            ["git"] + args, cwd=cwd, stderr=subprocess.STDOUT, text=True
-        ).strip()
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Git command failed: {e.output}")
+        completed = subprocess.run(
+            ["git"] + args,
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            detail = completed.stderr.strip() or completed.stdout.strip()
+            raise RuntimeError(f"Git command failed: {detail}")
+        # Git writes advisory messages (for example CRLF conversion warnings)
+        # to stderr. Only stdout is command data; merging both streams turns
+        # those warnings into fake changed paths and can falsely fail a task.
+        return completed.stdout.strip()
     except Exception as e:
+        if isinstance(e, RuntimeError):
+            raise
         raise RuntimeError(f"Failed to run git: {str(e)}")
 
 def load_contract(path: Path) -> dict:
