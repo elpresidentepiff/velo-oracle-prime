@@ -57,12 +57,14 @@ ENV_ALLOW_FLAGS = [
     "VELO_ALLOW_LIVE_SCORING"
 ]
 
-REQUIRED_CLASSIFICATIONS = [
+BASE_REQUIRED_CLASSIFICATIONS = [
     "NO_LIVE_SCORING_CHANGE",
-    "NO_SUPABASE_WRITES",
     "NO_MODEL_PROMOTION",
     "NO_TELEGRAM_SEND"
 ]
+
+NO_SUPABASE_WRITES = "NO_SUPABASE_WRITES"
+SUPABASE_WRITES_AUTHORIZED = "SUPABASE_WRITES_AUTHORIZED"
 
 def check_risky_command(cmd_str: str) -> Tuple[Optional[str], List[str]]:
     risk_hits = []
@@ -124,6 +126,7 @@ def main():
     risk_hits = []
     env_hits = []
     classification_missing = []
+    classification_text = ""
     errors = []
     command_executed = False
     command_exit_code = None
@@ -150,16 +153,36 @@ def main():
             cls_path = ROOT / cls_path
         
         if cls_path.exists():
-            cls_text = cls_path.read_text()
-            classification_missing = [c for c in REQUIRED_CLASSIFICATIONS if c not in cls_text]
+            classification_text = cls_path.read_text()
+            required = list(BASE_REQUIRED_CLASSIFICATIONS)
+            if any(hit.startswith("SUPABASE:") for hit in risk_hits):
+                required.append(SUPABASE_WRITES_AUTHORIZED)
+            else:
+                required.append(NO_SUPABASE_WRITES)
+            classification_missing = [c for c in required if c not in classification_text]
             if classification_missing and status != "FAIL":
                 status = "FAIL"
                 # Keep existing risk state if present, otherwise set to failed.
                 # Actually, missing classification is its own fail mode.
         else:
             errors.append(f"Classification file missing: {args.classification_file}")
-            classification_missing = REQUIRED_CLASSIFICATIONS
-            status = "FAIL"
+            classification_missing = BASE_REQUIRED_CLASSIFICATIONS + [NO_SUPABASE_WRITES]
+
+    # A bounded Supabase command may proceed only when it is the sole risk
+    # category and the task classification explicitly authorizes the write.
+    # The risk remains recorded in the audit payload. All other risky command
+    # categories and every allow-flag environment variable remain fail-closed.
+    supabase_only = bool(risk_hits) and all(hit.startswith("SUPABASE:") for hit in risk_hits)
+    supabase_authorized = (
+        supabase_only
+        and SUPABASE_WRITES_AUTHORIZED in classification_text
+        and not classification_missing
+        and not env_hits
+        and not errors
+    )
+    if supabase_authorized:
+        status = "UNKNOWN"
+        state = SIDE_EFFECT_SAFE
     
     # 4. Final Safety Determination
     is_safe = (status != "FAIL" and not errors and not classification_missing)

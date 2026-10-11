@@ -68,6 +68,30 @@ def test_supabase_risk(sentinel_script, tmp_path):
     assert data["state"] == SIDE_EFFECT_SUPABASE_WRITE_RISK
     assert any("SUPABASE" in hit for hit in data["risk_hits"])
 
+
+def test_explicitly_classified_supabase_persist_is_authorized(sentinel_script, tmp_path):
+    """A bounded Supabase command needs explicit task-level authorization."""
+    env = os.environ.copy()
+    env["VELO_SENTINEL_ROOT"] = str(tmp_path)
+    cls_file = tmp_path / "cls.txt"
+    cls_file.write_text(
+        "NO_LIVE_SCORING_CHANGE SUPABASE_WRITES_AUTHORIZED "
+        "NO_MODEL_PROMOTION NO_TELEGRAM_SEND"
+    )
+
+    res = subprocess.run([
+        "python3", str(sentinel_script),
+        "--mode", "audit",
+        "--classification-file", str(cls_file),
+        "--", "python3", "scripts/ops/persist_daily_artifacts.py", "--kind", "reports"
+    ], capture_output=True, text=True, env=env)
+
+    assert res.returncode == 0
+    data = _load_json_from_stdout(res.stdout)
+    assert data["status"] == "PASS"
+    assert data["state"] == SIDE_EFFECT_SAFE
+    assert data["risk_hits"] == ["SUPABASE:persist"]
+
 def test_telegram_risk(sentinel_script, tmp_path):
     """Telegram send-risk command returns SIDE_EFFECT_TELEGRAM_SEND_RISK and non-PASS."""
     env = os.environ.copy()
