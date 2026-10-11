@@ -1653,6 +1653,93 @@ async def midprice_shadow(date: str = Query(default=None)):
     }
 
 
+@app.get("/api/formfav-shadow")
+async def formfav_shadow(date: str = Query(default=None)):
+    """Read-only FormFav feature coverage for the operator dashboard.
+
+    The underlying packet is additive pre-race evidence.  This endpoint returns
+    compact race summaries only: it never presents FormFav as a selection lane,
+    never changes Prime probabilities, and never authorises staking or promotion.
+    """
+    import datetime as _dt
+
+    d = date or _dt.date.today().isoformat()
+    path = (
+        pathlib.Path(__file__).parent.parent
+        / "data"
+        / "reports"
+        / f"formfav_uk_shadow_features_{d.replace('-', '_')}.json"
+    )
+    data, source = _report_artifact("formfav_uk_shadow_features", d, path)
+    boundary = {
+        "shadow_only": True,
+        "production_influence": False,
+        "stake_authorised": False,
+        "promotion_eligible": False,
+    }
+    if data is None:
+        return {
+            "date": d,
+            "status": "NOT_RUN",
+            "artifact_status": "MISSING",
+            "trust_policy": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
+            "summary": {},
+            "races": [],
+            **boundary,
+        }
+
+    race_summaries = []
+    for race in data.get("races") or []:
+        runners = race.get("runners") or []
+
+        def _present(field: str) -> int:
+            return sum(1 for runner in runners if float(runner.get(field) or 0) > 0)
+
+        race_summaries.append(
+            {
+                "race_id": race.get("race_id"),
+                "course": race.get("course"),
+                "off_time": race.get("off_time"),
+                "race_name": race.get("race_name"),
+                "runner_count": race.get("runner_count") or len(runners),
+                "training_eligible_runners": race.get("training_eligible_runners") or 0,
+                "mean_quality_score": race.get("mean_quality_score"),
+                "pace_scenario": race.get("formfav_pace_scenario"),
+                "speedmap_coverage": race.get("speedmap_coverage"),
+                "feature_coverage": {
+                    "form": _present("ff_form_present"),
+                    "class_fit": _present("ff_class_fit_present"),
+                    "track_bias": _present("ff_track_bias_present"),
+                    "speed_map": _present("ff_speedmap_present"),
+                },
+            }
+        )
+
+    audit = data.get("enrichment_audit") or {}
+    return {
+        "date": d,
+        "status": "OK",
+        "artifact_status": data.get("status") or "UNKNOWN",
+        "feature_schema_version": data.get("feature_schema_version"),
+        "trust_policy": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
+        "source": source,
+        "summary": {
+            "races_primary": data.get("races_primary") or 0,
+            "races_enriched": data.get("races_enriched") or 0,
+            "runners": data.get("runners") or 0,
+            "training_eligible_runners": data.get("training_eligible_runners") or 0,
+            "identity_mismatches": data.get("identity_mismatches") or 0,
+            "draw_conflicts": data.get("draw_conflicts") or 0,
+            "mean_quality_score": data.get("mean_quality_score"),
+            "coverage": data.get("coverage") or {},
+            "track_bias_failures": audit.get("track_bias_calls_failed") or 0,
+            "upstream_error_count": len(audit.get("errors") or []),
+        },
+        "races": race_summaries,
+        **boundary,
+    }
+
+
 @app.get("/api/llm-brief")
 async def llm_brief(date: str = Query(default=None), mode: str = Query(default=None)):
     """LLM intel brief (2026-07-29, DeepSeek v4 pro via OpenRouter).
