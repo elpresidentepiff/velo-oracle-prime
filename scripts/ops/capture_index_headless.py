@@ -48,7 +48,12 @@ with sync_playwright() as p:
 
     for label, url in PAGES:
         page = browser.new_page()
-        page.goto(url, wait_until="networkidle", timeout=60000)
+        # Racing Post keeps background requests open continuously, so
+        # ``networkidle`` is not a truthful readiness condition and can time
+        # out after the authenticated document has loaded.  Wait for the DOM,
+        # then allow the client-rendered racecard index to settle.
+        page.goto(url, wait_until="domcontentloaded", timeout=60000)
+        page.wait_for_timeout(5000)
         html = page.content()
         page.close()
         out = OUT_DIR / f"{label}.html"
