@@ -447,6 +447,20 @@ def build_model_suggestions(date_str: str, race_id: str | None = None) -> dict:
     # which container produced its local artifact.
     canonical_rows, canonical_error = _canonical_supabase_top_picks(date_str)
     if canonical_rows:
+        # Anchor every lane to the same production race universe as MAIN_VELO_PRIME.
+        # Some research shadows intentionally score wider international cards;
+        # those must not leak into the operator's canonical GB/IRE race-day view.
+        main_race_ids = {
+            str(r.get("race_id") or "")
+            for r in canonical_rows
+            if r.get("model_name") == "MAIN_VELO_PRIME"
+        }
+        if main_race_ids:
+            canonical_rows = [
+                r for r in canonical_rows
+                if str(r.get("race_id") or "") in main_race_ids
+            ]
+
         rows = [_canonical_row_to_suggestion(r) for r in canonical_rows]
         if race_id:
             rows = [r for r in rows if r["race_id"] == str(race_id)]
