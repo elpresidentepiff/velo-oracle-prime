@@ -112,6 +112,7 @@ def enrich_existing_racecards(
     races: list[dict[str, Any]],
     countries: set[str] | None = None,
     include_prices: bool = True,
+    include_track_bias: bool = True,
     timezone: str = "Europe/London",
     report_path: Path | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -131,6 +132,9 @@ def enrich_existing_racecards(
         "form_calls_ok": 0,
         "price_calls_ok": 0,
         "price_calls_forbidden": 0,
+        "track_bias_calls_ok": 0,
+        "track_bias_calls_forbidden": 0,
+        "track_bias_calls_failed": 0,
         "runners_matched": 0,
         "runners_unmatched": 0,
         "fields_filled": {},
@@ -150,6 +154,7 @@ def enrich_existing_racecards(
 
     meetings = meetings_payload.get("meetings") or []
     report["meetings_seen"] = len(meetings)
+    track_bias_cache: dict[tuple[str, str, str], dict[str, Any] | None] = {}
 
     def filled(field: str) -> None:
         report["fields_filled"][field] = int(report["fields_filled"].get(field, 0)) + 1
@@ -224,6 +229,38 @@ def enrich_existing_racecards(
                     existing[key] = value
                     filled(f"race.{key}")
 
+            # Track bias is distance-specific. Request one exact-distance packet
+            # per venue/distance and cache it for the card. Failure is non-fatal.
+            track_bias: dict[str, Any] | None = None
+            distance_raw = form.get("distance") or mrace.get("distance")
+            distance_match = re.search(r"(\d{3,4})", str(distance_raw or ""))
+            distance_m = distance_match.group(1) if distance_match else None
+            bias_key = (country, _norm(slug), str(distance_m or ""))
+            if include_track_bias and distance_m:
+                if bias_key not in track_bias_cache:
+                    try:
+                        track_bias_cache[bias_key] = client.track_bias(
+                            venue=slug,
+                            country=country,
+                            distance=distance_m,
+                            window=90,
+                        )
+                        report["track_bias_calls_ok"] += 1
+                    except FormFavError as exc:
+                        track_bias_cache[bias_key] = None
+                        if "403" in str(exc):
+                            report["track_bias_calls_forbidden"] += 1
+                        else:
+                            report["track_bias_calls_failed"] += 1
+                            report["errors"].append(f"track_bias {track} {distance_m}m: {exc}")
+                    except Exception as exc:
+                        track_bias_cache[bias_key] = None
+                        report["track_bias_calls_failed"] += 1
+                        report["errors"].append(
+                            f"track_bias {track} {distance_m}m: {type(exc).__name__}: {exc}"
+                        )
+                track_bias = track_bias_cache.get(bias_key)
+
             existing["_formfav"] = {
                 "track": form.get("track") or track,
                 "slug": slug,
@@ -233,8 +270,11 @@ def enrich_existing_racecards(
                 "timezone": form.get("timezone") or mrace.get("timezone"),
                 "condition": form.get("condition") or mrace.get("condition"),
                 "weather": form.get("weather") or mrace.get("weather"),
+                "paceScenario": form.get("paceScenario") or mrace.get("paceScenario"),
                 "numberOfRunners": form.get("numberOfRunners") or mrace.get("numberOfRunners"),
                 "prizeMoney": form.get("prizeMoney") or mrace.get("prizeMoney"),
+                "distance": distance_raw,
+                "trackBias": track_bias,
             }
 
             price_map = _price_by_runner(prices)
