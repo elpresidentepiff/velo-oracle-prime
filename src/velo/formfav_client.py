@@ -122,6 +122,33 @@ class FormFavClient:
             },
         )
 
+    def track_bias(
+        self,
+        *,
+        venue: str,
+        country: str,
+        distance: str | int | None = None,
+        window: int | None = 90,
+        condition: str | None = None,
+        race_code: str = "gallops",
+    ) -> dict[str, Any]:
+        """Return FormFav's distance-scoped barrier bias packet.
+
+        This is enrichment evidence only. Callers must retain sample sizes and
+        missingness; win/place rates are never trusted without their denominators.
+        """
+        safe_venue = urllib.parse.quote(str(venue).strip(), safe="")
+        return self._get(
+            f"/v1/stats/track-bias/{safe_venue}",
+            {
+                "race_code": race_code,
+                "country": country,
+                "distance": distance,
+                "window": window,
+                "condition": condition,
+            },
+        )
+
     def results(
         self,
         *,
