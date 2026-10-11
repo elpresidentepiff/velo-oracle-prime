@@ -327,6 +327,17 @@ def main() -> int:
     ):
         return 1
 
+    # ── Step 5.6: FormFav UK enhanced shadow feature card ────────────────
+    # Uses the SAME RP merged racecards that Step 9 will score. This is
+    # deliberately shadow-only: it builds pace/form/class/track-bias features
+    # and persists an audit artifact but cannot alter Prime probabilities.
+    run(
+        "Step 5.6: FormFav UK enhanced shadow features",
+        [PY, "scripts/ops/run_formfav_uk_enhanced_shadow.py",
+         "--date", date, "--countries", "gb,ie", "--persist-artifact"],
+        critical=False, results=results,
+    )
+
     # ── Step 6: New Build current-card feed ──────────────────────────────
     standard_cache = ROOT / "data" / f"racecards_{date.replace('-', '_')}_standard.json"
     run(
