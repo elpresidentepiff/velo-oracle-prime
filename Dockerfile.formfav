@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONPATH=/app
+
+WORKDIR /app
+
+COPY src/velo/formfav_client.py src/velo/formfav_client.py
+COPY scripts/ops/formfav_live_worker.py scripts/ops/formfav_live_worker.py
+
+CMD ["python", "scripts/ops/formfav_live_worker.py"]
