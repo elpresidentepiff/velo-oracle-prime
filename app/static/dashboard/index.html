@@ -738,6 +738,18 @@ td:last-child  { padding-right: 20px; }
   <div id="mps-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
 </div>
 
+<div id="formfav-shadow-panel" style="display:none;background:#111;border:1px solid #42a5f5;border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:#42a5f5;letter-spacing:0.05em;margin-bottom:6px;">
+    FORMFAV FEATURE ENRICHMENT <span id="ffs-count" style="color:#888;font-weight:400"></span>
+    <span style="float:right;font-size:10px;color:#666;font-weight:400">SHADOW ONLY · PRODUCTION INFLUENCE 0 · NO STAKING</span>
+  </div>
+  <div id="ffs-summary" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  <details id="ffs-race-details" style="margin-top:8px;color:#aaa;">
+    <summary style="cursor:pointer;font-size:11px;color:#42a5f5;">Race-level evidence coverage</summary>
+    <div id="ffs-races" style="max-height:260px;overflow:auto;margin-top:6px;"></div>
+  </details>
+</div>
+
 <div id="llm-brief-panel" style="display:none;background:#111;border:1px solid #26a69a;border-radius:6px;margin:8px 12px;padding:10px 14px;">
   <div style="font-weight:600;color:#26a69a;letter-spacing:0.05em;margin-bottom:6px;">
     LLM INTEL BRIEF <span id="llm-brief-mode" style="color:#888;font-weight:400"></span>
@@ -4214,6 +4226,57 @@ async function loadMidpriceShadow() {
   } catch (_mpsErr) { panel.style.display = 'none'; }
 }
 
+async function loadFormfavShadow() {
+  const params = new URLSearchParams(window.location.search);
+  const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
+  const panel = document.getElementById('formfav-shadow-panel');
+  const summaryEl = document.getElementById('ffs-summary');
+  const racesEl = document.getElementById('ffs-races');
+  const countEl = document.getElementById('ffs-count');
+  if (!panel || !summaryEl || !racesEl || !countEl) return;
+  try {
+    const res = await fetch(`/api/formfav-shadow?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`formfav-shadow ${res.status}`);
+    const data = await res.json();
+    if (data.status !== 'OK') { panel.style.display = 'none'; return; }
+    const s = data.summary || {};
+    const coverage = s.coverage || {};
+    const runners = Number(s.runners || 0);
+    const eligible = Number(s.training_eligible_runners || 0);
+    const qualityPct = s.mean_quality_score === null || s.mean_quality_score === undefined
+      ? '—' : `${(Number(s.mean_quality_score) * 100).toFixed(1)}%`;
+    countEl.textContent = `(${s.races_enriched || 0}/${s.races_primary || 0} races · ${eligible}/${runners} eligible)`;
+    const metrics = [
+      ['QUALITY', qualityPct],
+      ['FORM', `${coverage.form || 0}/${runners}`],
+      ['CLASS PROFILE', `${coverage.class_profile || 0}/${runners}`],
+      ['CLASS FIT', `${coverage.class_fit || 0}/${runners}`],
+      ['TRACK BIAS', `${coverage.track_bias || 0}/${runners}`],
+      ['SPEED MAP', `${coverage.speed_map || 0}/${runners}`],
+      ['PACE SCENARIO', `${coverage.pace_scenario || 0}/${s.races_enriched || 0}`],
+      ['IDENTITY MISMATCH', String(s.identity_mismatches || 0)],
+    ];
+    summaryEl.innerHTML = metrics.map(([label, value]) =>
+      `<div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px 10px;min-width:110px;">`
+      + `<div style="font-size:9px;color:#777;letter-spacing:.08em">${esc(label)}</div>`
+      + `<div style="font-size:14px;color:${label === 'IDENTITY MISMATCH' && Number(value) ? '#ff7043' : '#ddd'}">${esc(value)}</div></div>`
+    ).join('');
+    const rows = data.races || [];
+    racesEl.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap;">'
+      + '<tr style="color:#777;text-align:left"><th>RACE</th><th>ELIGIBLE</th><th>QUALITY</th><th>FORM</th><th>CLASS FIT</th><th>TRACK BIAS</th><th>SPEED MAP</th><th>PACE</th></tr>'
+      + rows.map(r => {
+        const c = r.feature_coverage || {};
+        const n = Number(r.runner_count || 0);
+        const q = r.mean_quality_score === null || r.mean_quality_score === undefined ? '—' : `${(Number(r.mean_quality_score) * 100).toFixed(1)}%`;
+        return `<tr style="border-top:1px solid #222"><td style="padding:3px 12px 3px 0;color:#ccc">${esc(`${r.course || ''} ${r.off_time || ''}`)}</td>`
+          + `<td>${r.training_eligible_runners || 0}/${n}</td><td>${q}</td><td>${c.form || 0}/${n}</td>`
+          + `<td>${c.class_fit || 0}/${n}</td><td>${c.track_bias || 0}/${n}</td><td>${c.speed_map || 0}/${n}</td>`
+          + `<td>${esc(r.pace_scenario || 'UNAVAILABLE')}</td></tr>`;
+      }).join('') + '</table>';
+    panel.style.display = 'block';
+  } catch (_ffsErr) { panel.style.display = 'none'; }
+}
+
 async function loadLlmBrief() {
   const params = new URLSearchParams(window.location.search);
   const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
@@ -4237,6 +4300,7 @@ async function loadLlmBrief() {
 loadCard();
 loadPlotConviction();
 loadMidpriceShadow();
+loadFormfavShadow();
 loadLlmBrief();
 </script>
 </body>
