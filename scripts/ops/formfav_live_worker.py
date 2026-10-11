@@ -171,7 +171,11 @@ def _looks_final(result: dict[str, Any]) -> bool:
 
 def _persist_form(race_key: str, race_row: dict[str, Any], form: dict[str, Any]) -> None:
     _upsert("formfav_races", [race_row], "provider_race_key")
-    runners = []
+    # Providers can occasionally emit duplicate saddlecloth numbers in the
+    # same payload (e.g. coupled entries / correction rows). De-duplicate the
+    # batch before Postgres ON CONFLICT so one insert command never targets the
+    # same primary key twice. Preserve the last provider row as freshest truth.
+    runners_by_number: dict[int, dict[str, Any]] = {}
     for rr in form.get("runners") or []:
         if not isinstance(rr, dict):
             continue
@@ -179,35 +183,38 @@ def _persist_form(race_key: str, race_row: dict[str, Any], form: dict[str, Any])
         name = rr.get("name")
         if number is None or not name:
             continue
-        runners.append({
+        n = int(number)
+        runners_by_number[n] = {
             "provider_race_key": race_key,
-            "runner_number": int(number),
+            "runner_number": n,
             "horse_name": str(name),
             "scratched": bool(rr.get("scratched")),
             "form_payload": rr,
             "updated_at": datetime.now(UTC).isoformat(),
-        })
-    _upsert("formfav_runner_form", runners, "provider_race_key,runner_number")
+        }
+    _upsert("formfav_runner_form", list(runners_by_number.values()), "provider_race_key,runner_number")
 
 
 def _persist_prices(race_key: str, prices: dict[str, Any]) -> int:
-    rows = []
+    rows_by_number: dict[int, dict[str, Any]] = {}
     captured = datetime.now(UTC).isoformat()
     for rr in prices.get("runners") or []:
         if not isinstance(rr, dict) or rr.get("number") is None or not rr.get("name"):
             continue
         summary = best_live_prices(rr)
-        rows.append({
+        n = int(rr["number"])
+        rows_by_number[n] = {
             "provider_race_key": race_key,
             "captured_at": captured,
-            "runner_number": int(rr["number"]),
+            "runner_number": n,
             "horse_name": str(rr["name"]),
             "best_win": summary.get("best_win"),
             "best_place": summary.get("best_place"),
             "shortest_win": summary.get("shortest_win"),
             "quote_count": summary.get("fresh_quote_count") or 0,
             "market_payload": rr,
-        })
+        }
+    rows = list(rows_by_number.values())
     _insert("formfav_market_snapshots", rows)
     return len(rows)
 
