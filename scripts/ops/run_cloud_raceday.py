@@ -30,6 +30,7 @@ if str(ROOT) not in sys.path:
 
 from src.velo.racecard_loader import fetch_api_racecards
 from src.velo.formfav_enrichment import enrich_existing_racecards
+from src.velo.formfav_uk_features import FEATURE_SCHEMA_VERSION, build_race_shadow_packet
 
 LONDON = ZoneInfo("Europe/London")
 
@@ -90,6 +91,7 @@ def main() -> int:
                 races=races,
                 countries=countries,
                 include_prices=(os.getenv("FORMFAV_INCLUDE_PRICES", "1").strip() != "0"),
+                include_track_bias=(os.getenv("FORMFAV_INCLUDE_TRACK_BIAS", "1").strip() != "0"),
                 timezone=os.getenv("FORMFAV_TIMEZONE") or "Europe/London",
                 report_path=report_path,
             )
@@ -97,8 +99,43 @@ def main() -> int:
                 "[FORMFAV] enrichment "
                 f"matched_races={ff_report.get('races_matched', 0)} "
                 f"matched_runners={ff_report.get('runners_matched', 0)} "
+                f"track_bias_calls={ff_report.get('track_bias_calls_ok', 0)} "
                 f"price_calls={ff_report.get('price_calls_ok', 0)} "
                 f"errors={len(ff_report.get('errors') or [])}",
+                flush=True,
+            )
+
+            # Build a UK/IRE-only source-aware feature packet. This is SHADOW
+            # evidence: Prime does not read these features yet.
+            uk_races = [
+                race for race in races
+                if str((race.get("_formfav") or {}).get("country") or race.get("country") or race.get("region") or "").lower()
+                in {"gb", "ie"}
+            ]
+            uk_packets = [build_race_shadow_packet(race) for race in uk_races]
+            uk_report = {
+                "date": date_str,
+                "status": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
+                "feature_schema_version": FEATURE_SCHEMA_VERSION,
+                "source": "formfav",
+                "primary_source": "racing_api_standard",
+                "race_count": len(uk_packets),
+                "runner_count": sum(p.get("runner_count", 0) for p in uk_packets),
+                "training_eligible_runners": sum(p.get("training_eligible_runners", 0) for p in uk_packets),
+                "mean_race_quality": (
+                    round(sum(float(p.get("mean_quality_score") or 0.0) for p in uk_packets) / len(uk_packets), 4)
+                    if uk_packets else 0.0
+                ),
+                "races": uk_packets,
+            }
+            uk_shadow_path = ROOT / "data" / "reports" / f"formfav_uk_shadow_features_{date_str.replace('-', '_')}.json"
+            uk_shadow_path.parent.mkdir(parents=True, exist_ok=True)
+            uk_shadow_path.write_text(json.dumps(uk_report, ensure_ascii=False), encoding="utf-8")
+            print(
+                "[FORMFAV-UK] shadow features "
+                f"schema={FEATURE_SCHEMA_VERSION} races={uk_report['race_count']} "
+                f"runners={uk_report['runner_count']} eligible={uk_report['training_eligible_runners']} "
+                f"mean_quality={uk_report['mean_race_quality']}",
                 flush=True,
             )
         except Exception as exc:
