@@ -42,6 +42,7 @@ RESULT_LOOKBACK_MIN = max(30, int(os.getenv("FORMFAV_RESULT_LOOKBACK_MIN", "180"
 _last_meetings_fetch: float = 0.0
 _meeting_cache: dict[str, list[dict[str, Any]]] = {}
 _last_form: dict[str, float] = {}
+_last_prediction: dict[str, float] = {}
 _last_price: dict[str, float] = {}
 _last_result: dict[str, float] = {}
 _price_forbidden_until: float = 0.0
@@ -195,6 +196,23 @@ def _persist_form(race_key: str, race_row: dict[str, Any], form: dict[str, Any])
     _upsert("formfav_runner_form", list(runners_by_number.values()), "provider_race_key,runner_number")
 
 
+def _persist_predictions(race_key: str, payload: dict[str, Any]) -> None:
+    model_version = payload.get("modelVersion") or payload.get("model_version")
+    confidence = payload.get("confidence") or payload.get("confidenceLevel")
+    _upsert(
+        "formfav_predictions",
+        [{
+            "provider_race_key": race_key,
+            "model_version": str(model_version) if model_version is not None else None,
+            "confidence": str(confidence) if confidence is not None else None,
+            "predictions_payload": payload,
+            "captured_at": datetime.now(UTC).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
+        }],
+        "provider_race_key",
+    )
+
+
 def _persist_prices(race_key: str, prices: dict[str, Any]) -> int:
     rows_by_number: dict[int, dict[str, Any]] = {}
     captured = datetime.now(UTC).isoformat()
@@ -293,6 +311,27 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
             _persist_form(race_key, race_row, form)
             _last_form[race_key] = time.time()
             print(f"[FORMFAV-LIVE] form OK {country}:{track} R{race_no}", flush=True)
+
+            # Pro's own probability model is captured as an independent benchmark.
+            # It never replaces or directly drives VÉLØ's rankings.
+            if time.time() - _last_prediction.get(race_key, 0.0) >= 21600:
+                try:
+                    pred = client.predictions(
+                        date=date_str,
+                        track=slug,
+                        race=race_no,
+                        country=country,
+                        timezone=mrace.get("timezone") or QUERY_TIMEZONE,
+                    )
+                    _persist_predictions(race_key, pred)
+                    _last_prediction[race_key] = time.time()
+                    print(f"[FORMFAV-LIVE] predictions OK {country}:{track} R{race_no}", flush=True)
+                except Exception as pred_exc:
+                    print(
+                        f"[FORMFAV-LIVE] predictions ERROR {country}:{track} R{race_no}: {pred_exc}",
+                        file=sys.stderr,
+                        flush=True,
+                    )
         except Exception as exc:
             print(f"[FORMFAV-LIVE] form ERROR {country}:{track} R{race_no}: {exc}", file=sys.stderr, flush=True)
 
