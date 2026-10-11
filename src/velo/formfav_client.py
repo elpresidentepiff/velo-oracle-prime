@@ -100,6 +100,28 @@ class FormFavClient:
             },
         )
 
+    def predictions(
+        self,
+        *,
+        date: str,
+        track: str,
+        race: int,
+        country: str,
+        race_code: str = "gallops",
+        timezone: str = "Europe/London",
+    ) -> dict[str, Any]:
+        return self._get(
+            "/v1/predictions",
+            {
+                "date": date,
+                "track": track,
+                "race": race,
+                "race_code": race_code,
+                "country": country,
+                "timezone": timezone,
+            },
+        )
+
     def results(
         self,
         *,
