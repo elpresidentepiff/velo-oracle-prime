@@ -1,6 +1,7 @@
 """Additive FormFav enrichment for existing VÉLØ racecards.
 
-The current Racing API remains the primary source. FormFav is a second source:
+The caller-supplied canonical card remains the primary source. FormFav is a
+shadow-only second source:
 - fills genuinely missing fields only;
 - attaches its independent stats/market packet under _formfav keys;
 - never overwrites an existing primary-source value;
