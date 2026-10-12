@@ -20,6 +20,7 @@ import json
 import os
 import subprocess
 import sys
+from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -37,6 +38,11 @@ LONDON = ZoneInfo("Europe/London")
 
 def _date_today_london() -> str:
     return datetime.now(LONDON).date().isoformat()
+
+
+def _normalise_country(value: object) -> str:
+    key = str(value or "").strip().lower()
+    return {"uk": "gb", "eng": "gb", "ire": "ie", "irl": "ie"}.get(key, key)
 
 
 def _write_api_cache(date_str: str, races: list[dict]) -> Path:
@@ -75,9 +81,8 @@ def main() -> int:
 
     races = fetch_api_racecards(date_str)
 
-    # Additive FormFav enrichment. Racing API remains the primary source and
-    # existing fields are never overwritten. If the key is absent or FormFav is
-    # temporarily unavailable, the canonical run continues unchanged.
+    # FormFav is a strictly isolated shadow copy. The object later written to
+    # Prime's cache is never enriched, even when a canonical field is missing.
     if (os.getenv("FORMFAV_API_KEY") or "").strip():
         countries = {
             c.strip().lower()
@@ -86,7 +91,8 @@ def main() -> int:
         }
         report_path = ROOT / "data" / "reports" / f"formfav_enrichment_{date_str.replace('-', '_')}.json"
         try:
-            races, ff_report = enrich_existing_racecards(
+            production_snapshot = deepcopy(races)
+            shadow_races, ff_report = enrich_existing_racecards(
                 date_str=date_str,
                 races=races,
                 countries=countries,
@@ -95,6 +101,8 @@ def main() -> int:
                 timezone=os.getenv("FORMFAV_TIMEZONE") or "Europe/London",
                 report_path=report_path,
             )
+            if races != production_snapshot:
+                raise RuntimeError("FormFav shadow boundary violation: production racecards mutated")
             print(
                 "[FORMFAV] enrichment "
                 f"matched_races={ff_report.get('races_matched', 0)} "
@@ -108,14 +116,23 @@ def main() -> int:
             # Build a UK/IRE-only source-aware feature packet. This is SHADOW
             # evidence: Prime does not read these features yet.
             uk_races = [
-                race for race in races
-                if str((race.get("_formfav") or {}).get("country") or race.get("country") or race.get("region") or "").lower()
+                race for race in shadow_races
+                if race.get("_formfav")
+                if _normalise_country(
+                    (race.get("_formfav") or {}).get("country")
+                    or race.get("country")
+                    or race.get("region")
+                )
                 in {"gb", "ie"}
             ]
             uk_packets = [build_race_shadow_packet(race) for race in uk_races]
             uk_report = {
                 "date": date_str,
-                "status": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
+                "status": "SHADOW_ONLY_ENRICHED" if uk_packets else "SHADOW_NO_USABLE_ENRICHMENT",
+                "shadow_only": True,
+                "production_influence": False,
+                "stake_authorised": False,
+                "promotion_eligible": False,
                 "feature_schema_version": FEATURE_SCHEMA_VERSION,
                 "source": "formfav",
                 "primary_source": "racing_api_standard",

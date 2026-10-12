@@ -2,7 +2,7 @@
 """Build a UK/IRE FormFav-enhanced shadow feature card without touching Prime.
 
 Purpose:
-- primary card comes from the existing Racing API;
+- primary card comes from canonical Racing Post capture (local or Supabase);
 - FormFav enriches only as a second source;
 - extracts pace/form/class/track-bias features with data-quality gates;
 - persists only a shadow report artifact;
@@ -25,6 +25,10 @@ if str(ROOT) not in sys.path:
 from src.velo.formfav_enrichment import enrich_existing_racecards
 from src.velo.formfav_uk_features import FEATURE_SCHEMA_VERSION, build_race_shadow_packet
 from src.velo.racecard_loader import load_racecards
+from src.velo.supabase_racecard_source import (
+    SupabaseRacecardError,
+    load_supabase_rp_racecards,
+)
 
 LONDON = ZoneInfo("Europe/London")
 
@@ -33,27 +37,44 @@ def _default_date() -> str:
     return (datetime.now(LONDON).date() + timedelta(days=1)).isoformat()
 
 
+def _normalise_country(value: object) -> str:
+    key = str(value or "").strip().lower()
+    return {"uk": "gb", "eng": "gb", "ire": "ie", "irl": "ie"}.get(key, key)
+
+
+def _load_primary_races(date_str: str, source: str) -> tuple[list[dict], str]:
+    date_tag = date_str.replace("-", "_")
+    if source in {"rp", "auto"}:
+        races, source_label = load_racecards(date_tag, date_str, ROOT / "data", source="rp")
+        if source_label == "rp_merged" and races:
+            return races, source_label
+        if source == "rp":
+            raise RuntimeError(
+                f"UK enhanced shadow requires canonical RP merged source; got {source_label!r}"
+            )
+    try:
+        return load_supabase_rp_racecards(date_str), "supabase_races_rp_capture"
+    except SupabaseRacecardError:
+        raise
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=None)
     ap.add_argument("--countries", default="gb,ie")
+    ap.add_argument(
+        "--source",
+        choices=("auto", "rp", "supabase"),
+        default="auto",
+        help="Canonical RP source. auto prefers local merged files then Supabase.",
+    )
     ap.add_argument("--persist-artifact", action="store_true")
     args = ap.parse_args()
 
     date_str = args.date or _default_date()
     countries = {c.strip().lower() for c in args.countries.split(",") if c.strip()}
 
-    date_tag = date_str.replace("-", "_")
-    races, source_label = load_racecards(
-        date_tag,
-        date_str,
-        ROOT / "data",
-        source="rp",
-    )
-    if source_label != "rp_merged":
-        raise RuntimeError(
-            f"UK enhanced shadow requires the canonical RP merged source; got {source_label!r}"
-        )
+    races, source_label = _load_primary_races(date_str, args.source)
 
     enriched, enrich_report = enrich_existing_racecards(
         date_str=date_str,
@@ -67,8 +88,10 @@ def main() -> int:
     packets = []
     for race in enriched:
         ff = race.get("_formfav") or {}
-        country = str(ff.get("country") or race.get("country") or race.get("region") or "").lower()
-        if country not in countries:
+        country = _normalise_country(
+            ff.get("country") or race.get("country") or race.get("region")
+        )
+        if country not in countries or not ff:
             continue
         packets.append(build_race_shadow_packet(race))
 
@@ -76,15 +99,24 @@ def main() -> int:
     def covered(key: str) -> int:
         return sum(1 for rr in runners if rr.get(key) == 1.0)
 
+    races_enriched = len(packets)
+    usable = races_enriched > 0 and bool(runners)
     report = {
         "date": date_str,
-        "status": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
+        "status": "SHADOW_ONLY_ENRICHED" if usable else "SHADOW_NO_USABLE_ENRICHMENT",
+        "shadow_only": True,
+        "production_influence": False,
+        "stake_authorised": False,
+        "promotion_eligible": False,
         "feature_schema_version": FEATURE_SCHEMA_VERSION,
         "countries": sorted(countries),
         "primary_source": source_label,
         "enrichment_source": "formfav",
         "races_primary": len(races),
-        "races_enriched": len(packets),
+        "races_in_scope": enrich_report.get("races_in_scope", 0),
+        "races_matched": enrich_report.get("races_matched", 0),
+        "races_enriched": races_enriched,
+        "races_unmatched": enrich_report.get("races_unmatched", 0),
         "runners": len(runners),
         "training_eligible_runners": sum(1 for rr in runners if rr.get("ff_training_eligible") == 1.0),
         "identity_mismatches": sum(1 for rr in runners if rr.get("ff_identity_name_match") != 1.0),
@@ -142,6 +174,13 @@ def main() -> int:
         if done.returncode != 0:
             raise RuntimeError(f"artifact persistence failed: {done.returncode}")
 
+    if not usable:
+        print(
+            "[FORMFAV-UK] FAIL_CLOSED: no race received usable FormFav shadow enrichment",
+            file=sys.stderr,
+            flush=True,
+        )
+        return 2
     return 0
 
 

@@ -11,8 +11,10 @@ from __future__ import annotations
 import json
 import math
 import re
+import unicodedata
 from copy import deepcopy
 from datetime import datetime
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -21,10 +23,29 @@ from src.velo.formfav_client import FormFavClient, FormFavError, best_live_price
 
 
 def _norm(value: Any) -> str:
-    s = str(value or "").lower()
+    s = unicodedata.normalize("NFKD", str(value or "")).encode("ascii", "ignore").decode().lower()
     s = re.sub(r"\([^)]*\)", " ", s)
     s = re.sub(r"[^a-z0-9]+", "", s)
     return s
+
+
+def _country(value: Any) -> str:
+    key = str(value or "").strip().lower()
+    return {"uk": "gb", "eng": "gb", "ire": "ie", "irl": "ie"}.get(key, key)
+
+
+def _track_norm(value: Any) -> str:
+    raw = unicodedata.normalize("NFKD", str(value or "")).encode("ascii", "ignore").decode().lower()
+    raw = re.sub(r"\([^)]*\)", " ", raw)
+    tokens = re.findall(r"[a-z0-9]+", raw)
+    ignored = {"aw", "park", "racecourse", "race", "course"}
+    aliases = {
+        "leopardstown": "leopardstown",
+        "kempton": "kempton",
+        "newcastleupon": "newcastle",
+    }
+    key = "".join(token for token in tokens if token not in ignored)
+    return aliases.get(key, key)
 
 
 def _safe_float(v: Any) -> float | None:
@@ -53,6 +74,16 @@ def _race_local_minutes(race: dict[str, Any], date_str: str) -> int | None:
     return None
 
 
+def _minute_distance(primary: int, target: int) -> int:
+    """Compare clock times while tolerating RP's ambiguous 12-hour dot format."""
+    options = {primary}
+    if primary < 12 * 60:
+        options.add(primary + 12 * 60)
+    else:
+        options.add(primary - 12 * 60)
+    return min(min(abs(option - target), 24 * 60 - abs(option - target)) for option in options)
+
+
 def _ff_local_minutes(start_time: Any, tz_name: str | None) -> int | None:
     if not start_time:
         return None
@@ -71,31 +102,97 @@ def _closest_existing_race(
     track: str,
     start_time: Any,
     timezone: str | None,
+    race_number: Any = None,
+    country: Any = None,
+    used_race_ids: set[str] | None = None,
     max_minutes: int = 12,
 ) -> dict[str, Any] | None:
-    track_key = _norm(track)
-    candidates = [r for r in races if _norm(r.get("course")) == track_key]
+    match, _ = _match_existing_race(
+        races,
+        track=track,
+        start_time=start_time,
+        timezone=timezone,
+        race_number=race_number,
+        country=country,
+        used_race_ids=used_race_ids,
+        max_minutes=max_minutes,
+    )
+    return match
+
+
+def _match_existing_race(
+    races: list[dict[str, Any]],
+    *,
+    track: str,
+    start_time: Any,
+    timezone: str | None,
+    race_number: Any = None,
+    country: Any = None,
+    used_race_ids: set[str] | None = None,
+    max_minutes: int = 12,
+) -> tuple[dict[str, Any] | None, str | None]:
+    track_key = _track_norm(track)
+    candidates = [r for r in races if _track_norm(r.get("course")) == track_key]
     if not candidates:
-        # tolerate naming additions such as "(AW)" or "Park"
+        # Tolerate genuine provider additions after removing venue suffixes.
         candidates = [
             r for r in races
-            if track_key and _norm(r.get("course"))
-            and (track_key in _norm(r.get("course")) or _norm(r.get("course")) in track_key)
+            if track_key and _track_norm(r.get("course"))
+            and (
+                track_key in _track_norm(r.get("course"))
+                or _track_norm(r.get("course")) in track_key
+            )
         ]
+    wanted_country = _country(country)
+    country_candidates = [
+        race for race in candidates
+        if not wanted_country
+        or not _country(race.get("country") or race.get("region"))
+        or _country(race.get("country") or race.get("region")) == wanted_country
+    ]
+    if country_candidates:
+        candidates = country_candidates
     if not candidates:
-        return None
+        return None, None
+    available = [
+        race for race in candidates
+        if not used_race_ids or str(race.get("race_id") or id(race)) not in used_race_ids
+    ]
+    if not available:
+        return None, None
     target = _ff_local_minutes(start_time, timezone)
-    if target is None:
-        return candidates[0] if len(candidates) == 1 else None
-    scored = []
-    for r in candidates:
-        rm = _race_local_minutes(r, str(r.get("date") or ""))
-        if rm is not None:
-            scored.append((abs(rm - target), r))
-    if not scored:
-        return candidates[0] if len(candidates) == 1 else None
-    scored.sort(key=lambda x: x[0])
-    return scored[0][1] if scored[0][0] <= max_minutes else None
+    if target is not None:
+        scored = []
+        for race in available:
+            local_minutes = _race_local_minutes(race, str(race.get("date") or ""))
+            if local_minutes is not None:
+                scored.append((_minute_distance(local_minutes, target), race))
+        scored.sort(key=lambda item: item[0])
+        if scored and scored[0][0] <= max_minutes:
+            return scored[0][1], "track_time"
+
+    # MeetingRace.startTime is nullable.  The provider's raceNumber is the
+    # authoritative ordinal fallback within an already matched venue/card.
+    try:
+        ordinal = int(race_number)
+    except (TypeError, ValueError):
+        ordinal = 0
+    ordered = sorted(
+        candidates,
+        key=lambda race: (
+            _race_local_minutes(race, str(race.get("date") or "")) is None,
+            _race_local_minutes(race, str(race.get("date") or "")) or 0,
+            str(race.get("race_id") or ""),
+        ),
+    )
+    if 1 <= ordinal <= len(ordered):
+        selected = ordered[ordinal - 1]
+        selected_id = str(selected.get("race_id") or id(selected))
+        if not used_race_ids or selected_id not in used_race_ids:
+            return selected, "track_race_number"
+    if len(available) == 1:
+        return available[0], "track_singleton"
+    return None, None
 
 
 def _price_by_runner(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -115,9 +212,10 @@ def enrich_existing_racecards(
     include_track_bias: bool = True,
     timezone: str = "Europe/London",
     report_path: Path | None = None,
+    client: FormFavClient | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Return enriched copies of existing races plus a machine-auditable report."""
-    countries = {c.lower() for c in (countries or {"gb", "ie"})}
+    countries = {_country(c) for c in (countries or {"gb", "ie"})}
     out = deepcopy(races)
     report: dict[str, Any] = {
         "date": date_str,
@@ -128,7 +226,9 @@ def enrich_existing_racecards(
         "races_input": len(out),
         "meetings_seen": 0,
         "meetings_in_scope": 0,
+        "races_in_scope": 0,
         "races_matched": 0,
+        "races_unmatched": 0,
         "form_calls_ok": 0,
         "price_calls_ok": 0,
         "price_calls_forbidden": 0,
@@ -139,11 +239,13 @@ def enrich_existing_racecards(
         "runners_unmatched": 0,
         "fields_filled": {},
         "matches": [],
+        "unmatched_races": [],
+        "matching_methods": {},
         "errors": [],
     }
 
     try:
-        client = FormFavClient()
+        client = client or FormFavClient()
         meetings_payload = client.meetings(date_str, timezone=timezone)
     except Exception as exc:
         report["errors"].append(f"meetings: {type(exc).__name__}: {exc}")
@@ -155,6 +257,7 @@ def enrich_existing_racecards(
     meetings = meetings_payload.get("meetings") or []
     report["meetings_seen"] = len(meetings)
     track_bias_cache: dict[tuple[str, str, str], dict[str, Any] | None] = {}
+    used_race_ids: set[str] = set()
 
     def filled(field: str) -> None:
         report["fields_filled"][field] = int(report["fields_filled"].get(field, 0)) + 1
@@ -162,7 +265,7 @@ def enrich_existing_racecards(
     for meeting in meetings:
         if not isinstance(meeting, dict):
             continue
-        country = str(meeting.get("country") or "").lower()
+        country = _country(meeting.get("country"))
         if country not in countries or meeting.get("abandoned"):
             continue
         report["meetings_in_scope"] += 1
@@ -171,19 +274,34 @@ def enrich_existing_racecards(
         for mrace in meeting.get("races") or []:
             if not isinstance(mrace, dict) or mrace.get("abandoned"):
                 continue
-            existing = _closest_existing_race(
+            report["races_in_scope"] += 1
+            race_no = mrace.get("raceNumber")
+            existing, matching_method = _match_existing_race(
                 out,
                 track=track,
                 start_time=mrace.get("startTime"),
                 timezone=mrace.get("timezone") or timezone,
+                race_number=race_no,
+                country=country,
+                used_race_ids=used_race_ids,
             )
             if existing is None:
+                report["races_unmatched"] += 1
+                if len(report["unmatched_races"]) < 100:
+                    report["unmatched_races"].append({
+                        "formfav_track": track,
+                        "raceNumber": race_no,
+                        "startTime": mrace.get("startTime"),
+                        "country": country,
+                    })
                 continue
-
-            race_no = mrace.get("raceNumber")
             if race_no is None:
                 continue
+            used_race_ids.add(str(existing.get("race_id") or id(existing)))
             report["races_matched"] += 1
+            report["matching_methods"][matching_method] = (
+                int(report["matching_methods"].get(matching_method, 0)) + 1
+            )
 
             try:
                 form = client.race_form(
@@ -283,10 +401,27 @@ def enrich_existing_racecards(
                 for r in (form.get("runners") or [])
                 if isinstance(r, dict) and r.get("name")
             }
+            ff_by_number = {
+                str(r.get("number")): r
+                for r in (form.get("runners") or [])
+                if isinstance(r, dict) and r.get("number") not in (None, "")
+            }
             matched_names = []
             for runner in existing.get("runners") or []:
                 rk = _norm(runner.get("horse") or runner.get("horse_name"))
                 ff = ff_runners.get(rk)
+                runner_match_method = "name_exact" if ff is not None else None
+                if ff is None:
+                    number = runner.get("start_number") or runner.get("number") or runner.get("cloth_number")
+                    numbered = ff_by_number.get(str(number))
+                    candidate_name = _norm((numbered or {}).get("name"))
+                    # Saddlecloth is only a tie-breaker, never identity by itself.
+                    # Require a strong name relationship before accepting it.
+                    if numbered is not None and rk and candidate_name:
+                        similarity = SequenceMatcher(None, rk, candidate_name).ratio()
+                        if rk in candidate_name or candidate_name in rk or similarity >= 0.82:
+                            ff = numbered
+                            runner_match_method = "number_name_guarded"
                 if ff is None:
                     report["runners_unmatched"] += 1
                     continue
@@ -318,6 +453,7 @@ def enrich_existing_racecards(
                     "classProfile": ff.get("classProfile"),
                     "raceClassFit": ff.get("raceClassFit"),
                     "market": market,
+                    "identity_match_method": runner_match_method,
                 }
 
                 # Fill missing primary fields. Never overwrite existing values.
@@ -352,6 +488,7 @@ def enrich_existing_racecards(
                 "formfav_track": track,
                 "formfav_slug": slug,
                 "raceNumber": race_no,
+                "matching_method": matching_method,
                 "runner_matches": len(matched_names),
                 "formfav_runner_count": len(ff_runners),
                 "price_runner_count": len(price_map),

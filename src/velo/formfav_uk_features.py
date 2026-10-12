@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import math
 import re
+import unicodedata
 from typing import Any
 
 FEATURE_SCHEMA_VERSION = "FORMFAV_UK_SHADOW_V1"
@@ -46,7 +47,7 @@ def _clamp(v: float | None, lo: float = 0.0, hi: float = 1.0) -> float | None:
 
 
 def _norm_name(v: Any) -> str:
-    s = str(v or "").lower()
+    s = unicodedata.normalize("NFKD", str(v or "")).encode("ascii", "ignore").decode().lower()
     s = re.sub(r"\([^)]*\)", " ", s)
     return re.sub(r"[^a-z0-9]+", "", s)
 
