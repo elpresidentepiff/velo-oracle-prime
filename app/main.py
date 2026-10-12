@@ -2290,13 +2290,35 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         verdict_map[rid] = fa if isinstance(fa, list) else []
 
     meta_map = {}
-    if raw_verdicts and db:
+    if raw_verdicts:
         try:
             from src.velo.race_metadata_resolver import RaceMetadataResolver
 
-            resolver = RaceMetadataResolver(date=target_date, sb_client=db)
             race_ids = [row.get("race_id", "") for row in raw_verdicts if row.get("race_id")]
-            meta_map = resolver.resolve_batch(race_ids, verdict_map)
+
+            # The governed card's primary source is the exact-date local verdict
+            # archive, and RaceMetadataResolver also indexes the exact-date local
+            # standard/merged cards.  Resolve those sources first.  Passing the
+            # Supabase client on the first pass makes the resolver issue one
+            # network request per race even when every local row is already
+            # complete; a full card can therefore sit on "Loading" during a
+            # transient network delay despite having all required data on disk.
+            local_resolver = RaceMetadataResolver(date=target_date, sb_client=None)
+            meta_map = local_resolver.resolve_batch(race_ids, verdict_map)
+
+            # Preserve Supabase as a read-only fallback, but only for races whose
+            # exact-date local artifacts genuinely lack course or off-time.
+            unresolved_ids = [
+                race_id
+                for race_id, metadata in meta_map.items()
+                if not metadata.metadata_complete
+            ]
+            if unresolved_ids and db:
+                remote_resolver = RaceMetadataResolver(date=target_date, sb_client=db)
+                remote_meta = remote_resolver.resolve_batch(unresolved_ids, verdict_map)
+                for race_id, metadata in remote_meta.items():
+                    if metadata.metadata_complete or not meta_map[race_id].metadata_complete:
+                        meta_map[race_id] = metadata
         except Exception as e:
             logger.warning("Race metadata resolver failed: %s", e)
     local_meta_by_horse = _load_local_racecard_meta(target_date)
