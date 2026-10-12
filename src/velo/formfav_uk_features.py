@@ -16,6 +16,7 @@ from __future__ import annotations
 import math
 import re
 import unicodedata
+from copy import deepcopy
 from typing import Any
 
 FEATURE_SCHEMA_VERSION = "FORMFAV_UK_SHADOW_V1"
@@ -200,6 +201,54 @@ def _pace_fit_hint(style: str, scenario: str) -> float:
     return 0.0
 
 
+def _derived_pace_shape(runners: list[dict[str, Any]]) -> dict[str, Any]:
+    """Derive an auditable race-level pace shape from FormFav speed maps.
+
+    This is a transparent shadow heuristic, not provider truth and not a model
+    input.  At least two runners and 40% field coverage are required.
+    """
+    styles: list[str] = []
+    high_speed = 0
+    for runner in runners:
+        ff = runner.get("_formfav") if isinstance(runner.get("_formfav"), dict) else {}
+        speed_map = ff.get("speedMap") if isinstance(ff.get("speedMap"), dict) else {}
+        if not speed_map:
+            continue
+        style = str(speed_map.get("runningStyle") or "X").upper()
+        styles.append(style if style in _STYLE_KEYS else "X")
+        speed = _safe_float(speed_map.get("earlySpeedIndex"))
+        if speed is not None and speed >= 7.0:
+            high_speed += 1
+
+    field_size = len(runners)
+    covered = len(styles)
+    coverage = covered / max(field_size, 1)
+    leaders = styles.count("L")
+    pressers = styles.count("P")
+    pressure = (2.0 * leaders + pressers) / max(covered, 1)
+    scenario = None
+    if covered >= 2 and coverage >= 0.40:
+        if leaders >= 3 or pressure >= 0.90:
+            scenario = "VERY_FAST"
+        elif leaders >= 2 or pressure >= 0.55:
+            scenario = "FAST"
+        elif leaders == 0 and pressure <= 0.20:
+            scenario = "SLOW"
+        else:
+            scenario = "MODERATE"
+    return {
+        "scenario": scenario,
+        "source": "speed_map_derived" if scenario else "missing",
+        "covered_runners": covered,
+        "field_size": field_size,
+        "coverage": round(coverage, 4),
+        "leader_count": leaders,
+        "presser_count": pressers,
+        "high_speed_count": high_speed,
+        "pressure_score": round(pressure, 4) if covered else None,
+    }
+
+
 def build_formfav_uk_shadow_features(race: dict[str, Any], runner: dict[str, Any]) -> dict[str, Any]:
     ff_race = race.get("_formfav") if isinstance(race.get("_formfav"), dict) else {}
     ff = runner.get("_formfav") if isinstance(runner.get("_formfav"), dict) else {}
@@ -242,8 +291,14 @@ def build_formfav_uk_shadow_features(race: dict[str, Any], runner: dict[str, Any
     for key in _STYLE_KEYS:
         out[f"ff_style_{key.lower()}"] = 1.0 if style == key else 0.0
 
-    pace = str(ff_race.get("paceScenario") or "").upper()
+    provider_pace = str(ff_race.get("paceScenario") or "").upper()
+    derived_pace = str(ff_race.get("paceScenarioDerived") or "").upper()
+    pace = provider_pace if provider_pace in _PACE_KEYS else derived_pace
     out["ff_pace_scenario_present"] = 1.0 if pace in _PACE_KEYS else 0.0
+    out["ff_pace_scenario_provider"] = 1.0 if provider_pace in _PACE_KEYS else 0.0
+    out["ff_pace_scenario_derived"] = (
+        1.0 if provider_pace not in _PACE_KEYS and derived_pace in _PACE_KEYS else 0.0
+    )
     for key in _PACE_KEYS:
         out[f"ff_pace_{key.lower()}"] = 1.0 if pace == key else 0.0
     out["ff_pace_shape_fit_hint"] = _pace_fit_hint(style, pace)
@@ -337,7 +392,13 @@ def build_formfav_uk_shadow_features(race: dict[str, Any], runner: dict[str, Any
 def build_race_shadow_packet(race: dict[str, Any]) -> dict[str, Any]:
     """Return one auditable race packet with race-shape summaries and runner features."""
     runners = race.get("runners") or []
-    rows = [build_formfav_uk_shadow_features(race, r) for r in runners]
+    pace_shape = _derived_pace_shape(runners)
+    effective_race = race
+    provider_pace = str((race.get("_formfav") or {}).get("paceScenario") or "").upper()
+    if provider_pace not in _PACE_KEYS and pace_shape["scenario"]:
+        effective_race = deepcopy(race)
+        effective_race.setdefault("_formfav", {})["paceScenarioDerived"] = pace_shape["scenario"]
+    rows = [build_formfav_uk_shadow_features(effective_race, r) for r in runners]
 
     speed_rows = [r for r in rows if r.get("ff_speedmap_present") == 1.0]
     leaders = sum(1 for r in speed_rows if r.get("ff_style_l") == 1.0)
@@ -354,7 +415,13 @@ def build_race_shadow_packet(race: dict[str, Any]) -> dict[str, Any]:
         "going": race.get("going"),
         "race_class": race.get("race_class"),
         "distance": race.get("distance") or race.get("distance_f"),
-        "formfav_pace_scenario": (race.get("_formfav") or {}).get("paceScenario"),
+        "formfav_pace_scenario": (
+            provider_pace if provider_pace in _PACE_KEYS else pace_shape["scenario"]
+        ),
+        "pace_scenario_source": (
+            "formfav_provider" if provider_pace in _PACE_KEYS else pace_shape["source"]
+        ),
+        "pace_pressure_score": pace_shape["pressure_score"],
         "pace_leader_count": leaders,
         "pace_presser_count": pressers,
         "pace_high_speed_count": high_speed,

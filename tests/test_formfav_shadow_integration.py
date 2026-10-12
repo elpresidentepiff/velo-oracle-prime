@@ -203,3 +203,36 @@ def test_supabase_loader_reconstructs_rp_card_and_marks_no_scoring(monkeypatch) 
     assert runner["form"] == "12-3"
     assert runner["odds"] == 6.0
 
+
+def test_missing_provider_pace_scenario_is_transparently_derived_from_speed_maps() -> None:
+    styles = (("L", 8.5), ("L", 7.8), ("P", 7.1), ("M", 5.0))
+    race = {
+        "race_id": "pace-1",
+        "course": "Test Course",
+        "_formfav": {"country": "gb", "paceScenario": None},
+        "runners": [
+            {
+                "horse": f"Horse {index}",
+                "_formfav": {
+                    "name": f"Horse {index}",
+                    "speedMap": {
+                        "runningStyle": style,
+                        "earlySpeedIndex": speed,
+                        "settlingPosition": index,
+                    },
+                },
+            }
+            for index, (style, speed) in enumerate(styles, start=1)
+        ],
+    }
+
+    packet = build_race_shadow_packet(race)
+
+    assert packet["formfav_pace_scenario"] == "VERY_FAST"
+    assert packet["pace_scenario_source"] == "speed_map_derived"
+    assert packet["pace_pressure_score"] == 1.25
+    assert all(row["ff_pace_scenario_present"] == 1.0 for row in packet["runners"])
+    assert all(row["ff_pace_scenario_provider"] == 0.0 for row in packet["runners"])
+    assert all(row["ff_pace_scenario_derived"] == 1.0 for row in packet["runners"])
+    assert race["_formfav"].get("paceScenarioDerived") is None
+
