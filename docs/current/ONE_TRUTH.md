@@ -987,6 +987,9 @@ Live proof: 2026-09-10 council `WATCH_ONLY` (SR 13.5%) → `learning_gate_status
 reasons `LEARNING_ALLOWED_DEGRADED_PERFORMANCE`, 38 learning events written; 2026-09-08 and
 09-11 carry `GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY` with learning `OPEN`.
 
+## Global (FormFav) end-of-day sigma — SHADOW ONLY (added 2026-10-14)
+The `velo-formfav-live` worker settles and reconciles every FormFav race day (US, CA, AU, HK, JP, FR, GB, IE) hourly once past 05:00 UTC, for the previous two UTC dates (`scripts/ops/formfav_global_eod.py`). Step 1 re-fetches results that are missing or not `final` (the live poller stops 180 min after the off). Step 2 writes one row per predicted race to **`formfav_sigma_audits`** (rollup view `formfav_sigma_daily`). Rows carry `basis`: `final`, `provisional` (provider still says interim but placings exist) or `no_result` — never blend them into one strike rate. It never writes `sigma_audits`, `velo_verdicts`, `pipeline_runs`, weights or Telegram, so international results do not feed UK learning. Manual run: `python scripts/ops/formfav_global_eod.py --date YYYY-MM-DD [--settle] [--dry-run]`. Disable with `FORMFAV_GLOBAL_EOD=0`.
+
 ## Next safe command
 ```
 python scripts/ops/velo_session_start_check.py

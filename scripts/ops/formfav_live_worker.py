@@ -49,6 +49,12 @@ _last_prediction: dict[str, float] = {}
 _last_price: dict[str, float] = {}
 _last_result: dict[str, float] = {}
 _price_forbidden_until: float = 0.0
+GLOBAL_EOD_ENABLED = os.getenv("FORMFAV_GLOBAL_EOD", "1") != "0"
+GLOBAL_EOD_START_HOUR_UTC = int(os.getenv("FORMFAV_GLOBAL_EOD_START_HOUR_UTC", "5"))
+GLOBAL_EOD_DAYS_BACK = max(1, int(os.getenv("FORMFAV_GLOBAL_EOD_DAYS_BACK", "2")))
+GLOBAL_EOD_CHECK_SECONDS = 3600
+_last_eod_check: float = 0.0
+_eod_settle_attempts: dict[str, int] = {}
 _provider_rate_limited_until: float = 0.0
 
 
@@ -144,8 +150,10 @@ def _race_key(date_str: str, country: str, slug: str, race_no: int) -> str:
 
 def _meeting_dates(now: datetime) -> list[str]:
     # Query yesterday/today/tomorrow in UTC so evening US and early Asian/AUS
-    # cards remain visible across timezone boundaries.
-    return [(now.date() + timedelta(days=d)).isoformat() for d in (-1, 0, 1)]
+    # cards remain visible across timezone boundaries. Today and tomorrow go
+    # first: a provider-wide 429 stops the scan, and it must never starve the
+    # live cards by repeatedly failing on yesterday's date.
+    return [(now.date() + timedelta(days=d)).isoformat() for d in (0, 1, -1)]
 
 
 def _refresh_meetings(client: FormFavClient, now: datetime) -> None:
@@ -433,6 +441,44 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                 _last_result[race_key] = time.time()
 
 
+def _maybe_run_global_eod(client: FormFavClient, now: datetime) -> None:
+    """Hourly: settle non-final results and run shadow sigma for past race days.
+
+    Shadow only (``formfav_sigma_audits``). Reconciliation reads the DB and
+    always runs; the provider re-fetch is skipped during a rate-limit cooldown.
+    """
+    global _last_eod_check
+    if not GLOBAL_EOD_ENABLED or now.hour < GLOBAL_EOD_START_HOUR_UTC:
+        return
+    if time.time() - _last_eod_check < GLOBAL_EOD_CHECK_SECONDS:
+        return
+    _last_eod_check = time.time()
+    from scripts.ops import formfav_global_eod as eod
+
+    for offset in range(1, GLOBAL_EOD_DAYS_BACK + 1):
+        race_date = (now.date() - timedelta(days=offset)).isoformat()
+        settle = None
+        if _provider_backoff_remaining() <= 0:
+            settle = {
+                "fetch_result": lambda r: client.results(
+                    date=r["race_date"],
+                    track=r.get("meeting_slug") or r["track"],
+                    race=int(r["race_number"]),
+                    country=r["country"],
+                    timezone=r.get("timezone") or QUERY_TIMEZONE,
+                ),
+                "persist_result": _persist_result,
+                "is_final": _looks_final,
+                "on_error": _activate_provider_backoff,
+                "attempts": _eod_settle_attempts,
+            }
+        try:
+            report = eod.run_day(race_date, sb_request=_sb_request, upsert=_upsert, settle=settle)
+            print(eod.format_report(report), flush=True)
+        except Exception as exc:
+            print(f"[FORMFAV-EOD] ERROR date={race_date}: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
+
+
 def main() -> int:
     client = FormFavClient()
     _sb_env()  # fail fast on durable-storage misconfiguration
@@ -445,6 +491,8 @@ def main() -> int:
     while True:
         now = datetime.now(UTC)
         try:
+            # DB-only reconciliation must keep running through provider cooldowns.
+            _maybe_run_global_eod(client, now)
             remaining = _provider_backoff_remaining()
             if remaining > 0:
                 print(

@@ -8,5 +8,6 @@ WORKDIR /app
 
 COPY src/velo/formfav_client.py src/velo/formfav_client.py
 COPY scripts/ops/formfav_live_worker.py scripts/ops/formfav_live_worker.py
+COPY scripts/ops/formfav_global_eod.py scripts/ops/formfav_global_eod.py
 
 CMD ["python", "scripts/ops/formfav_live_worker.py"]
