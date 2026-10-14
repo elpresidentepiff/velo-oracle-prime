@@ -4238,14 +4238,16 @@ async function loadFormfavShadow() {
     const res = await fetch(`/api/formfav-shadow?date=${encodeURIComponent(dateParam)}`);
     if (!res.ok) throw new Error(`formfav-shadow ${res.status}`);
     const data = await res.json();
-    if (data.status !== 'OK') { panel.style.display = 'none'; return; }
+    const artifactStatus = data.artifact_status || 'UNKNOWN';
+    const healthy = data.health_status === 'PASS';
     const s = data.summary || {};
     const coverage = s.coverage || {};
     const runners = Number(s.runners || 0);
     const eligible = Number(s.training_eligible_runners || 0);
     const qualityPct = s.mean_quality_score === null || s.mean_quality_score === undefined
       ? '—' : `${(Number(s.mean_quality_score) * 100).toFixed(1)}%`;
-    countEl.textContent = `(${s.races_enriched || 0}/${s.races_primary || 0} races · ${eligible}/${runners} eligible)`;
+    countEl.textContent = `(${artifactStatus} · ${s.races_enriched || 0}/${s.races_primary || 0} races · ${eligible}/${runners} eligible)`;
+    panel.style.borderColor = healthy ? '#42a5f5' : '#e05050';
     const metrics = [
       ['QUALITY', qualityPct],
       ['FORM', `${coverage.form || 0}/${runners}`],
@@ -4256,7 +4258,10 @@ async function loadFormfavShadow() {
       ['PACE SCENARIO', `${coverage.pace_scenario || 0}/${s.races_enriched || 0}`],
       ['IDENTITY MISMATCH', String(s.identity_mismatches || 0)],
     ];
-    summaryEl.innerHTML = metrics.map(([label, value]) =>
+    const healthBanner = `<div style="width:100%;border:1px solid ${healthy ? '#2e7d32' : '#e05050'};background:${healthy ? '#102418' : '#2a1111'};color:${healthy ? '#66bb6a' : '#ff8a80'};padding:7px 10px;border-radius:4px;font-size:11px;font-weight:700;">`
+      + `${healthy ? 'FORMFAV SHADOW HEALTH PASS' : 'FORMFAV SHADOW HEALTH FAIL'} · ${esc(artifactStatus)}`
+      + `${healthy ? '' : ` · upstream errors ${Number(s.upstream_error_count || 0)}`}</div>`;
+    summaryEl.innerHTML = healthBanner + metrics.map(([label, value]) =>
       `<div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px 10px;min-width:110px;">`
       + `<div style="font-size:9px;color:#777;letter-spacing:.08em">${esc(label)}</div>`
       + `<div style="font-size:14px;color:${label === 'IDENTITY MISMATCH' && Number(value) ? '#ff7043' : '#ddd'}">${esc(value)}</div></div>`

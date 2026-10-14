@@ -11,7 +11,7 @@ client = TestClient(main.app)
 def _packet() -> dict:
     return {
         "date": "2026-10-12",
-        "status": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
+        "status": "SHADOW_ONLY_ENRICHED",
         "feature_schema_version": "FORMFAV_UK_SHADOW_V1",
         "races_primary": 1,
         "races_enriched": 1,
@@ -51,7 +51,8 @@ def test_formfav_dashboard_endpoint_is_read_only_shadow(monkeypatch, tmp_path):
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "OK"
-    assert body["artifact_status"] == "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE"
+    assert body["health_status"] == "PASS"
+    assert body["artifact_status"] == "SHADOW_ONLY_ENRICHED"
     assert body["shadow_only"] is True
     assert body["production_influence"] is False
     assert body["stake_authorised"] is False
@@ -71,9 +72,34 @@ def test_formfav_dashboard_missing_packet_is_explicit(monkeypatch):
     body = client.get("/api/formfav-shadow?date=2099-01-01").json()
 
     assert body["status"] == "NOT_RUN"
+    assert body["health_status"] == "FAIL"
     assert body["artifact_status"] == "MISSING"
     assert body["races"] == []
     assert body["production_influence"] is False
+
+
+def test_formfav_zero_coverage_packet_is_explicit_failure(monkeypatch):
+    packet = _packet()
+    packet.update(
+        {
+            "status": "SHADOW_NO_USABLE_ENRICHMENT",
+            "races_enriched": 0,
+            "runners": 0,
+            "races": [],
+        }
+    )
+    monkeypatch.setattr(
+        main,
+        "_report_artifact",
+        lambda artifact_type, date, local_path: (packet, "supabase_report_artifacts"),
+    )
+
+    body = client.get("/api/formfav-shadow?date=2026-10-14").json()
+
+    assert body["status"] == "OK"
+    assert body["health_status"] == "FAIL"
+    assert body["artifact_status"] == "SHADOW_NO_USABLE_ENRICHMENT"
+    assert body["summary"]["races_enriched"] == 0
 
 
 def test_dashboard_displays_formfav_shadow_boundary():

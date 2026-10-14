@@ -1787,6 +1787,7 @@ async def formfav_shadow(date: str = Query(default=None)):
         return {
             "date": d,
             "status": "NOT_RUN",
+            "health_status": "FAIL",
             "artifact_status": "MISSING",
             "trust_policy": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
             "summary": {},
@@ -1822,10 +1823,17 @@ async def formfav_shadow(date: str = Query(default=None)):
         )
 
     audit = data.get("enrichment_audit") or {}
+    artifact_status = data.get("status") or "UNKNOWN"
+    usable = (
+        artifact_status == "SHADOW_ONLY_ENRICHED"
+        and int(data.get("races_enriched") or 0) > 0
+        and int(data.get("runners") or 0) > 0
+    )
     return {
         "date": d,
         "status": "OK",
-        "artifact_status": data.get("status") or "UNKNOWN",
+        "health_status": "PASS" if usable else "FAIL",
+        "artifact_status": artifact_status,
         "feature_schema_version": data.get("feature_schema_version"),
         "trust_policy": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
         "source": source,
