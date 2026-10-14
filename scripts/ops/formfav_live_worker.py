@@ -38,6 +38,9 @@ COUNTRIES = {
 QUERY_TIMEZONE = os.getenv("FORMFAV_LIVE_QUERY_TIMEZONE", "UTC")
 PRICE_LOOKAHEAD_MIN = max(15, int(os.getenv("FORMFAV_PRICE_LOOKAHEAD_MIN", "120")))
 RESULT_LOOKBACK_MIN = max(30, int(os.getenv("FORMFAV_RESULT_LOOKBACK_MIN", "180")))
+RATE_LIMIT_BACKOFF_SECONDS = max(
+    300, int(os.getenv("FORMFAV_RATE_LIMIT_BACKOFF_SECONDS", "1800"))
+)
 
 _last_meetings_fetch: float = 0.0
 _meeting_cache: dict[str, list[dict[str, Any]]] = {}
@@ -46,6 +49,29 @@ _last_prediction: dict[str, float] = {}
 _last_price: dict[str, float] = {}
 _last_result: dict[str, float] = {}
 _price_forbidden_until: float = 0.0
+_provider_rate_limited_until: float = 0.0
+
+
+def _activate_provider_backoff(exc: BaseException) -> bool:
+    """Open one global cooldown after the provider reports HTTP 429.
+
+    Without this, every remaining race in the current 500+ race scan makes
+    another doomed request and extends the outage.  Returning ``True`` lets
+    callers distinguish a provider-wide limit from an ordinary per-race
+    missing-data response.
+    """
+    global _provider_rate_limited_until
+    if "429" not in str(exc) and "rate limit" not in str(exc).lower():
+        return False
+    _provider_rate_limited_until = max(
+        _provider_rate_limited_until,
+        time.time() + RATE_LIMIT_BACKOFF_SECONDS,
+    )
+    return True
+
+
+def _provider_backoff_remaining() -> int:
+    return max(0, int(_provider_rate_limited_until - time.time()))
 
 
 def _sb_env() -> tuple[str, str]:
@@ -126,7 +152,9 @@ def _refresh_meetings(client: FormFavClient, now: datetime) -> None:
     global _last_meetings_fetch, _meeting_cache
     if time.time() - _last_meetings_fetch < MEETINGS_REFRESH_SECONDS:
         return
-    fresh: dict[str, list[dict[str, Any]]] = {}
+    # Start from the last known-good cache so a provider-wide cooldown partway
+    # through the three-date refresh cannot erase the unvisited race days.
+    fresh: dict[str, list[dict[str, Any]]] = dict(_meeting_cache)
     for date_str in _meeting_dates(now):
         try:
             payload = client.meetings(date_str, timezone=QUERY_TIMEZONE)
@@ -141,6 +169,8 @@ def _refresh_meetings(client: FormFavClient, now: datetime) -> None:
         except Exception as exc:
             print(f"[FORMFAV-LIVE] meetings ERROR date={date_str}: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
             fresh[date_str] = _meeting_cache.get(date_str, [])
+            if _activate_provider_backoff(exc):
+                break
     _meeting_cache = fresh
     _last_meetings_fetch = time.time()
 
@@ -261,6 +291,8 @@ def _persist_result(race_key: str, payload: dict[str, Any]) -> None:
 
 def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any], mrace: dict[str, Any], now: datetime) -> None:
     global _price_forbidden_until
+    if _provider_backoff_remaining() > 0:
+        return
     country = str(meeting.get("country") or "").lower()
     track = str(meeting.get("track") or "")
     slug = str(meeting.get("slug") or track)
@@ -327,12 +359,14 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                     _last_prediction[race_key] = time.time()
                     print(f"[FORMFAV-LIVE] predictions OK {country}:{track} R{race_no}", flush=True)
                 except Exception as pred_exc:
+                    _activate_provider_backoff(pred_exc)
                     print(
                         f"[FORMFAV-LIVE] predictions ERROR {country}:{track} R{race_no}: {pred_exc}",
                         file=sys.stderr,
                         flush=True,
                     )
         except Exception as exc:
+            _activate_provider_backoff(exc)
             print(f"[FORMFAV-LIVE] form ERROR {country}:{track} R{race_no}: {exc}", file=sys.stderr, flush=True)
 
     # Premium market polling. A Pro trial legitimately returns 403; back off
@@ -356,6 +390,11 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                 if "403" in str(exc):
                     _price_forbidden_until = time.time() + 3600
                     print("[FORMFAV-LIVE] prices tier-gated (403); backing off 60m", flush=True)
+                elif _activate_provider_backoff(exc):
+                    print(
+                        f"[FORMFAV-LIVE] provider rate-limited; backing off {_provider_backoff_remaining()}s",
+                        flush=True,
+                    )
                 else:
                     print(f"[FORMFAV-LIVE] prices ERROR {country}:{track} R{race_no}: {exc}", file=sys.stderr, flush=True)
             except Exception as exc:
@@ -387,6 +426,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                 # A not-yet-resulted race may legitimately 404/empty.
                 if "404" not in str(exc):
                     print(f"[FORMFAV-LIVE] result ERROR {country}:{track} R{race_no}: {exc}", file=sys.stderr, flush=True)
+                _activate_provider_backoff(exc)
                 _last_result[race_key] = time.time()
             except Exception as exc:
                 print(f"[FORMFAV-LIVE] result ERROR {country}:{track} R{race_no}: {exc}", file=sys.stderr, flush=True)
@@ -405,6 +445,14 @@ def main() -> int:
     while True:
         now = datetime.now(UTC)
         try:
+            remaining = _provider_backoff_remaining()
+            if remaining > 0:
+                print(
+                    f"[FORMFAV-LIVE] provider cooldown active remaining={remaining}s",
+                    flush=True,
+                )
+                time.sleep(min(POLL_SECONDS, remaining))
+                continue
             _refresh_meetings(client, now)
             processed = 0
             for date_str, meetings in list(_meeting_cache.items()):

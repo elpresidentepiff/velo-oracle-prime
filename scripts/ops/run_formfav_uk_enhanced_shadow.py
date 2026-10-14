@@ -14,7 +14,7 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -34,7 +34,14 @@ LONDON = ZoneInfo("Europe/London")
 
 
 def _default_date() -> str:
-    return (datetime.now(LONDON).date() + timedelta(days=1)).isoformat()
+    """Return the current UK race day for unattended daily runs.
+
+    The Railway shadow service previously needed a hard-coded ``--date`` and
+    was consequently left pinned to 2026-10-13.  The governed local runner
+    still passes an explicit date; this default exists only so the cloud cron
+    can advance naturally at midnight Europe/London.
+    """
+    return datetime.now(LONDON).date().isoformat()
 
 
 def _normalise_country(value: object) -> str:

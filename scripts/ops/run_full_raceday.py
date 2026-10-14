@@ -335,7 +335,7 @@ def main() -> int:
         "Step 5.6: FormFav UK enhanced shadow features",
         [PY, "scripts/ops/run_formfav_uk_enhanced_shadow.py",
          "--date", date, "--countries", "gb,ie", "--persist-artifact"],
-        critical=False, results=results,
+        critical=True, results=results,
     )
 
     # ── Step 6: New Build current-card feed ──────────────────────────────

@@ -2,10 +2,17 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
+from scripts.ops.run_formfav_uk_enhanced_shadow import _default_date
 from src.velo.formfav_enrichment import _closest_existing_race, enrich_existing_racecards
 from src.velo.formfav_uk_features import build_race_shadow_packet
 from src.velo.supabase_racecard_source import load_supabase_rp_racecards
+
+
+def test_unattended_shadow_defaults_to_current_london_race_day() -> None:
+    assert _default_date() == datetime.now(ZoneInfo("Europe/London")).date().isoformat()
 
 
 def test_rp_dot_time_and_track_alias_match_formfav_utc() -> None:
