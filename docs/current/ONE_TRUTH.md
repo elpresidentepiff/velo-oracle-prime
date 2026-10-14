@@ -990,6 +990,11 @@ reasons `LEARNING_ALLOWED_DEGRADED_PERFORMANCE`, 38 learning events written; 202
 ## Global (FormFav) end-of-day sigma — SHADOW ONLY (added 2026-10-14)
 The `velo-formfav-live` worker settles and reconciles every FormFav race day (US, CA, AU, HK, JP, FR, GB, IE) hourly once past 05:00 UTC, for the previous two UTC dates (`scripts/ops/formfav_global_eod.py`). Step 1 re-fetches results that are missing or not `final` (the live poller stops 180 min after the off). Step 2 writes one row per predicted race to **`formfav_sigma_audits`** (rollup view `formfav_sigma_daily`). Rows carry `basis`: `final`, `provisional` (provider still says interim but placings exist) or `no_result` — never blend them into one strike rate. It never writes `sigma_audits`, `velo_verdicts`, `pipeline_runs`, weights or Telegram, so international results do not feed UK learning. Manual run: `python scripts/ops/formfav_global_eod.py --date YYYY-MM-DD [--settle] [--dry-run]`. Disable with `FORMFAV_GLOBAL_EOD=0`.
 
+### FormFav enrichment reads the worker's stored data (added 2026-10-14)
+The UK/IRE shadow job (`run_formfav_uk_enhanced_shadow.py`) used to re-call FormFav's API and failed closed with **zero** enrichment on 2026-10-13 and 10-14 (HTTP 429 on `/meetings`: one rate-limited key shared with the live worker). It now uses `src/velo/formfav_cache_client.py`: meetings, race form and predictions come from `formfav_races` / `formfav_runner_form` / `formfav_predictions` (written by `velo-formfav-live`), falling back to the live API only on a miss or rows older than 12 h. Prices and track bias are not cached. Opt out with `FORMFAV_ENRICH_FROM_CACHE=0`. Race-level `/form` fields now live in `formfav_races.form_meta` (the per-tick `metadata` rewrite used to erase them). Still shadow only: nothing here changes Prime scoring.
+
+**See what FormFav predicts next to VELO:** `select * from velo_vs_formfav where race_date = current_date;` — per GB/IE race: both top picks, whether they agree, FormFav's probability and rank for VELO's pick (and VELO's for FormFav's), and the winner / who was right once results are in. Read-only.
+
 ## Next safe command
 ```
 python scripts/ops/velo_session_start_check.py

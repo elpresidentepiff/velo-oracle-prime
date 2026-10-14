@@ -362,7 +362,9 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                 timezone=mrace.get("timezone") or QUERY_TIMEZONE,
             )
             race_row = dict(base_race)
-            race_row["metadata"] = {"meeting_race": mrace, "form_meta": {k: v for k, v in form.items() if k != "runners"}}
+            # form_meta has its own column: metadata is rewritten every tick with the
+            # bare meeting-race dict and would erase it within a minute.
+            race_row["form_meta"] = {k: v for k, v in form.items() if k != "runners"}
             _persist_form(race_key, race_row, form)
             _last_form[race_key] = time.time()
             print(f"[FORMFAV-LIVE] form OK {country}:{track} R{race_no}", flush=True)

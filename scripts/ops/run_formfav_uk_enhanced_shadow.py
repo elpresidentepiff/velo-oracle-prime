@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from src.velo.formfav_cache_client import build_enrichment_client
 from src.velo.formfav_enrichment import enrich_existing_racecards
 from src.velo.formfav_uk_features import FEATURE_SCHEMA_VERSION, build_race_shadow_packet
 from src.velo.racecard_loader import load_racecards
@@ -90,6 +91,9 @@ def main() -> int:
         include_prices=False,
         include_track_bias=True,
         timezone="Europe/London",
+        # Cache-first: reuse what the live worker already stored instead of
+        # re-calling the shared, rate-limited FormFav key (429 -> zero enrichment).
+        client=build_enrichment_client(),
     )
 
     packets = []
