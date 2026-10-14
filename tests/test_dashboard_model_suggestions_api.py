@@ -11,6 +11,8 @@ import ast
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
@@ -21,6 +23,23 @@ from scripts.ops.new_build_dashboard_server import app
 client = TestClient(app)
 
 JULY06 = "2026-07-06"
+
+
+@pytest.fixture(autouse=True)
+def _use_checked_in_fixture_truth(monkeypatch):
+    """Keep historical endpoint tests independent of operator credentials.
+
+    Production is intentionally Supabase-first.  These July 06 regression
+    tests verify the checked-in fixture artifacts and must not change outcome
+    merely because the developer running pytest has a live ``.env`` file.
+    """
+    for key in (
+        "SUPABASE_URL",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_SERVICE_KEY",
+        "SUPABASE_KEY",
+    ):
+        monkeypatch.delenv(key, raising=False)
 
 
 def test_model_suggestions_returns_lanes_for_available_models():
