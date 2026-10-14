@@ -183,3 +183,20 @@ def test_no_telegram_or_live_scoring_path_touched():
     assert "telegram" not in lowered
     assert "run_prime_today" not in lowered
     assert "velo_prime_service" not in lowered
+
+
+def test_dashboard_all_model_table_uses_non_recursive_label_lookup():
+    html = (ROOT / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+
+    assert "const mdlShort = label => MDL_SHORT[label]" in html
+    assert "const mdlShort = label => mdlShort(label)" not in html
+
+
+def test_race_cards_fall_back_to_current_canonical_model_capture():
+    html = (ROOT / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+
+    assert "canonicalModelsByRaceId" in html
+    assert "NEW_BUILD_LANE_A_MODEL" in html
+    assert "OLD_VELO_WIN_ROLE" in html
+    assert "LANE A · CANONICAL CAPTURE" in html
+    assert "CANONICAL CURRENT-DAY CAPTURE" in html
