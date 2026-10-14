@@ -3894,7 +3894,7 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
     const course   = esc(r0.course || '');
     const raceName = esc(r0.race_name || r0.race_title || '');
     const canonicalRunnerCount = new Set(canonicalRows.map(r => r.horse).filter(Boolean)).size;
-    const runnerCount = parseInt(r0.new_build_runner_count) || canonicalRunnerCount || runners.length;
+    const runnerCount = parseInt(r0.new_build_runner_count) || parseInt(r0.declared_runner_count) || canonicalRunnerCount || runners.length;
     const previousOffTime = r0.previous_off_time || '';
     const maxProb = Math.max(...nbRunners.map(r => parseFloat(r.champion_probability || 0)));
 

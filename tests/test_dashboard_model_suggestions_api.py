@@ -198,5 +198,6 @@ def test_race_cards_fall_back_to_current_canonical_model_capture():
     assert "canonicalModelsByRaceId" in html
     assert "NEW_BUILD_LANE_A_MODEL" in html
     assert "OLD_VELO_WIN_ROLE" in html
+    assert "declared_runner_count" in html
     assert "LANE A · CANONICAL CAPTURE" in html
     assert "CANONICAL CURRENT-DAY CAPTURE" in html

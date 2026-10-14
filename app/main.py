@@ -2088,6 +2088,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     # ── Source 2: Supabase governance overlay ────────────────────────────────
     gov_by_race: dict = {}
+    race_counts_by_id: dict[str, int] = {}
     sb_verdict_rows: list[dict] = []
     sb_url = resolve_supabase_url()
     sb_key = resolve_supabase_service_key()
@@ -2128,6 +2129,27 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                     gov_by_race[row["race_id"]]["no_rpr_top_prob"] = float(_best.get("sqpe_no_rpr_shadow_prob") or 0)
         except Exception as e:
             logger.warning("Supabase query failed: %s", e)
+
+    # Authoritative declared field size belongs to the canonical races table.
+    # Do not infer it from verdict rows (one per race) or from distinct model
+    # selections (which omit horses that no lane ranked first).
+    if db is not None:
+        try:
+            race_rows = (
+                db.table("races")
+                .select("race_id,runners_count")
+                .eq("date", target_date)
+                .execute()
+                .data
+                or []
+            )
+            for row in race_rows:
+                rid = str(row.get("race_id") or "")
+                count = int(row.get("runners_count") or 0)
+                if rid and count > 0:
+                    race_counts_by_id[rid] = count
+        except Exception as e:
+            logger.warning("Supabase race-count query failed: %s", e)
 
     if (not raw_verdicts or loaded_date != target_date) and sb_verdict_rows:
         raw_verdicts = sb_verdict_rows
@@ -2673,6 +2695,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
                 "rp_flatline_warning": _flatline_warning,
                 "new_build_top3": _new_build.get("lane_a_top3") or [],
                 "new_build_runner_count": _new_build.get("runner_count"),
+                "declared_runner_count": race_counts_by_id.get(str(race_id)),
                 "new_build_passport_coverage": _new_build.get("passport_coverage"),
                 "new_build_passport_coverage_pct": _new_build.get("passport_coverage_pct"),
                 "new_build_weak_data": _new_build.get("weak_data"),
