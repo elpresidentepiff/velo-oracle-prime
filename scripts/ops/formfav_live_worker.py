@@ -30,6 +30,11 @@ POLL_SECONDS = max(20, int(os.getenv("FORMFAV_WORKER_TICK_SECONDS", "30")))
 MEETINGS_REFRESH_SECONDS = max(120, int(os.getenv("FORMFAV_MEETINGS_REFRESH_SECONDS", "600")))
 FORM_REFRESH_SECONDS = max(300, int(os.getenv("FORMFAV_FORM_REFRESH_SECONDS", "1800")))
 RESULT_REFRESH_SECONDS = max(30, int(os.getenv("FORMFAV_RESULT_REFRESH_SECONDS", "60")))
+# Results stuck at "pending"/"interim" used to be re-fetched every 60s for the
+# whole lookback window, which was most of the call volume. Poll them slower;
+# the daily settle sweep (formfav_global_eod) upgrades stragglers afterwards.
+RESULT_PENDING_REFRESH_SECONDS = max(60, int(os.getenv("FORMFAV_RESULT_PENDING_REFRESH_SECONDS", "120")))
+RESULT_INTERIM_REFRESH_SECONDS = max(120, int(os.getenv("FORMFAV_RESULT_INTERIM_REFRESH_SECONDS", "600")))
 COUNTRIES = {
     c.strip().lower()
     for c in os.getenv("FORMFAV_LIVE_COUNTRIES", "gb,ie,us,ca,fr,au,hk,jp").split(",")
@@ -48,6 +53,7 @@ _last_form: dict[str, float] = {}
 _last_prediction: dict[str, float] = {}
 _last_price: dict[str, float] = {}
 _last_result: dict[str, float] = {}
+_last_result_stage: dict[str, str] = {}
 _price_forbidden_until: float = 0.0
 GLOBAL_EOD_ENABLED = os.getenv("FORMFAV_GLOBAL_EOD", "1") != "0"
 GLOBAL_EOD_START_HOUR_UTC = int(os.getenv("FORMFAV_GLOBAL_EOD_START_HOUR_UTC", "5"))
@@ -275,6 +281,15 @@ def _persist_prices(race_key: str, prices: dict[str, Any]) -> int:
     return len(rows)
 
 
+def _result_refresh_interval(stage: str | None) -> int:
+    """Seconds between result polls, by the provider's last-seen race status."""
+    if stage == "interim":
+        return RESULT_INTERIM_REFRESH_SECONDS
+    if stage == "pending":
+        return RESULT_PENDING_REFRESH_SECONDS
+    return RESULT_REFRESH_SECONDS
+
+
 def _persist_result(race_key: str, payload: dict[str, Any]) -> None:
     final = _looks_final(payload)
     stage = (
@@ -412,7 +427,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
     # final/correct-weight or the live lookback window expires.
     if -RESULT_LOOKBACK_MIN <= mins_to_off <= 0:
         last = _last_result.get(race_key, 0.0)
-        if time.time() - last >= RESULT_REFRESH_SECONDS:
+        if time.time() - last >= _result_refresh_interval(_last_result_stage.get(race_key)):
             try:
                 result = client.results(
                     date=date_str,
@@ -423,6 +438,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                 )
                 _persist_result(race_key, result)
                 _last_result[race_key] = time.time()
+                _last_result_stage[race_key] = str(result.get("resultStatus") or "").lower()
                 print(
                     f"[FORMFAV-LIVE] result OK {country}:{track} R{race_no} final={_looks_final(result)}",
                     flush=True,

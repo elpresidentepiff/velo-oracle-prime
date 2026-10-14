@@ -5,8 +5,11 @@ Supports SIM / DELAYED / LIVE modes for safe testing and deployment
 
 import logging
 import os
+from collections.abc import Callable
 from datetime import datetime, timedelta
 from enum import StrEnum
+
+from src.velo.execution_risk import Decision, deny_all
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +50,12 @@ class BetfairClient:
         mode: BetfairMode = BetfairMode.SIM,
         cert_path: str | None = None,
         key_path: str | None = None,
+        risk_gate: Callable[[dict], Decision] | None = None,
     ):
         self.app_key = app_key
+        # Fail-closed: real orders need an explicitly wired pre-trade gate
+        # (src/velo/execution_risk.py). BETFAIR_MODE=LIVE alone is not enough.
+        self.risk_gate = risk_gate or deny_all
         self.username = username
         self.password = password
         self.mode = mode
@@ -243,6 +250,7 @@ class BetfairClient:
         size: float,
         price: float,
         persistence: str = "PERSIST",
+        customer_order_ref: str | None = None,
     ) -> dict:
         """
         Place a bet on Betfair
@@ -270,6 +278,7 @@ class BetfairClient:
             "size": size,
             "price": price,
             "persistence": persistence,
+            "customer_order_ref": customer_order_ref,
             "timestamp": datetime.utcnow().isoformat(),
         }
 
@@ -279,6 +288,11 @@ class BetfairClient:
         if self.mode == BetfairMode.DELAYED:
             logger.warning("[DELAYED] Cannot place orders in DELAYED mode - use LIVE mode")
             return {"status": "BLOCKED", "error": "Orders not allowed in DELAYED mode"}
+
+        decision = self.risk_gate(order)
+        if not decision.allowed:
+            logger.error(f"[LIVE] Order BLOCKED by risk gate: {decision.reason}")
+            return {"status": "BLOCKED", "error": decision.reason}
 
         try:
             # Real Betfair order placement

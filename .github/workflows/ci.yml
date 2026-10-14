@@ -115,6 +115,10 @@ jobs:
           pip install pytest
           pytest tests/test_racecard_loader.py -q
 
+      - name: Live-order safety perimeter
+        run: |
+          pytest tests/test_no_live_order_path.py tests/test_execution_risk.py -q -p no:warnings
+
       - name: Verify Racing API source truth
         run: |
           python - <<'PY'

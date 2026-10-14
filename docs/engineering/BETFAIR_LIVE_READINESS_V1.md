@@ -17,10 +17,15 @@
 
 No price history means closing-line value (CLV) cannot be measured, so "is VELO beating the market" is currently unanswerable.
 
-## Blockers (must close before any live stake)
+## Closed 2026-10-14 (no behaviour change to scoring; live betting still blocked)
+- **Blocker 4/5 (single switch, shallow scan):** `BetfairClient.place_order` in LIVE mode now calls a risk gate first and **denies by default** (`NO_RISK_GATE_CONFIGURED`). Real orders need `BETFAIR_MODE=LIVE` *and* an explicitly wired gate. `tests/test_no_live_order_path.py` (CI) fails if any code other than the Betfair client calls `place_order(s)` or any deploy config enables a LIVE mode.
+- **Blocker 3 (risk layer) — rules built, not wired:** `src/velo/execution_risk.py` is a pure, fail-closed gate: kill switch, per-market operator approval, market open and pre-play, customer order ref + duplicate refs, stake cap, price band and Betfair ladder, per-race and daily liability caps, daily loss stop, bankroll floor. 12 rules, each tested. **Still to build (needs operator approval):** the durable state provider (kill-switch row, approval records, exposure, seen refs), and passing `customer_order_ref` to Betfair as its own idempotency key.
+- **FormFav call volume:** results for races stuck `pending`/`interim` were re-fetched every 60 s for 3 hours; now every 2 / 10 min. The daily settle sweep upgrades stragglers. Prices are Premium-only (trial = 403), so price capture (G1) waits on a paid tier or the Betfair delayed key.
+
+## Blockers still open
 1. **Secrets hygiene.** A TheRacingAPI username/password is committed in `docs/VELO_DEVELOPER_BLUEPRINT.md` in a **public** repo (and git history). Rotate it, remove it, then decide whether the repo stays public. Betfair credentials/certs go in Railway sealed variables only, never in the repo.
 2. **No demonstrated edge.** Need pre-off price capture, then CLV and calibration by segment (`formfav_sigma_edges`) over a sample large enough to trust (≥30 final races per segment as a floor, far more for a go decision).
-3. **No execution risk layer.** Missing: per-bet stake cap, per-race and daily liability caps, daily-loss stop and bankroll floor, persistent kill switch, market-status check (suspended / in-play), price sanity vs expectation, idempotent customer order refs, order-state reconciliation (partial matches, lapses, cancels), commission-aware P&L.
+3. **Execution risk layer wired to real state.** Rules exist (above); still missing: per-bet stake cap, per-race and daily liability caps, daily-loss stop and bankroll floor, persistent kill switch, market-status check (suspended / in-play), price sanity vs expectation, idempotent customer order refs, order-state reconciliation (partial matches, lapses, cancels), commission-aware P&L.
 4. **Single-point switch.** One env var enables real orders. Needs a second independent control (signed operator approval record in the DB, checked per order) and a hard daily cap enforced server-side.
 5. **Safety scan is shallow.** `app/core/safety_guards.py` scans three files for two module names that no longer exist. Replace with a real test that fails CI if any non-execution module can reach `place_order`.
 6. **Monitoring.** The FormFav worker sat in a silent 429 loop for hours and was found by hand. A betting system needs alerts on stale feeds, failed deploys, rate limits, and missed daily runs, not log reading.
