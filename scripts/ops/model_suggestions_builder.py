@@ -18,6 +18,9 @@ from __future__ import annotations
 
 import csv
 import json
+import os
+import urllib.parse
+import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -36,6 +39,29 @@ MODEL_LABELS = [
     "OLD_VELO_PLACE",
     "OLD_VELO_LONGSHOT",
     "CHAMPION_INTENT_SHADOW",
+]
+
+
+# Cloud-native production order.  These names are the canonical identities
+# persisted in public.canonical_model_scorecards by the current scoring stack.
+# Keep the legacy MODEL_LABELS above for local-artifact fallback only.
+CANONICAL_MODEL_ORDER = [
+    "MAIN_VELO_PRIME",
+    "SQPE_NO_RPR_SHADOW",
+    "SQPE_MDS_SHADOW_V1",
+    "MDS_HEAVY_SHADOW_V1",
+    "MARKET_BLIND_CORE_SHADOW_V1",
+    "CALIBRATED_G_SHADOW_V1",
+    "CAPTAIN_VELO_VALUE_V1",
+    "NEW_BUILD_LANE_A_MODEL",
+    "NEW_BUILD_LANE_B_MODEL",
+    "NEW_BUILD_LANE_C_MODEL",
+    "CHAMPION_INTENT_SHADOW",
+    "MIDPRICE_SPECIALIST_SHADOW",
+    "OLD_VELO_WIN_ROLE",
+    "OLD_VELO_PLACE_ROLE",
+    "OLD_VELO_LONGSHOT_ROLE",
+    "PASSPORT_STRENGTH_SCORE_PROXY",
 ]
 
 
@@ -62,6 +88,104 @@ def _read_csv(path: Path) -> list[dict]:
         return []
     with path.open(encoding="utf-8") as f:
         return list(csv.DictReader(f))
+
+
+def _canonical_supabase_top_picks(date_str: str) -> tuple[list[dict], str | None]:
+    """Read captured rank-1 model outputs from the shared production truth store.
+
+    Railway runs the web app and the scoring worker in separate containers, so
+    today's scorer artifacts are not guaranteed to exist on the web container's
+    filesystem.  canonical_model_scorecards is the durable cross-service bridge.
+    This is read-only and never performs scoring or writes.
+    """
+    sb_url = (os.getenv("SUPABASE_URL") or "").rstrip("/")
+    sb_key = (
+        os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+        or os.getenv("SUPABASE_SERVICE_KEY")
+        or os.getenv("SUPABASE_KEY")
+        or ""
+    )
+    if not sb_url or not sb_key:
+        return [], "Supabase credentials unavailable in dashboard runtime"
+
+    select_cols = ",".join(
+        [
+            "run_date",
+            "race_id",
+            "course",
+            "off_time",
+            "model_name",
+            "lane_name",
+            "source_path",
+            "source_field",
+            "rank",
+            "horse",
+            "horse_id",
+            "score",
+            "policy_decision",
+            "stake_authorised",
+            "dashboard_visible",
+            "notes",
+            "result_position",
+            "created_at",
+        ]
+    )
+    query = urllib.parse.urlencode(
+        {
+            "select": select_cols,
+            "run_date": f"eq.{date_str}",
+            "rank": "eq.1",
+            "order": "off_time.asc,course.asc,model_name.asc",
+        }
+    )
+    req = urllib.request.Request(
+        f"{sb_url}/rest/v1/canonical_model_scorecards?{query}",
+        headers={
+            "apikey": sb_key,
+            "Authorization": f"Bearer {sb_key}",
+            "Accept": "application/json",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=12) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+    except Exception as exc:
+        return [], f"{type(exc).__name__}: {exc}"
+
+    if not isinstance(payload, list):
+        return [], "Supabase canonical model response was not a list"
+    return payload, None
+
+
+def _canonical_row_to_suggestion(row: dict) -> dict:
+    score = row.get("score")
+    try:
+        score = float(score) if score is not None else None
+    except (TypeError, ValueError):
+        score = None
+    return {
+        "date": str(row.get("run_date") or ""),
+        "race_id": str(row.get("race_id") or ""),
+        "course": row.get("course") or "",
+        "off_time": row.get("off_time"),
+        "model_label": row.get("model_name") or "UNKNOWN",
+        "lane_name": row.get("lane_name") or row.get("model_name") or "UNKNOWN",
+        "rank": row.get("rank"),
+        "horse": row.get("horse") or "",
+        "horse_id": str(row.get("horse_id") or ""),
+        "score": score,
+        "source_path": row.get("source_path") or "public.canonical_model_scorecards",
+        "source_field": row.get("source_field") or "score",
+        "policy_decision": row.get("policy_decision"),
+        "stake_authorised": bool(row.get("stake_authorised")),
+        "promotion_eligible": False,
+        "dashboard_visible": bool(row.get("dashboard_visible")),
+        "suggestion_status": "CANONICAL_CURRENT_DAY_CAPTURE",
+        "notes": row.get("notes") or "Durable rank-1 capture from public.canonical_model_scorecards",
+        "capture_source": "public.canonical_model_scorecards",
+        "result_position_present": row.get("result_position") is not None,
+        "captured_at": row.get("created_at"),
+    }
 
 
 def _base_row(*, date: str, race_id: str, course: str, off_time: Any, model_label: str,
@@ -317,6 +441,78 @@ LANE_BUILDERS = {
 
 
 def build_model_suggestions(date_str: str, race_id: str | None = None) -> dict:
+    # Production-first: the scoring worker and web dashboard are separate
+    # Railway containers.  Read the durable canonical capture from Supabase so
+    # the dashboard sees every model lane that actually ran, regardless of
+    # which container produced its local artifact.
+    canonical_rows, canonical_error = _canonical_supabase_top_picks(date_str)
+    if canonical_rows:
+        # Anchor every lane to the same production race universe as MAIN_VELO_PRIME.
+        # Some research shadows intentionally score wider international cards;
+        # those must not leak into the operator's canonical GB/IRE race-day view.
+        main_race_ids = {
+            str(r.get("race_id") or "")
+            for r in canonical_rows
+            if r.get("model_name") == "MAIN_VELO_PRIME"
+        }
+        if main_race_ids:
+            canonical_rows = [
+                r for r in canonical_rows
+                if str(r.get("race_id") or "") in main_race_ids
+            ]
+
+        rows = [_canonical_row_to_suggestion(r) for r in canonical_rows]
+        if race_id:
+            rows = [r for r in rows if r["race_id"] == str(race_id)]
+
+        rows.sort(
+            key=lambda r: (
+                r.get("off_time") or "",
+                r.get("course") or "",
+                r.get("model_label") or "",
+            )
+        )
+        counts_by_label: dict[str, int] = {}
+        for r in rows:
+            label = r["model_label"]
+            counts_by_label[label] = counts_by_label.get(label, 0) + 1
+
+        discovered = sorted(counts_by_label.keys())
+        requested = list(CANONICAL_MODEL_ORDER)
+        for label in discovered:
+            if label not in requested:
+                requested.append(label)
+
+        missing = [
+            _missing(
+                label,
+                "public.canonical_model_scorecards",
+                "No rank-1 canonical capture found for this date",
+            )
+            for label in requested
+            if label not in counts_by_label
+        ]
+        return {
+            "date": date_str,
+            "race_id": race_id,
+            "source": "SUPABASE_CANONICAL_CAPTURE",
+            "suggestion_status": "CANONICAL_CURRENT_DAY_CAPTURE",
+            "result_truth": False,
+            "staking_instruction": False,
+            "promotion_action": False,
+            "canonical_post_race_learning": False,
+            "no_supabase_writes": True,
+            "supabase_read_only": True,
+            "models_requested": requested,
+            "models_available": discovered,
+            "models_missing": [m["model_label"] for m in missing],
+            "row_counts_by_model": counts_by_label,
+            "missing_artifacts": missing,
+            "rows": rows,
+        }
+
+    # Local fallback is retained for development / old dates where canonical
+    # capture is unavailable. Missing artifacts remain explicit.
     rows: list[dict] = []
     missing: list[dict] = []
     for label in MODEL_LABELS:
@@ -337,6 +533,8 @@ def build_model_suggestions(date_str: str, race_id: str | None = None) -> dict:
     return {
         "date": date_str,
         "race_id": race_id,
+        "source": "LOCAL_ARTIFACT_FALLBACK",
+        "canonical_read_error": canonical_error,
         "suggestion_status": SUGGESTION_STATUS_LABEL,
         "result_truth": False,
         "staking_instruction": False,

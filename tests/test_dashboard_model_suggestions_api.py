@@ -7,8 +7,11 @@ truth — every row/response must say so, and the CHAMPION_INTENT_SHADOW and
 SQPE_NO_RPR_SHADOW lanes must never claim stake authorisation or promotion
 eligibility no matter what artifacts are present on disk.
 """
+import ast
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -20,6 +23,23 @@ from scripts.ops.new_build_dashboard_server import app
 client = TestClient(app)
 
 JULY06 = "2026-07-06"
+
+
+@pytest.fixture(autouse=True)
+def _use_checked_in_fixture_truth(monkeypatch):
+    """Keep historical endpoint tests independent of operator credentials.
+
+    Production is intentionally Supabase-first.  These July 06 regression
+    tests verify the checked-in fixture artifacts and must not change outcome
+    merely because the developer running pytest has a live ``.env`` file.
+    """
+    for key in (
+        "SUPABASE_URL",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_SERVICE_KEY",
+        "SUPABASE_KEY",
+    ):
+        monkeypatch.delenv(key, raising=False)
 
 
 def test_model_suggestions_returns_lanes_for_available_models():
@@ -133,10 +153,26 @@ def test_race_filtered_endpoint_scopes_to_one_race():
 def test_no_supabase_writer_in_source():
     src = (ROOT / "scripts" / "ops" / "model_suggestions_builder.py").read_text(encoding="utf-8")
     lowered = src.lower()
-    # The module discloses "no_supabase_writes": true in its response — that's
-    # fine. What it must never contain is an actual Supabase client/writer.
-    assert "supabase_url" not in lowered
-    assert "supabase_service_role_key" not in lowered
+    # Canonical model truth is cloud-native, so this read-only dashboard
+    # consumer must be allowed to authenticate a GET.  Guard the boundary that
+    # matters: it must never contain a database write method or writer helper.
+    tree = ast.parse(src)
+    request_calls = [
+        node for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "Request"
+    ]
+    assert request_calls
+    for call in request_calls:
+        keywords = {kw.arg: kw.value for kw in call.keywords if kw.arg}
+        assert "data" not in keywords
+        if "method" in keywords:
+            assert isinstance(keywords["method"], ast.Constant)
+            assert str(keywords["method"].value).upper() == "GET"
+    assert 'method="post"' not in lowered
+    assert 'method="patch"' not in lowered
+    assert 'method="delete"' not in lowered
     assert ".insert(" not in lowered
     assert ".upsert(" not in lowered
 

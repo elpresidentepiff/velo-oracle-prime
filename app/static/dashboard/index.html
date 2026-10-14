@@ -1985,6 +1985,11 @@ window.__SSC_INLINE = {"date":"2026-05-29","generated_at":"2026-05-29T13:10:54.6
       const res = await fetch('sidecar_stack_latest.json');
       if (!res.ok) throw new Error('fetch failed');
       data = await res.json();
+      const discoveredModels = [
+        ...(Array.isArray(data.models_requested) ? data.models_requested : []),
+        ...(Array.isArray(data.models_available) ? data.models_available : []),
+      ].filter(Boolean);
+      if (discoveredModels.length) MDL_MODELS = [...new Set(discoveredModels)];
     } catch (_e) {
       // Fetch failed (file-protocol, CORS, etc.) — use inline pre-loaded data if available
       if (window.__SSC_INLINE) {
@@ -2852,17 +2857,51 @@ table.mdl-table tr:hover { background: var(--bg-hover); }
 
 <script>
 (function() {
-  const MDL_MODELS = [
-    'MAIN_VELO_PRIME', 'SQPE_NO_RPR_SHADOW', 'NEW_BUILD_LANE_A', 'NEW_BUILD_LANE_B',
-    'NEW_BUILD_LANE_C', 'NEW_BUILD_POLICY_V1', 'OLD_VELO_WIN', 'OLD_VELO_PLACE',
-    'OLD_VELO_LONGSHOT', 'CHAMPION_INTENT_SHADOW',
+  let MDL_MODELS = [
+    'MAIN_VELO_PRIME',
+    'SQPE_NO_RPR_SHADOW',
+    'SQPE_MDS_SHADOW_V1',
+    'MDS_HEAVY_SHADOW_V1',
+    'MARKET_BLIND_CORE_SHADOW_V1',
+    'CALIBRATED_G_SHADOW_V1',
+    'CAPTAIN_VELO_VALUE_V1',
+    'NEW_BUILD_LANE_A_MODEL',
+    'NEW_BUILD_LANE_B_MODEL',
+    'NEW_BUILD_LANE_C_MODEL',
+    'CHAMPION_INTENT_SHADOW',
+    'MIDPRICE_SPECIALIST_SHADOW',
+    'OLD_VELO_WIN_ROLE',
+    'OLD_VELO_PLACE_ROLE',
+    'OLD_VELO_LONGSHOT_ROLE',
+    'PASSPORT_STRENGTH_SCORE_PROXY',
   ];
   const MDL_SHORT = {
-    MAIN_VELO_PRIME: 'MAIN VÉLØ', SQPE_NO_RPR_SHADOW: 'NO-RPR', NEW_BUILD_LANE_A: 'NB·A',
-    NEW_BUILD_LANE_B: 'NB·B', NEW_BUILD_LANE_C: 'NB·C', NEW_BUILD_POLICY_V1: 'NB·POLICY',
-    OLD_VELO_WIN: 'OLD·WIN', OLD_VELO_PLACE: 'OLD·PLACE', OLD_VELO_LONGSHOT: 'OLD·LONG',
-    CHAMPION_INTENT_SHADOW: 'INTENT·SHADOW',
+    MAIN_VELO_PRIME: 'MAIN VÉLØ',
+    SQPE_NO_RPR_SHADOW: 'NO-RPR',
+    SQPE_MDS_SHADOW_V1: 'SQPE+MDS',
+    MDS_HEAVY_SHADOW_V1: 'MDS·HEAVY',
+    MARKET_BLIND_CORE_SHADOW_V1: 'MKT·BLIND',
+    CALIBRATED_G_SHADOW_V1: 'G·SHADOW',
+    CAPTAIN_VELO_VALUE_V1: 'CAPTAIN',
+    NEW_BUILD_LANE_A_MODEL: 'NB·A',
+    NEW_BUILD_LANE_B_MODEL: 'NB·B',
+    NEW_BUILD_LANE_C_MODEL: 'NB·C',
+    CHAMPION_INTENT_SHADOW: 'INTENT',
+    MIDPRICE_SPECIALIST_SHADOW: 'MIDPRICE',
+    OLD_VELO_WIN_ROLE: 'OLD·WIN',
+    OLD_VELO_PLACE_ROLE: 'OLD·PLACE',
+    OLD_VELO_LONGSHOT_ROLE: 'OLD·LONG',
+    PASSPORT_STRENGTH_SCORE_PROXY: 'PASSPORT·PROXY',
+    // Backward-compatible aliases for older local-artifact dates.
+    NEW_BUILD_LANE_A: 'NB·A',
+    NEW_BUILD_LANE_B: 'NB·B',
+    NEW_BUILD_LANE_C: 'NB·C',
+    NEW_BUILD_POLICY_V1: 'NB·POLICY',
+    OLD_VELO_WIN: 'OLD·WIN',
+    OLD_VELO_PLACE: 'OLD·PLACE',
+    OLD_VELO_LONGSHOT: 'OLD·LONG',
   };
+  const mdlShort = label => mdlShort(label) || String(label || 'UNKNOWN').replaceAll('_', '·');
 
   window.toggleMDL = function() {
     const body = document.getElementById('mdl-body');
@@ -2897,7 +2936,7 @@ table.mdl-table tr:hover { background: var(--bg-hover); }
     if (meta) {
       meta.innerHTML =
         `<b>${data.suggestion_status || '—'}</b> · date: <b>${data.date || '—'}</b> · ` +
-        `races: <b>${raceIds.length}</b> · total rows: <b>${(data.rows || []).length}</b> · ` +
+        `source: <b>${data.source || 'legacy/local'}</b> · races: <b>${raceIds.length}</b> · total rows: <b>${(data.rows || []).length}</b> · ` +
         `no_supabase_writes: <b>${data.no_supabase_writes ? 'true' : 'false'}</b> · ` +
         `result_truth: <b>${data.result_truth ? 'true' : 'false'}</b> · ` +
         `staking_instruction: <b>${data.staking_instruction ? 'true' : 'false'}</b> · ` +
@@ -2908,17 +2947,17 @@ table.mdl-table tr:hover { background: var(--bg-hover); }
     if (chipsEl) {
       chipsEl.innerHTML = MDL_MODELS.map(label => {
         const count = (data.row_counts_by_model || {})[label];
-        if (count) return `<span class="mdl-chip ok">${MDL_SHORT[label]} — ${count} rows</span>`;
+        if (count) return `<span class="mdl-chip ok">${mdlShort(label)} — ${count} rows</span>`;
         const miss = (data.missing_artifacts || []).find(m => m.model_label === label);
         const path = miss ? miss.expected_source_path : '?';
-        return `<span class="mdl-chip missing" title="Expected: ${path}">${MDL_SHORT[label]} — MISSING_ARTIFACT</span>`;
+        return `<span class="mdl-chip missing" title="Expected: ${path}">${mdlShort(label)} — MISSING_ARTIFACT</span>`;
       }).join('');
     }
 
     const theadRow = document.getElementById('mdl-thead-row');
     if (theadRow) {
       theadRow.innerHTML = '<th>TIME</th><th>COURSE</th>' +
-        MDL_MODELS.map(label => `<th>${MDL_SHORT[label]}</th>`).join('');
+        MDL_MODELS.map(label => `<th>${mdlShort(label)}</th>`).join('');
     }
 
     const tbody = document.getElementById('mdl-tbody');
