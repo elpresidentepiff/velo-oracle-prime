@@ -750,6 +750,29 @@ td:last-child  { padding-right: 20px; }
   </details>
 </div>
 
+<div id="world-day-panel" style="display:none;background:#111;border:1px solid #66bb6a;border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:#66bb6a;letter-spacing:0.05em;margin-bottom:6px;">
+    WORLD DAY <span id="wd-date" style="color:#888;font-weight:400"></span>
+    <span style="float:right;font-size:10px;color:#666;font-weight:400">UK/IRE = RACING POST (VELO SCORES) · REST OF WORLD = FORMFAV, SHADOW ONLY · NO STAKING</span>
+  </div>
+  <div id="wd-summary" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  <div id="wd-countries" style="margin-top:8px;overflow:auto;"></div>
+  <details style="margin-top:8px;color:#aaa;">
+    <summary style="cursor:pointer;font-size:11px;color:#66bb6a;">FormFav's own picks by race, whole world <span style="color:#777">(FormFav model, not VELO selections)</span></summary>
+    <div id="wd-picks" style="max-height:340px;overflow:auto;margin-top:6px;"></div>
+  </details>
+</div>
+<div id="vvf-panel" style="display:none;background:#111;border:1px solid #ffa726;border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:#ffa726;letter-spacing:0.05em;margin-bottom:6px;">
+    VELO vs FORMFAV <span id="vvf-count" style="color:#888;font-weight:400"></span>
+    <span style="float:right;font-size:10px;color:#666;font-weight:400">GB/IE · TWO INDEPENDENT MODELS · FORMFAV DOES NOT CHANGE VELO'S PICKS</span>
+  </div>
+  <div id="vvf-summary" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  <details open style="margin-top:8px;color:#aaa;">
+    <summary style="cursor:pointer;font-size:11px;color:#ffa726;">Race by race</summary>
+    <div id="vvf-races" style="max-height:340px;overflow:auto;margin-top:6px;"></div>
+  </details>
+</div>
 <div id="llm-brief-panel" style="display:none;background:#111;border:1px solid #26a69a;border-radius:6px;margin:8px 12px;padding:10px 14px;">
   <div style="font-weight:600;color:#26a69a;letter-spacing:0.05em;margin-bottom:6px;">
     LLM INTEL BRIEF <span id="llm-brief-mode" style="color:#888;font-weight:400"></span>
@@ -4327,6 +4350,103 @@ async function loadFormfavShadow() {
   } catch (_ffsErr) { panel.style.display = 'none'; }
 }
 
+function _wdChip(label, value, color) {
+  return `<div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px 10px;min-width:104px;">`
+    + `<div style="font-size:9px;color:#777;letter-spacing:.08em">${esc(label)}</div>`
+    + `<div style="font-size:14px;color:${color || '#ddd'}">${esc(String(value))}</div></div>`;
+}
+
+async function loadWorldDay() {
+  const params = new URLSearchParams(window.location.search);
+  const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
+  const panel = document.getElementById('world-day-panel');
+  if (!panel) return;
+  try {
+    const res = await fetch(`/api/world-day?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`world-day ${res.status}`);
+    const data = await res.json();
+    if (!data.available) { panel.style.display = 'none'; return; }
+    const st = data.status || {};
+    document.getElementById('wd-date').textContent = `(${data.date})`;
+    const missing = Number(st.uk_sigma_missing || 0);
+    const noRes = Number(st.world_no_result || 0);
+    document.getElementById('wd-summary').innerHTML = [
+      _wdChip('WORLD RACES', st.world_races || 0),
+      _wdChip('FORMFAV PREDICTED', `${st.world_predicted || 0}/${st.world_races || 0}`),
+      _wdChip('WORLD EOD', `${st.world_eod_rows || 0} rows`, (st.world_eod_rows ? '#ddd' : '#888')),
+      _wdChip('FINAL / PROVISIONAL', `${st.world_final || 0} / ${st.world_provisional || 0}`),
+      _wdChip('NO RESULT', noRes, noRes ? '#ffb74d' : '#ddd'),
+      _wdChip('UK/IRE VERDICTS', st.uk_verdict_races || 0),
+      _wdChip('UK/IRE SIGMA', `${st.uk_sigma_rows || 0}${missing ? ` (${missing} missing)` : ''}`, missing ? '#ffb74d' : '#ddd'),
+      _wdChip('LEARNING GATE', st.learning_gate_status || '—'),
+      _wdChip('COUNCIL', st.council_verdict || '—'),
+    ].join('');
+    const by = {};
+    (data.by_country || []).forEach(r => { (by[r.country] = by[r.country] || {})[r.basis] = r; });
+    const cc = Object.keys(by).sort();
+    const cell = (r) => r ? `${r.top1_wins}/${r.races} <span style="color:#777">(${r.top1_strike_pct === null || r.top1_strike_pct === undefined ? '—' : r.top1_strike_pct + '%'})</span>` : '—';
+    document.getElementById('wd-countries').innerHTML = cc.length
+      ? '<table style="width:100%;border-collapse:collapse;font-size:11px;white-space:nowrap;">'
+        + '<tr style="color:#777;text-align:left"><th>COUNTRY</th><th>FINAL: TOP PICK WON</th><th>PROVISIONAL: TOP PICK WON</th><th>NO RESULT</th></tr>'
+        + cc.map(c => `<tr style="border-top:1px solid #222"><td style="padding:3px 12px 3px 0;color:#ccc">${esc(c.toUpperCase())}</td>`
+          + `<td>${cell(by[c].final)}</td><td>${cell(by[c].provisional)}</td><td>${by[c].no_result ? by[c].no_result.races : 0}</td></tr>`).join('')
+        + '</table><div style="font-size:10px;color:#666;margin-top:4px;">Final and provisional are never blended. Provisional = provider still says interim.</div>'
+      : '<div style="font-size:11px;color:#777;">No settled world results yet for this date.</div>';
+    const picks = data.formfav_picks || [];
+    const groups = {};
+    picks.forEach(p => { (groups[p.country] = groups[p.country] || []).push(p); });
+    const pct = (v) => v === null || v === undefined ? '' : ` ${(Number(v) * 100).toFixed(0)}%`;
+    document.getElementById('wd-picks').innerHTML = Object.keys(groups).sort().map(c =>
+      `<div style="color:#66bb6a;font-weight:600;margin:6px 0 2px">${esc(c.toUpperCase())} · ${groups[c].length} races</div>`
+      + '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap;">'
+      + '<tr style="color:#777;text-align:left"><th>UK TIME</th><th>RACE</th><th>1ST</th><th>2ND</th><th>3RD</th><th>CONF</th><th>FIELD</th></tr>'
+      + groups[c].map(p => `<tr style="border-top:1px solid #222"><td style="padding:2px 10px 2px 0">${esc(p.off_uk || '')}</td>`
+        + `<td style="padding-right:10px;color:#ccc">${esc(p.track || '')} R${esc(String(p.race_number || ''))}</td>`
+        + `<td style="padding-right:10px;color:#eee">${esc(p.pick1_name || '')}${pct(p.pick1_win)}</td>`
+        + `<td style="padding-right:10px">${esc(p.pick2_name || '')}${pct(p.pick2_win)}</td>`
+        + `<td style="padding-right:10px">${esc(p.pick3_name || '')}${pct(p.pick3_win)}</td>`
+        + `<td style="padding-right:10px;color:${p.confidence === 'high' ? '#66bb6a' : '#999'}">${esc(p.confidence || '')}</td>`
+        + `<td>${esc(String(p.field_size || ''))}${p.scratched ? ` (-${p.scratched})` : ''}</td></tr>`).join('')
+      + '</table>').join('') || '<div style="font-size:11px;color:#777;">No FormFav predictions stored for this date.</div>';
+    panel.style.display = 'block';
+  } catch (_wdErr) { panel.style.display = 'none'; }
+}
+
+async function loadVeloVsFormfav() {
+  const params = new URLSearchParams(window.location.search);
+  const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
+  const panel = document.getElementById('vvf-panel');
+  if (!panel) return;
+  try {
+    const res = await fetch(`/api/velo-vs-formfav?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`velo-vs-formfav ${res.status}`);
+    const data = await res.json();
+    const s = data.summary || {};
+    if (!data.available || !s.races) { panel.style.display = 'none'; return; }
+    document.getElementById('vvf-count').textContent = `(${s.races} races · ${data.date})`;
+    document.getElementById('vvf-summary').innerHTML = [
+      _wdChip('SAME TOP PICK', `${s.agree}/${s.races}${s.agree_pct === null ? '' : ` (${s.agree_pct}%)`}`),
+      _wdChip('VELO PICK IN FORMFAV TOP 3', `${s.velo_pick_in_formfav_top3}/${s.races}`),
+      _wdChip('WINNERS KNOWN', `${s.with_winner}/${s.races}`),
+      _wdChip('VELO PICK WON', `${s.velo_won}/${s.with_winner}`, '#ffa726'),
+      _wdChip('FORMFAV PICK WON', `${s.formfav_won}/${s.with_winner}`, '#42a5f5'),
+    ].join('') + (s.sample_note ? `<div style="width:100%;font-size:10px;color:#777">${esc(s.sample_note)}</div>` : '');
+    const pc = (v) => v === null || v === undefined ? '' : ` ${(Number(v) * 100).toFixed(0)}%`;
+    const mark = (v) => v === true ? '<span style="color:#66bb6a">✓</span>' : v === false ? '<span style="color:#e05050">✗</span>' : '·';
+    document.getElementById('vvf-races').innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap;">'
+      + '<tr style="color:#777;text-align:left"><th>TIME</th><th>COURSE</th><th>VELO PICK</th><th>FORMFAV PICK</th><th>SAME</th><th>FF RANK OF VELO PICK</th><th>WINNER</th><th>VELO</th><th>FF</th></tr>'
+      + (data.races || []).map(r => `<tr style="border-top:1px solid #222">`
+        + `<td style="padding:2px 10px 2px 0">${esc(String(r.off_time || '').slice(0, 5))}</td><td style="padding-right:10px;color:#ccc">${esc(r.course || '')}</td>`
+        + `<td style="padding-right:10px;color:#ffa726">${esc(r.velo_top_horse || '')}${pc(r.velo_top_prob)}</td>`
+        + `<td style="padding-right:10px;color:#42a5f5">${esc(r.formfav_top_horse || '')}${pc(r.formfav_top_prob)}</td>`
+        + `<td>${r.agree_on_top_pick ? '=' : ''}</td><td>${esc(String(r.formfav_rank_of_velo_pick || ''))}</td>`
+        + `<td style="padding-right:10px">${esc(r.winner_name || '')}${r.winner_name && r.result_is_final === false ? ' <span style="color:#777">(prov.)</span>' : ''}</td>`
+        + `<td>${mark(r.velo_pick_won)}</td><td>${mark(r.formfav_pick_won)}</td></tr>`).join('')
+      + '</table>';
+    panel.style.display = 'block';
+  } catch (_vvfErr) { panel.style.display = 'none'; }
+}
+
 async function loadLlmBrief() {
   const params = new URLSearchParams(window.location.search);
   const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
@@ -4351,6 +4471,8 @@ loadCard();
 loadPlotConviction();
 loadMidpriceShadow();
 loadFormfavShadow();
+loadWorldDay();
+loadVeloVsFormfav();
 loadLlmBrief();
 </script>
 </body>

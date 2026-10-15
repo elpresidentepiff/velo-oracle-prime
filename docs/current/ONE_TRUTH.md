@@ -990,6 +990,24 @@ reasons `LEARNING_ALLOWED_DEGRADED_PERFORMANCE`, 38 learning events written; 202
 ## Global (FormFav) end-of-day sigma — SHADOW ONLY (added 2026-10-14)
 The `velo-formfav-live` worker settles and reconciles every FormFav race day (US, CA, AU, HK, JP, FR, GB, IE) hourly once past 05:00 UTC, for the previous two UTC dates (`scripts/ops/formfav_global_eod.py`). Step 1 re-fetches results that are missing or not `final` (the live poller stops 180 min after the off). Step 2 writes one row per predicted race to **`formfav_sigma_audits`** (rollup view `formfav_sigma_daily`). Rows carry `basis`: `final`, `provisional` (provider still says interim but placings exist) or `no_result` — never blend them into one strike rate. It never writes `sigma_audits`, `velo_verdicts`, `pipeline_runs`, weights or Telegram, so international results do not feed UK learning. Manual run: `python scripts/ops/formfav_global_eod.py --date YYYY-MM-DD [--settle] [--dry-run]`. Disable with `FORMFAV_GLOBAL_EOD=0`.
 
+## WORLD DAY — one place to see the whole world (added 2026-10-15)
+**Two feeds, two jobs.** UK/IRE = Racing Post, local, scored by VELO (hard law 1 unchanged). Every other country = FormFav only, cloud, **shadow only**: it is stored, settled and reported, never scored, never staked, never written to `sigma_audits`.
+
+| When | What | Where it runs | Output you can see |
+|---|---|---|---|
+| Continuous | World cards, form, predictions, results stored | `velo-formfav-live` (Railway) | `formfav_races`, `formfav_runner_form`, `formfav_predictions`, `formfav_results` |
+| Before RP (Step 0) | FormFav stored and fresh? | `run_full_raceday.py` | stops the run if not (`--allow-partial-formfav` overrides) |
+| Morning (Steps 1-9) | RP capture, FormFav enrichment (5.6, must reach 80%), VELO scoring | your machine | `velo_verdicts`, `formfav_uk_shadow_features` |
+| Intraday | Results polled; picks and comparison live | worker + dashboard | WORLD DAY and VELO vs FORMFAV panels |
+| End of day, world | Settle non-final results, then reconcile every prediction against its result, hourly from 05:00 UTC for the previous 2 days | `velo-formfav-live` | `formfav_sigma_audits` (final / provisional / no_result, never blended) |
+| End of day, UK/IRE (Steps 10-20) | RP results, sigma, ingest, Mission Control, council, learning | your machine | `sigma_audits`, `velo_mission_control`, `velo_council_runs` |
+
+**Where to look (all read-only):** dashboard `/dashboard` panels *WORLD DAY*, *VELO vs FORMFAV*, *FORMFAV FEATURE ENRICHMENT*; API `/api/world-day?date=`, `/api/velo-vs-formfav?date=`, `/api/formfav-shadow?date=`; Supabase views `world_day_status` (**one row per day, the end-of-day checklist for UK/IRE and the world**), `formfav_sigma_daily`, `formfav_sigma_edges` (where VELO/FormFav is winning, with a sample-size flag), `formfav_race_picks` (FormFav's own top 3 per race, not VELO selections), `velo_vs_formfav`. Container mirror of each world sigma: `data/sigma_results/formfav_global_sigma_YYYY_MM_DD.json`.
+
+**A day is complete when:** `world_day_status` shows `world_eod_rows = world_predicted`, `uk_sigma_missing = 0`, and Mission Control `learning_gate_status = OPEN`. Anything else is `DAY INCOMPLETE` and names the gap.
+
+**Did FormFav affect VELO's decisions?** No. Prime's scoring code never references it, and `select count(*) from velo_verdicts where full_analysis::text ilike '%formfav%'` returns 0 (checked for the 39 verdicts of 2026-10-14). It stays that way until a lane wins the chronological ablation in `docs/engineering/FORMFAV_UK_ENHANCED_VELO_PLAN_V1.md`.
+
 **Race-day order, FormFav first (added 2026-10-15):** `run_full_raceday.py` Step 0 runs `scripts/ops/formfav_readiness.py` (FormFav stored and fresh for the day) before the RP capture; Step 5.6 then enriches from those stored rows and must cover >=80% of GB/IE races before Step 9 scores. `--allow-partial-formfav` overrides both. Analysis of how RP and FormFav differ and how each is fed: `docs/engineering/RP_VS_FORMFAV_DATA_FLOW_V1.md`.
 
 ### FormFav enrichment reads the worker's stored data (added 2026-10-14)

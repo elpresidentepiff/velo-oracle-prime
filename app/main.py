@@ -1854,6 +1854,70 @@ async def formfav_shadow(date: str = Query(default=None)):
     }
 
 
+def _sb_rest_rows(path: str, timeout: int = 8) -> list[dict] | None:
+    """Read-only Supabase REST GET for the world-day endpoints; None when unavailable."""
+    url, key = resolve_supabase_url(), resolve_supabase_service_key()
+    if not (url and key):
+        return None
+    req = urllib.request.Request(
+        f"{url}/rest/v1/{path}", headers={"apikey": key, "Authorization": f"Bearer {key}"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read())
+    except Exception as exc:
+        logger.warning("supabase read failed for %s: %s", path.split("?")[0], exc)
+        return None
+
+
+@app.get("/api/world-day")
+async def world_day(date: str = Query(default=None)):
+    """End-of-day checklist and FormFav's own picks for the whole world.
+
+    UK/IRE come from the Racing Post pipeline that VELO scores; every other
+    country is FormFav only and shadow-only. Nothing here feeds Prime.
+    """
+    import datetime as _dt
+
+    from app.world_dashboard import SHADOW_BOUNDARY, valid_date
+
+    d = date or _dt.date.today().isoformat()
+    if not valid_date(d):
+        return JSONResponse({"error": "date must be YYYY-MM-DD"}, status_code=400)
+    status = _sb_rest_rows(f"world_day_status?day=eq.{d}&limit=1")
+    daily = _sb_rest_rows(f"formfav_sigma_daily?race_date=eq.{d}&order=country.asc,basis.asc")
+    picks = _sb_rest_rows(f"formfav_race_picks?race_date=eq.{d}&order=start_time.asc&limit=1000")
+    return {
+        "date": d,
+        "available": status is not None,
+        "status": (status or [None])[0],
+        "by_country": daily or [],
+        "formfav_picks": picks or [],
+        "picks_label": "FormFav's own model. Not a VELO selection.",
+        **SHADOW_BOUNDARY,
+    }
+
+
+@app.get("/api/velo-vs-formfav")
+async def velo_vs_formfav(date: str = Query(default=None)):
+    """Per-race VELO top pick against FormFav's, with winners once results exist."""
+    import datetime as _dt
+
+    from app.world_dashboard import SHADOW_BOUNDARY, summarise_velo_vs_formfav, valid_date
+
+    d = date or _dt.date.today().isoformat()
+    if not valid_date(d):
+        return JSONResponse({"error": "date must be YYYY-MM-DD"}, status_code=400)
+    rows = _sb_rest_rows(f"velo_vs_formfav?race_date=eq.{d}&order=off_time.asc&limit=500")
+    return {
+        "date": d,
+        "available": rows is not None,
+        "summary": summarise_velo_vs_formfav(rows or []),
+        "races": rows or [],
+        **SHADOW_BOUNDARY,
+    }
+
+
 @app.get("/api/llm-brief")
 async def llm_brief(date: str = Query(default=None), mode: str = Query(default=None)):
     """LLM intel brief (2026-07-29, DeepSeek v4 pro via OpenRouter).
@@ -2362,9 +2426,12 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
             logger.warning("Could not read Course Master file %s: %s", course_master_path, e)
 
     sidecar_path = root / "app" / "static" / "dashboard" / "sidecar_stack_latest.json"
-    if sidecar_path.exists():
+    # On Railway the static file is a deploy-time git copy (2026-07-25 on 2026-10-15), so the
+    # per-horse sidecar join silently missed every day. Prefer the persisted artifact for the
+    # requested date, as the /sidecar_stack_latest.json route already does.
+    sidecar_payload, _sidecar_source = _report_artifact("sidecar_stack", target_date, sidecar_path)
+    if sidecar_payload is not None:
         try:
-            sidecar_payload = _json.loads(sidecar_path.read_text())
             sidecar_loaded_date = sidecar_payload.get("date")
             sidecar_status = sidecar_payload.get("status", "UNKNOWN")
             sidecar_date_match = sidecar_loaded_date == target_date
