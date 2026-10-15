@@ -199,6 +199,17 @@ def main() -> int:
 
     print(f"RUN_FULL_RACEDAY — {date} — started {_utc_now()}")
 
+    # ── Step 0: FormFav first ────────────────────────────────────────────
+    # FormFav is continuous and cloud-side; the RP capture is perishable and
+    # local. Confirm FormFav's stored data for the day is complete and fresh
+    # BEFORE spending the RP capture, so the info is already there when RP lands.
+    if not run(
+        "Step 0: FormFav readiness (stored before RP capture)",
+        [PY, "scripts/ops/formfav_readiness.py", "--date", date, "--countries", "gb,ie"],
+        critical=not args.allow_partial_formfav, results=results,
+    ) and not args.allow_partial_formfav:
+        return 1
+
     # ── Pre-flight: RP session health ────────────────────────────────────
     if not args.skip_capture:
         print("\nPre-flight: RP session health check...")
