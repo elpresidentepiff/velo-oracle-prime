@@ -3,7 +3,7 @@
 Everything below is read from Supabase (`velo_verdicts`, `sigma_audits`, `formfav_*`, persisted cards). Samples are small and several cuts were looked at, so treat each as a **lead to test forward**, not a proven edge. Prime scoring is unchanged by this document.
 
 ## 1. Was VELO enriched today?
-**No.** FormFav's pace, speed-map, class and track-bias features exist for today (40/40 races, 438 runners, quality 0.92) but are shadow-only: Prime does not read them. Coverage of the 6 elite horses today: speed map on 3, pace scenario on 2 of their 6 races, class fit on 5, **barrier-bias statistics on none** (flag says present, sample size 0).
+**No.** FormFav's pace, speed-map, class and track-bias features exist for today (40/40 races, 438 runners, quality 0.92) but are shadow-only: Prime does not read them. Coverage of the 6 elite horses today: speed map on 3, pace scenario on 2 of their 6 races, class fit on 5. Barrier-bias statistics were **empty for every runner on every day** (flag said present, sample size 0) because of a key mismatch (`totalStarts` vs `starts`); fixed 2026-10-15 (be618b7) and confirmed on the live API, which returns `advantage, barrierNumber, placeRate, places, totalStarts, winRate, wins` per barrier, plus `expectedWinRate, strongestBarrier, weakestBarrier, conditionStats, distanceStats, recentStats, totalRaces` at race level that the extractor does not use yet. Today's elite horses sit on draws with 34-110 past starts and small edges (advantage 0.00 to +0.06).
 
 ## 2. Calibration: VELO's ranking works, its percentages do not
 Top-pick win rate by raw `velo_prime_prob` (4,495 settled races, 2026-03-17 → 10-14):
@@ -65,5 +65,5 @@ Three days only, morning prices (not SP). Direction is informative, magnitude is
 3. **Forward-test an elite price gate (2.0-3.0)**. Pass criterion: ≥ 150 bets, positive return at SP, not carried by a few outliers. Until then do not read the +12% as an edge.
 4. **Calibrate VP** (isotonic or Platt on the 4.5k settled rows) so probabilities can drive accumulators and stakes. Ship as a side column first.
 5. **LONGSHOT role:** -23 units over 100 picks. Test requiring FormFav win probability ≥ 1.5× the market-implied chance.
-6. **Fix enrichment gaps:** barrier-bias flag must require sample size > 0; derive pace from the speed map where the provider gives none (Irish flat, Southwell); persist the cash-run card; capture prices (needs FormFav Premium or Betfair) so closing-line value can be measured.
+6. **Fix enrichment gaps:** (barrier-bias sample bug fixed; next, extract the unused race-level fields `expectedWinRate`, `strongestBarrier`, `weakestBarrier`, `distanceStats`, `conditionStats`, `recentStats`); derive pace from the speed map where the provider gives none (Irish flat, Southwell); persist the cash-run card; capture prices (needs FormFav Premium or Betfair) so closing-line value can be measured.
 7. **Per-runner shadow feature rows** with a snapshot time, joined to results, so the chronological ablation in `FORMFAV_UK_ENHANCED_VELO_PLAN_V1.md` can actually run.
