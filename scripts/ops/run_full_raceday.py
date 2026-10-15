@@ -182,6 +182,12 @@ def main() -> int:
     parser.add_argument("--passport-topup-limit", type=int, default=400,
                         help="Max horses to capture in the top-up (default 400, ~8 min).")
     parser.add_argument(
+        "--allow-partial-formfav",
+        action="store_true",
+        help="Step 5.6 normally needs FormFav enrichment on >=80%% of GB/IE races before scoring; "
+             "this accepts any non-zero enrichment (use only if FormFav is degraded).",
+    )
+    parser.add_argument(
         "--allow-missing-pdfs",
         action="store_true",
         help="Bypass the PDF-ingestion half of the scoring readiness gate (passport check is never overridable).",
@@ -334,7 +340,8 @@ def main() -> int:
     run(
         "Step 5.6: FormFav UK enhanced shadow features",
         [PY, "scripts/ops/run_formfav_uk_enhanced_shadow.py",
-         "--date", date, "--countries", "gb,ie", "--persist-artifact"],
+         "--date", date, "--countries", "gb,ie", "--persist-artifact"]
+        + (["--min-coverage", "0"] if args.allow_partial_formfav else []),
         critical=True, results=results,
     )
 

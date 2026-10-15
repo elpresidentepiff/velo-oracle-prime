@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -66,6 +67,18 @@ def _load_primary_races(date_str: str, source: str) -> tuple[list[dict], str]:
         raise
 
 
+def coverage_gate(races_enriched: int, primary_in_scope: int, min_coverage: float) -> tuple[bool, float]:
+    """(passes, ratio). Enrichment must reach ``min_coverage`` of the in-scope RP races.
+
+    Requiring only one enriched race let a 3-of-40 day look healthy and score
+    anyway. ``min_coverage <= 0`` disables the gate (explicit operator override).
+    """
+    ratio = (races_enriched / primary_in_scope) if primary_in_scope > 0 else 0.0
+    if min_coverage <= 0:
+        return races_enriched > 0, ratio
+    return races_enriched > 0 and ratio >= min_coverage, ratio
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=None)
@@ -77,12 +90,27 @@ def main() -> int:
         help="Canonical RP source. auto prefers local merged files then Supabase.",
     )
     ap.add_argument("--persist-artifact", action="store_true")
+    ap.add_argument(
+        "--min-coverage",
+        type=float,
+        default=float(os.getenv("FORMFAV_MIN_COVERAGE", "0.8")),
+        help="Fail closed unless this share of in-scope RP races got FormFav enrichment "
+             "(default 0.8; 0 = only require at least one race).",
+    )
     args = ap.parse_args()
 
     date_str = args.date or _default_date()
     countries = {c.strip().lower() for c in args.countries.split(",") if c.strip()}
 
-    races, source_label = _load_primary_races(date_str, args.source)
+    try:
+        races, source_label = _load_primary_races(date_str, args.source)
+    except SupabaseRacecardError as exc:
+        if args.source == "supabase":
+            # Unattended cloud cron: RP capture is local and perishable, so the
+            # cards may simply not be uploaded yet. Say so; do not crash-loop.
+            print(f"[FORMFAV-UK] WAITING_FOR_RP_CARDS date={date_str}: {exc}", file=sys.stderr, flush=True)
+            return 0
+        raise
 
     enriched, enrich_report = enrich_existing_racecards(
         date_str=date_str,
@@ -111,10 +139,17 @@ def main() -> int:
         return sum(1 for rr in runners if rr.get(key) == 1.0)
 
     races_enriched = len(packets)
-    usable = races_enriched > 0 and bool(runners)
+    primary_in_scope = sum(1 for r in races if _normalise_country(r.get("country")) in countries)
+    covered_ok, coverage_ratio = coverage_gate(races_enriched, primary_in_scope, args.min_coverage)
+    has_any = races_enriched > 0 and bool(runners)
+    usable = has_any and covered_ok
     report = {
         "date": date_str,
-        "status": "SHADOW_ONLY_ENRICHED" if usable else "SHADOW_NO_USABLE_ENRICHMENT",
+        "status": (
+            "SHADOW_ONLY_ENRICHED" if usable
+            else "SHADOW_PARTIAL_ENRICHMENT" if has_any
+            else "SHADOW_NO_USABLE_ENRICHMENT"
+        ),
         "shadow_only": True,
         "production_influence": False,
         "stake_authorised": False,
@@ -124,6 +159,9 @@ def main() -> int:
         "primary_source": source_label,
         "enrichment_source": "formfav",
         "races_primary": len(races),
+        "races_primary_in_scope": primary_in_scope,
+        "coverage_ratio": round(coverage_ratio, 4),
+        "min_coverage": args.min_coverage,
         "races_in_scope": enrich_report.get("races_in_scope", 0),
         "races_matched": enrich_report.get("races_matched", 0),
         "races_enriched": races_enriched,
@@ -186,6 +224,15 @@ def main() -> int:
             raise RuntimeError(f"artifact persistence failed: {done.returncode}")
 
     if not usable:
+        if has_any:
+            print(
+                f"[FORMFAV-UK] FAIL_CLOSED: only {races_enriched}/{primary_in_scope} in-scope races "
+                f"({coverage_ratio:.0%}) were enriched; need {args.min_coverage:.0%}. "
+                "Fix the gap, or rerun with --min-coverage 0 to accept partial enrichment.",
+                file=sys.stderr,
+                flush=True,
+            )
+            return 3
         print(
             "[FORMFAV-UK] FAIL_CLOSED: no race received usable FormFav shadow enrichment",
             file=sys.stderr,
