@@ -365,6 +365,10 @@ def enrich_existing_racecards(
                             window=90,
                         )
                         report["track_bias_calls_ok"] += 1
+                        _rows = (track_bias_cache[bias_key] or {}).get("barrierStats") or []
+                        if _rows and isinstance(_rows[0], dict) and "track_bias_row_keys" not in report:
+                            report["track_bias_row_keys"] = sorted(_rows[0].keys())
+                            report["track_bias_top_keys"] = sorted((track_bias_cache[bias_key] or {}).keys())
                     except FormFavError as exc:
                         track_bias_cache[bias_key] = None
                         if "403" in str(exc):

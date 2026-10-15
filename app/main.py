@@ -1816,7 +1816,13 @@ async def formfav_shadow(date: str = Query(default=None)):
                 "feature_coverage": {
                     "form": _present("ff_form_present"),
                     "class_fit": _present("ff_class_fit_present"),
-                    "track_bias": _present("ff_track_bias_present"),
+                    # A matched barrier row without a sample is not evidence. Newer packets
+                    # carry ff_barrier_bias_sample_ok; older ones only had the matched flag.
+                    "track_bias": _present(
+                        "ff_barrier_bias_sample_ok"
+                        if any("ff_barrier_bias_sample_ok" in rr for rr in runners)
+                        else "ff_track_bias_present"
+                    ),
                     "speed_map": _present("ff_speedmap_present"),
                 },
             }

@@ -107,3 +107,15 @@ def test_dashboard_displays_formfav_shadow_boundary():
 
     assert "/api/formfav-shadow" in html
     assert "SHADOW ONLY · PRODUCTION INFLUENCE 0 · NO STAKING" in html
+
+
+def test_track_bias_coverage_requires_a_sample_when_the_packet_has_one(monkeypatch):
+    packet = _packet()
+    for runner in packet["races"][0]["runners"]:
+        runner["ff_barrier_bias_sample_ok"] = 0  # row matched, but no usable sample
+    packet["races"][0]["runners"][0]["ff_barrier_bias_sample_ok"] = 1
+    monkeypatch.setattr(main, "_report_artifact", lambda artifact_type, date, local_path: (packet, "local_file"))
+
+    body = client.get("/api/formfav-shadow?date=2026-10-12").json()
+
+    assert body["races"][0]["feature_coverage"]["track_bias"] == 1

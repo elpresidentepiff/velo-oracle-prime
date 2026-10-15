@@ -80,7 +80,9 @@ def _smoothed_stat(block: dict[str, Any] | None, prefix: str) -> dict[str, Any]:
             f"{prefix}_place_rate_smoothed": None,
         }
 
-    starts = max(_safe_float(block.get("starts")) or 0.0, 0.0)
+    # Stat blocks name the sample "starts"; the track-bias barrier rows name it
+    # "totalStarts". Reading only "starts" zeroed every barrier sample (2026-10-15 audit).
+    starts = max(_safe_float(block.get("starts")) or _safe_float(block.get("totalStarts")) or 0.0, 0.0)
     wins = max(_safe_float(block.get("wins")) or 0.0, 0.0)
     places = max(_safe_float(block.get("places")) or 0.0, 0.0)
 
@@ -345,9 +347,10 @@ def build_formfav_uk_shadow_features(race: dict[str, Any], runner: dict[str, Any
     out["ff_track_bias_strength"] = {
         "none": 0.0, "mild": 0.33, "moderate": 0.66, "strong": 1.0
     }.get(str((track_bias or {}).get("biasStrength") or "").lower())
-    out["ff_barrier_bias_starts"] = _safe_float((barrier_bias or {}).get("totalStarts")) or 0.0
     out["ff_barrier_advantage_raw"] = _safe_float((barrier_bias or {}).get("advantage"))
     out.update(_smoothed_stat(barrier_bias, "ff_barrier_bias"))
+    # A matched row with no sample is not evidence; keep the distinction explicit.
+    out["ff_barrier_bias_sample_ok"] = 1.0 if (out.get("ff_barrier_bias_starts") or 0.0) > 0 else 0.0
 
     # Decorators are derived summaries of data already present. Keep only
     # diagnostic counts to avoid double-counting the same fact in a future model.

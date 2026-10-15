@@ -158,6 +158,11 @@ def test_shadow_enrichment_builds_pace_class_form_and_bias_without_mutating_prim
     assert features["ff_class_fit_present"] == 1.0
     assert features["ff_form_present"] == 1.0
     assert features["ff_track_bias_present"] == 1.0
+    # 2026-10-15: sample size was silently 0 for every runner (key "totalStarts" vs "starts").
+    assert features["ff_barrier_bias_starts"] == 40.0
+    assert features["ff_barrier_bias_sample_ok"] == 1.0
+    assert features["ff_barrier_bias_win_rate_raw"] == 8 / 40
+    assert features["ff_barrier_bias_win_rate_smoothed"] is not None
     assert features["ff_training_eligible"] == 1.0
 
 
@@ -243,3 +248,14 @@ def test_missing_provider_pace_scenario_is_transparently_derived_from_speed_maps
     assert all(row["ff_pace_scenario_derived"] == 1.0 for row in packet["runners"])
     assert race["_formfav"].get("paceScenarioDerived") is None
 
+
+
+def test_barrier_bias_without_a_sample_is_flagged_not_trusted() -> None:
+    from src.velo.formfav_uk_features import _bias_for_barrier, _smoothed_stat
+
+    row = _bias_for_barrier({"barrierStats": [{"barrierNumber": 3, "advantage": 0.2}]}, 3)
+    stat = _smoothed_stat(row, "ff_barrier_bias")
+    assert row is not None and stat["ff_barrier_bias_starts"] == 0.0
+    assert stat["ff_barrier_bias_win_rate_smoothed"] is None
+    # plain "starts" (the other stat blocks) still works
+    assert _smoothed_stat({"starts": 10, "wins": 2, "places": 5}, "x")["x_starts"] == 10.0
