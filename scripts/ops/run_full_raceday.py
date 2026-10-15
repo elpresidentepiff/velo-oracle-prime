@@ -184,8 +184,8 @@ def main() -> int:
     parser.add_argument(
         "--allow-partial-formfav",
         action="store_true",
-        help="Step 5.6 normally needs FormFav enrichment on >=80%% of GB/IE races before scoring; "
-             "this accepts any non-zero enrichment (use only if FormFav is degraded).",
+        help="Steps 0 and 5.6 normally STOP the run unless FormFav is ready and enriches >=80%% of GB/IE races. "
+             "This lets the run continue to scoring even if FormFav is partial or down (use only on purpose).",
     )
     parser.add_argument(
         "--allow-missing-pdfs",
@@ -348,13 +348,20 @@ def main() -> int:
     # Uses the SAME RP merged racecards that Step 9 will score. This is
     # deliberately shadow-only: it builds pace/form/class/track-bias features
     # and persists an audit artifact but cannot alter Prime probabilities.
-    run(
+    # run() only reports; it never raised. Until 2026-10-15 this call's result
+    # was ignored, so a failed enrichment (0/40 races, "FORMFAV_API_KEY is not
+    # configured") still went on to score. The result now decides.
+    if not run(
         "Step 5.6: FormFav UK enhanced shadow features",
         [PY, "scripts/ops/run_formfav_uk_enhanced_shadow.py",
          "--date", date, "--countries", "gb,ie", "--persist-artifact"]
         + (["--min-coverage", "0"] if args.allow_partial_formfav else []),
-        critical=True, results=results,
-    )
+        critical=not args.allow_partial_formfav, results=results,
+    ) and not args.allow_partial_formfav:
+        print("\n[BLOCKED] FormFav enrichment did not reach the required coverage; "
+              "scoring (Step 9) will not start. Fix FormFav, or rerun with --allow-partial-formfav "
+              "to score without it (loudly, on purpose).")
+        return 1
 
     # ── Step 6: New Build current-card feed ──────────────────────────────
     standard_cache = ROOT / "data" / f"racecards_{date.replace('-', '_')}_standard.json"

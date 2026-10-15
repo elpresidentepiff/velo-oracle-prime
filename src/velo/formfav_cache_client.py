@@ -30,9 +30,16 @@ def race_key(date_str: str, country: str, slug: str, race_no: int) -> str:
     return f"formfav:{country}:{date_str}:{safe_slug}:r{race_no}"
 
 
+def _service_key() -> str:
+    # Same names, same order as app.core.runtime_env.resolve_supabase_service_key
+    return (
+        os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_KEY") or ""
+    ).strip()
+
+
 def _supabase_get(path: str) -> list[dict[str, Any]]:
     url = (os.getenv("SUPABASE_URL") or "").strip().rstrip("/")
-    key = (os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY") or "").strip()
+    key = _service_key()
     if not url or not key:
         raise FormFavError("cache unavailable: SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set")
     req = urllib.request.Request(
@@ -161,7 +168,7 @@ def build_enrichment_client() -> CachedFormFavClient | FormFavClient | None:
     """Cache-first client for the shadow job; None means 'let enrichment build its own'."""
     if os.getenv("FORMFAV_ENRICH_FROM_CACHE", "1").strip() == "0":
         return None
-    if not (os.getenv("SUPABASE_URL") and (os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY"))):
+    if not (os.getenv("SUPABASE_URL") and _service_key()):
         return None
     live = None
     if (os.getenv("FORMFAV_API_KEY") or "").strip():

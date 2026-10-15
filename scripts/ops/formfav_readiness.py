@@ -32,9 +32,15 @@ def _parse(ts: Any) -> datetime | None:
         return None
 
 
+def _service_key() -> str:
+    return (
+        os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_KEY") or ""
+    ).strip()
+
+
 def _rest_get(path: str) -> list[dict[str, Any]]:
     url = (os.getenv("SUPABASE_URL") or "").strip().rstrip("/")
-    key = (os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY") or "").strip()
+    key = _service_key()
     req = urllib.request.Request(
         f"{url}/rest/v1/{path}",
         headers={"apikey": key, "Authorization": f"Bearer {key}", "Accept": "application/json"},
@@ -109,7 +115,7 @@ def main() -> int:
     ap.add_argument("--countries", default="gb,ie")
     ap.add_argument("--min-races", type=int, default=1)
     args = ap.parse_args()
-    if not (os.getenv("SUPABASE_URL") and (os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY"))):
+    if not (os.getenv("SUPABASE_URL") and _service_key()):
         print("[FORMFAV-READY] SKIP: no Supabase credentials on this machine; cannot pre-check. "
               "Step 5.6 still enforces FormFav coverage before scoring.", flush=True)
         return 0
