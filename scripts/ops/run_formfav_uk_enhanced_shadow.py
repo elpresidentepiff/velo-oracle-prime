@@ -27,6 +27,7 @@ from src.velo.formfav_cache_client import build_enrichment_client
 from src.velo.formfav_enrichment import enrich_existing_racecards
 from src.velo.formfav_uk_features import FEATURE_SCHEMA_VERSION, build_race_shadow_packet
 from src.velo.racecard_loader import load_racecards
+from app.core.runtime_env import load_optional_env_file
 from src.velo.supabase_racecard_source import (
     SupabaseRacecardError,
     load_supabase_rp_racecards,
@@ -79,7 +80,26 @@ def coverage_gate(races_enriched: int, primary_in_scope: int, min_coverage: floa
     return races_enriched > 0 and ratio >= min_coverage, ratio
 
 
+def _count_primary_in_scope(races: list[dict], countries: set[str]) -> int:
+    """Count UK/IRE primary races using either supported jurisdiction field.
+
+    Native API/Supabase cards expose ``country`` while the canonical RP merged
+    loader exposes ``region``.  Counting only ``country`` turned complete RP
+    merged days into a false 21/0 FormFav coverage failure.
+    """
+    return sum(
+        1
+        for race in races
+        if _normalise_country(race.get("country") or race.get("region")) in countries
+    )
+
+
 def main() -> int:
+    # FormFav readiness/enrichment is the first race-day gate, so credentials
+    # must be available before argparse reads its environment-backed defaults
+    # and before any cache client is constructed.
+    load_optional_env_file(ROOT / ".env")
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=None)
     ap.add_argument("--countries", default="gb,ie")
@@ -139,7 +159,7 @@ def main() -> int:
         return sum(1 for rr in runners if rr.get(key) == 1.0)
 
     races_enriched = len(packets)
-    primary_in_scope = sum(1 for r in races if _normalise_country(r.get("country")) in countries)
+    primary_in_scope = _count_primary_in_scope(races, countries)
     covered_ok, coverage_ratio = coverage_gate(races_enriched, primary_in_scope, args.min_coverage)
     has_any = races_enriched > 0 and bool(runners)
     usable = has_any and covered_ok

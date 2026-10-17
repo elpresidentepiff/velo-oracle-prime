@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from scripts.ops.run_formfav_uk_enhanced_shadow import coverage_gate
+from scripts.ops.run_formfav_uk_enhanced_shadow import _count_primary_in_scope, coverage_gate
 
 
 def test_full_and_threshold_coverage_pass() -> None:
@@ -22,3 +22,14 @@ def test_zero_enrichment_or_zero_primary_never_passes() -> None:
 
 def test_override_zero_accepts_any_nonzero_enrichment() -> None:
     assert coverage_gate(3, 40, 0)[0] is True
+
+
+def test_primary_scope_accepts_country_or_rp_merged_region() -> None:
+    races = [
+        {"country": "GB"},
+        {"region": "IRE"},
+        {"country": "FR", "region": "FR"},
+        {"country": "", "region": "GB"},
+    ]
+
+    assert _count_primary_in_scope(races, {"gb", "ie"}) == 3

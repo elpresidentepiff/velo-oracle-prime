@@ -198,7 +198,9 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
         so _build_live_features() reads them on the first pass
       - going and race_class extracted from race_info when present
 
-    Fields absent from RP data remain None. Sets region="IRE" for Irish venues.
+    Fields absent from RP data remain None. Preserves the verified RP country
+    stored in ``race_info`` and falls back to the legacy venue-code inference
+    only for older merged files that predate that field.
     Returns an empty list if no RP merged files exist for the date.
     """
     import re as _re
@@ -217,7 +219,7 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
 
         venue_name: str = rp.get("venue", rp_path.stem.split("_")[1])
         venue_code: str = rp_path.stem.split("_")[1].upper()
-        region = "IRE" if venue_code in _IRE_VENUE_CODES else "GB"
+        fallback_region = "IRE" if venue_code in _IRE_VENUE_CODES else "GB"
 
         for race_time, race_data in rp.get("races", {}).items():
             horses = race_data.get("horses", [])
@@ -233,11 +235,13 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
             going_str: str | None = None
             race_class: str | None = None
             race_type_str: str | None = None
+            country_str: str | None = None
             if isinstance(race_info, dict):
                 going_str = race_info.get("going") or None
                 rc = race_info.get("race_class")
                 race_class = str(rc) if rc is not None else None
                 race_type_str = race_info.get("race_type") or None
+                country_str = str(race_info.get("country") or "").strip().upper() or None
             else:
                 race_info_str = str(race_info) if race_info else ""
                 m_going = _re.search(r"\b(Good|Firm|Soft|Heavy|Yielding|Standard)[^\)]*", race_info_str, _re.I)
@@ -325,7 +329,8 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                 "going": going_str,
                 "race_class": race_class,
                 "type": race_type_str,
-                "region": region,
+                "country": country_str,
+                "region": country_str or fallback_region,
                 "runners": runners,
                 # Keep raw forecast for diagnostics
                 "_rp_betting_forecast": forecast_raw,

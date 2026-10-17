@@ -61,6 +61,7 @@ PY = sys.executable
 #
 # Importing the collector's default means there is no second copy to drift.
 from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR as FIREFOX_PROFILE
+from app.core.runtime_env import load_optional_env_file
 
 
 def _utc_now() -> str:
@@ -100,8 +101,7 @@ def verdicts_already_persisted(date: str) -> bool:
     completed. A broken idempotence check must block the run, not silently permit a
     second scoring pass for a date that may already be scored.
     """
-    from dotenv import load_dotenv
-    load_dotenv(str(ROOT / ".env"))
+    load_optional_env_file(ROOT / ".env")
     import os
     from supabase import create_client
 
@@ -173,6 +173,10 @@ def rp_session_autoheal() -> bool:
 
 
 def main() -> int:
+    # Step 0 is FormFav readiness. Load the existing runtime environment before
+    # that first subprocess so cache credentials are inherited from the start.
+    load_optional_env_file(ROOT / ".env")
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
     parser.add_argument("--execute", action="store_true", required=True, help="Required — this runs real captures and scoring.")

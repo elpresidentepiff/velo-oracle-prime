@@ -196,6 +196,18 @@ def test_ire_venue_gets_ire_region(tmp_path):
         assert race["region"] == "IRE", f"Expected IRE, got {race['region']}"
 
 
+def test_rp_merged_preserves_verified_country_from_race_info(tmp_path):
+    content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    content["races"]["14:00"]["race_info"] = {"country": "JPN"}
+    content["races"]["14:30"]["race_info"] = {"country": "FR"}
+    _make_rp_file(tmp_path, venue_code="INTL", content=content)
+
+    races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
+
+    assert [race["country"] for race in races] == ["JPN", "FR"]
+    assert [race["region"] for race in races] == ["JPN", "FR"]
+
+
 def test_rp_runners_have_horse_name(tmp_path):
     _make_rp_file(tmp_path)
     races = load_rp_merged_as_racecards(_DATE_STR, tmp_path)
