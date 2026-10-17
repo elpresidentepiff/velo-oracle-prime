@@ -210,12 +210,14 @@ every failure below actually happened and cost race days:
   missed run up when the machine next wakes; it never wakes it. Week of 07 Sep the
   morning started 10:10 (09), 10:00 (10), **not at all** (12) and 11:05 (13) — the
   09th and 12th produced no predictions. Both tasks now have `WakeToRun=true`, and
-  the Balanced plan's *Allow wake timers* is **Enable on AC** (it was Disable on AC
-  and DC, so `WakeToRun` alone would still never have fired). DC is deliberately
-  left Disabled: no self-waking in a bag on battery. So the laptop must be plugged
-  in and asleep (not shut down) at 07:00 / 22:00. Verify:
-  `schtasks.exe /Query /TN VELO_Raceday_Morning /XML | grep WakeToRun` and
-  `powercfg.exe /q SCHEME_CURRENT SUB_SLEEP RTCWAKE` (expect AC index `0x1`).
+  the Balanced plan's *Allow wake timers* is **Enable on AC and DC** (2026-09-16).
+  It was originally Enable-on-AC / Disable-on-DC to avoid self-waking in a bag on
+  battery, but with no off-laptop redundancy that DC gap silently dropped 14 Sep
+  (asleep on battery) on top of 09/12, so DC was enabled — a charged laptop asleep
+  on battery now wakes at 06:55 / 21:55 to run. It still cannot wake from a **flat**
+  battery or a shutdown, so the laptop must stay plugged in and asleep (not shut
+  down). Verify: `schtasks.exe /Query /TN VELO_Raceday_Morning /XML | grep WakeToRun`
+  and `powercfg.exe /q SCHEME_CURRENT SUB_SLEEP RTCWAKE` (expect AC and DC index `0x1`).
 - **Phase collision (fixed 2026-09-13).** Waking after missing both phases makes
   Task Scheduler fire the morning AND the caught-up EOD in the same second
   (13 Sep, 11:05:16). Both drive the one Firefox profile; the EOD's auto-login won

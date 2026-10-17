@@ -1,27 +1,27 @@
 # Passport + Sigma Training Test
-Generated: 2026-06-19T23:09:26.636478+00:00
+Generated: 2026-10-17T02:26:50.232651+00:00
 
 ## Sigma Selector
 - Status: PASS
-- Rows: 1105
-- Test races: 274
-- Baseline AUC: 0.5872034747744738
-- Selector AUC: 0.7657200133645172
-- Baseline top-1: 0.2664
-- Selector top-1: 0.2664
-- Staging model: C:\Users\puror\velo-oracle-prime\models\sigma_selector_staging\sigma_selector.pkl
+- Rows: 3049
+- Test races: 760
+- Baseline AUC: 0.5890443213296399
+- Selector AUC: 0.7725761772853186
+- Baseline top-1: 0.25
+- Selector top-1: 0.25
+- Staging model: /mnt/c/Users/puror/velo-oracle-prime/models/sigma_selector_staging/sigma_selector.pkl
 
 ### Acceptance Bands
 | Ranker | Accept top % | n | SR | ROI/pt | P&L | Avg SP |
 |---|---:|---:|---:|---:|---:|---:|
-| baseline_model_probability | 10 | 27 | 0.5185 | 0.1333 | 3.6000 | 3.1163 |
-| baseline_model_probability | 20 | 55 | 0.4182 | -0.0945 | -5.2000 | 3.4196 |
-| baseline_model_probability | 30 | 83 | 0.3494 | -0.1299 | -10.7800 | 4.2594 |
-| baseline_model_probability | 50 | 139 | 0.3022 | -0.1091 | -15.1700 | 5.4325 |
-| sigma_selector | 10 | 27 | 0.7037 | 0.1270 | 3.4300 | 1.6278 |
-| sigma_selector | 20 | 55 | 0.6364 | 0.1589 | 8.7400 | 1.8765 |
-| sigma_selector | 30 | 83 | 0.5301 | 0.0600 | 4.9800 | 2.1666 |
-| sigma_selector | 50 | 139 | 0.4173 | -0.0004 | -0.0600 | 2.7676 |
+| baseline_model_probability | 10 | 76 | 0.3947 | -0.2120 | -16.1100 | 4.0858 |
+| baseline_model_probability | 20 | 152 | 0.3487 | -0.2597 | -39.4800 | 4.1292 |
+| baseline_model_probability | 30 | 228 | 0.3114 | -0.3130 | -71.3600 | 4.5136 |
+| baseline_model_probability | 50 | 380 | 0.2974 | -0.2413 | -91.7100 | 5.4996 |
+| sigma_selector | 10 | 76 | 0.6711 | 0.0138 | 1.0500 | 1.5333 |
+| sigma_selector | 20 | 152 | 0.5526 | -0.0409 | -6.2200 | 1.8051 |
+| sigma_selector | 30 | 228 | 0.4825 | -0.0557 | -12.6900 | 2.1082 |
+| sigma_selector | 50 | 380 | 0.4026 | -0.0251 | -9.5500 | 2.7317 |
 
 ## Passport vs RP Files
 - Status: PASS
@@ -34,7 +34,7 @@ Generated: 2026-06-19T23:09:26.636478+00:00
 | RP_SAFE_FILES_ONLY | 25 | 0.6983 | 0.3414 | 0.2652 | 0.4807 |
 | RP_CORE_NO_RPR_NO_MARKET | 17 | 0.6870 | 0.3450 | 0.2482 | 0.4651 |
 | RP_DOCTRINE_NO_RATINGS_NO_MARKET | 23 | 0.6916 | 0.3438 | 0.2604 | 0.4770 |
-| PASSPORT_ONLY | 11 | 0.6362 | 0.3560 | 0.2471 | 0.4623 |
+| PASSPORT_ONLY | 11 | 0.6362 | 0.3560 | 0.2471 | 0.4620 |
 | RP_CORE_PLUS_PASSPORT | 28 | 0.6989 | 0.3413 | 0.2609 | 0.4798 |
 | RP_DOCTRINE_PLUS_PASSPORT | 34 | 0.7018 | 0.3406 | 0.2690 | 0.4848 |
 

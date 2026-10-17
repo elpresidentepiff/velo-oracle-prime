@@ -1,28 +1,28 @@
 # Horse Passport V2
-Generated: 2026-08-02T19:14:46.715688+00:00
+Generated: 2026-10-17T21:20:37.885602+00:00
 
 ## Summary
-- **Total passports**: 8177
-- **Existing before run**: 0
-- **Newly appended**: 5
-- **Source horses found (history + profiles)**: 8177
+- **Total passports**: 16192
+- **Existing before run**: 1525
+- **Newly appended**: 45
+- **Source horses found (history + profiles)**: 14667
 - **Build failures**: 0
 - **Existing duplicate rows skipped**: 0
-- **Cash-run candidates**: 89
-- **Setup-run candidates**: 3102
-- **Jockey anomaly candidates** (well-fancied failure rate >= 50%): 2112
+- **Cash-run candidates**: 226
+- **Setup-run candidates**: 6399
+- **Jockey anomaly candidates** (well-fancied failure rate >= 50%): 4225
 
 ## Field Coverage
 | Field | Coverage |
 |---|---|
-| last_run_date | 81.5% |
+| last_run_date | 90.2% |
 | win_rate_last3 | 100.0% |
-| beaten_margin_slope | 68.6% |
-| sp_trajectory | 63.3% |
-| avg_sp_last5 | 81.5% |
-| going_preference | 18.4% |
-| course_affinity | 10.9% |
-| current_or | 80.3% |
+| beaten_margin_slope | 69.0% |
+| sp_trajectory | 63.2% |
+| avg_sp_last5 | 89.7% |
+| going_preference | 18.3% |
+| course_affinity | 10.1% |
+| current_or | 72.7% |
 
 ## Top 10 Cash-Run Candidates
 | Horse | SP | WF Rate | WF Fail Rate | Last Run |
@@ -46,6 +46,11 @@ Generated: 2026-08-02T19:14:46.715688+00:00
 - **places**: 4
 - **win_rate**: 1.0
 - **place_rate**: 1.0
+- **career_starts_official**: None
+- **career_wins_official**: None
+- **career_best_rpr**: None
+- **career_best_ts**: None
+- **career_prize_sterling_official**: None
 - **last_run_date**: 2026-05-02
 - **days_since_last_run**: None
 - **avg_days_between_runs**: 86.7
@@ -97,4 +102,4 @@ Generated: 2026-08-02T19:14:46.715688+00:00
 - **ts_last6_array**: [115.0, 105.0]
 - **recent_in_running_comments**: []
 - **recent_trainer_intent_tags**: []
-- **built_at**: 2026-08-02T19:14:44.336942Z
+- **built_at**: 2026-10-17T21:20:33.515903Z

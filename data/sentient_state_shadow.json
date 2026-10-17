@@ -1,17 +1,17 @@
 {
   "version": "1.1",
-  "last_updated": "2026-07-27T22:45:25.790749",
-  "total_races_observed": 1027,
+  "last_updated": "2026-10-17T22:16:16.174394",
+  "total_races_observed": 2293,
   "house_behaviour_map": {
-    "favourites_protected": 2,
-    "favourites_abandoned": 1025,
-    "market_lies_detected": 44,
+    "favourites_protected": 236,
+    "favourites_abandoned": 2057,
+    "market_lies_detected": 80,
     "safe_bets_imploded": 41,
     "recurring_setups": {}
   },
   "structural_weights": {
     "off_pace_wins": 0,
-    "high_draw_wins": 0,
+    "high_draw_wins": 44,
     "hidden_improver_wins": 0,
     "short_burst_wins": 0,
     "stamina_collapse_wins": 0,
@@ -187,358 +187,533 @@
         "pattern": "high_mpi_narrative_trap",
         "strength": 1.0,
         "timestamp": "2026-07-27T22:45:25.661253"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-08-02T22:22:31.217824"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-08-02T22:22:31.280900"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-08-04T11:32:25.247247"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-02T09:12:38.033811"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-02T09:12:38.039404"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-02T20:53:04.933379"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-03T22:13:37.109018"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-03T22:13:37.114474"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-03T22:13:37.303714"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-03T22:13:37.311666"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-06T22:10:57.338939"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-11T08:35:26.440172"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-11T22:11:12.891117"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-16T22:12:13.576594"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-16T22:12:13.988860"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-18T00:52:19.893542"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-23T22:10:42.733012"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-09-29T10:25:41.151290"
+      },
+      {
+        "rule": "Avoid favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-10-07T11:42:05.857835"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-10-07T11:54:02.322333"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-10-07T11:54:02.407072"
+      },
+      {
+        "rule": "Avoid favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-10-07T12:11:22.859860"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-10-07T12:11:23.151229"
+      },
+      {
+        "rule": "Avoid favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-10-14T12:57:47.710368"
+      },
+      {
+        "rule": "Avoid non-favourite when MPI > 70",
+        "key": "mpi",
+        "pattern": "high_mpi_narrative_trap",
+        "strength": 1.0,
+        "timestamp": "2026-10-14T22:12:48.416889"
       }
     ],
     "triumph_rules": [
       {
-        "rule": "Trust 9499170 engine supremacy",
+        "rule": "Trust 5826656 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-16T13:11:14.860163"
+        "timestamp": "2026-10-14T12:57:47.668243"
       },
       {
-        "rule": "Trust 7887314 engine supremacy",
+        "rule": "Trust 4737879 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-16T13:11:14.895002"
+        "timestamp": "2026-10-14T12:57:47.703920"
       },
       {
-        "rule": "Trust 7280717 engine supremacy",
+        "rule": "Trust 4497048 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-16T13:11:14.899541"
+        "timestamp": "2026-10-14T12:57:47.717093"
       },
       {
-        "rule": "Trust 8124818 engine supremacy",
+        "rule": "Trust 9217611 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-16T13:11:14.904826"
+        "timestamp": "2026-10-14T12:57:47.724186"
       },
       {
-        "rule": "Trust 7020583 engine supremacy",
+        "rule": "Trust 7436407 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-16T13:11:14.912146"
+        "timestamp": "2026-10-14T12:57:47.794729"
       },
       {
-        "rule": "Trust 3448754 engine supremacy",
+        "rule": "Trust 7020272 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-16T13:11:14.951222"
+        "timestamp": "2026-10-14T12:57:47.801354"
       },
       {
-        "rule": "Trust 7272317 engine supremacy",
+        "rule": "Trust 3265163 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.742352"
+        "timestamp": "2026-10-14T22:12:48.407403"
       },
       {
-        "rule": "Trust 9254435 engine supremacy",
+        "rule": "Trust 3499167 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.785185"
+        "timestamp": "2026-10-14T22:12:48.422776"
       },
       {
-        "rule": "Trust 9424935 engine supremacy",
+        "rule": "Trust 4173223 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.828796"
+        "timestamp": "2026-10-14T22:12:48.439483"
       },
       {
-        "rule": "Trust 9409952 engine supremacy",
+        "rule": "Trust 9115819 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.896955"
+        "timestamp": "2026-10-14T22:12:48.455376"
       },
       {
-        "rule": "Trust 5002205 engine supremacy",
+        "rule": "Trust 5198129 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.907286"
+        "timestamp": "2026-10-14T22:12:48.461806"
       },
       {
-        "rule": "Trust 6102271 engine supremacy",
+        "rule": "Trust 9960413 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.922153"
+        "timestamp": "2026-10-14T22:12:48.526497"
       },
       {
-        "rule": "Trust 4839367 engine supremacy",
+        "rule": "Trust 8455180 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.927092"
+        "timestamp": "2026-10-14T22:12:48.536811"
       },
       {
-        "rule": "Trust 5708637 engine supremacy",
+        "rule": "Trust 7020340 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.937138"
+        "timestamp": "2026-10-14T22:12:48.543238"
       },
       {
-        "rule": "Trust 8144053 engine supremacy",
+        "rule": "Trust 3709123 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.948392"
+        "timestamp": "2026-10-14T22:12:48.563032"
       },
       {
-        "rule": "Trust 9115842 engine supremacy",
+        "rule": "Trust 9960441 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.953220"
+        "timestamp": "2026-10-14T22:12:48.571807"
       },
       {
-        "rule": "Trust 8214901 engine supremacy",
+        "rule": "Trust 9024479 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.983203"
+        "timestamp": "2026-10-14T22:12:48.581160"
       },
       {
-        "rule": "Trust 8188070 engine supremacy",
+        "rule": "Trust 4129120 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:29.989227"
+        "timestamp": "2026-10-14T22:12:48.611195"
       },
       {
-        "rule": "Trust 8688824 engine supremacy",
+        "rule": "Trust 8157630 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-18T14:37:30.008586"
+        "timestamp": "2026-10-14T22:12:48.647394"
       },
       {
-        "rule": "Trust 9512289 engine supremacy",
+        "rule": "Trust 9317900 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.522209"
+        "timestamp": "2026-10-15T22:10:58.375478"
       },
       {
-        "rule": "Trust 6504994 engine supremacy",
+        "rule": "Trust 9227252 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.533777"
+        "timestamp": "2026-10-15T22:10:58.382473"
       },
       {
-        "rule": "Trust 6120961 engine supremacy",
+        "rule": "Trust 5186091 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.581322"
+        "timestamp": "2026-10-15T22:10:58.397059"
       },
       {
-        "rule": "Trust 9184968 engine supremacy",
+        "rule": "Trust 3212573 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.595894"
+        "timestamp": "2026-10-15T22:10:58.413170"
       },
       {
-        "rule": "Trust 9125044 engine supremacy",
+        "rule": "Trust 8375314 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.620078"
+        "timestamp": "2026-10-15T22:10:58.456151"
       },
       {
-        "rule": "Trust 6604812 engine supremacy",
+        "rule": "Trust 7267905 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.631033"
+        "timestamp": "2026-10-15T22:10:58.485624"
       },
       {
-        "rule": "Trust 7806370 engine supremacy",
+        "rule": "Trust 6894201 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.637110"
+        "timestamp": "2026-10-15T22:10:58.533742"
       },
       {
-        "rule": "Trust 5003636 engine supremacy",
+        "rule": "Trust 5424978 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.643009"
+        "timestamp": "2026-10-15T22:10:58.550120"
       },
       {
-        "rule": "Trust 7298728 engine supremacy",
+        "rule": "Trust 9595370 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.658921"
+        "timestamp": "2026-10-15T22:10:58.618378"
       },
       {
-        "rule": "Trust 9512291 engine supremacy",
+        "rule": "Trust 5172509 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.679484"
+        "timestamp": "2026-10-15T22:10:58.625308"
       },
       {
-        "rule": "Trust 9083768 engine supremacy",
+        "rule": "Trust 4299525 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.688798"
+        "timestamp": "2026-10-15T22:10:58.632671"
       },
       {
-        "rule": "Trust 4609242 engine supremacy",
+        "rule": "Trust 6812152 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.746211"
+        "timestamp": "2026-10-15T22:10:58.661704"
       },
       {
-        "rule": "Trust 7303462 engine supremacy",
+        "rule": "Trust 6456207 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.768708"
+        "timestamp": "2026-10-17T22:16:15.715014"
       },
       {
-        "rule": "Trust 9409944 engine supremacy",
+        "rule": "Trust 6055641 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.784240"
+        "timestamp": "2026-10-17T22:16:15.740085"
       },
       {
-        "rule": "Trust 5870116 engine supremacy",
+        "rule": "Trust 9222237 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-25T05:22:34.795078"
+        "timestamp": "2026-10-17T22:16:15.760874"
       },
       {
-        "rule": "Trust 8111191 engine supremacy",
+        "rule": "Trust 9819188 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-26T23:05:42.285965"
+        "timestamp": "2026-10-17T22:16:15.770284"
       },
       {
-        "rule": "Trust 4362963 engine supremacy",
+        "rule": "Trust 9300208 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-26T23:05:42.301265"
+        "timestamp": "2026-10-17T22:16:15.843553"
       },
       {
-        "rule": "Trust 6088056 engine supremacy",
+        "rule": "Trust 9564193 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:35:17.301878"
+        "timestamp": "2026-10-17T22:16:15.868374"
       },
       {
-        "rule": "Trust 7436439 engine supremacy",
+        "rule": "Trust 9286493 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:35:17.464925"
+        "timestamp": "2026-10-17T22:16:15.883853"
       },
       {
-        "rule": "Trust 6206828 engine supremacy",
+        "rule": "Trust 6314149 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:35:17.518266"
+        "timestamp": "2026-10-17T22:16:15.948682"
       },
       {
-        "rule": "Trust 8432208 engine supremacy",
+        "rule": "Trust 7395195 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:35:17.697030"
+        "timestamp": "2026-10-17T22:16:15.960210"
       },
       {
-        "rule": "Trust 9106008 engine supremacy",
+        "rule": "Trust 9088301 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:35:17.873852"
+        "timestamp": "2026-10-17T22:16:15.985620"
       },
       {
-        "rule": "Trust 9409964 engine supremacy",
+        "rule": "Trust 7347751 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:45:25.373017"
+        "timestamp": "2026-10-17T22:16:15.991260"
       },
       {
-        "rule": "Trust 9517086 engine supremacy",
+        "rule": "Trust 3432677 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:45:25.434984"
+        "timestamp": "2026-10-17T22:16:16.001287"
       },
       {
-        "rule": "Trust 7204955 engine supremacy",
+        "rule": "Trust 9982087 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:45:25.443511"
+        "timestamp": "2026-10-17T22:16:16.021287"
       },
       {
-        "rule": "Trust 3575318 engine supremacy",
+        "rule": "Trust 8111196 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:45:25.478576"
+        "timestamp": "2026-10-17T22:16:16.026027"
       },
       {
-        "rule": "Trust 7992523 engine supremacy",
+        "rule": "Trust 8205601 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:45:25.485078"
+        "timestamp": "2026-10-17T22:16:16.044326"
       },
       {
-        "rule": "Trust 4499169 engine supremacy",
+        "rule": "Trust 9416689 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:45:25.523353"
+        "timestamp": "2026-10-17T22:16:16.102719"
       },
       {
-        "rule": "Trust 9405447 engine supremacy",
+        "rule": "Trust 4648366 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:45:25.560749"
+        "timestamp": "2026-10-17T22:16:16.124012"
       },
       {
-        "rule": "Trust 9522222 engine supremacy",
+        "rule": "Trust 6649597 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:45:25.667595"
+        "timestamp": "2026-10-17T22:16:16.153047"
       },
       {
-        "rule": "Trust 9208539 engine supremacy",
+        "rule": "Trust 6523105 engine supremacy",
         "key": "engine_superiority",
         "pattern": "engine_dominance_confirmed",
         "strength": 1.0,
-        "timestamp": "2026-07-27T22:45:25.699568"
+        "timestamp": "2026-10-17T22:16:16.174405"
       }
     ],
     "anger_rules": [],
@@ -546,29 +721,29 @@
   },
   "appetite_state": {
     "recent_performance": [],
-    "aggression_level": 0.3,
-    "pattern_recognition_sensitivity": 0.5,
-    "doctrine_firing_threshold": 1.0,
-    "directive_firing_threshold": 1.0,
-    "narrative_skepticism": 0.7,
+    "aggression_level": 0.35,
+    "pattern_recognition_sensitivity": 1.0,
+    "doctrine_firing_threshold": 0.98,
+    "directive_firing_threshold": 0.98,
+    "narrative_skepticism": 1.0,
     "chaos_tolerance": 0.0,
     "manipulation_sensitivity": 1.0,
     "recent_profit": [
       -1.0,
+      3.5,
       -1.0,
       -1.0,
       -1.0,
+      1.25,
       -1.0,
       -1.0,
       -1.0,
-      -1.0,
-      -1.0,
-      -1.0
+      2.75
     ]
   },
   "doctrine_strengths": {
-    "LAY_THE_STORY": 0.5,
-    "SHADOW_TRACKING": 0.5,
+    "LAY_THE_STORY": 0.3545388300223496,
+    "SHADOW_TRACKING": 0.25,
     "ENGINE_SUPREMACY": 1.0,
     "TOP_4_ON_DANGER": 0.5,
     "HOUSE_REVERSAL": 0.5,

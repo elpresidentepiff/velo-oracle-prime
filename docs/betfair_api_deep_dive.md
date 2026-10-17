@@ -1,5 +1,13 @@
 # VÉLØ Oracle Prime: Betfair API Integration Deep Dive
 
+> **STALE / SUPERSEDED — do not use this document to activate an App Key or
+> implement execution.** Several commercial and runtime claims below are no
+> longer current, including the old £299 Live App Key fee. The verified
+> 2026-10-09 readiness audit and fail-closed integration specification is
+> `docs/engineering/VELO_BETFAIR_READINESS_SPEC_V1.md`. The current official
+> fee is £499, the fee is non-refundable, Delayed-Key Stream data is conflated
+> to 180 seconds, and VÉLØ remains SIM/PAPER with live staking prohibited.
+
 **Author:** Manus AI
 **Date:** February 26, 2026
 

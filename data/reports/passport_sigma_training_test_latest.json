@@ -1,101 +1,101 @@
 {
-  "generated_at": "2026-06-19T23:09:26.636478+00:00",
+  "generated_at": "2026-10-17T02:26:50.232651+00:00",
   "source": "evidence_only_no_live_changes",
   "sigma_selector": {
     "status": "PASS",
-    "rows": 1105,
-    "train_rows": 827,
-    "test_rows": 278,
-    "test_races": 274,
-    "baseline_auc": 0.5872034747744738,
-    "selector_auc": 0.7657200133645172,
-    "baseline_logloss": 0.5834528045510814,
-    "selector_logloss": 0.5678410485976101,
+    "rows": 3049,
+    "train_rows": 2289,
+    "test_rows": 760,
+    "test_races": 760,
+    "baseline_auc": 0.5890443213296399,
+    "selector_auc": 0.7725761772853186,
+    "baseline_logloss": 0.6069589172785315,
+    "selector_logloss": 0.5710271787262919,
     "baseline_top1": {
-      "races": 274,
-      "top1": 0.2664,
+      "races": 760,
+      "top1": 0.25,
       "mrr": 1.0
     },
     "selector_top1": {
-      "races": 274,
-      "top1": 0.2664,
+      "races": 760,
+      "top1": 0.25,
       "mrr": 1.0
     },
     "acceptance_bands": [
       {
         "ranker": "baseline_model_probability",
         "accept_top_pct": 10,
-        "n": 27,
-        "sr": 0.5185,
-        "roi": 0.1333,
-        "pl": 3.6,
-        "avg_sp": 3.1163
+        "n": 76,
+        "sr": 0.3947,
+        "roi": -0.212,
+        "pl": -16.11,
+        "avg_sp": 4.0858
       },
       {
         "ranker": "baseline_model_probability",
         "accept_top_pct": 20,
-        "n": 55,
-        "sr": 0.4182,
-        "roi": -0.0945,
-        "pl": -5.2,
-        "avg_sp": 3.4196
+        "n": 152,
+        "sr": 0.3487,
+        "roi": -0.2597,
+        "pl": -39.48,
+        "avg_sp": 4.1292
       },
       {
         "ranker": "baseline_model_probability",
         "accept_top_pct": 30,
-        "n": 83,
-        "sr": 0.3494,
-        "roi": -0.1299,
-        "pl": -10.78,
-        "avg_sp": 4.2594
+        "n": 228,
+        "sr": 0.3114,
+        "roi": -0.313,
+        "pl": -71.36,
+        "avg_sp": 4.5136
       },
       {
         "ranker": "baseline_model_probability",
         "accept_top_pct": 50,
-        "n": 139,
-        "sr": 0.3022,
-        "roi": -0.1091,
-        "pl": -15.17,
-        "avg_sp": 5.4325
+        "n": 380,
+        "sr": 0.2974,
+        "roi": -0.2413,
+        "pl": -91.71,
+        "avg_sp": 5.4996
       },
       {
         "ranker": "sigma_selector",
         "accept_top_pct": 10,
-        "n": 27,
-        "sr": 0.7037,
-        "roi": 0.127,
-        "pl": 3.43,
-        "avg_sp": 1.6278
+        "n": 76,
+        "sr": 0.6711,
+        "roi": 0.0138,
+        "pl": 1.05,
+        "avg_sp": 1.5333
       },
       {
         "ranker": "sigma_selector",
         "accept_top_pct": 20,
-        "n": 55,
-        "sr": 0.6364,
-        "roi": 0.1589,
-        "pl": 8.74,
-        "avg_sp": 1.8765
+        "n": 152,
+        "sr": 0.5526,
+        "roi": -0.0409,
+        "pl": -6.22,
+        "avg_sp": 1.8051
       },
       {
         "ranker": "sigma_selector",
         "accept_top_pct": 30,
-        "n": 83,
-        "sr": 0.5301,
-        "roi": 0.06,
-        "pl": 4.98,
-        "avg_sp": 2.1666
+        "n": 228,
+        "sr": 0.4825,
+        "roi": -0.0557,
+        "pl": -12.69,
+        "avg_sp": 2.1082
       },
       {
         "ranker": "sigma_selector",
         "accept_top_pct": 50,
-        "n": 139,
-        "sr": 0.4173,
-        "roi": -0.0004,
-        "pl": -0.06,
-        "avg_sp": 2.7676
+        "n": 380,
+        "sr": 0.4026,
+        "roi": -0.0251,
+        "pl": -9.55,
+        "avg_sp": 2.7317
       }
     ],
-    "staging_model": "C:\\Users\\puror\\velo-oracle-prime\\models\\sigma_selector_staging\\sigma_selector.pkl",
+    "staging_model": "/mnt/c/Users/puror/velo-oracle-prime/models/sigma_selector_staging/sigma_selector.pkl",
     "note": "Small post-score selector test from sigma/innovation protocol rows only."
   },
   "passport_vs_rp": {
@@ -182,7 +182,7 @@
         "label": "RP_CORE_NO_RPR_NO_MARKET",
         "features": 17,
         "auc": 0.6869931674463524,
-        "logloss": 0.3449858688827512,
+        "logloss": 0.34498586888275123,
         "races": 3691,
         "top1": 0.2482,
         "mrr": 0.4651,
@@ -303,7 +303,7 @@
         "logloss": 0.3559618743585526,
         "races": 3691,
         "top1": 0.2471,
-        "mrr": 0.4623,
+        "mrr": 0.462,
         "top_importance": [
           {
             "feature": "pp_avg_sp_last5",

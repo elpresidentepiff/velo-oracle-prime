@@ -1,6 +1,6 @@
 # VÉLØ LLM Council Operator Report - 2026-07-24
 
-**Run Date:** 2026-07-25T10:40:52.845304
+**Run Date:** 2026-07-29T19:08:28.139685
 **Council Status:** READY
 **Status:** SHADOW / OPERATOR ONLY
 

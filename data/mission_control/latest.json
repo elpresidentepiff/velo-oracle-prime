@@ -1,33 +1,32 @@
 {
-  "date": "2026-07-26",
-  "generated_at": "2026-07-27T21:45:54.907274+00:00",
+  "date": "2026-10-17",
+  "generated_at": "2026-10-17T21:15:59.174467+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
-    "87b99355"
+    "ac0d284d"
   ],
   "flatline_count": 0,
   "fully_uniform_count": 0,
   "fully_uniform_races": [],
   "majority_tied_count": 0,
   "identity_failure_count": 0,
-  "runners_snapshotted": 209,
-  "council_verdict": "WATCH_ONLY",
-  "learning_gate_status": "BLOCKED",
+  "runners_snapshotted": 572,
+  "council_verdict": "PASS_TO_LEARNING",
+  "learning_gate_status": "OPEN",
   "promotion_gate_status": "BLOCKED",
   "gate_reasons": [
-    "GATE_COUNCIL_WATCH_ONLY",
     "GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY"
   ],
   "sigma_artifact": {
     "status": "PRESENT",
-    "path": "data/sigma_results/sigma_results_2026_07_26.json",
-    "sr": 0.1176,
-    "wins": 2,
-    "evaluated_count": 17,
+    "path": "data/sigma_results/sigma_results_2026_10_17.json",
+    "sr": 0.2881,
+    "wins": 17,
+    "evaluated_count": 59,
     "sigma_status": "PASS",
     "completeness_gate": null,
     "learning_blocked": null,
-    "expected_predictions": 17,
+    "expected_predictions": 60,
     "result_races_available": null,
     "matched": null,
     "coverage_ratio": null,
@@ -35,7 +34,7 @@
   },
   "run_truth": {
     "status": "MANUAL_RECOVERY_ONLY",
-    "path": "data/velo_daily_run_truth_2026_07_26.json",
+    "path": "data/velo_daily_run_truth_2026_10_17.json",
     "alert_required": true,
     "issues": [
       "MANUAL_RUN_ONLY"
@@ -49,29 +48,20 @@
     "council_packet": "PRESENT",
     "council_report": "PRESENT"
   },
-  "runner_calibration_gate_status": "REVIEW_THRESHOLD_MET",
-  "runner_calibration_gate_runners": 786,
-  "decision_policy_gate_status": "NEEDS_MORE_DAYS",
-  "decision_policy_gate_top_picks": 87,
+  "runner_calibration_gate_status": "UNKNOWN",
+  "runner_calibration_gate_runners": 0,
+  "decision_policy_gate_status": "UNKNOWN",
+  "decision_policy_gate_top_picks": 0,
   "learning_admission": {
-    "eligibility_status": "OUTCOME_ONLY_EOD_REPLAY_PASS",
-    "eligible_rows": 17,
+    "eligibility_status": "NOT_RUN",
+    "eligible_rows": 0,
     "excluded_rows": 0,
     "consumed_shadow_before": 0,
     "consumed_live_before": 0,
     "live_state_hash": "UNKNOWN",
-    "build_events_result": {
-      "phase": "OUTCOME_ONLY_EOD_REPLAY",
-      "events_built": 17,
-      "events_written": 17,
-      "status": "PASS",
-      "sentient_state_touched": false,
-      "shadow_state_touched": true,
-      "duplicates_skipped_second_run": 17,
-      "consumed_live": false
-    },
+    "build_events_result": {},
     "admission_packet": "PRESENT",
-    "recommendation": "OUTCOME_ONLY_EOD_REPLAY_COMPLETE"
+    "recommendation": "PENDING"
   },
   "race_shape_v1": {
     "race_shape_model_v1": "DESIGN_PENDING",
@@ -81,84 +71,29 @@
       "race_count": 36
     },
     "midprice_overlap": {
-      "status": "OVERLAP_RUN",
-      "date": "2026-05-22",
-      "winner_visible_pct": 92.6,
-      "winner_ranked_2nd_3rd_pct": 48.1,
-      "fav_vulnerable_misses": 17,
-      "compressed_misses": 2,
-      "shadow_candidates": 24
+      "status": "NOT_RUN"
     }
   },
   "corpus_governance": {
-    "status": "REBUILT",
-    "rows_after": 1018,
-    "dates_added": [
-      "2026-05-21",
-      "2026-05-22"
-    ],
-    "dates_excluded": [
-      "2026-05-20"
-    ],
-    "exclusion_reason": "SCORING_FLATLINE_CONTAMINATED",
-    "may_20_rows": 0,
-    "may_20_check": "PASS"
+    "status": "EXISTS_NO_REBUILD_REPORT"
   },
   "shadow_consume_idempotency": {
-    "status": "VERIFIED",
-    "all_checks_pass": true,
-    "consumed_shadow": 80,
-    "consumed_live": 0,
-    "live_state_unchanged": true,
-    "shadow_train_v2_race_count": 2055
+    "status": "NOT_RUN"
   },
   "race_shape_precision_audit": {
-    "status": "RUN",
-    "date": "2026-05-22",
-    "ledger_rows": 36,
-    "ledger_rows_to_gate_150": 114,
-    "ledger_rows_to_gate_300": 264,
-    "actionable_candidates": [
-      "MIDPRICE_TRAP",
-      "FAV_VULN_ULTRA_COMPRESSED"
-    ],
-    "fav_vuln_ultra_compressed_n": 16,
-    "fav_vuln_ultra_compressed_sr": 0.1875,
-    "fav_vuln_ultra_compressed_verdict": "ACTIONABLE_RISK_FLAG",
-    "tracker": {
-      "fav_vuln_ultra_compressed": {
-        "n": 16,
-        "sr": 0.1875,
-        "to_150": 134,
-        "verdict": "PROVISIONAL_RISK_FLAG"
-      },
-      "midprice_trap": {
-        "n": 5,
-        "sr": 0.2,
-        "to_150": 145,
-        "verdict": "PROVISIONAL_RISK_FLAG"
-      }
-    }
+    "status": "NOT_RUN"
   },
   "cpu_decision_policy_tracker": {
-    "status": "RUN",
-    "decisions_made": 87,
-    "decisions_with_outcomes": 80,
-    "needed_to_150": 63,
-    "needed_to_300": 213,
-    "sr": 0.275,
-    "brier": 0.2091,
-    "top_decile_sr": 0.375,
-    "verdict": "NEEDS_MORE_DAYS"
+    "status": "NOT_RUN"
   },
   "evidence_accumulation": {
     "action": "ACCUMULATE_EVIDENCE",
-    "race_shape_rows": 36,
-    "race_shape_to_150": 114,
-    "race_shape_to_300": 264,
-    "cpu_decisions_made": 87,
-    "cpu_to_150": 63,
-    "cpu_to_300": 213,
+    "race_shape_rows": 0,
+    "race_shape_to_150": 150,
+    "race_shape_to_300": 300,
+    "cpu_decisions_made": 0,
+    "cpu_to_150": 150,
+    "cpu_to_300": 300,
     "production_status": "NOT_APPROVED"
   },
   "research_status": {
@@ -173,24 +108,12 @@
   "cpu_shadow_gate_v2": {
     "gate_v1_status": "GATE_V1_AUDIT_ONLY",
     "runner_calibration_gate": {
-      "runner_count": 786,
-      "status": "REVIEW_THRESHOLD_MET",
-      "threshold": 300,
-      "review_threshold_met": true
+      "status": "UNKNOWN"
     },
     "decision_policy_gate": {
-      "top_pick_decisions": 87,
-      "status": "NEEDS_MORE_DAYS",
-      "next_review": "63 more top-pick decisions to first policy gate",
-      "threshold_1": 150,
-      "threshold_1_met": false
+      "status": "UNKNOWN"
     },
-    "live_promotion_allowed": false,
-    "promotion_decision": "NOT_APPROVED_OPERATOR_DECISION_REQUIRED",
-    "mission_control_display": {
-      "runner_calibration": "REVIEW_THRESHOLD_MET / NOT APPROVED",
-      "decision_policy": "NEEDS_MORE_DAYS \u2014 63 top-pick decisions to first gate"
-    }
+    "live_promotion_allowed": false
   },
   "gate_rules": [
     "sigma_audits truth writes: NEVER blocked \u2014 raw result ledger always recorded",

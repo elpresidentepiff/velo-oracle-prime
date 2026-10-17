@@ -1,68 +1,80 @@
 {
-  "generated_at": "2026-08-02T19:47:14.845669Z",
+  "generated_at": "2026-10-17T21:18:05.037285Z",
   "status": "PASS",
   "queue_path": "/mnt/c/Users/puror/velo-oracle-prime/data/new_build/rp_scrape_queue/passport_queue_latest.jsonl",
   "next_batch_url_list": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_url_lists/passport_bank_next_batch_latest.txt",
-  "queued_horses": 22304,
-  "queued_for_capture": 4447,
+  "queued_horses": 21595,
+  "queued_for_capture": 45,
   "next_batch_limit": 500,
-  "next_batch_count": 500,
-  "captured_profiles": 8049,
-  "parsed_passports": 8049,
-  "total_passports_after_run": 8177,
+  "next_batch_count": 45,
+  "captured_profiles": 11067,
+  "parsed_passports": 11067,
+  "total_passports_after_run": 16147,
   "duplicates": 0,
   "failures": 0,
   "no_form_history_horses": 0,
-  "upcoming_race_coverage": 12471,
+  "upcoming_race_coverage": 9076,
   "big_race_entries_coverage": 0,
   "rpr_violations": 0,
   "status_counts": {
-    "PASSPORT_EXISTS": 8049,
-    "QUEUED_FOR_CAPTURE": 4447,
-    "NEEDS_SOURCE_REVIEW": 9808
+    "PASSPORT_EXISTS": 11067,
+    "QUEUED_FOR_CAPTURE": 45,
+    "NEEDS_SOURCE_REVIEW": 10483
   },
   "source_counts": {
-    "upcoming_racecard": 12471,
-    "current_racecard": 7,
-    "raw_profile_link_review": 9826
+    "racing_imminent": 659,
+    "upcoming_racecard": 8417,
+    "recent_profile_capture": 1613,
+    "raw_profile_link_review": 10906
   },
   "source_member_counts": {
-    "current_racecard": 753,
-    "upcoming_racecard": 12471,
-    "raw_profile_link_review": 19151,
-    "recent_profile_capture": 1589
+    "upcoming_racecard": 9076,
+    "raw_profile_link_review": 20177,
+    "racing_imminent": 659,
+    "recent_profile_capture": 5838
   },
   "priority_counts": {
-    "10": 12471,
-    "20": 7,
-    "80": 9826
+    "1": 659,
+    "10": 8417,
+    "50": 1613,
+    "80": 10906
   },
   "top_reasons": {
-    "UPCOMING_RACECARD_RUNNER": 12274,
-    "RAW_PROFILE_LINK_NEEDS_RUNNER_SOURCE_REVIEW": 9826,
-    "UPCOMING_RACECARD_PROFILE": 197,
-    "CURRENT_RACECARD_RUNNER": 7
+    "RAW_PROFILE_LINK_NEEDS_RUNNER_SOURCE_REVIEW": 10906,
+    "UPCOMING_RACECARD_RUNNER": 8417,
+    "RECENT_PROFILE_CAPTURE_PROFILE": 1613,
+    "RACING_WITHIN_48H": 659
   },
   "next_batch_sample": [
     {
-      "rp_uid": "7935067",
-      "name": "Abdulhamid",
-      "source": "upcoming_racecard",
+      "rp_uid": "9920308",
+      "name": "Accumulation",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-19",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-19/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-19",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-19/003_racecards_440_hoppegarten_2026_07_19_925207_618f836f6507.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/014_racecards_187_leopardstown_2026_10_17_931102_09b8cd188c8b.html"
+        },
+        {
+          "source": "raw_profile_link_review",
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/014_results_187_leopardstown_2026_10_17_931102_2fbf6827d075.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/7935067/abdulhamid/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9920308/accumulation/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -80,29 +92,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "6238173",
-      "name": "Ablon",
-      "source": "upcoming_racecard",
+      "rp_uid": "9924442",
+      "name": "Annies Pass",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-18",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-18/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-18",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-18/044_racecards_40_nottingham_2026_07_18_924361_67ffe8db5cde.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/037_racecards_35_market_rasen_2026_10_17_928440_e711caa013fc.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-18-final",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-18-final/047_results_40_nottingham_2026_07_18_924361_488587b20620.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/037_results_35_market_rasen_2026_10_17_928440_deef1e0bade2.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_MAR_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/6238173/ablon/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9924442/annies-pass/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -120,39 +137,44 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "6220013",
-      "name": "Abu Shomran (Gb)",
-      "source": "upcoming_racecard",
+      "rp_uid": "9851750",
+      "name": "Anymore",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-16/racecard_injection.json"
+          "date": "2026-09-29",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-09-29/racecard_injection.json"
         },
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-16_merged/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-16/001_racecards_1322_chepstow_gb_2026_07_16_924778_67222212d495.html"
+          "date": "2026-09-29",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-09-29/030_racecards_596_cork_2026_09_29_929766_ff1091ddcdf5.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-16_merged",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-16_merged/001_racecards_1322_chepstow_gb_2026_07_16_924778_67222212d495.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/012_racecards_187_leopardstown_2026_10_17_931100_bd35732d2420.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-16/049_results_1322_chepstow_gb_2026_07_16_924778_d3f73eaf5e97.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/012_results_187_leopardstown_2026_10_17_931100_f0ef7de86730.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/6220013/abu-shomran-gb/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9851750/anymore/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -170,44 +192,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "7280723",
-      "name": "Acanto",
-      "source": "upcoming_racecard",
+      "rp_uid": "9982187",
+      "name": "Bridal Queen",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-14",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-14/racecard_injection.json"
-        },
-        {
-          "source": "upcoming_racecard",
-          "date": "2026-07-31",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-31/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-14",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-14/014_racecards_185_killarney_2026_07_14_924638_4e91e1bf8943.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/009_racecards_187_leopardstown_2026_10_17_931097_d762cfb13a02.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-31",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-31/025_racecards_183_galway_2026_07_31_925539_a901ba82558d.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/009_results_187_leopardstown_2026_10_17_931097_3891e6a69ed0.html"
         },
         {
-          "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-14",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-14/017_results_185_killarney_2026_07_14_924638_9267c38c515a.html"
-        },
-        {
-          "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-31",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-31/025_results_183_galway_2026_07_31_925539_c6cb82e4750a.html"
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/7280723/acanto/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9982187/bridal-queen/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -225,24 +237,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "9554516",
-      "name": "Activity",
-      "source": "upcoming_racecard",
+      "rp_uid": "9982192",
+      "name": "Captaincormac",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-23",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-23/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-23",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-23/013_racecards_187_leopardstown_2026_07_23_925217_c8ec339cca93.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/010_racecards_187_leopardstown_2026_10_17_931098_fad6b1d378b2.html"
+        },
+        {
+          "source": "raw_profile_link_review",
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/010_results_187_leopardstown_2026_10_17_931098_6239519fa6c4.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/9554516/activity/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9982192/captaincormac/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -260,39 +282,44 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "9490320",
-      "name": "Ad Lib",
-      "source": "upcoming_racecard",
+      "rp_uid": "9693243",
+      "name": "Captivating",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-16/racecard_injection.json"
+          "date": "2026-09-29",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-09-29/racecard_injection.json"
         },
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-16_merged/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-16/014_racecards_17_epsom_2026_07_16_923115_7286487519e9.html"
+          "date": "2026-09-29",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-09-29/030_racecards_596_cork_2026_09_29_929766_ff1091ddcdf5.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-16_merged",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-16_merged/014_racecards_17_epsom_2026_07_16_923115_7286487519e9.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/009_racecards_187_leopardstown_2026_10_17_931097_d762cfb13a02.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-16/014_results_17_epsom_2026_07_16_923115_c1bd1581b712.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/009_results_187_leopardstown_2026_10_17_931097_3891e6a69ed0.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/9490320/ad-lib/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9693243/captivating/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -310,29 +337,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "5711170",
-      "name": "Addragoole",
-      "source": "upcoming_racecard",
+      "rp_uid": "9982205",
+      "name": "Ciarrai Oir",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-31",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-31/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-31",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-31/024_racecards_183_galway_2026_07_31_925538_7ffba4277cfb.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/014_racecards_187_leopardstown_2026_10_17_931102_09b8cd188c8b.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-31",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-31/024_results_183_galway_2026_07_31_925538_595e4cfa37ae.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/014_results_187_leopardstown_2026_10_17_931102_2fbf6827d075.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/5711170/addragoole/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9982205/ciarrai-oir/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -350,24 +382,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "9531364",
-      "name": "Admired Beauty",
-      "source": "upcoming_racecard",
+      "rp_uid": "9951328",
+      "name": "Cosmonaut",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-19",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-19/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-19",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-19/005_racecards_178_curragh_2026_07_19_924774_d84f19235f27.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/014_racecards_187_leopardstown_2026_10_17_931102_09b8cd188c8b.html"
+        },
+        {
+          "source": "raw_profile_link_review",
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/014_results_187_leopardstown_2026_10_17_931102_2fbf6827d075.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/9531364/admired-beauty/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9951328/cosmonaut/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -385,29 +427,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "9046199",
-      "name": "Adonius",
-      "source": "upcoming_racecard",
+      "rp_uid": "9982092",
+      "name": "Delilah's Boy",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-29",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/live-full-racepages-2026-07-29/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "live-full-racepages-2026-07-29",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/live-full-racepages-2026-07-29/010_racecards_21_goodwood_2026_07_29_923933_aa2f63521838.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/044_racecards_39_newton_abbot_2026_10_17_928447_4fe6995b4d66.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-29",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-29/010_results_21_goodwood_2026_07_29_923933_9ed6ebed8500.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/044_results_39_newton_abbot_2026_10_17_928447_c9288b9f3e27.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_NEWTON_ABBOT_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/9046199/adonius/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9982092/delilahs-boy/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -425,29 +472,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "8881261",
-      "name": "Agrippa",
-      "source": "upcoming_racecard",
+      "rp_uid": "9110903",
+      "name": "Dreamer Of Dreams",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-18",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-18/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-18",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-18/042_racecards_36_newbury_2026_07_18_923177_d558f5bca4e1.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/022_racecards_188_limerick_2026_10_17_931070_0f9a7366e3df.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-18-final",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-18-final/045_results_36_newbury_2026_07_18_923177_ce84ceaee167.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/022_results_188_limerick_2026_10_17_931070_6b75d1e23989.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LIM_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/8881261/agrippa/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9110903/dreamer-of-dreams/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -465,29 +517,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "9535726",
-      "name": "Aibar",
-      "source": "upcoming_racecard",
+      "rp_uid": "9933913",
+      "name": "Drive On There",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-08-02",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-08-02/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-08-02",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-08-02/003_racecards_206_deauville_2026_08_02_926119_b59ad9eeafcd.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/014_racecards_187_leopardstown_2026_10_17_931102_09b8cd188c8b.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-12-final",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-12-final/022_results_2026_07_12_7866e1e182c9.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/014_results_187_leopardstown_2026_10_17_931102_2fbf6827d075.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/9535726/aibar/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9933913/drive-on-there/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -505,29 +562,44 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "6318960",
-      "name": "Akashaa",
-      "source": "upcoming_racecard",
+      "rp_uid": "9896982",
+      "name": "Duchessofaquitaine",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-22",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-22/racecard_injection.json"
+          "date": "2026-09-29",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-09-29/racecard_injection.json"
+        },
+        {
+          "source": "upcoming_racecard",
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-22",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-22/014_racecards_192_naas_2026_07_22_925236_beda8a4ba7f3.html"
+          "date": "2026-09-29",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-09-29/030_racecards_596_cork_2026_09_29_929766_ff1091ddcdf5.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-12-dundalk",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-12-dundalk/004_results_1138_dundalk_aw_2026_07_12_924521_c10fc7756a0d.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/009_racecards_187_leopardstown_2026_10_17_931097_d762cfb13a02.html"
+        },
+        {
+          "source": "raw_profile_link_review",
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/009_results_187_leopardstown_2026_10_17_931097_3891e6a69ed0.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/6318960/akashaa/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9896982/duchessofaquitaine/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -545,39 +617,29 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "9544210",
-      "name": "Al Samsama",
-      "source": "upcoming_racecard",
+      "rp_uid": "9982188",
+      "name": "Emtee",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-17",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-17/racecard_injection.json"
-        },
-        {
-          "source": "upcoming_racecard",
-          "date": "2026-07-17",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-17_merged/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-17",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-17/034_racecards_36_newbury_2026_07_17_923170_5429b8f53cb4.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/009_racecards_187_leopardstown_2026_10_17_931097_d762cfb13a02.html"
         },
         {
-          "source": "raw_profile_link_review",
-          "date": "2026-07-17_merged",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-17_merged/034_racecards_36_newbury_2026_07_17_923170_5429b8f53cb4.html"
-        },
-        {
-          "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-17-final",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-17-final/041_results_36_newbury_2026_07_17_923170_659f67d6dbe6.html"
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/9544210/al-samsama/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9982188/emtee/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -595,39 +657,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "4483044",
-      "name": "Al Sayah",
-      "source": "upcoming_racecard",
+      "rp_uid": "9982194",
+      "name": "Etawann",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-17",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-17/racecard_injection.json"
-        },
-        {
-          "source": "upcoming_racecard",
-          "date": "2026-07-17",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-17_merged/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-17",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-17/036_racecards_40_nottingham_2026_07_17_923141_015d3d9f5eea.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/010_racecards_187_leopardstown_2026_10_17_931098_fad6b1d378b2.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-17_merged",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-17_merged/036_racecards_40_nottingham_2026_07_17_923141_015d3d9f5eea.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/010_results_187_leopardstown_2026_10_17_931098_6239519fa6c4.html"
         },
         {
-          "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-17-final",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-17-final/043_results_40_nottingham_2026_07_17_923141_2acdfd726345.html"
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/4483044/al-sayah/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9982194/etawann/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -645,29 +702,39 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "7947743",
-      "name": "Al Zanati",
-      "source": "upcoming_racecard",
+      "rp_uid": "9896984",
+      "name": "Gods Love",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-18",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-18/racecard_injection.json"
+          "date": "2026-09-29",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-09-29/racecard_injection.json"
+        },
+        {
+          "source": "upcoming_racecard",
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-18",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-18/038_racecards_36_newbury_2026_07_18_923173_26e9bff5483c.html"
+          "date": "2026-09-29",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-09-29/030_racecards_596_cork_2026_09_29_929766_ff1091ddcdf5.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-18-final",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-18-final/041_results_36_newbury_2026_07_18_923173_eed063d4f7b2.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/009_racecards_187_leopardstown_2026_10_17_931097_d762cfb13a02.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/7947743/al-zanati/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9896984/gods-love/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -685,24 +752,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "9490299",
-      "name": "Alfinthesea",
-      "source": "upcoming_racecard",
+      "rp_uid": "9933907",
+      "name": "Hamara",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-21",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-21/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-21",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-21/009_racecards_175_ballinrobe_2026_07_21_925226_6d5bcb6e2e6c.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/009_racecards_187_leopardstown_2026_10_17_931097_d762cfb13a02.html"
+        },
+        {
+          "source": "raw_profile_link_review",
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/009_results_187_leopardstown_2026_10_17_931097_3891e6a69ed0.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/9490299/alfinthesea/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9933907/hamara/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -720,24 +797,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "5237856",
-      "name": "Align The Stars",
-      "source": "upcoming_racecard",
+      "rp_uid": "9910054",
+      "name": "Havanotherguinness",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-08-01",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-08-01/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-08-01",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-08-01/026_racecards_21_goodwood_2026_08_01_923951_69a59d274534.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/044_racecards_39_newton_abbot_2026_10_17_928447_4fe6995b4d66.html"
+        },
+        {
+          "source": "raw_profile_link_review",
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/044_results_39_newton_abbot_2026_10_17_928447_c9288b9f3e27.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_NEWTON_ABBOT_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/5237856/align-the-stars/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9910054/havanotherguinness/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -755,24 +842,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "8881392",
-      "name": "All Angels",
-      "source": "upcoming_racecard",
+      "rp_uid": "9982081",
+      "name": "Hubris",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-20",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-20/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-20",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-20/029_racecards_93_windsor_2026_07_20_923229_8a8e726c7998.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/037_racecards_35_market_rasen_2026_10_17_928440_e711caa013fc.html"
+        },
+        {
+          "source": "raw_profile_link_review",
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/037_results_35_market_rasen_2026_10_17_928440_deef1e0bade2.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_MAR_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/8881392/all-angels/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9982081/hubris/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -790,29 +887,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "8432194",
-      "name": "All Moonshine",
-      "source": "upcoming_racecard",
+      "rp_uid": "9982089",
+      "name": "Irish Ocean",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-18",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-18/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-18",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-18/041_racecards_36_newbury_2026_07_18_923176_72911a7b68aa.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/044_racecards_39_newton_abbot_2026_10_17_928447_4fe6995b4d66.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-18-final",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-18-final/044_results_36_newbury_2026_07_18_923176_f6d5f331fab5.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/044_results_39_newton_abbot_2026_10_17_928447_c9288b9f3e27.html"
+        },
+        {
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_NEWTON_ABBOT_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/8432194/all-moonshine/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9982089/irish-ocean/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -830,39 +932,34 @@
       "rpr_policy": "RPR_ARCHIVE_ONLY_EXCLUDED_FROM_VELO"
     },
     {
-      "rp_uid": "9531382",
-      "name": "All Of A Sudden",
-      "source": "upcoming_racecard",
+      "rp_uid": "9920304",
+      "name": "Lady Letita",
+      "source": "racing_imminent",
       "sources": [
         {
           "source": "upcoming_racecard",
-          "date": "2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-16/racecard_injection.json"
-        },
-        {
-          "source": "upcoming_racecard",
-          "date": "2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-07-16_merged/racecard_injection.json"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_parsed/2026-10-17/racecard_injection.json"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-16/026_racecards_185_killarney_2026_07_16_924635_0b86c27c6b88.html"
+          "date": "2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-10-17/012_racecards_187_leopardstown_2026_10_17_931100_bd35732d2420.html"
         },
         {
           "source": "raw_profile_link_review",
-          "date": "2026-07-16_merged",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/2026-07-16_merged/026_racecards_185_killarney_2026_07_16_924635_0b86c27c6b88.html"
+          "date": "rp-results-2026-10-17",
+          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-10-17/012_results_187_leopardstown_2026_10_17_931100_f0ef7de86730.html"
         },
         {
-          "source": "raw_profile_link_review",
-          "date": "rp-results-2026-07-16",
-          "file": "/mnt/c/Users/puror/velo-oracle-prime/data/racing_post_account_raw/rp-results-2026-07-16/026_results_185_killarney_2026_07_16_924635_229556a9a01f.html"
+          "source": "racing_imminent",
+          "date": "2026-10-17",
+          "file": "racecard_LEO_2026-10-17.json"
         }
       ],
-      "priority": 10,
-      "profile_url": "https://www.racingpost.com/profile/horse/9531382/all-of-a-sudden/form",
-      "reason": "UPCOMING_RACECARD_RUNNER",
+      "priority": 1,
+      "profile_url": "https://www.racingpost.com/profile/horse/9920304/lady-letita/form",
+      "reason": "RACING_WITHIN_48H",
       "status": "QUEUED_FOR_CAPTURE",
       "already_captured": false,
       "already_passported": false,
@@ -882,93 +979,309 @@
   ],
   "capture_batches": [
     {
-      "batch": "passport-bank-2026-07-08-1",
-      "html_files": 500,
-      "sidecar_json_files": 500,
+      "batch": "passport-bank-2026-09-08",
+      "html_files": 0,
+      "sidecar_json_files": 497,
       "manifest_present": true
     },
     {
-      "batch": "passport-bank-2026-07-08-2",
-      "html_files": 500,
-      "sidecar_json_files": 500,
+      "batch": "passport-bank-2026-09-11",
+      "html_files": 0,
+      "sidecar_json_files": 495,
       "manifest_present": true
     },
     {
-      "batch": "passport-bank-2026-07-10-1",
-      "html_files": 244,
-      "sidecar_json_files": 244,
+      "batch": "passport-bank-2026-09-13",
+      "html_files": 0,
+      "sidecar_json_files": 480,
       "manifest_present": true
     },
     {
-      "batch": "passport-bank-2026-07-11-targeted",
-      "html_files": 214,
-      "sidecar_json_files": 214,
+      "batch": "passport-bank-2026-09-15",
+      "html_files": 0,
+      "sidecar_json_files": 33,
       "manifest_present": true
     },
     {
-      "batch": "passport-bank-2026-07-11-targeted-v2",
-      "html_files": 214,
-      "sidecar_json_files": 214,
+      "batch": "passport-bank-2026-09-16",
+      "html_files": 0,
+      "sidecar_json_files": 28,
       "manifest_present": true
     },
     {
-      "batch": "passport-bank-2026-08-02",
-      "html_files": 5,
-      "sidecar_json_files": 5,
+      "batch": "passport-bank-2026-09-17",
+      "html_files": 0,
+      "sidecar_json_files": 43,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-09-18",
+      "html_files": 0,
+      "sidecar_json_files": 20,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-09-20",
+      "html_files": 0,
+      "sidecar_json_files": 151,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-09-23",
+      "html_files": 0,
+      "sidecar_json_files": 263,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-09-24",
+      "html_files": 0,
+      "sidecar_json_files": 0,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-09-26",
+      "html_files": 0,
+      "sidecar_json_files": 32,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-09-27",
+      "html_files": 0,
+      "sidecar_json_files": 20,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-09-28",
+      "html_files": 0,
+      "sidecar_json_files": 1,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-10-05",
+      "html_files": 0,
+      "sidecar_json_files": 32,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-10-12",
+      "html_files": 0,
+      "sidecar_json_files": 23,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-10-13",
+      "html_files": 0,
+      "sidecar_json_files": 0,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-10-14",
+      "html_files": 0,
+      "sidecar_json_files": 22,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-10-15",
+      "html_files": 0,
+      "sidecar_json_files": 19,
+      "manifest_present": true
+    },
+    {
+      "batch": "passport-bank-2026-10-16",
+      "html_files": 0,
+      "sidecar_json_files": 391,
       "manifest_present": true
     }
   ],
   "parsed_batches": [
     {
       "batch": "passport-bank-2026-07-08-1",
-      "horse_profiles": 500,
+      "horse_profiles": 0,
       "races": 0,
       "runners": 0
     },
     {
       "batch": "passport-bank-2026-07-08-2",
-      "horse_profiles": 500,
+      "horse_profiles": 0,
       "races": 0,
       "runners": 0
     },
     {
       "batch": "passport-bank-2026-07-10-1",
-      "horse_profiles": 244,
+      "horse_profiles": 0,
       "races": 0,
       "runners": 0
     },
     {
       "batch": "passport-bank-2026-07-11-targeted-v2",
-      "horse_profiles": 214,
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-08-01",
+      "horse_profiles": 0,
       "races": 0,
       "runners": 0
     },
     {
       "batch": "passport-bank-2026-08-02",
-      "horse_profiles": 5,
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-08-03",
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-08-04",
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-08-12",
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-01",
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-02",
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-03",
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-08",
+      "horse_profiles": 497,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-11",
+      "horse_profiles": 495,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-13",
+      "horse_profiles": 480,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-15",
+      "horse_profiles": 33,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-16",
+      "horse_profiles": 28,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-17",
+      "horse_profiles": 43,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-18",
+      "horse_profiles": 20,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-20",
+      "horse_profiles": 151,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-23",
+      "horse_profiles": 263,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-26",
+      "horse_profiles": 32,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-09-27",
+      "horse_profiles": 20,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-10-05",
+      "horse_profiles": 32,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-10-14",
+      "horse_profiles": 22,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-10-15",
+      "horse_profiles": 19,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-2026-10-16",
+      "horse_profiles": 391,
       "races": 0,
       "runners": 0
     },
     {
       "batch": "passport-bank-batch-001-2026-05-25",
-      "horse_profiles": 500,
+      "horse_profiles": 0,
       "races": 0,
       "runners": 0
     },
     {
       "batch": "passport-bank-batch-002-2026-05-25",
-      "horse_profiles": 283,
+      "horse_profiles": 0,
       "races": 0,
       "runners": 0
     },
     {
       "batch": "passport-bank-big-race-entries-2026-05-25",
       "horse_profiles": 0,
-      "races": 28,
-      "runners": 1008
+      "races": 0,
+      "runners": 0
     },
     {
       "batch": "passport-bank-bulk-2026-05-30",
+      "horse_profiles": 0,
+      "races": 0,
+      "runners": 0
+    },
+    {
+      "batch": "passport-bank-e2e-2026-09-02",
       "horse_profiles": 0,
       "races": 0,
       "runners": 0

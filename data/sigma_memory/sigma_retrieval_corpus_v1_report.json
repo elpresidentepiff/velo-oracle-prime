@@ -1,20 +1,20 @@
 {
-  "total_records": 3775,
-  "retrieval_eligible_records": 3688,
+  "total_records": 4990,
+  "retrieval_eligible_records": 4903,
   "outcome_counts": {
-    "FRAME": 1078,
-    "MISS": 1805,
-    "WIN": 892
+    "FRAME": 1443,
+    "MISS": 2356,
+    "WIN": 1191
   },
   "regime_confidence_counts": {
-    "HIGH": 1505,
+    "HIGH": 2720,
     "LOW_REGIME_INFERRED": 2270
   },
   "retrieval_blocker_counts": {
-    "NONE": 3688,
+    "NONE": 4903,
     "OUTCOME_OR_DATE_MISSING": 87
   },
-  "regime_count": 40,
+  "regime_count": 60,
   "top_regimes": [
     [
       "e895f31903a5",
@@ -33,44 +33,44 @@
       189
     ],
     [
+      "ad8c1cb99f71",
+      154
+    ],
+    [
+      "eaa24e484558",
+      132
+    ],
+    [
       "e5623e386fd8",
       132
+    ],
+    [
+      "7f2d1fd07f5a",
+      118
     ],
     [
       "99eaf1ff8596",
       109
     ],
     [
-      "4112ba030758",
-      82
-    ],
-    [
-      "780e9f708338",
-      65
-    ],
-    [
-      "a56148362a70",
-      59
-    ],
-    [
-      "eb59aea1ef60",
-      56
+      "edb9b06750af",
+      108
     ]
   ],
   "date_min": "2026-01-09",
-  "date_max": "2026-07-27",
-  "date_count": 120,
+  "date_max": "2026-10-15",
+  "date_count": 153,
   "rpr_violations": 0,
   "forbidden_model_field_violations": 0,
   "classification": "SIGMA_RETRIEVAL_CORPUS_READY_SHADOW_ONLY",
-  "generated_at": "2026-07-27T21:45:52.589012+00:00",
+  "generated_at": "2026-10-15T21:09:19.540431+00:00",
   "schema_version": "sigma_retrieval_corpus_v1",
   "input_sigma_dump": "data/sigma_audits_dump.json",
   "output_jsonl": "data/sigma_memory/sigma_retrieval_corpus_v1.jsonl",
   "shadow_only": true,
   "live_velo_impact": false,
-  "sp_enrichment_applied": 2039,
+  "sp_enrichment_applied": 3215,
   "sp_enrichment_source": "data/velo_innovation_protocol_1k_deduped.csv",
-  "required_through_date": "2026-07-26",
+  "required_through_date": "2026-10-15",
   "freshness_gate_passed": true
 }
