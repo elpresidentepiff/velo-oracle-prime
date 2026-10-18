@@ -22,7 +22,7 @@ from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR, auto_
 
 
 def main() -> int:
-    date = datetime.datetime.now(datetime.timezone.utc)  # noqa: UP017 - container is py3.10.strftime("%Y-%m-%d")
+    date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")  # noqa: UP017 - container is py3.10
     out: dict = {"date": date, "steps": {}}
 
     login = auto_login(DEFAULT_PROFILE_DIR, execute=True, headed=False, timeout_s=90)
@@ -32,9 +32,11 @@ def main() -> int:
     out["steps"]["auto_login"]["email_present"] = login.get("email_present")
     out["steps"]["auto_login"]["password_present"] = login.get("password_present")
 
+    print("STEP auto_login:", json.dumps(out["steps"]["auto_login"], default=str), flush=True)
     health = probe(DEFAULT_PROFILE_DIR)
     out["steps"]["session_probe"] = {k: health.get(k) for k in ("status", "reason", "is_logged", "http_status", "role")}
 
+    print("STEP session_probe:", json.dumps(out["steps"]["session_probe"], default=str), flush=True)
     cap = subprocess.run(
         [sys.executable, "scripts/ops/capture_index_headless.py", "--date", date],
         cwd=str(ROOT), capture_output=True, text=True, timeout=300,
