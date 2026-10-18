@@ -22,7 +22,6 @@ jobs:
       - name: Check offline research lint
         run: |
           ruff check src/intelligence/challenger_policy_replay.py tests/test_challenger_policy_replay.py
-          ruff format --diff src/intelligence/challenger_policy_replay.py tests/test_challenger_policy_replay.py || true
           ruff format --check src/intelligence/challenger_policy_replay.py tests/test_challenger_policy_replay.py
       - name: Execute offline policy and CLI tests
         run: |
