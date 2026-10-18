@@ -1873,9 +1873,7 @@ def _sb_rest_rows(path: str, timeout: int = 8) -> list[dict] | None:
     url, key = resolve_supabase_url(), resolve_supabase_service_key()
     if not (url and key):
         return None
-    req = urllib.request.Request(
-        f"{url}/rest/v1/{path}", headers={"apikey": key, "Authorization": f"Bearer {key}"}
-    )
+    req = urllib.request.Request(f"{url}/rest/v1/{path}", headers={"apikey": key, "Authorization": f"Bearer {key}"})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             return json.loads(resp.read())
