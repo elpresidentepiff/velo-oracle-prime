@@ -1799,8 +1799,8 @@ async def formfav_shadow(date: str = Query(default=None)):
     for race in data.get("races") or []:
         runners = race.get("runners") or []
 
-        def _present(field: str) -> int:
-            return sum(1 for runner in runners if float(runner.get(field) or 0) > 0)
+        def _present(field: str, race_runners=runners) -> int:
+            return sum(1 for runner in race_runners if float(runner.get(field) or 0) > 0)
 
         race_summaries.append(
             {
