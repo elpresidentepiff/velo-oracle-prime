@@ -136,6 +136,6 @@ Additional verified observations:
 - `model_versions`: one row with latest trained_at 2025-12-03, inconsistent with artifacts described in `ONE_TRUTH`; registry cannot be treated as authoritative.
 - Research commit `19640df3` has SUCCESS for ordinary CI, Evo2 offline tests, GX and safety. Eleven offline policy/CLI tests passed. No live deployment/promotion.
 - `hermes-agent` is explicitly retired by owner; its online state/warnings are NOT counted as an operational incident. Any resource cleanup requires separate approval.
-- The Rugby/April Docker-era logs showing a null-byte syntax error in early October are historical logs; not evidence of the precise Oct 18 cron failure.
+- Railway deploy logs showing a null-byte syntax error on October 2–4 are historical and do not establish the cause of the October 18 cron failure.
 
 All findings read-only. Issue #172 holds the production reliability investigation; master backlog #171 tracks remaining work.
