@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import replace
 
 from src.intelligence.challenger_policy_replay import audit_midprice_actions, audit_new_build
-from src.intelligence.historical_runner_crosswalk import CrosswalkRecord, CrosswalkReport, STATUS_COMPLETE
+from src.intelligence.historical_runner_crosswalk import STATUS_COMPLETE, CrosswalkRecord, CrosswalkReport
 
 
 def _runner(horse_id: str, horse: str, prob: float, outcome: int) -> CrosswalkRecord:
