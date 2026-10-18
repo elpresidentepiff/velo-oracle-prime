@@ -152,8 +152,10 @@ def cloud_capture(b, date: str) -> dict:
                 page.close()
                 (out_dir / f"{label}.html").write_text(html, encoding="utf-8")
                 info["kb"] = len(html.encode("utf-8")) // 1024
-                info["logged_in_marker"] = "Welcome back" in visible or "Welcome back" in html
-                info["racecard_links"] = len(set(re.findall(r'href="(/racecards/[^"#?]+/[^"#?]+/\d+[^"]*)"', html)))
+                found = set(re.findall(r"/racecards/(\d+)/([^/\"\\\\]+)/" + re.escape(date) + r"/(\d+)", html))
+                info["race_urls"] = len(found)
+                info["venues"] = sorted({slug for _cid, slug, _rid in found})[:40]
+                info["steven_in_page"] = "Steven" in visible
             except Exception as exc:
                 info["error"] = f"{type(exc).__name__}: {str(exc)[:160]}"
             res[label] = info
@@ -187,7 +189,7 @@ def main() -> int:
     ok = (
         out["steps"]["auto_login"].get("status") == "PASS"
         and all(v.get("kb", 0) >= 50 and not v.get("error") for v in cap.values())
-        and any(v.get("logged_in_marker") for v in cap.values())
+        and any(v.get("race_urls", 0) > 0 for v in cap.values())
     )
     out["verdict"] = "PASS" if ok else "FAIL"
     print(json.dumps(out, indent=2, default=str), flush=True)
