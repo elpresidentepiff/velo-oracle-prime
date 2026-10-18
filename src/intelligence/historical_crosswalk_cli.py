@@ -14,12 +14,15 @@ from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
 
+from src.intelligence.challenger_lab import evaluate_market_value
 from src.intelligence.challenger_research_cycle import propose_calibration_review, reflect
 from src.intelligence.historical_runner_crosswalk import (
+    PROBABILITY_FIELDS,
     SourceBundle,
     build_crosswalk,
     canonical_sha256,
     frozen_holdout,
+    frozen_model_holdout,
 )
 
 TABLE_SELECTS = {
@@ -136,8 +139,55 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     else:
         replay["blocker"] = "INSUFFICIENT_COMPLETE_VERIFIED_RUNNERS"
 
+    model_replays: dict[str, Any] = {}
+    min_market_races = getattr(args, "min_market_races", 30)
+    for probability_field in PROBABILITY_FIELDS:
+        model_observations, _, model_manifest = frozen_model_holdout(
+            report,
+            challenger_field=probability_field,
+            holdout_start=args.holdout_start,
+            holdout_end=args.holdout_end,
+        )
+        market_rows, market_observations, market_manifest = frozen_model_holdout(
+            report,
+            challenger_field=probability_field,
+            holdout_start=args.holdout_start,
+            holdout_end=args.holdout_end,
+            require_market_price=True,
+        )
+        model_proposal = propose_calibration_review(baseline_ref=f"{args.baseline_ref}:{probability_field}")
+        entry: dict[str, Any] = {
+            "manifest": model_manifest,
+            "executable": len(model_observations) >= args.min_runners,
+            "minimum_runner_count": args.min_runners,
+            "market_manifest": market_manifest,
+            "market_executable": (
+                len({row.race_id for row in market_rows}) >= min_market_races
+                and len(market_observations) == len(market_rows)
+            ),
+            "minimum_market_race_count": min_market_races,
+        }
+        if entry["executable"]:
+            entry["result"] = reflect(model_proposal, model_observations, min_runners=args.min_runners)
+        else:
+            entry["blocker"] = "INSUFFICIENT_COMPLETE_VERIFIED_RUNNERS"
+        if entry["market_executable"]:
+            entry["market_result"] = evaluate_market_value(market_observations, min_races=min_market_races)
+        else:
+            entry["market_blocker"] = "INSUFFICIENT_COMPLETE_PRE_RACE_PRICE_COHORT"
+        model_replays[probability_field] = entry
+
     output = report.to_dict()
     output["evo2_replay"] = replay
+    output["evo2_model_replays"] = model_replays
+    output["requested_model_evidence_gaps"] = {
+        "mds_heavy": "NO_CAPTURED_RUNNER_WIN_PROBABILITY_CROSSWALKED",
+        "calibrated_g": "NO_CAPTURED_RUNNER_WIN_PROBABILITY_CROSSWALKED",
+        "passport_strength": "NO_CAPTURED_RUNNER_WIN_PROBABILITY_CROSSWALKED",
+        "new_build_lane_a": "SEPARATE_HISTORICAL_ARTIFACT_NOT_YET_CROSSWALKED",
+        "new_build_lane_b": "SEPARATE_HISTORICAL_ARTIFACT_NOT_YET_CROSSWALKED",
+        "mid_price_hunter": "CAPTURED_ACTION_IS_NOT_A_RUNNER_WIN_PROBABILITY",
+    }
     output["artifact_sha256"] = canonical_sha256(output)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(output, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -157,6 +207,7 @@ def main() -> int:
     parser.add_argument("--holdout-end")
     parser.add_argument("--baseline-ref", required=True)
     parser.add_argument("--min-runners", type=int, default=300)
+    parser.add_argument("--min-market-races", type=int, default=30)
     args = parser.parse_args()
     payload = run(args)
     summary = {

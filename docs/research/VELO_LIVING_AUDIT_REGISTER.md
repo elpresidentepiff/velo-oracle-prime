@@ -76,3 +76,27 @@ Gap counts overlap and must not be summed. The identity total includes 221 exces
 The strict, full-field replay cohort is smaller than the individually verified set: 1,074 runners in 125 races. Every included race has complete starter evidence, exactly one winner, paired `velo_prime_prob` and `sqpe_v17_prob`, and timezone-correct pre-race timestamps. Cohort SHA256: `71ee4dd292049a77d16d1cf7d7d168fe5e340d02b94295609c14257d787adae7`.
 
 The existing Proposer → Evaluator → Reflector chain executed. Velo Prime Brier/log loss were `0.106091` / `0.372467`; SQPE v17 were `0.112116` / `0.442492`. Reflector decision: `REJECT`. Promotion remains `NOT_AUTHORISED`; this run changed no production state.
+
+## Multi-model and captured-price replay — 2026-10-18
+
+The adapter now inventories probability and price evidence without converting scores or categorical actions into probabilities. Of 48,246 crosswalk rows, 47,841 contain `sqpe_v17_prob`, 27,649 contain `sqpe_no_rpr_shadow_prob`, and 28,490 contain a positive `sp_dec` value in the prediction record. The price is accepted only when the containing prediction record is strictly pre-race; its field name and source hash are retained.
+
+Both SQPE variants are complete on the existing 1,074-runner / 125-race frozen cohort (cohort SHA256 `71ee4dd292049a77d16d1cf7d7d168fe5e340d02b94295609c14257d787adae7`). The extended artifact SHA256 is `5fcc1d3b7ba114ad6e609ed7db1ed1880a24378b7bac94045ea18b2ce6966427`.
+
+| Model | Brier | Log loss | 10-bin ECE | Brier delta vs Prime | Race-level 95% CI | Reflector |
+|---|---:|---:|---:|---:|---:|---|
+| Velo Prime | 0.106091 | 0.372467 | 0.060752 | — | — | baseline |
+| SQPE v17 | 0.112116 | 0.442492 | 0.090516 | +0.006025 | [+0.002192, +0.016230] | REJECT |
+| SQPE no-RPR shadow | 0.100426 | 0.349853 | 0.011329 | -0.005665 | [-0.017201, +0.002980] | REVIEW_REQUIRED |
+
+The no-RPR shadow improves the point estimates, but its race-level Brier interval crosses zero. `REVIEW_REQUIRED` is therefore an invitation to independent chronological validation, not promotion evidence.
+
+For a descriptive value check, each model selected one highest-probability runner per race for a flat one-unit stake at the `sp_dec` value captured in the pre-race record. Prime returned 101.66 units from 125 stakes (ROI -18.672%); SQPE v17 returned 104.91 (-16.072%); SQPE no-RPR returned 106.33 (-14.936%). The no-RPR paired ROI delta versus Prime was +3.736 percentage points, with a race-level 95% interval of [-63.020%, +70.492%]. All three lost money. The adapter does not claim that `sp_dec` was independently timestamped by the market provider or obtainable at execution; those provenance questions remain open, so these returns are descriptive only.
+
+Requested challenger gaps remain explicit:
+
+- MDS Heavy, Calibrated G and Passport Strength have no crosswalked runner-level win-probability artifact.
+- New Build lanes A/B live in separate historical artifacts and are not yet joined to this cohort.
+- Mid-Price Hunter is captured as an action/category, not a runner win probability; it must be evaluated under its declared selection policy rather than coerced into Brier/log-loss input.
+
+No production state, live model weight, database record, promotion status or betting system changed.

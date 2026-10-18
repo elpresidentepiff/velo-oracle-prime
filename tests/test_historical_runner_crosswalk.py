@@ -10,6 +10,7 @@ from src.intelligence.historical_runner_crosswalk import (
     build_crosswalk,
     canonical_sha256,
     frozen_holdout,
+    frozen_model_holdout,
 )
 
 
@@ -39,6 +40,8 @@ def _bundle() -> SourceBundle:
             "horse": "Winner",
             "velo_prime_prob": 0.55,
             "sqpe_v17_prob": 0.50,
+            "sqpe_no_rpr_shadow_prob": 0.60,
+            "sp_dec": 2.5,
         },
         {
             "race_id": "921135",
@@ -46,6 +49,8 @@ def _bundle() -> SourceBundle:
             "horse": "Second",
             "velo_prime_prob": 0.45,
             "sqpe_v17_prob": 0.50,
+            "sqpe_no_rpr_shadow_prob": 0.40,
+            "sp_dec": 4.0,
         },
     ]
     return SourceBundle(
@@ -128,6 +133,33 @@ def test_frozen_holdout_uses_identical_paired_cohort_and_existing_cycle() -> Non
 
 def test_hash_is_order_stable_for_mapping_keys() -> None:
     assert canonical_sha256({"b": 2, "a": 1}) == canonical_sha256({"a": 1, "b": 2})
+
+
+def test_model_holdout_requires_complete_probability_and_price_cohorts() -> None:
+    report = build_crosswalk(_bundle())
+    observations, market, manifest = frozen_model_holdout(
+        report,
+        challenger_field="sqpe_no_rpr_shadow_prob",
+        holdout_start="2026-06-20",
+        require_market_price=True,
+    )
+    assert len(observations) == len(market) == 2
+    assert manifest["challenger_model"] == "sqpe_no_rpr_shadow_prob"
+    assert manifest["market_price_field"] == "sp_dec"
+    assert all(row.decimal_price > 1 for row in market)
+
+
+def test_model_holdout_fails_closed_when_one_runner_lacks_probability() -> None:
+    bundle = _bundle()
+    del bundle.velo_verdicts[0]["full_analysis"]["predictions"][1]["sqpe_no_rpr_shadow_prob"]
+    observations, market, manifest = frozen_model_holdout(
+        build_crosswalk(bundle),
+        challenger_field="sqpe_no_rpr_shadow_prob",
+        holdout_start="2026-06-20",
+        require_market_price=True,
+    )
+    assert observations == market == []
+    assert manifest["excluded_races"] == {"MISSING_CHALLENGER_PROBABILITY": 1}
 
 
 def test_raw_snapshot_duplicate_is_counted_by_date_and_not_certified() -> None:

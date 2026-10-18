@@ -33,6 +33,8 @@
 - Verdict predictions have no explicit historical rank. The adapter preserves their array position as `source_ordinal` and leaves `rank=null`.
 - Scorecard eligibility, result-source completeness/hash and `velo_race_truth.actual_winner_id` must agree. Missing or contradictory evidence is never filled.
 - Frozen replay uses identical paired runner cohorts, chronological date bounds and exactly one verified winner per complete race. It invokes the existing Proposer, Evaluator and Reflector; it has no promotion authority.
+- Multi-model replay admits only genuine captured runner probabilities. It currently supports `sqpe_v17_prob` and `sqpe_no_rpr_shadow_prob`; MDS, Passport, New Build and mid-price evidence remain blocked or require their own artifact/policy adapters.
+- Captured-price evaluation requires every starter in an admitted race to have a positive `sp_dec` in its strictly pre-race prediction record. It reports flat-stake top-pick returns, calibration error and race-level uncertainty, but does not assert independent bookmaker timestamp provenance or price obtainability.
 
 ### Capture cutoff conclusion
 
@@ -55,3 +57,4 @@ The cutoff is a Supabase sink cutoff, not a scoring-capture cutoff. Local JSONL 
 - 2,734 ID matches do not equal 2,734 certified races.
 - 253 eligible races do not imply 2,597 lost races.
 - Available records do not by themselves establish profitable betting edge, statistical significance, or live deployment readiness.
+- The no-RPR shadow's better Brier/log-loss point estimates do not authorize promotion: its race-level Brier interval crosses zero, all tested flat-stake returns are negative, and independent chronological validation has not happened.

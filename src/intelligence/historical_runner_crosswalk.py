@@ -16,7 +16,7 @@ from hashlib import sha256
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from src.intelligence.challenger_lab import Observation
+from src.intelligence.challenger_lab import MarketObservation, Observation
 from src.velo.learning.identity_resolver import normalise_name, parse_time_to_minutes
 from src.velo.learning.prediction_run_selector import (
     PROOF_PRE_RACE,
@@ -29,6 +29,7 @@ SOURCE_SNAPSHOT_LOCAL = "runner_prediction_snapshots.local_jsonl"
 SOURCE_VERDICT = "velo_verdicts.full_analysis.predictions"
 STATUS_COMPLETE = "COMPLETE_VERIFIED"
 STATUS_INCOMPLETE = "INCOMPLETE"
+PROBABILITY_FIELDS = ("sqpe_v17_prob", "sqpe_no_rpr_shadow_prob")
 
 
 def canonical_sha256(value: Any) -> str:
@@ -94,6 +95,9 @@ class CrosswalkRecord:
     source_ordinal: int | None
     velo_prime_prob: float | None
     sqpe_v17_prob: float | None
+    model_probabilities: dict[str, float | None]
+    market_decimal_price: float | None
+    market_price_field: str | None
     result_position: str | None
     outcome: int | None
     non_runner: bool
@@ -297,6 +301,19 @@ def build_crosswalk(bundle: SourceBundle) -> CrosswalkReport:
             baseline = challenger = None
         if baseline is None or challenger is None or not (0 <= baseline <= 1 and 0 <= challenger <= 1):
             issues.append("MISSING_OR_INVALID_PROBABILITY")
+        model_probabilities: dict[str, float | None] = {}
+        for field_name in PROBABILITY_FIELDS:
+            try:
+                value = float(prediction[field_name]) if prediction.get(field_name) is not None else None
+            except (TypeError, ValueError):
+                value = None
+            model_probabilities[field_name] = value if value is not None and 0 <= value <= 1 else None
+        try:
+            market_price = float(prediction["sp_dec"]) if prediction.get("sp_dec") is not None else None
+        except (TypeError, ValueError):
+            market_price = None
+        if market_price is not None and market_price <= 1:
+            market_price = None
 
         status = STATUS_COMPLETE if not issues and not non_runner and outcome is not None else STATUS_INCOMPLETE
         records.append(
@@ -312,6 +329,9 @@ def build_crosswalk(bundle: SourceBundle) -> CrosswalkReport:
                 source_ordinal=prediction.get("_source_ordinal"),
                 velo_prime_prob=baseline,
                 sqpe_v17_prob=challenger,
+                model_probabilities=model_probabilities,
+                market_decimal_price=market_price,
+                market_price_field="sp_dec" if market_price is not None else None,
                 result_position=result_position,
                 outcome=outcome,
                 non_runner=non_runner,
@@ -380,6 +400,11 @@ def build_crosswalk(bundle: SourceBundle) -> CrosswalkReport:
         "canonical_model_scorecards": len(bundle.canonical_model_scorecards),
         "velo_race_truth": len(bundle.velo_race_truth),
         "crosswalk_records": len(records),
+        "crosswalk.sqpe_v17_prob": sum(row.model_probabilities["sqpe_v17_prob"] is not None for row in records),
+        "crosswalk.sqpe_no_rpr_shadow_prob": sum(
+            row.model_probabilities["sqpe_no_rpr_shadow_prob"] is not None for row in records
+        ),
+        "crosswalk.pre_race_decimal_price": sum(row.market_decimal_price is not None for row in records),
     }
     source_hashes = {
         name: canonical_sha256(getattr(bundle, name))
@@ -459,3 +484,86 @@ def frozen_holdout(
         "promotion_authority": False,
     }
     return observations, manifest
+
+
+def frozen_model_holdout(
+    report: CrosswalkReport,
+    *,
+    challenger_field: str,
+    holdout_start: str,
+    holdout_end: str | None = None,
+    require_market_price: bool = False,
+) -> tuple[list[Observation], list[MarketObservation], dict[str, Any]]:
+    """Build a complete paired cohort for one captured historical model field."""
+    if challenger_field not in PROBABILITY_FIELDS:
+        raise ValueError(f"unsupported historical probability field: {challenger_field}")
+    races: dict[str, list[CrosswalkRecord]] = defaultdict(list)
+    for row in report.records:
+        if (
+            row.race_date is not None
+            and row.race_date >= holdout_start
+            and (holdout_end is None or row.race_date <= holdout_end)
+        ):
+            races[row.race_id].append(row)
+    selected: list[CrosswalkRecord] = []
+    excluded_races: Counter[str] = Counter()
+    for rows in races.values():
+        starters = [row for row in rows if not row.non_runner]
+        if any(row.status != STATUS_COMPLETE for row in starters):
+            excluded_races["INCOMPLETE_STARTER_EVIDENCE"] += 1
+            continue
+        if sum(row.outcome == 1 for row in starters) != 1:
+            excluded_races["WINNER_CARDINALITY_NOT_ONE"] += 1
+            continue
+        if any(row.model_probabilities.get(challenger_field) is None for row in starters):
+            excluded_races["MISSING_CHALLENGER_PROBABILITY"] += 1
+            continue
+        if require_market_price and any(row.market_decimal_price is None for row in starters):
+            excluded_races["INCOMPLETE_MARKET_PRICE_COHORT"] += 1
+            continue
+        selected.extend(starters)
+    selected.sort(key=lambda row: (row.race_date or "", row.race_id, row.horse_id))
+    observations = [
+        Observation(
+            race_id=row.race_id,
+            runner_id=row.horse_id,
+            race_time=str(row.race_time),
+            prediction_time=str(row.prediction_time),
+            outcome=int(row.outcome),
+            baseline_prob=float(row.velo_prime_prob),
+            challenger_prob=float(row.model_probabilities[challenger_field]),
+        )
+        for row in selected
+    ]
+    market_observations = [
+        MarketObservation(
+            race_id=row.race_id,
+            runner_id=row.horse_id,
+            race_time=str(row.race_time),
+            prediction_time=str(row.prediction_time),
+            outcome=int(row.outcome),
+            baseline_prob=float(row.velo_prime_prob),
+            challenger_prob=float(row.model_probabilities[challenger_field]),
+            decimal_price=float(row.market_decimal_price),
+        )
+        for row in selected
+        if row.market_decimal_price is not None
+    ]
+    identity = [{"race_date": row.race_date, "race_id": row.race_id, "horse_id": row.horse_id} for row in selected]
+    manifest = {
+        "holdout_start": holdout_start,
+        "holdout_end": holdout_end,
+        "runner_count": len(observations),
+        "race_count": len({row.race_id for row in selected}),
+        "cohort_sha256": canonical_sha256(identity),
+        "comparison_cohort": "IDENTICAL_PAIRED_COMPLETE_RACES",
+        "chronology": "FROZEN_DATE_RANGE",
+        "baseline_model": "velo_prime_prob",
+        "challenger_model": challenger_field,
+        "market_price_required": require_market_price,
+        "market_price_field": "sp_dec" if require_market_price else None,
+        "source_hashes": report.source_hashes,
+        "excluded_races": dict(excluded_races),
+        "promotion_authority": False,
+    }
+    return observations, market_observations, manifest
