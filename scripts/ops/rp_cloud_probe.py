@@ -125,6 +125,7 @@ def cloud_login(b) -> dict:
 
 
 def cloud_capture(b, date: str) -> dict:
+    tomorrow = (datetime.date.fromisoformat(date) + datetime.timedelta(days=1)).isoformat()
     """Capture the logged-in racecards pages. Cloud-only: a logged-in page never reaches
     'networkidle' (ads and trackers keep polling), so wait for the DOM plus a fixed settle time.
     """
@@ -135,6 +136,7 @@ def cloud_capture(b, date: str) -> dict:
     pages = [
         ("rp-index", "https://www.racingpost.com/racecards"),
         ("rp-all-races", f"https://www.racingpost.com/racecards/{date}"),
+        ("rp-tomorrow", f"https://www.racingpost.com/racecards/{tomorrow}"),
     ]
     res: dict = {}
     if True:
@@ -163,9 +165,10 @@ def cloud_capture(b, date: str) -> dict:
                 page.close()
                 (out_dir / f"{label}.html").write_text(html, encoding="utf-8")
                 info["kb"] = len(html.encode("utf-8")) // 1024
-                found = set(re.findall(r"/racecards/(\d+)/([^/\"\\\\]+)/" + re.escape(date) + r"/(\d+)", html))
-                info["race_urls"] = len(found)
-                info["venues"] = sorted({slug for _cid, slug, _rid in found})[:40]
+                for label_date, tag in ((date, "today"), (tomorrow, "tomorrow")):
+                    found = set(re.findall(r"/racecards/(\d+)/([^/\"\\\\]+)/" + re.escape(label_date) + r"/(\d+)", html))
+                    info[f"race_urls_{tag}"] = len(found)
+                    info[f"venues_{tag}"] = sorted({slug for _cid, slug, _rid in found})[:40]
                 info["steven_in_page"] = "Steven" in visible
             except Exception as exc:
                 info["error"] = f"{type(exc).__name__}: {str(exc)[:160]}"
@@ -200,7 +203,7 @@ def main() -> int:
     ok = (
         out["steps"]["auto_login"].get("status") == "PASS"
         and all(v.get("kb", 0) >= 50 and not v.get("error") for v in cap.values())
-        and any(v.get("race_urls", 0) > 0 for v in cap.values())
+        and any(v.get("race_urls_today", 0) + v.get("race_urls_tomorrow", 0) > 0 for v in cap.values())
     )
     out["verdict"] = "PASS" if ok else "FAIL"
     print(json.dumps(out, indent=2, default=str), flush=True)
