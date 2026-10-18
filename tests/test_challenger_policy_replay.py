@@ -46,22 +46,27 @@ def _readiness(when: str = "2026-10-15T09:00:00Z") -> dict:
     return {
         "target_date": "2026-10-15",
         "generated_at": when,
-        "race_day_scorecards": [{
-            "race_id": "example-race",
-            "race_date": "2026-10-15",
-            "lane_a_top3": [{"rank": 1, "horse": "Challenger", "prob": 0.55}],
-            "lane_b_top3": [{"rank": 1, "horse": "Prime Pick", "prob": 0.60}],
-        }],
+        "race_day_scorecards": [
+            {
+                "race_id": "example-race",
+                "race_date": "2026-10-15",
+                "lane_a_top3": [{"rank": 1, "horse": "Challenger", "prob": 0.55}],
+                "lane_b_top3": [{"rank": 1, "horse": "Prime Pick", "prob": 0.60}],
+            }
+        ],
     }
 
 
 def _midprice(when: str = "2026-10-15T09:00:00Z") -> dict:
     return {
-        "race_date": "2026-10-15", "race_id": "example-race",
-        "created_at": when, "top_pick": "Prime Pick",
+        "race_date": "2026-10-15",
+        "race_id": "example-race",
+        "created_at": when,
+        "top_pick": "Prime Pick",
         "rule_version": "midprice_hunter_v2_2026_06_19",
         "shadow_action": "MIDPRICE_SUPPRESS_TOP",
-        "live_scoring_changed": False, "execution_allowed": False,
+        "live_scoring_changed": False,
+        "execution_allowed": False,
     }
 
 
@@ -86,9 +91,7 @@ def test_new_build_late_or_naive_timestamp_blocked() -> None:
 
 def test_new_build_duplicate_rank_and_unmapped_horse_blocked() -> None:
     duplicate = _readiness()
-    duplicate["race_day_scorecards"][0]["lane_a_top3"].append(
-        {"rank": 1, "horse": "Prime Pick", "prob": 0.8}
-    )
+    duplicate["race_day_scorecards"][0]["lane_a_top3"].append({"rank": 1, "horse": "Prime Pick", "prob": 0.8})
     result = audit_new_build([duplicate], _crosswalk())
     assert result["exclusions"]["lane_a"]["AMBIGUOUS_RANK_ONE"] == 1
 
