@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import datetime
 import json
-import subprocess
 import sys
 from pathlib import Path
 
@@ -135,6 +134,46 @@ def cloud_login() -> dict:
     return d
 
 
+def cloud_capture(date: str) -> dict:
+    """Capture the logged-in racecards pages. Cloud-only: a logged-in page never reaches
+    'networkidle' (ads and trackers keep polling), so wait for the DOM plus a fixed settle time.
+    """
+    import re
+
+    from playwright.sync_api import sync_playwright
+
+    out_dir = ROOT / "data" / "racing_post_account_raw" / date
+    out_dir.mkdir(parents=True, exist_ok=True)
+    pages = [
+        ("rp-index", "https://www.racingpost.com/racecards"),
+        ("rp-all-races", f"https://www.racingpost.com/racecards/{date}"),
+    ]
+    res: dict = {}
+    with sync_playwright() as p:
+        b = p.firefox.launch_persistent_context(
+            user_data_dir=str(DEFAULT_PROFILE_DIR), headless=True,
+            viewport={"width": 1400, "height": 1000},
+            firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
+        )
+        for label, url in pages:
+            info: dict = {}
+            try:
+                page = b.new_page()
+                page.goto(url, wait_until="domcontentloaded", timeout=60000)
+                page.wait_for_timeout(10000)
+                html = page.content()
+                page.close()
+                (out_dir / f"{label}.html").write_text(html, encoding="utf-8")
+                info["kb"] = len(html.encode("utf-8")) // 1024
+                info["logged_in_marker"] = "Welcome back" in html
+                info["racecard_links"] = len(set(re.findall(r'href="(/racecards/[^"#?]+/[^"#?]+/\d+[^"]*)"', html)))
+            except Exception as exc:
+                info["error"] = f"{type(exc).__name__}: {str(exc)[:160]}"
+            res[label] = info
+        b.close()
+    return res
+
+
 def main() -> int:
     date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")  # noqa: UP017 - container is py3.10
     out: dict = {"date": date, "steps": {}}
@@ -149,16 +188,14 @@ def main() -> int:
     out["steps"]["session_probe"] = {k: health.get(k) for k in ("status", "reason", "is_logged", "http_status", "role")}
 
     print("STEP session_probe:", json.dumps(out["steps"]["session_probe"], default=str), flush=True)
-    cap = subprocess.run(
-        [sys.executable, "scripts/ops/capture_index_headless.py", "--date", date],
-        cwd=str(ROOT), capture_output=True, text=True, timeout=300,
-    )
-    out["steps"]["index_capture"] = {"returncode": cap.returncode, "stdout": cap.stdout[-600:], "stderr": cap.stderr[-600:]}
+    cap = cloud_capture(date)
+    out["steps"]["index_capture"] = cap
+    print("STEP index_capture:", json.dumps(cap, default=str), flush=True)
 
     ok = (
-        out["steps"]["session_probe"].get("status") == "PASS"
-        and cap.returncode == 0
-        and "WARNING" not in cap.stdout
+        out["steps"]["auto_login"].get("status") == "PASS"
+        and all(v.get("kb", 0) >= 50 and not v.get("error") for v in cap.values())
+        and any(v.get("logged_in_marker") for v in cap.values())
     )
     out["verdict"] = "PASS" if ok else "FAIL"
     print(json.dumps(out, indent=2, default=str), flush=True)
