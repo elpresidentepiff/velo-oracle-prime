@@ -34,3 +34,8 @@ Verify every live service's actual deployment commit, process command, schedules
 
 ## Owner correction — 2026-10-18
 Hermes is retired and must not be represented as an active fault. One truth: canonical VÉLØ repository is `elpresidentepiff/velo-oracle-prime`; `main` is intended canonical source, subject to verification of deployed SHAs/service roles. Evo² stays research-only until evidence-gated. Do not route new work to old VÉLØ repositories, feature branches, or Hermes. No production configuration has been changed.
+
+## Snapshot cutover findings — 2026-10-18
+
+| VELO-011 | `runner_prediction_snapshots` ends 2026-06-19: 26,425 rows / 1,360 race-date identities; 74 excess (run_id,race_id,horse_id) records over unique keys | HIGH | Trace persistence cutover and duplicate semantics | OPEN |
+| VELO-012 | **Recovery source found:** `velo_verdicts.full_analysis.predictions` contains 2,743 verdict rows / 27,176 runner entries generated on/after 2026-06-20; first item in all has horse_id and velo_prime_prob, but not explicit rank | HIGH | Audit every runner, chronology/real race off, identity, deduplication, complete runner fields and actual official result join; do not treat entries as certified by count alone | INVESTIGATING |
