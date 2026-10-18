@@ -21,9 +21,45 @@ from scripts.ops.check_rp_session_health import probe  # noqa: E402
 from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR, auto_login  # noqa: E402
 
 
+def login_page_diag() -> dict:
+    """What does the sign-in page look like from this network? No credentials used."""
+    from playwright.sync_api import sync_playwright
+
+    from scripts.ops.racing_post_account_collector import RP_AUTH_LOGIN_URL
+
+    d: dict = {}
+    try:
+        with sync_playwright() as p:
+            b = p.firefox.launch(headless=True)
+            page = b.new_page(viewport={"width": 1400, "height": 1000})
+            resp = page.goto(RP_AUTH_LOGIN_URL, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_timeout(6000)
+            html = page.content()
+            d["http_status"] = resp.status if resp else None
+            d["final_url"] = page.url
+            d["title"] = page.title()
+            d["email_field"] = page.locator("#email").count()
+            d["password_field"] = page.locator("#password").count()
+            d["consent_banner"] = page.locator("#truste-consent-button").count()
+            d["iframes"] = [f.url[:90] for f in page.frames][:8]
+            low = html.lower()
+            d["markers"] = [m for m in ("captcha", "datadome", "cloudflare", "access denied", "blocked", "px-captcha", "challenge") if m in low]
+            try:
+                d["body_head"] = " ".join(page.inner_text("body")[:400].split())
+            except Exception:
+                d["body_head"] = ""
+            b.close()
+    except Exception as exc:  # diagnostic only
+        d["error"] = f"{type(exc).__name__}: {str(exc)[:200]}"
+    return d
+
+
 def main() -> int:
     date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")  # noqa: UP017 - container is py3.10
     out: dict = {"date": date, "steps": {}}
+
+    out["steps"]["login_page"] = login_page_diag()
+    print("STEP login_page:", json.dumps(out["steps"]["login_page"], default=str), flush=True)
 
     login = auto_login(DEFAULT_PROFILE_DIR, execute=True, headed=False, timeout_s=90)
     out["steps"]["auto_login"] = {
