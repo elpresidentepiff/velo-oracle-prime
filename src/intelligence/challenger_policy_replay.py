@@ -3,6 +3,7 @@
 NOT probability calibration: readiness reports expose top-three, not full fields.
 No network, Supabase writes, executable bets, training or model promotion.
 """
+
 from __future__ import annotations
 
 from collections import Counter, defaultdict
@@ -19,12 +20,14 @@ from src.intelligence.historical_runner_crosswalk import (
 from src.velo.learning.identity_resolver import normalise_name
 
 LANES = ("lane_a", "lane_b", "lane_c")
-MIDPRICE_ACTIONS = frozenset({
-    "MIDPRICE_CLEAN",
-    "MIDPRICE_SUPPRESS_TOP",
-    "MIDPRICE_NO_EDGE",
-    "MIDPRICE_SPLIT_RACE",
-})
+MIDPRICE_ACTIONS = frozenset(
+    {
+        "MIDPRICE_CLEAN",
+        "MIDPRICE_SUPPRESS_TOP",
+        "MIDPRICE_NO_EDGE",
+        "MIDPRICE_SPLIT_RACE",
+    }
+)
 
 
 def _aware(value: Any) -> datetime | None:
@@ -128,7 +131,11 @@ def audit_new_build(reports: list[dict[str, Any]], crosswalk: CrosswalkReport) -
                 if not isinstance(top3, list):
                     excluded[lane]["TOP3_ABSENT"] += 1
                     continue
-                leaders = [item for item in top3 if isinstance(item, dict) and type(item.get("rank")) is int and item["rank"] == 1]
+                leaders = [
+                    item
+                    for item in top3
+                    if isinstance(item, dict) and type(item.get("rank")) is int and item["rank"] == 1
+                ]
                 if len(leaders) != 1:
                     excluded[lane]["AMBIGUOUS_RANK_ONE"] += 1
                     continue
@@ -155,13 +162,17 @@ def audit_new_build(reports: list[dict[str, Any]], crosswalk: CrosswalkReport) -
                     stats[lane]["paired_priced_races"] += 1
                     stats[lane]["challenger_return_cents"] += round(100 * cp) if challenger.outcome else 0
                     stats[lane]["prime_return_cents"] += round(100 * bp) if prime.outcome else 0
-                examples.append({
-                    "race_date": day, "race_id": race_id, "lane": lane,
-                    "selected_horse_id": challenger.horse_id,
-                    "prime_horse_id": prime.horse_id,
-                    "selected_win": challenger.outcome,
-                    "source_report_sha256": canonical_sha256(report),
-                })
+                examples.append(
+                    {
+                        "race_date": day,
+                        "race_id": race_id,
+                        "lane": lane,
+                        "selected_horse_id": challenger.horse_id,
+                        "prime_horse_id": prime.horse_id,
+                        "selected_win": challenger.outcome,
+                        "source_report_sha256": canonical_sha256(report),
+                    }
+                )
     return {
         "lanes": {lane: dict(stats[lane]) for lane in LANES},
         "exclusions": {lane: dict(excluded[lane]) for lane in LANES},
