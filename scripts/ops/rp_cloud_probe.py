@@ -143,7 +143,18 @@ def cloud_capture(b, date: str) -> dict:
             try:
                 page = b.new_page()
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
-                page.wait_for_timeout(10000)
+                page.wait_for_timeout(6000)
+                try:
+                    page.wait_for_load_state("networkidle", timeout=25000)
+                except Exception:
+                    pass
+                # Meetings below the fold load as the page scrolls; walk down and back up.
+                for _ in range(12):
+                    page.mouse.wheel(0, 1800)
+                    page.wait_for_timeout(1200)
+                page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                page.wait_for_timeout(3000)
+                info["scroll_height"] = page.evaluate("document.body.scrollHeight")
                 html = page.content()
                 try:
                     visible = page.inner_text("body")
