@@ -812,7 +812,6 @@ async def runtime_truth():
     }
 
 
-
 # ── Continuity endpoint — machine-readable session state for cold context pickup ──
 @app.get("/api/continuity")
 async def continuity_state(date: str = Query(default=None)):
@@ -3265,7 +3264,6 @@ async def predict_full(race_data: dict, authorized: bool = Depends(verify_api_ke
     Use /api/v1/predict/race for the live scoring path.
     """
     raise HTTPException(status_code=501, detail="Not implemented — use /api/v1/predict/race for live scoring")
-
 
 
 # System endpoints

@@ -1,0 +1,70 @@
+{
+  "task_id": "EVO2-HISTORICAL-CROSSWALK",
+  "title": "Read-only historical runner recovery and Evo2 replay",
+  "classification": "ENFORCED_READ_ONLY_RESEARCH",
+  "allowed_paths": [
+    "src/intelligence/",
+    "tests/test_challenger_",
+    "tests/test_historical_",
+    "docs/research/",
+    "ops/task_contracts/EVO2-HISTORICAL-CROSSWALK.json",
+    "app/main.py",
+    "app/world_dashboard.py"
+  ],
+  "forbidden_paths": [
+    "models/",
+    "src/intelligence/velo_prime_ensemble.py",
+    "src/velo/execution_bridge.py",
+    "app/agents/betfair_execution_agent.py",
+    "app/agents/betfair_trading_agents.py",
+    "supabase/migrations/",
+    "data/sentient_state.json"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_supabase",
+    "create_offline_adapter",
+    "create_hashed_research_artifact",
+    "run_offline_replay",
+    "run_tests",
+    "update_research_docs",
+    "format_existing_app_files"
+  ],
+  "forbidden_actions": [
+    "supabase_write",
+    "database_migration",
+    "production_deploy",
+    "live_betting",
+    "model_weight_change",
+    "automatic_promotion",
+    "telegram_send",
+    "credential_exposure"
+  ],
+  "forbidden_keywords": [
+    ".insert(",
+    ".update(",
+    ".upsert(",
+    ".delete(",
+    "promote_model",
+    "VELO_ALLOW_SUPABASE_WRITES=true",
+    "betfair_execution"
+  ],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_DATABASE_MIGRATIONS",
+    "NO_MODEL_WEIGHT_CHANGES",
+    "NO_MODEL_PROMOTION",
+    "NO_LIVE_BETTING",
+    "NO_TELEGRAM_SEND"
+  ],
+  "final_classifications": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_DATABASE_MIGRATIONS",
+    "NO_MODEL_WEIGHT_CHANGES",
+    "NO_MODEL_PROMOTION",
+    "NO_LIVE_BETTING",
+    "NO_TELEGRAM_SEND"
+  ]
+}

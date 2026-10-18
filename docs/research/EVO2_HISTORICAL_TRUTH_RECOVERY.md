@@ -24,6 +24,33 @@
 6. Evo² Proposer outputs research hypotheses; existing Harness/Sentinel enforces scope; Evaluator tests frozen holdouts; LLM Council examines reproducible evidence; Reflector recommends REJECT or REVIEW_REQUIRED. No agent self-approval or silent live learning.
 7. Record immutable snapshots and hashes, and audit rejected cases separately. Promotion remains blocked until independent validation and operator authorization.
 
+## Implemented recovery path (PR #168)
+
+- `src/intelligence/historical_runner_crosswalk.py` is the pure read-only crosswalk. It reuses `identity_resolver`, `prediction_run_selector`, and the existing challenger `Observation` contract.
+- `src/intelligence/historical_crosswalk_cli.py` reads an immutable four-table export or performs allowlisted GET-only PostgREST reads. `--snapshot-jsonl-dir` adds the local append-only archive. There are no POST/PATCH/DELETE methods.
+- Every original row used by a crosswalk record has a canonical SHA256. Each local JSONL file also receives its own raw-byte hash and a file-manifest hash.
+- Snapshot runs are selected with the existing timezone-aware canonical run selector. Post-race runs, ambiguous runs, duplicate runner identities and unmapped timestamps fail closed.
+- Verdict predictions have no explicit historical rank. The adapter preserves their array position as `source_ordinal` and leaves `rank=null`.
+- Scorecard eligibility, result-source completeness/hash and `velo_race_truth.actual_winner_id` must agree. Missing or contradictory evidence is never filled.
+- Frozen replay uses identical paired runner cohorts, chronological date bounds and exactly one verified winner per complete race. It invokes the existing Proposer, Evaluator and Reflector; it has no promotion authority.
+
+### Capture cutoff conclusion
+
+The cutoff is a Supabase sink cutoff, not a scoring-capture cutoff. Local JSONL evidence continues through 18 October.
+
+1. Last Supabase snapshot rows: 19 June, commit `3667d39`.
+2. The 20 June run at `14d7cff` recorded a 481-runner snapshot stage in 0.7497 seconds; the 21 June run at `821462d` recorded 166 runners in 0.3759 seconds. Both revisions' 37 written fields match the live table. The committed pipeline evidence does not retain the warning text, so the exact database exception is unproved.
+3. The store reports the number written locally and catches every Supabase exception as non-fatal. Pipeline PASS and observability `persistence_status=OK` measured verdict persistence, not snapshot persistence.
+4. At `fc297c7`, 14 new fields were added to each snapshot insert without corresponding live columns. That mismatch deterministically rejects later whole-batch inserts. The current writer still contains those fields and still swallows the error.
+5. Local JSONL files are the primary alternative capture: 70,935 rows in 188 files, with 38,387 rows after 19 June. Verdict arrays independently cover the post-cutoff period.
+
+### Runtime governance truth
+
+- Harness and Sentinel are working Python implementations under `src/velo/harness/`; this change also has an enforced read-only task contract.
+- The Council implementation under `src/velo/council/` is deterministic rule logic. Despite the historical name “LLM Council,” it contains no LLM calls.
+- `nightly_eod_learning_runner.py` has Council integration, but repository presence and historical artifacts do not prove every scheduled run executed. `ONE_TRUTH.md` records prior missing Council runs and a period where the runner did not read the actual Council output.
+- The replay therefore treats governance artifacts as evidence to validate, not as automatic certification or promotion authority.
+
 ## Do not misstate
 - 2,734 ID matches do not equal 2,734 certified races.
 - 253 eligible races do not imply 2,597 lost races.
