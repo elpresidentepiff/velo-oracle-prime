@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import os
 from dataclasses import asdict, replace
@@ -15,6 +16,7 @@ from urllib.request import Request, urlopen
 from dotenv import load_dotenv
 
 from src.intelligence.challenger_lab import evaluate_market_value
+from src.intelligence.challenger_policy_replay import audit_midprice_actions, audit_new_build
 from src.intelligence.challenger_research_cycle import propose_calibration_review, reflect
 from src.intelligence.historical_runner_crosswalk import (
     PROBABILITY_FIELDS,
@@ -177,7 +179,29 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             entry["market_blocker"] = "INSUFFICIENT_COMPLETE_PRE_RACE_PRICE_COHORT"
         model_replays[probability_field] = entry
 
+    # Optional offline policy artifacts; no assumptions about unavailable lane files.
+    policy_replays: dict[str, Any] = {}
+    readiness_dir = getattr(args, "new_build_readiness_dir", None)
+    if readiness_dir is not None:
+        paths = sorted(readiness_dir.glob("two_lane_readiness_*.json"))
+        readiness = [json.loads(path.read_text(encoding="utf-8")) for path in paths]
+        policy_replays["new_build"] = audit_new_build(readiness, report)
+        policy_replays["new_build"]["input_files_sha256"] = {
+            path.name: sha256(path.read_bytes()).hexdigest() for path in paths
+        }
+    ledger_path = getattr(args, "midprice_ledger_csv", None)
+    if ledger_path is not None:
+        with ledger_path.open(encoding="utf-8", newline="") as stream:
+            entries = list(csv.DictReader(stream))
+        for entry in entries:
+            for field_name in ("execution_allowed", "live_scoring_changed"):
+                raw = str(entry.get(field_name) or "").strip().lower()
+                entry[field_name] = {"true": True, "false": False}.get(raw)
+        policy_replays["midprice"] = audit_midprice_actions(entries, report)
+        policy_replays["midprice"]["source_file_sha256"] = sha256(ledger_path.read_bytes()).hexdigest()
+
     output = report.to_dict()
+    output["evo2_policy_replays"] = policy_replays
     output["evo2_replay"] = replay
     output["evo2_model_replays"] = model_replays
     output["requested_model_evidence_gaps"] = {
@@ -208,6 +232,8 @@ def main() -> int:
     parser.add_argument("--baseline-ref", required=True)
     parser.add_argument("--min-runners", type=int, default=300)
     parser.add_argument("--min-market-races", type=int, default=30)
+    parser.add_argument("--new-build-readiness-dir", type=Path)
+    parser.add_argument("--midprice-ledger-csv", type=Path)
     args = parser.parse_args()
     payload = run(args)
     summary = {
