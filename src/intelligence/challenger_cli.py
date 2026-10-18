@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from hashlib import sha256
 from pathlib import Path
 
 from src.intelligence.challenger_lab import Observation
@@ -19,18 +20,25 @@ from src.intelligence.challenger_research_cycle import propose_calibration_revie
 def run(input_path: Path, output_path: Path, baseline_ref: str, *, min_runners: int = 300) -> dict:
     if input_path.resolve() == output_path.resolve():
         raise ValueError("input and output paths must differ")
-    payload = json.loads(input_path.read_text(encoding="utf-8"))
+    source_bytes = input_path.read_bytes()
+    payload = json.loads(source_bytes.decode("utf-8"))
     if not isinstance(payload, dict) or not isinstance(payload.get("observations"), list):
         raise ValueError("input must contain observations array")
     if payload.get("result_source_complete") is not True:
         raise ValueError("verified result_source_complete=true is mandatory")
     if payload.get("holdout_frozen") is not True:
         raise ValueError("holdout_frozen=true is mandatory")
+    if not isinstance(payload.get("source_ref"), str) or not payload["source_ref"].strip():
+        raise ValueError("source_ref required")
+    if not isinstance(payload.get("run_id"), str) or not payload["run_id"].strip():
+        raise ValueError("run_id required")
     observations = [Observation(**item) for item in payload["observations"]]
     proposal = propose_calibration_review(baseline_ref=baseline_ref)
     report = reflect(proposal, observations, min_runners=min_runners)
     report["input_provenance"] = {
-        "source_ref": payload.get("source_ref"),
+        "source_ref": payload["source_ref"],
+        "source_file_sha256": sha256(source_bytes).hexdigest(),
+        "certification": "SELF_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
         "run_id": payload.get("run_id"),
         "result_source_complete": True,
         "holdout_frozen": True,
