@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from scripts.ops.check_rp_session_health import probe  # noqa: E402
-from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR, auto_login  # noqa: E402
+from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR  # noqa: E402
 
 
 def login_page_diag() -> dict:
@@ -54,6 +54,87 @@ def login_page_diag() -> dict:
     return d
 
 
+def cloud_login() -> dict:
+    """Sign in on a fresh profile: dismiss the consent dialog, then type the credentials.
+
+    A fresh container has no saved consent cookie, so Racing Post shows its cookie
+    dialog over the form. Cloud-only; the laptop's auto_login is untouched.
+    """
+    import os
+
+    from playwright.sync_api import sync_playwright
+
+    from scripts.ops.racing_post_account_collector import RP_AUTH_LOGIN_URL
+
+    email = (os.getenv("RP_EMAIL") or "").strip()
+    password = os.getenv("RP_PASSWORD") or ""
+    d: dict = {"email_present": bool(email), "password_present": bool(password)}
+    if not (email and password):
+        d["status"] = "SKIPPED_NO_CREDENTIALS"
+        return d
+    DEFAULT_PROFILE_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        with sync_playwright() as p:
+            b = p.firefox.launch_persistent_context(
+                user_data_dir=str(DEFAULT_PROFILE_DIR), headless=True,
+                viewport={"width": 1400, "height": 1000},
+                firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
+            )
+            page = b.new_page()
+            page.goto(RP_AUTH_LOGIN_URL, wait_until="domcontentloaded", timeout=60000)
+            page.wait_for_timeout(6000)
+            d["buttons_before"] = page.evaluate(
+                "[...document.querySelectorAll('button,a[role=button]')].slice(0,14)"
+                ".map(e => (e.id || '') + '|' + (e.innerText || '').trim().slice(0, 28))"
+            )
+            d["covered_by"] = page.evaluate(
+                "(() => { const e = document.querySelector('#email'); if (!e) return 'no #email';"
+                " const r = e.getBoundingClientRect();"
+                " const t = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);"
+                " return t ? (t.tagName + '#' + (t.id || '') + '.' + String(t.className).slice(0, 40)) : 'none'; })()"
+            )
+            d["consent_clicked"] = page.evaluate(
+                "(() => { for (const s of ['#truste-consent-button', '#truste-consent-required']) {"
+                " const e = document.querySelector(s); if (e) { e.click(); return s; } } return null; })()"
+            )
+            page.wait_for_timeout(3000)
+            page.evaluate(
+                "document.querySelectorAll('#truste-consent-track, #consent_blackbar, .truste_overlay, "
+                ".truste_box_overlay, #truste-consent-content').forEach(e => e.remove())"
+            )
+            d["covered_by_after"] = page.evaluate(
+                "(() => { const e = document.querySelector('#email'); if (!e) return 'no #email';"
+                " const r = e.getBoundingClientRect();"
+                " const t = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);"
+                " return t ? (t.tagName + '#' + (t.id || '')) : 'none'; })()"
+            )
+            page.click("#email", force=True, timeout=20000)
+            page.type("#email", email, delay=25)
+            page.click("#password", force=True, timeout=20000)
+            page.type("#password", password, delay=25)
+            page.locator("#password").blur()
+            page.wait_for_timeout(500)
+            page.locator('button[type="submit"]').first.click(force=True, timeout=20000)
+            page.wait_for_timeout(8000)
+            try:
+                page.wait_for_load_state("networkidle", timeout=20000)
+            except Exception:
+                pass
+            d["final_url"] = page.url
+            d["login_form_still_present"] = bool(page.locator("#password").count())
+            try:
+                d["page_text_head"] = " ".join(page.inner_text("body")[:300].split())
+            except Exception:
+                pass
+            d["rp_authenticated_cookie"] = any(c["name"] == "rp_authenticated" for c in b.cookies())
+            b.close()
+        d["status"] = "PASS" if (d["rp_authenticated_cookie"] and not d["login_form_still_present"]) else "FAIL"
+    except Exception as exc:
+        d["status"] = "FAIL"
+        d["reason"] = f"{type(exc).__name__}: {str(exc)[:200]}"
+    return d
+
+
 def main() -> int:
     date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")  # noqa: UP017 - container is py3.10
     out: dict = {"date": date, "steps": {}}
@@ -61,13 +142,8 @@ def main() -> int:
     out["steps"]["login_page"] = login_page_diag()
     print("STEP login_page:", json.dumps(out["steps"]["login_page"], default=str), flush=True)
 
-    login = auto_login(DEFAULT_PROFILE_DIR, execute=True, headed=False, timeout_s=90)
-    out["steps"]["auto_login"] = {
-        k: login.get(k) for k in ("status", "final_url", "login_form_still_present", "page_text_head", "reason", "hint") if k in login
-    }
-    out["steps"]["auto_login"]["email_present"] = login.get("email_present")
-    out["steps"]["auto_login"]["password_present"] = login.get("password_present")
-
+    login = cloud_login()
+    out["steps"]["auto_login"] = login
     print("STEP auto_login:", json.dumps(out["steps"]["auto_login"], default=str), flush=True)
     health = probe(DEFAULT_PROFILE_DIR)
     out["steps"]["session_probe"] = {k: health.get(k) for k in ("status", "reason", "is_logged", "http_status", "role")}
