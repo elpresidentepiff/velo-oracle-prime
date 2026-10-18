@@ -16,7 +16,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from scripts.ops.check_rp_session_health import probe  # noqa: E402
 from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR  # noqa: E402
 
 
@@ -53,15 +52,13 @@ def login_page_diag() -> dict:
     return d
 
 
-def cloud_login() -> dict:
+def cloud_login(b) -> dict:
     """Sign in on a fresh profile: dismiss the consent dialog, then type the credentials.
 
     A fresh container has no saved consent cookie, so Racing Post shows its cookie
     dialog over the form. Cloud-only; the laptop's auto_login is untouched.
     """
     import os
-
-    from playwright.sync_api import sync_playwright
 
     from scripts.ops.racing_post_account_collector import RP_AUTH_LOGIN_URL
 
@@ -71,14 +68,8 @@ def cloud_login() -> dict:
     if not (email and password):
         d["status"] = "SKIPPED_NO_CREDENTIALS"
         return d
-    DEFAULT_PROFILE_DIR.mkdir(parents=True, exist_ok=True)
     try:
-        with sync_playwright() as p:
-            b = p.firefox.launch_persistent_context(
-                user_data_dir=str(DEFAULT_PROFILE_DIR), headless=True,
-                viewport={"width": 1400, "height": 1000},
-                firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
-            )
+        if True:
             page = b.new_page()
             page.goto(RP_AUTH_LOGIN_URL, wait_until="domcontentloaded", timeout=60000)
             page.wait_for_timeout(6000)
@@ -126,7 +117,6 @@ def cloud_login() -> dict:
             except Exception:
                 pass
             d["rp_authenticated_cookie"] = any(c["name"] == "rp_authenticated" for c in b.cookies())
-            b.close()
         d["status"] = "PASS" if (d["rp_authenticated_cookie"] and not d["login_form_still_present"]) else "FAIL"
     except Exception as exc:
         d["status"] = "FAIL"
@@ -134,13 +124,11 @@ def cloud_login() -> dict:
     return d
 
 
-def cloud_capture(date: str) -> dict:
+def cloud_capture(b, date: str) -> dict:
     """Capture the logged-in racecards pages. Cloud-only: a logged-in page never reaches
     'networkidle' (ads and trackers keep polling), so wait for the DOM plus a fixed settle time.
     """
     import re
-
-    from playwright.sync_api import sync_playwright
 
     out_dir = ROOT / "data" / "racing_post_account_raw" / date
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -149,12 +137,7 @@ def cloud_capture(date: str) -> dict:
         ("rp-all-races", f"https://www.racingpost.com/racecards/{date}"),
     ]
     res: dict = {}
-    with sync_playwright() as p:
-        b = p.firefox.launch_persistent_context(
-            user_data_dir=str(DEFAULT_PROFILE_DIR), headless=True,
-            viewport={"width": 1400, "height": 1000},
-            firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
-        )
+    if True:
         for label, url in pages:
             info: dict = {}
             try:
@@ -162,15 +145,18 @@ def cloud_capture(date: str) -> dict:
                 page.goto(url, wait_until="domcontentloaded", timeout=60000)
                 page.wait_for_timeout(10000)
                 html = page.content()
+                try:
+                    visible = page.inner_text("body")
+                except Exception:
+                    visible = ""
                 page.close()
                 (out_dir / f"{label}.html").write_text(html, encoding="utf-8")
                 info["kb"] = len(html.encode("utf-8")) // 1024
-                info["logged_in_marker"] = "Welcome back" in html
+                info["logged_in_marker"] = "Welcome back" in visible or "Welcome back" in html
                 info["racecard_links"] = len(set(re.findall(r'href="(/racecards/[^"#?]+/[^"#?]+/\d+[^"]*)"', html)))
             except Exception as exc:
                 info["error"] = f"{type(exc).__name__}: {str(exc)[:160]}"
             res[label] = info
-        b.close()
     return res
 
 
@@ -181,14 +167,20 @@ def main() -> int:
     out["steps"]["login_page"] = login_page_diag()
     print("STEP login_page:", json.dumps(out["steps"]["login_page"], default=str), flush=True)
 
-    login = cloud_login()
-    out["steps"]["auto_login"] = login
-    print("STEP auto_login:", json.dumps(out["steps"]["auto_login"], default=str), flush=True)
-    health = probe(DEFAULT_PROFILE_DIR)
-    out["steps"]["session_probe"] = {k: health.get(k) for k in ("status", "reason", "is_logged", "http_status", "role")}
+    from playwright.sync_api import sync_playwright
 
-    print("STEP session_probe:", json.dumps(out["steps"]["session_probe"], default=str), flush=True)
-    cap = cloud_capture(date)
+    DEFAULT_PROFILE_DIR.mkdir(parents=True, exist_ok=True)
+    with sync_playwright() as pw:
+        ctx = pw.firefox.launch_persistent_context(
+            user_data_dir=str(DEFAULT_PROFILE_DIR), headless=True,
+            viewport={"width": 1400, "height": 1000},
+            firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
+        )
+        login = cloud_login(ctx)
+        out["steps"]["auto_login"] = login
+        print("STEP auto_login:", json.dumps(login, default=str), flush=True)
+        cap = cloud_capture(ctx, date)
+        ctx.close()
     out["steps"]["index_capture"] = cap
     print("STEP index_capture:", json.dumps(cap, default=str), flush=True)
 
