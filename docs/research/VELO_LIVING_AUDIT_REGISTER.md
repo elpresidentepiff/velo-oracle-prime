@@ -100,3 +100,20 @@ Requested challenger gaps remain explicit:
 - Mid-Price Hunter is captured as an action/category, not a runner win probability; it must be evaluated under its declared selection policy rather than coerced into Brier/log-loss input.
 
 No production state, live model weight, database record, promotion status or betting system changed.
+
+## Evo² policy replay and certification triage — 2026-10-18
+
+| ID | Finding | Severity | Evidence / next action | Status |
+|---|---|---|---|---|
+| VELO-016 | New Build historical `two_lane_readiness` artifacts expose **ranked top-three only** and frequently horse names but not canonical horse IDs. Individual reports have a shared generated_at and some race cards precede that timestamp. | HIGH | Added `src/intelligence/challenger_policy_replay.py` strict offline top-pick audit; require unambiguous runner-name match, rank-one identity, and report timestamp strictly before race off. Reject post-off and ambiguous rows; NEVER compute full-field Brier from top-three. Complete historical evaluation awaits local readiness files on the replay machine. | IMPLEMENTED RESEARCH GATE; EMPIRICAL COHORT PENDING |
+| VELO-017 | Mid-Price Hunter is an existing action policy with `MIDPRICE_CLEAN`, `MIDPRICE_SUPPRESS_TOP`, `MIDPRICE_NO_EDGE`, and `MIDPRICE_SPLIT_RACE`. Historical actions are not win probabilities. | HIGH | Added action-only conditional-outcome replay with pre-race timestamp, canonical Prime top-pick match, declared rule version and strict shadow-only flags. Non-clean abstention is a **hypothetical counterfactual**, not a deployed execution rule. | IMPLEMENTED RESEARCH GATE; EMPIRICAL COHORT PENDING |
+| VELO-018 | `canonical_model_scorecards` records 78,683 ineligible rows marked `GOVERNED_REBUILD_REQUIRED`, spanning 2,330 distinct run_date/race_id combinations. These rows have **zero** complete-source flags and **zero** result-source hashes. | CRITICAL (evidence) | Recover official provider results through governed source rebuild and verified provenance, not eligibility flag edits. Read-only `scripts/research/evo2_official_eligibility_triage.sql` added. | SOURCE RECOVERY REQUIRED |
+| VELO-019 | 15,890 scorecard rows marked `RESULT_SOURCE_INCOMPLETE`, across 235 race/date identities. 10,749 have source hashes but **zero** are marked result-source complete. | HIGH | Audit hashed-but-incomplete official result evidence separately; hashes prove byte identity, not completeness or trustworthy official status. | RECONCILIATION REQUIRED |
+
+New optional flags in `historical_crosswalk_cli.py`:
+- `--new-build-readiness-dir PATH` reads existing `two_lane_readiness_*.json` files (never writes to them).
+- `--midprice-ledger-csv PATH` reads the historical Mid-Price Hunter action ledger.
+- Both emit fail-closed provenance-tagged `evo2_policy_replays` into the existing report and do not change the certified 1,074-runner probability cohort or authorise promotion.
+- A separate PR-only GitHub workflow `evo2-offline.yml` checks this research code and executes dedicated offline tests rather than relying on ingestion-only CI.
+
+**Status:** The user-provided frozen 125-race replay remains the only executed certified probability comparison. New Build/Mid-Price results must remain unclaimed until the local archive and readiness/ledger artifacts are evaluated together. No production edits, provider calls, database writes, stake placement or promotion were performed.
