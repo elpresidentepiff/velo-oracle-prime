@@ -7,13 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONPATH=/app
 
 WORKDIR /app
-RUN pip install --no-cache-dir playwright==1.49.1 python-dotenv
+COPY requirements_production.txt requirements_production.txt
+RUN pip install --no-cache-dir -r requirements_production.txt \
+    playwright==1.49.1
 
-COPY scripts/__init__.py scripts/__init__.py
-COPY scripts/ops/__init__.py scripts/ops/__init__.py
-COPY scripts/ops/racing_post_account_collector.py scripts/ops/racing_post_account_collector.py
-COPY scripts/ops/check_rp_session_health.py scripts/ops/check_rp_session_health.py
-COPY scripts/ops/capture_index_headless.py scripts/ops/capture_index_headless.py
-COPY scripts/ops/rp_cloud_probe.py scripts/ops/rp_cloud_probe.py
+COPY . .
 
-CMD ["python", "scripts/ops/rp_cloud_probe.py"]
+CMD ["python", "scripts/ops/rp_cloud_raceday.py"]
