@@ -81,6 +81,21 @@ def main() -> int:
     print(f"VELO CLOUD RP RACEDAY — {date_str}", flush=True)
     print("executor=Railway source=RacingPost-HTML durable_truth=Supabase", flush=True)
 
+    # FormFav is a mandatory pre-race enrichment gate.  Run it before opening
+    # the Racing Post capture path so a cloud run cannot silently score from a
+    # stale or missing enrichment packet.
+    _run(
+        "FormFav readiness gate",
+        [
+            sys.executable,
+            "scripts/ops/formfav_readiness.py",
+            "--date",
+            date_str,
+            "--countries",
+            "gb,ie",
+        ],
+    )
+
     _capture_index_and_tomorrow(date_str)
 
     _run(
