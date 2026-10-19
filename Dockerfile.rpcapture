@@ -1,6 +1,6 @@
 # Racing Post capture from Railway. Browsers come with the Playwright image, so the
 # pip package must match the image tag exactly.
-FROM mcr.microsoft.com/playwright/python:v1.49.1-jammy
+FROM mcr.microsoft.com/playwright/python:v1.49.1-noble
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
