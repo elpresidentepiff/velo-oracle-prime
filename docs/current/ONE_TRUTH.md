@@ -18,6 +18,52 @@
 7. Learning is blocked on degraded days. No exceptions without operator approval.
 8. No live staking. Not a tips service. Execution bridge is SIM/PAPER only with hard runtime guards.
 
+
+## SYSTEM MAP — how VÉLØ actually runs (verified 2026-10-18 from Supabase + Railway, not from docs)
+
+**Where the data really comes from.** Every row in `races` for 2026-10-01..10-18 has
+`raw._velo_source = racing_post_account_racecard_capture` (11 race days, 0 rows from any other
+source). Racing API fed nothing. Every `pipeline_runs` scoring row in that window has
+`trigger_source = manual`, and the commit SHAs stamped on them (`82f2982`, `ac0d284`, `1673bc8`)
+do not exist in the GitHub repo — scoring runs from a checkout that is **ahead of `main`**.
+Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing scored.
+
+**The three lanes (this is the whole system):**
+
+| Lane | Runs where | What | Status |
+|---|---|---|---|
+| 1. Capture + score + EOD | Operator laptop (Windows tasks `VELO_Raceday_0700` + evening) | RP HTML capture (logged-in Playwright) → `run_full_raceday.py` → `run_prime_today.py` → Supabase; evening `run_full_raceday_eod.py` / `run_results_sigma.py` | LIVE. Single point of failure: if the laptop does not run, the day does not exist (10-16). |
+| 2. FormFav (world data) | Railway | `velo-formfav-live` 24/7 worker (ingest + hourly global EOD → `formfav_sigma_audits`); `velo-formfav-uk-shadow` cron `30 8 * * *` (enrichment packet) | LIVE, SHADOW ONLY. Prime does not read it. |
+| 3. Dashboard | Railway `velo-oracle` (`app.main:app`, auto-deploys on push to `main`) | Reads Supabase only | LIVE |
+| Storage | Supabase `ltbsxbvfsxtnharjvqcm` | System of record | LIVE |
+
+**Every Railway service, one verdict each** (config read from Railway 2026-10-18):
+
+| Service | Config | Verdict |
+|---|---|---|
+| `velo-oracle` | gunicorn `app.main:app`, `main` | KEEP — the dashboard |
+| `velo-formfav-live` | `formfav_live_worker.py`, always on | KEEP |
+| `velo-formfav-uk-shadow` | cron `30 8 * * *`, gb+ie | KEEP |
+| `velo-formfav-us-shadow` | one-shot, **`--date 2026-10-11` hard-coded**, no cron | DEAD — runs nothing useful today |
+| `velo-prime-scoring` | cron `0 9 * * *` → `run_cloud_raceday.py` (**Racing API Standard**) | CONTRADICTS Law 2; wrote no scheduled run; last cron FAILED 2026-10-18. Retire after operator approval |
+| `velo-results-sigma` | cron `0 21 * * *` → `scripts/run_results_sigma.py` @ Apr-26 commit, Racing API creds | LEGACY, FAILED 2026-10-17. Real sigma is `scripts/ops/run_results_sigma.py` |
+| `velo-daily-ingestion` | `workers/daily_pipeline.py`, Racing API creds, no schedule | LEGACY |
+| `ingestion-spine` | branch `feature/v10-launch` (deleted), Racing API creds, build step rewrites source | LEGACY — cannot be rebuilt reproducibly |
+| `velo-shadow-lab` | branch `shadow-lab` (deleted), no deployment | DEAD |
+| `velo-oracle-prime` | no start command, no variables | IDLE |
+| `presidente-bot` | **different repo** (`presidente-bot`, `master`); holds Racing API, Supabase, Railway and trigger secrets | OUTSIDE this repo — unmapped |
+| `Postgres-8kOH` | Railway Postgres | UNKNOWN — nothing in this repo is verified to use it |
+| `hermes-agent` | — | RETIRED (operator) |
+
+**Known contradictions to resolve (none resolved by this section):**
+1. Six services still hold Racing API credentials (`velo-prime-scoring`, `velo-results-sigma`,
+   `velo-daily-ingestion`, `ingestion-spine`, `velo-oracle`, `presidente-bot`) although Law 2 says it is not live.
+2. The text of "Railway — What It Actually Does" below (Sept 13) predates the FormFav services and
+   says Railway runs one thing; it runs three lanes' worth. This map wins.
+3. The laptop checkout is ahead of `main`. Until it is pushed, GitHub is not the system.
+4. Lane 1 has no cloud fallback. Moving RP capture to Railway is unproven: it needs the RP login as
+   Railway variables (operator-entered) and Racing Post accepting a datacenter login.
+
 ---
 
 ## What is VÉLØ?
