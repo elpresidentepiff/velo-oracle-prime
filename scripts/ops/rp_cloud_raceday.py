@@ -76,6 +76,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", default=None, help="Race date YYYY-MM-DD; defaults to London today")
     parser.add_argument("--no-notify", action="store_true")
+    parser.add_argument(
+        "--capture-only",
+        action="store_true",
+        help="capture and archive published RP cards, then stop before parsing/scoring",
+    )
     args = parser.parse_args()
     date_str = args.date or datetime.now(LONDON).date().isoformat()
     print(f"VELO CLOUD RP RACEDAY — {date_str}", flush=True)
@@ -157,6 +162,10 @@ def main() -> int:
                 "--execute",
             ],
         )
+
+    if args.capture_only:
+        print(f"\n[CLOUD-RP] PASS — capture-only preparation completed for {date_str}", flush=True)
+        return 0
 
     score = [
         sys.executable,
