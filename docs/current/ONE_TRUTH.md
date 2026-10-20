@@ -32,7 +32,7 @@ Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing sc
 
 | Lane | Runs where | What | Status |
 |---|---|---|---|
-| 1. Capture + score + EOD | Railway (`velo-rp-capture` / `velo-prime-scoring`) with local Windows fallback | RP HTML capture (logged-in Playwright in `Dockerfile.rpcapture`) → `rp_cloud_raceday.py` → canonical runner → Supabase; local `run_full_raceday.py` remains an operator fallback | LIVE. Cloud login and index capture were verified 2026-10-20; the first scheduled run was blocked by a missing `beautifulsoup4` dependency, fixed in `main`. |
+| 1. Capture + score + EOD | Railway `velo-rp-capture` (07:00 UTC) with local Windows fallback | RP HTML capture (logged-in Playwright in `Dockerfile.rpcapture`) → `rp_cloud_raceday.py` → canonical runner → Supabase; local `run_full_raceday.py` remains an operator fallback | LIVE. Cloud login and index capture were verified 2026-10-20; the first scheduled run was blocked by a missing `beautifulsoup4` dependency, fixed in `main`. |
 | 2. FormFav (world data) | Railway | `velo-formfav-live` 24/7 worker (ingest + hourly global EOD → `formfav_sigma_audits`); `velo-formfav-uk-shadow` cron `30 8 * * *` (enrichment packet) | LIVE, SHADOW ONLY. Prime does not read it. |
 | 3. Dashboard | Railway `velo-oracle` (`app.main:app`, auto-deploys on push to `main`) | Reads Supabase only | LIVE |
 | Storage | Supabase `ltbsxbvfsxtnharjvqcm` | System of record | LIVE |
@@ -46,7 +46,7 @@ Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing sc
 | `velo-formfav-uk-shadow` | cron `30 8 * * *`, gb+ie | KEEP |
 | `velo-formfav-us-shadow` | one-shot, **`--date 2026-10-11` hard-coded**, no cron | DEAD — runs nothing useful today |
 | `velo-rp-capture` | cron/container → `rp_cloud_raceday.py` (`Dockerfile.rpcapture`) | KEEP — governed Racing Post HTML capture; login/index capture PASS on 2026-10-20 |
-| `velo-prime-scoring` | cron `0 9 * * *` → `rp_cloud_raceday.py` (`Dockerfile.rpcapture`) | KEEP — canonical cloud RP capture + FormFav-first scoring path |
+| `velo-prime-scoring` | no cron; live service setting still points at legacy `run_cloud_raceday.py` | LEGACY DUPLICATE — not the daily scheduler; do not run until its Railway start command is updated or the service is retired with operator approval |
 | `velo-results-sigma` | cron `0 21 * * *` → `scripts/run_results_sigma.py` @ Apr-26 commit, Racing API creds | LEGACY, FAILED 2026-10-17. Real sigma is `scripts/ops/run_results_sigma.py` |
 | `velo-daily-ingestion` | `workers/daily_pipeline.py`, Racing API creds, no schedule | LEGACY |
 | `ingestion-spine` | branch `feature/v10-launch` (deleted), Racing API creds, build step rewrites source | LEGACY — cannot be rebuilt reproducibly |
@@ -65,7 +65,8 @@ Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing sc
 4. **Resolved 2026-10-20:** Railway RP login and HTML index capture succeed with the configured
    `RP_EMAIL`/`RP_PASSWORD`; the scheduled worker was failing before capture because its production
    image omitted `beautifulsoup4` and its config still pointed at the retired Racing API runner.
-   `requirements_production.txt` and `railway.scoring.toml` now select the governed RP path.
+   `velo-rp-capture` now runs the governed RP path. The duplicate `velo-prime-scoring` service
+   remains unscheduled and still needs an owner-level Railway config update or retirement.
 
 ---
 
