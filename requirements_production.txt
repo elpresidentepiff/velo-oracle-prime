@@ -35,6 +35,10 @@ requests==2.31.0
 aiohttp==3.9.1
 loguru>=0.7.0
 httpx>=0.27.0
+# The governed Racing Post cloud capture builds its dated race URL list from
+# captured HTML with BeautifulSoup. Keep this in the production image; it is
+# present in the local venv but was missing from Railway's requirements image.
+beautifulsoup4>=4.12.2,<5.0.0
 
 # Testing — keep this trio in lockstep (venv drift to pytest 6.x + asyncio 1.x
 # made the suite uncollectable on 2026-06-10; restored to these pins)

@@ -3,7 +3,7 @@
 # AUTHORITATIVE MORNING SCORING:
 #   Railway service: velo-prime-scoring
 #   Schedule: 09:00 UTC every day
-#   Command: PYTHONPATH=. python scripts/ops/run_cloud_raceday.py
+#   Command: python scripts/ops/rp_cloud_raceday.py (Dockerfile.rpcapture)
 #   Config: railway.scoring.toml
 #
 # The Railway web service remains always-on and is NOT the scheduler.
@@ -12,7 +12,7 @@
 #   - 21:00 UTC daily sigma schedule
 #
 # Morning scoring (Railway, daily)
-0 9 * * *  PYTHONPATH=. python scripts/ops/run_cloud_raceday.py
+0 9 * * *  python scripts/ops/rp_cloud_raceday.py
 
 # Evening sigma (GitHub Actions, daily)
 0 21 * * *  PYTHONPATH=. python scripts/ops/run_results_sigma.py --notify-telegram

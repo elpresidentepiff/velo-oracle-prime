@@ -73,6 +73,32 @@ def cloud_login(b) -> dict:
             page = b.new_page()
             page.goto(RP_AUTH_LOGIN_URL, wait_until="domcontentloaded", timeout=60000)
             page.wait_for_timeout(6000)
+            # Railway reuses the persistent profile between cron attempts. If
+            # the saved RP session is still valid, /auth/login/ redirects to
+            # the signed-in home page and the form never mounts. The previous
+            # implementation waited on #email until it timed out, turning a
+            # healthy session into a false cloud-login failure. Reuse that
+            # authenticated session and only drive the form on a fresh one.
+            d["final_url_before_login"] = page.url
+            d["rp_authenticated_cookie_before_login"] = any(
+                c["name"] == "rp_authenticated" for c in b.cookies()
+            )
+            login_form_count = page.locator("#email").count()
+            if (
+                d["rp_authenticated_cookie_before_login"]
+                and login_form_count == 0
+                and "/auth/login" not in page.url
+            ):
+                d["session_reused"] = True
+                d["login_form_still_present"] = False
+                try:
+                    d["page_text_head"] = " ".join(page.inner_text("body")[:300].split())
+                except Exception:
+                    pass
+                d["rp_authenticated_cookie"] = True
+                d["status"] = "PASS"
+                page.close()
+                return d
             d["buttons_before"] = page.evaluate(
                 "[...document.querySelectorAll('button,a[role=button]')].slice(0,14)"
                 ".map(e => (e.id || '') + '|' + (e.innerText || '').trim().slice(0, 28))"

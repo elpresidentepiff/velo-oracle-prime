@@ -2,7 +2,7 @@
 
 > **IF THIS FILE CONFLICTS WITH ANY OTHER DOC, THIS FILE WINS UNTIL OPERATOR SAYS OTHERWISE.**
 
-**Effective:** 2026-07-29 (post one-truth consolidation PR #155 + branch sweep; prior baseline 2026-07-25) · **Branch:** `main` — THE only branch, local and remote; the sweep deleted 97 remote + 72 local branches, every non-bot unmerged tip preserved at `archive/2026-07-29/*` tags (see `docs/current/BRANCH_SWEEP_2026_07_29.md`) · **Verified against code, not docs.**
+**Effective:** 2026-10-21 (cloud RP capture cutover; prior baseline 2026-07-29) · **Branch:** `main` — THE only branch, local and remote; the sweep deleted 97 remote + 72 local branches, every non-bot unmerged tip preserved at `archive/2026-07-29/*` tags (see `docs/current/BRANCH_SWEEP_2026_07_29.md`) · **Verified against code and the 2026-10-20 Railway capture log.**
 
 **This file supersedes:** `THE_NEW_TRUTH.md`, `CURRENT_RUNTIME_TRUTH.md`, root `CLAUDE.md` state claims, all numbered docs in `docs/` flat directory.
 **This file defers to:** root `THE_ONE_TRUTH.md` for step-by-step command detail (Steps 1–20), `docs/current/RACE_DAY_RUNBOOK.md` for the lifecycle.
@@ -32,7 +32,7 @@ Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing sc
 
 | Lane | Runs where | What | Status |
 |---|---|---|---|
-| 1. Capture + score + EOD | Operator laptop (Windows tasks `VELO_Raceday_0700` + evening) | RP HTML capture (logged-in Playwright) → `run_full_raceday.py` → `run_prime_today.py` → Supabase; evening `run_full_raceday_eod.py` / `run_results_sigma.py` | LIVE. Single point of failure: if the laptop does not run, the day does not exist (10-16). |
+| 1. Capture + score + EOD | Railway (`velo-rp-capture` / `velo-prime-scoring`) with local Windows fallback | RP HTML capture (logged-in Playwright in `Dockerfile.rpcapture`) → `rp_cloud_raceday.py` → canonical runner → Supabase; local `run_full_raceday.py` remains an operator fallback | LIVE. Cloud login and index capture were verified 2026-10-20; the first scheduled run was blocked by a missing `beautifulsoup4` dependency, fixed in `main`. |
 | 2. FormFav (world data) | Railway | `velo-formfav-live` 24/7 worker (ingest + hourly global EOD → `formfav_sigma_audits`); `velo-formfav-uk-shadow` cron `30 8 * * *` (enrichment packet) | LIVE, SHADOW ONLY. Prime does not read it. |
 | 3. Dashboard | Railway `velo-oracle` (`app.main:app`, auto-deploys on push to `main`) | Reads Supabase only | LIVE |
 | Storage | Supabase `ltbsxbvfsxtnharjvqcm` | System of record | LIVE |
@@ -45,7 +45,8 @@ Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing sc
 | `velo-formfav-live` | `formfav_live_worker.py`, always on | KEEP |
 | `velo-formfav-uk-shadow` | cron `30 8 * * *`, gb+ie | KEEP |
 | `velo-formfav-us-shadow` | one-shot, **`--date 2026-10-11` hard-coded**, no cron | DEAD — runs nothing useful today |
-| `velo-prime-scoring` | cron `0 9 * * *` → `run_cloud_raceday.py` (**Racing API Standard**) | CONTRADICTS Law 2; wrote no scheduled run; last cron FAILED 2026-10-18. Retire after operator approval |
+| `velo-rp-capture` | cron/container → `rp_cloud_raceday.py` (`Dockerfile.rpcapture`) | KEEP — governed Racing Post HTML capture; login/index capture PASS on 2026-10-20 |
+| `velo-prime-scoring` | cron `0 9 * * *` → `rp_cloud_raceday.py` (`Dockerfile.rpcapture`) | KEEP — canonical cloud RP capture + FormFav-first scoring path |
 | `velo-results-sigma` | cron `0 21 * * *` → `scripts/run_results_sigma.py` @ Apr-26 commit, Racing API creds | LEGACY, FAILED 2026-10-17. Real sigma is `scripts/ops/run_results_sigma.py` |
 | `velo-daily-ingestion` | `workers/daily_pipeline.py`, Racing API creds, no schedule | LEGACY |
 | `ingestion-spine` | branch `feature/v10-launch` (deleted), Racing API creds, build step rewrites source | LEGACY — cannot be rebuilt reproducibly |
@@ -61,8 +62,10 @@ Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing sc
 2. The text of "Railway — What It Actually Does" below (Sept 13) predates the FormFav services and
    says Railway runs one thing; it runs three lanes' worth. This map wins.
 3. The laptop checkout is ahead of `main`. Until it is pushed, GitHub is not the system.
-4. Lane 1 has no cloud fallback. Moving RP capture to Railway is unproven: it needs the RP login as
-   Railway variables (operator-entered) and Racing Post accepting a datacenter login.
+4. **Resolved 2026-10-20:** Railway RP login and HTML index capture succeed with the configured
+   `RP_EMAIL`/`RP_PASSWORD`; the scheduled worker was failing before capture because its production
+   image omitted `beautifulsoup4` and its config still pointed at the retired Racing API runner.
+   `requirements_production.txt` and `railway.scoring.toml` now select the governed RP path.
 
 ---
 
@@ -72,7 +75,7 @@ An auditable UK/IRE horse-racing prediction system. It captures Racing Post HTML
 ## What is LIVE
 | Thing | Truth |
 |---|---|
-| Scoring entrypoint | `scripts/ops/run_prime_today.py --date YYYY-MM-DD --source rp --no-notify`. **Not manual** — invoked as Step 9 of `run_full_raceday.py`, which the `VELO_Raceday_0700` Windows task runs daily at 07:00 (see "What actually starts VELO"). Run it by hand only to re-score a single day. Railway cron is FAIL_OR_UNPROVEN and is not the scheduler. |
+| Scoring entrypoint | Railway `scripts/ops/rp_cloud_raceday.py` (FormFav readiness → authenticated RP HTML capture → URL list → canonical `run_full_raceday.py --skip-capture`); local `run_full_raceday.py` is the operator fallback. `run_prime_today.py` remains the governed scoring sub-step. |
 | Live formula | Profile `SQPE_IMPROVEMENT_MDS_V1`: `VP = (0.45·sqpe_v17 + 0.12·improvement_score + 0.10·market_deception_score) / 0.67` (`src/intelligence/velo_prime_ensemble.py:175-235`) |
 | Live model files | `models/sqpe_v17/sqpe_v17.pkl` (retrained as v17.1 on 1.54M rows, 2025 holdout AUC=0.9296, promoted 2026-06-19), `models/specialist/improvement_model/`, `models/specialist/market_deception_model/` |
 | RPR in the live model | `sqpe_v17.pkl` genuinely uses RPR (`rpr_num`+`rpr_vs_field` ≈ 50% of its real feature importance) — grandfathered by deliberate 2026-06-19 design, not a leak. See `docs/engineering/SOURCE_INCLUSION_POLICY_V1.md` for the full rationale and the empirical mid-price/short-fav band split that justifies it. New Build, Champion Intent Shadow, and No-RPR Shadow genuinely exclude it. |

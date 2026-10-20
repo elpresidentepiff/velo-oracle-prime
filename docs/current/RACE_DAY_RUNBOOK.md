@@ -4,6 +4,14 @@
 `{D}` = `YYYY-MM-DD`, `{D_}` = `YYYY_MM_DD`. `FINAL_CAPTURE_LABEL` is chosen ONCE after Stage 2 and reused everywhere.
 **Rule:** stop at the first failed gate, announce the obstacle, fix the source, rerun the stage. No stage may rediscover its own inputs.
 
+**Primary executor (verified 2026-10-20):** Railway service `velo-prime-scoring` runs
+`scripts/ops/rp_cloud_raceday.py` from `Dockerfile.rpcapture` at 09:00 UTC. It performs
+FormFav readiness first, logs into Racing Post with the Railway RP credentials, captures
+RP HTML, builds the URL list, and hands the dated capture to the canonical runner. The
+Windows `run_full_raceday.py` flow remains a supported local fallback only. Do not point
+the scheduled worker at `scripts/ops/run_cloud_raceday.py`; that is the retired Racing
+API path.
+
 | # | Stage | Command | Expected output | Failure condition | Fallback | Operator approval |
 |---|---|---|---|---|---|---|
 | 1 | Pre-flight | `python scripts/ops/velo_session_start_check.py` | All checks OK | Any CRITICAL | Fix and rerun; do not proceed | No |

@@ -1,9 +1,15 @@
 # Dedicated Railway cron worker for VELO morning scoring.
 # The always-on web service continues to use railway.toml.
+#
+# This worker must use the governed Racing Post HTML capture path. The old
+# Railpack command pointed at run_cloud_raceday.py, which is the retired
+# Racing API path and cannot satisfy ONE_TRUTH.md. Dockerfile.rpcapture pins
+# the Playwright image and starts rp_cloud_raceday.py, so RP capture does not
+# depend on the operator's laptop.
 [build]
-builder = "RAILPACK"
-buildCommand = "pip install -r requirements_production.txt"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.rpcapture"
 
 [deploy]
-startCommand = "PYTHONPATH=. python scripts/ops/run_cloud_raceday.py"
+startCommand = "python scripts/ops/rp_cloud_raceday.py"
 restartPolicyType = "NEVER"
