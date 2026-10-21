@@ -2134,6 +2134,23 @@ async def old_velo_verdicts(date: str = Query(default=None)):
     }
 
 
+def _prediction_rows_from_analysis(value: object) -> list[dict]:
+    """Return runner predictions from either persisted analysis shape.
+
+    Older verdict artifacts stored ``full_analysis`` directly as a list; the
+    current writer stores an object with a ``predictions`` list plus
+    governance/plot metadata. Dashboard consumers must support both shapes so
+    a valid verdict is never presented as an empty one-runner card.
+    """
+    if isinstance(value, list):
+        return [row for row in value if isinstance(row, dict)]
+    if isinstance(value, dict):
+        rows = value.get("predictions") or []
+        if isinstance(rows, list):
+            return [row for row in rows if isinstance(row, dict)]
+    return []
+
+
 @app.get("/api/governed-card")
 async def governed_card(date: str = Query(default=None), allow_fallback: bool = Query(default=False)):
     """
@@ -2630,8 +2647,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
         rid = row.get("race_id", "")
         if not rid:
             continue
-        fa = row.get("full_analysis") or []
-        verdict_map[rid] = fa if isinstance(fa, list) else []
+        verdict_map[rid] = _prediction_rows_from_analysis(row.get("full_analysis"))
 
     meta_map = {}
     if raw_verdicts and db:
@@ -2722,9 +2738,9 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     verdicts = []
     for v in raw_verdicts:
         race_id = v.get("race_id", "")
-        full_analysis = v.get("full_analysis") or []
+        full_analysis = _prediction_rows_from_analysis(v.get("full_analysis"))
         top = v.get("top", {})
-        if not top and isinstance(full_analysis, list) and full_analysis and isinstance(full_analysis[0], dict):
+        if not top and full_analysis:
             top = full_analysis[0]
         horse_name = top.get("horse") or v.get("horse") or v.get("horse_name") or ""
 
