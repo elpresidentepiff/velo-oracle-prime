@@ -1759,6 +1759,138 @@ async def midprice_shadow(date: str = Query(default=None)):
     }
 
 
+def _formfav_cache_shadow(date: str) -> dict | None:
+    """Build a truthful pending card from the FormFav cache when enrichment is not persisted.
+
+    The live FormFav worker stores race/form/prediction rows before the separate
+    UK shadow job can enrich the canonical Racing Post card.  The dashboard used
+    to hide the entire panel during that interval, which made a healthy cache
+    look like a failed run.  This fallback deliberately reports a pending state
+    and never presents the cache as completed VELO enrichment.
+    """
+    import datetime as _dt
+
+    try:
+        canonical_date = _dt.date.fromisoformat(date).isoformat()
+    except (TypeError, ValueError):
+        return None
+
+    race_rows = _sb_rest_rows(
+        "formfav_races?"
+        f"race_date=eq.{canonical_date}&country=in.(gb,ie)"
+        "&select=provider_race_key,track,race_number,start_time,metadata,status"
+        "&order=start_time.asc&limit=5000"
+    )
+    if not race_rows:
+        return None
+
+    # The date is carried in the provider key rather than a dedicated column.
+    # Keep the query broad and filter against the already date-scoped race keys.
+    prediction_rows = _sb_rest_rows(
+        "formfav_predictions?"
+        f"provider_race_key=like.*%3A{canonical_date}%3A*"
+        "&select=provider_race_key,model_version,confidence,captured_at&limit=5000"
+    ) or []
+    runner_rows = _sb_rest_rows(
+        "formfav_runner_form?"
+        f"provider_race_key=like.*%3A{canonical_date}%3A*"
+        "&select=provider_race_key,scratched,form_payload&limit=5000"
+    ) or []
+
+    race_keys = {str(row.get("provider_race_key")) for row in race_rows if row.get("provider_race_key")}
+    prediction_keys = {
+        str(row.get("provider_race_key"))
+        for row in prediction_rows
+        if row.get("provider_race_key") in race_keys
+    }
+    runners_by_key: dict[str, list[dict]] = {}
+    for row in runner_rows:
+        key = str(row.get("provider_race_key") or "")
+        if key in race_keys:
+            runners_by_key.setdefault(key, []).append(row)
+
+    def _payload(row: dict) -> dict:
+        value = row.get("form_payload")
+        return value if isinstance(value, dict) else {}
+
+    def _coverage(rows: list[dict]) -> dict[str, int]:
+        payloads = [_payload(row) for row in rows]
+        return {
+            "form": sum(1 for payload in payloads if payload.get("form")),
+            "class_profile": sum(1 for payload in payloads if payload.get("classProfile")),
+            "class_fit": sum(1 for payload in payloads if payload.get("raceClassFit")),
+            "track_bias": 0,  # track-bias calls belong to the later shadow job
+            "speed_map": sum(1 for payload in payloads if payload.get("speedMap")),
+        }
+
+    model_versions = sorted({
+        str(row.get("model_version"))
+        for row in prediction_rows
+        if row.get("provider_race_key") in race_keys and row.get("model_version")
+    })
+    race_summaries = []
+    totals = {key: 0 for key in ("form", "class_profile", "class_fit", "track_bias", "speed_map")}
+    for race in race_rows:
+        key = str(race.get("provider_race_key") or "")
+        runners = runners_by_key.get(key, [])
+        coverage = _coverage(runners)
+        for field, count in coverage.items():
+            totals[field] += count
+        metadata = race.get("metadata") if isinstance(race.get("metadata"), dict) else {}
+        race_summaries.append({
+            "race_id": key,
+            "course": race.get("track"),
+            "off_time": race.get("start_time"),
+            "race_name": metadata.get("raceName"),
+            "runner_count": len(runners) or metadata.get("numberOfRunners") or 0,
+            "training_eligible_runners": 0,
+            "mean_quality_score": None,
+            "pace_scenario": None,
+            "speedmap_coverage": (
+                coverage["speed_map"] / len(runners) if runners else None
+            ),
+            "feature_coverage": coverage,
+        })
+
+    runners_count = sum(len(rows) for rows in runners_by_key.values())
+    prediction_count = len(prediction_keys)
+    status = (
+        "FORMFAV_PREDICTIONS_READY_ENRICHMENT_PENDING"
+        if prediction_count
+        else "FORMFAV_RACES_READY_PREDICTIONS_PENDING"
+    )
+    return {
+        "date": canonical_date,
+        "status": "OK",
+        "health_status": "PENDING",
+        "artifact_status": status,
+        "feature_schema_version": None,
+        "trust_policy": "SHADOW_ONLY_NO_PRODUCTION_INFLUENCE",
+        "source": "supabase_formfav_cache",
+        "summary": {
+            "races_primary": len(race_rows),
+            "races_enriched": 0,
+            "runners": runners_count,
+            "training_eligible_runners": 0,
+            "predictions_ready": prediction_count,
+            "predictions_missing": max(len(race_rows) - prediction_count, 0),
+            "prediction_model_version": ", ".join(model_versions) or None,
+            "identity_mismatches": 0,
+            "draw_conflicts": 0,
+            "mean_quality_score": None,
+            "coverage": totals,
+            "track_bias_failures": 0,
+            "upstream_error_count": 0,
+            "enrichment_pending": True,
+        },
+        "races": race_summaries,
+        "shadow_only": True,
+        "production_influence": False,
+        "stake_authorised": False,
+        "promotion_eligible": False,
+    }
+
+
 @app.get("/api/formfav-shadow")
 async def formfav_shadow(date: str = Query(default=None)):
     """Read-only FormFav feature coverage for the operator dashboard.
@@ -1784,6 +1916,9 @@ async def formfav_shadow(date: str = Query(default=None)):
         "promotion_eligible": False,
     }
     if data is None:
+        pending = _formfav_cache_shadow(d)
+        if pending is not None:
+            return pending
         return {
             "date": d,
             "status": "NOT_RUN",

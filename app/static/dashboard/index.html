@@ -4308,27 +4308,33 @@ async function loadFormfavShadow() {
     const data = await res.json();
     const artifactStatus = data.artifact_status || 'UNKNOWN';
     const healthy = data.health_status === 'PASS';
+    const pending = data.health_status === 'PENDING';
+    const stateColor = healthy ? '#42a5f5' : pending ? '#ffb74d' : '#e05050';
     const s = data.summary || {};
     const coverage = s.coverage || {};
     const runners = Number(s.runners || 0);
     const eligible = Number(s.training_eligible_runners || 0);
     const qualityPct = s.mean_quality_score === null || s.mean_quality_score === undefined
       ? '—' : `${(Number(s.mean_quality_score) * 100).toFixed(1)}%`;
-    countEl.textContent = `(${artifactStatus} · ${s.races_enriched || 0}/${s.races_primary || 0} races · ${eligible}/${runners} eligible)`;
-    panel.style.borderColor = healthy ? '#42a5f5' : '#e05050';
+    const predictionText = s.predictions_ready === undefined
+      ? '—' : `${s.predictions_ready}/${s.races_primary || 0}`;
+    countEl.textContent = `(${artifactStatus} · ${s.races_enriched || 0}/${s.races_primary || 0} races · ${eligible}/${runners} eligible${s.prediction_model_version ? ` · model ${esc(s.prediction_model_version)}` : ''})`;
+    panel.style.borderColor = stateColor;
+    const coverageValue = (key) => pending ? 'PENDING' : `${coverage[key] || 0}/${runners}`;
     const metrics = [
+      ['PREDICTIONS', predictionText],
       ['QUALITY', qualityPct],
-      ['FORM', `${coverage.form || 0}/${runners}`],
-      ['CLASS PROFILE', `${coverage.class_profile || 0}/${runners}`],
-      ['CLASS FIT', `${coverage.class_fit || 0}/${runners}`],
-      ['TRACK BIAS', `${coverage.track_bias || 0}/${runners}`],
-      ['SPEED MAP', `${coverage.speed_map || 0}/${runners}`],
-      ['PACE SCENARIO', `${coverage.pace_scenario || 0}/${s.races_enriched || 0}`],
+      ['FORM', coverageValue('form')],
+      ['CLASS PROFILE', coverageValue('class_profile')],
+      ['CLASS FIT', coverageValue('class_fit')],
+      ['TRACK BIAS', coverageValue('track_bias')],
+      ['SPEED MAP', coverageValue('speed_map')],
+      ['PACE SCENARIO', pending ? 'PENDING' : `${coverage.pace_scenario || 0}/${s.races_enriched || 0}`],
       ['IDENTITY MISMATCH', String(s.identity_mismatches || 0)],
     ];
-    const healthBanner = `<div style="width:100%;border:1px solid ${healthy ? '#2e7d32' : '#e05050'};background:${healthy ? '#102418' : '#2a1111'};color:${healthy ? '#66bb6a' : '#ff8a80'};padding:7px 10px;border-radius:4px;font-size:11px;font-weight:700;">`
-      + `${healthy ? 'FORMFAV SHADOW HEALTH PASS' : 'FORMFAV SHADOW HEALTH FAIL'} · ${esc(artifactStatus)}`
-      + `${healthy ? '' : ` · upstream errors ${Number(s.upstream_error_count || 0)}`}</div>`;
+    const healthBanner = `<div style="width:100%;border:1px solid ${healthy ? '#2e7d32' : pending ? '#8a6d1d' : '#e05050'};background:${healthy ? '#102418' : pending ? '#2a2111' : '#2a1111'};color:${healthy ? '#66bb6a' : pending ? '#ffcc80' : '#ff8a80'};padding:7px 10px;border-radius:4px;font-size:11px;font-weight:700;">`
+      + `${healthy ? 'FORMFAV SHADOW HEALTH PASS' : pending ? 'FORMFAV PREDICTIONS READY — ENRICHMENT PENDING' : 'FORMFAV SHADOW HEALTH FAIL'} · ${esc(artifactStatus)}`
+      + `${healthy || pending ? '' : ` · upstream errors ${Number(s.upstream_error_count || 0)}`}</div>`;
     summaryEl.innerHTML = healthBanner + metrics.map(([label, value]) =>
       `<div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px 10px;min-width:110px;">`
       + `<div style="font-size:9px;color:#777;letter-spacing:.08em">${esc(label)}</div>`
@@ -4342,8 +4348,8 @@ async function loadFormfavShadow() {
         const n = Number(r.runner_count || 0);
         const q = r.mean_quality_score === null || r.mean_quality_score === undefined ? '—' : `${(Number(r.mean_quality_score) * 100).toFixed(1)}%`;
         return `<tr style="border-top:1px solid #222"><td style="padding:3px 12px 3px 0;color:#ccc">${esc(`${r.course || ''} ${r.off_time || ''}`)}</td>`
-          + `<td>${r.training_eligible_runners || 0}/${n}</td><td>${q}</td><td>${c.form || 0}/${n}</td>`
-          + `<td>${c.class_fit || 0}/${n}</td><td>${c.track_bias || 0}/${n}</td><td>${c.speed_map || 0}/${n}</td>`
+          + `<td>${pending ? 'PENDING' : `${r.training_eligible_runners || 0}/${n}`}</td><td>${q}</td><td>${pending ? 'PENDING' : `${c.form || 0}/${n}`}</td>`
+          + `<td>${pending ? 'PENDING' : `${c.class_fit || 0}/${n}`}</td><td>${pending ? 'PENDING' : `${c.track_bias || 0}/${n}`}</td><td>${pending ? 'PENDING' : `${c.speed_map || 0}/${n}`}</td>`
           + `<td>${esc(r.pace_scenario || 'UNAVAILABLE')}</td></tr>`;
       }).join('') + '</table>';
     panel.style.display = 'block';

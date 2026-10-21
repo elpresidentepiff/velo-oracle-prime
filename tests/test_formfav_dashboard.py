@@ -68,6 +68,7 @@ def test_formfav_dashboard_endpoint_is_read_only_shadow(monkeypatch, tmp_path):
 
 def test_formfav_dashboard_missing_packet_is_explicit(monkeypatch):
     monkeypatch.setattr(main, "_report_artifact", lambda artifact_type, date, local_path: (None, None))
+    monkeypatch.setattr(main, "_sb_rest_rows", lambda path: None)
 
     body = client.get("/api/formfav-shadow?date=2099-01-01").json()
 
@@ -100,6 +101,50 @@ def test_formfav_zero_coverage_packet_is_explicit_failure(monkeypatch):
     assert body["health_status"] == "FAIL"
     assert body["artifact_status"] == "SHADOW_NO_USABLE_ENRICHMENT"
     assert body["summary"]["races_enriched"] == 0
+
+
+def test_formfav_dashboard_shows_cached_predictions_while_enrichment_is_pending(monkeypatch):
+    monkeypatch.setattr(main, "_report_artifact", lambda artifact_type, date, local_path: (None, None))
+
+    def rest(path: str):
+        if path.startswith("formfav_races?"):
+            return [
+                {
+                    "provider_race_key": "formfav:gb:2026-10-21:test:r1",
+                    "track": "Test Course",
+                    "race_number": 1,
+                    "start_time": "2026-10-21T12:00:00Z",
+                    "metadata": {"raceName": "Test Race", "numberOfRunners": 2},
+                }
+            ]
+        if path.startswith("formfav_predictions?"):
+            return [{
+                "provider_race_key": "formfav:gb:2026-10-21:test:r1",
+                "model_version": "2026-10-10",
+                "confidence": "medium",
+                "captured_at": "2026-10-20T23:00:00Z",
+            }]
+        if path.startswith("formfav_runner_form?"):
+            return [
+                {"provider_race_key": "formfav:gb:2026-10-21:test:r1", "scratched": False,
+                 "form_payload": {"form": "12", "stats": {"overall": {"starts": 2}}, "speedMap": {}}},
+                {"provider_race_key": "formfav:gb:2026-10-21:test:r1", "scratched": False,
+                 "form_payload": {"form": "3", "classProfile": {}, "raceClassFit": {}}},
+            ]
+        raise AssertionError(path)
+
+    monkeypatch.setattr(main, "_sb_rest_rows", rest)
+
+    body = client.get("/api/formfav-shadow?date=2026-10-21").json()
+
+    assert body["status"] == "OK"
+    assert body["health_status"] == "PENDING"
+    assert body["artifact_status"] == "FORMFAV_PREDICTIONS_READY_ENRICHMENT_PENDING"
+    assert body["source"] == "supabase_formfav_cache"
+    assert body["summary"]["predictions_ready"] == 1
+    assert body["summary"]["races_enriched"] == 0
+    assert body["races"][0]["feature_coverage"]["form"] == 2
+    assert body["production_influence"] is False
 
 
 def test_dashboard_displays_formfav_shadow_boundary():
