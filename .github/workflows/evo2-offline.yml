@@ -1,0 +1,28 @@
+name: Evo2 Offline Research Tests
+
+on:
+  pull_request:
+    paths:
+      - "src/intelligence/**"
+      - "tests/test_challenger_policy_replay.py"
+      - "tests/test_historical_crosswalk_cli.py"
+      - ".github/workflows/evo2-offline.yml"
+
+jobs:
+  research-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install minimal offline dependencies
+        run: python -m pip install pytest python-dotenv ruff numpy pandas scikit-learn joblib
+      - name: Check offline research lint
+        run: |
+          ruff check src/intelligence/challenger_policy_replay.py tests/test_challenger_policy_replay.py
+          ruff format --check src/intelligence/challenger_policy_replay.py tests/test_challenger_policy_replay.py
+      - name: Execute offline policy and CLI tests
+        run: |
+          pytest -q tests/test_challenger_policy_replay.py tests/test_historical_crosswalk_cli.py

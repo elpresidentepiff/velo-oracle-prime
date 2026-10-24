@@ -812,7 +812,6 @@ async def runtime_truth():
     }
 
 
-
 # ── Continuity endpoint — machine-readable session state for cold context pickup ──
 @app.get("/api/continuity")
 async def continuity_state(date: str = Query(default=None)):
@@ -849,11 +848,13 @@ async def continuity_state(date: str = Query(default=None)):
             or os.getenv("SUPABASE_KEY", "")
         )
         if sb_url and sb_key:
-            qs = _up.urlencode({
-                "select": "id,service_name,run_state,status,source_date,created_at",
-                "order": "created_at.desc",
-                "limit": "5",
-            })
+            qs = _up.urlencode(
+                {
+                    "select": "id,service_name,run_state,status,source_date,created_at",
+                    "order": "created_at.desc",
+                    "limit": "5",
+                }
+            )
             req = urllib.request.Request(
                 f"{sb_url}/rest/v1/pipeline_runs?{qs}",
                 headers={
@@ -1497,7 +1498,9 @@ def _report_artifact(artifact_type: str, date: str | None, local_path: pathlib.P
     # On Railway every data file is a git checkout stamped with deploy time, so a stale
     # tracked "latest" file always looks newer than the persisted row (seen 2026-09-13:
     # sidecar stack served from 2026-07-25). There, Supabase wins whenever it has a row.
-    on_railway = bool(os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("RAILWAY_ENVIRONMENT_NAME") or os.getenv("RAILWAY_SERVICE_ID"))
+    on_railway = bool(
+        os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("RAILWAY_ENVIRONMENT_NAME") or os.getenv("RAILWAY_SERVICE_ID")
+    )
     if row is not None and on_railway:
         return row["payload"], "supabase_report_artifacts"
     if local_path is not None and local_path.exists():
@@ -1551,7 +1554,9 @@ async def rpdc_gate_card(date: str = Query(default=None)):
     staking impact. Same dated-file-first pattern as the three-option card."""
     reports_dir = pathlib.Path(__file__).parent.parent / "data" / "reports"
     if date:
-        payload, _source = _report_artifact("rpdc_gate_card", date, reports_dir / f"rpdc_gate_card_{date.replace('-', '_')}.json")
+        payload, _source = _report_artifact(
+            "rpdc_gate_card", date, reports_dir / f"rpdc_gate_card_{date.replace('-', '_')}.json"
+        )
         if payload is not None:
             return JSONResponse(payload, headers=_NO_STORE_HEADERS)
     payload, _source = _report_artifact("rpdc_gate_card", None, reports_dir / "rpdc_gate_card_latest.json")
@@ -1575,7 +1580,9 @@ async def old_velo_three_option_card(date: str = Query(default=None)):
     reports_dir = pathlib.Path(__file__).parent.parent / "data" / "reports"
     if date:
         payload, _source = _report_artifact(
-            "old_velo_three_option_card", date, reports_dir / f"old_velo_three_option_card_{date.replace('-', '_')}.json"
+            "old_velo_three_option_card",
+            date,
+            reports_dir / f"old_velo_three_option_card_{date.replace('-', '_')}.json",
         )
         if payload is not None:
             return JSONResponse(payload, headers=_NO_STORE_HEADERS)
@@ -1934,8 +1941,8 @@ async def formfav_shadow(date: str = Query(default=None)):
     for race in data.get("races") or []:
         runners = race.get("runners") or []
 
-        def _present(field: str) -> int:
-            return sum(1 for runner in runners if float(runner.get(field) or 0) > 0)
+        def _present(field: str, race_runners=runners) -> int:
+            return sum(1 for runner in race_runners if float(runner.get(field) or 0) > 0)
 
         race_summaries.append(
             {
@@ -2000,9 +2007,7 @@ def _sb_rest_rows(path: str, timeout: int = 8) -> list[dict] | None:
     url, key = resolve_supabase_url(), resolve_supabase_service_key()
     if not (url and key):
         return None
-    req = urllib.request.Request(
-        f"{url}/rest/v1/{path}", headers={"apikey": key, "Authorization": f"Bearer {key}"}
-    )
+    req = urllib.request.Request(f"{url}/rest/v1/{path}", headers={"apikey": key, "Authorization": f"Bearer {key}"})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             return json.loads(resp.read())
@@ -2357,14 +2362,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     # selections (which omit horses that no lane ranked first).
     if db is not None:
         try:
-            race_rows = (
-                db.table("races")
-                .select("race_id,runners_count")
-                .eq("date", target_date)
-                .execute()
-                .data
-                or []
-            )
+            race_rows = db.table("races").select("race_id,runners_count").eq("date", target_date).execute().data or []
             for row in race_rows:
                 rid = str(row.get("race_id") or "")
                 count = int(row.get("runners_count") or 0)
@@ -3417,7 +3415,6 @@ async def predict_full(race_data: dict, authorized: bool = Depends(verify_api_ke
     Use /api/v1/predict/race for the live scoring path.
     """
     raise HTTPException(status_code=501, detail="Not implemented — use /api/v1/predict/race for live scoring")
-
 
 
 # System endpoints
