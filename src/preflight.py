@@ -94,13 +94,17 @@ class PreflightResult:
 # ── Individual checks ─────────────────────────────────────────────────────────
 
 
-def _check_env_vars() -> PreflightCheck:
-    """Critical env vars must all be present."""
-    required = [
-        "SUPABASE_URL",
-        "TELEGRAM_BOT_TOKEN",
-        "TELEGRAM_CHAT_ID",
-    ]
+def _check_env_vars(*, require_telegram: bool = True) -> PreflightCheck:
+    """Critical runtime env vars must be present for the selected mode.
+
+    Telegram is deliberately conditional: governed ``--no-notify`` runs are
+    required to be genuinely notification-free and must not need a bot token
+    merely to reach the scoring gate.  The default remains strict for any
+    caller that intends to notify.
+    """
+    required = ["SUPABASE_URL"]
+    if require_telegram:
+        required.extend(["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"])
     missing = [k for k in required if not os.getenv(k)]
     if missing:
         return PreflightCheck(
@@ -109,9 +113,10 @@ def _check_env_vars() -> PreflightCheck:
             passed=False,
             detail=f"missing: {', '.join(missing)}",
         )
-    return PreflightCheck(
-        name="env_vars", severity=Severity.CRITICAL, passed=True, detail=f"{len(required)} vars present"
-    )
+    detail = f"{len(required)} vars present"
+    if not require_telegram:
+        detail += "; telegram disabled"
+    return PreflightCheck(name="env_vars", severity=Severity.CRITICAL, passed=True, detail=detail)
 
 
 def _check_supabase() -> PreflightCheck:
@@ -321,7 +326,7 @@ def _check_supabase_schema() -> PreflightCheck:
 # ── Main preflight function ───────────────────────────────────────────────────
 
 
-def preflight() -> PreflightResult:
+def preflight(*, require_telegram: bool = True) -> PreflightResult:
     """
     Run all preflight checks. Returns a PreflightResult with overall status.
 
@@ -331,7 +336,7 @@ def preflight() -> PreflightResult:
     """
     result = PreflightResult()
 
-    result.add(_check_env_vars())
+    result.add(_check_env_vars(require_telegram=require_telegram))
     result.add(_check_canonical_constants())
     result.add(_check_supabase())
     result.add(_check_sqpe_model())
@@ -341,7 +346,7 @@ def preflight() -> PreflightResult:
     return result
 
 
-def preflight_or_die(tg_fn=None) -> PreflightResult:
+def preflight_or_die(tg_fn=None, *, require_telegram: bool = True) -> PreflightResult:
     """
     Convenience wrapper: run preflight and sys.exit(1) on FAIL.
     Sends Telegram alert on DEGRADED or FAIL if tg_fn provided.
@@ -352,7 +357,7 @@ def preflight_or_die(tg_fn=None) -> PreflightResult:
     """
     import sys
 
-    result = preflight()
+    result = preflight(require_telegram=require_telegram)
 
     # Always print to stdout
     for check in result.checks:
@@ -362,7 +367,10 @@ def preflight_or_die(tg_fn=None) -> PreflightResult:
     if result.status != "PASS":
         alert = result.telegram_alert()
         print(f"\nPREFLIGHT {result.status}")
-        if tg_fn:
+        # A no-notify run must never call a Telegram function, including for
+        # a failure alert.  This is intentionally tied to the same mode flag
+        # that relaxes the env-var gate so the two cannot drift apart.
+        if tg_fn and require_telegram:
             tg_fn(alert)
 
     if result.status == "FAIL":

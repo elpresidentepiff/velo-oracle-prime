@@ -1655,7 +1655,10 @@ def main():
     print("-" * 40)
     from src.preflight import preflight_or_die
 
-    pf_result = preflight_or_die(tg_fn=tg)  # exits with sys.exit(1) on FAIL
+    pf_result = preflight_or_die(
+        tg_fn=tg,
+        require_telegram=notify_enabled,
+    )  # exits with sys.exit(1) on FAIL
     print(f"  Status: {pf_result.status}")
     print("-" * 40)
     _timer.mark("preflight")

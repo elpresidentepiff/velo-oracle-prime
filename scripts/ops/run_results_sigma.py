@@ -557,7 +557,10 @@ def main():
     print("\nPREFLIGHT")
     from src.preflight import preflight_or_die
 
-    preflight_or_die(tg_fn=tg)  # exits with sys.exit(1) on FAIL
+    preflight_or_die(
+        tg_fn=tg,
+        require_telegram=not NO_NOTIFY,
+    )  # exits with sys.exit(1) on FAIL
     # ─────────────────────────────────────────────────────────────────────────
 
     # ── STEP 1: Load today's predictions from Supabase ────────────────────────
