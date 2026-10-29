@@ -3,6 +3,7 @@
 Kept free of FastAPI and I/O so they are unit-testable. Everything here is a
 read-only presentation of shadow data: FormFav never feeds Prime scoring.
 """
+
 from __future__ import annotations
 
 import re
