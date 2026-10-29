@@ -164,3 +164,31 @@ def test_track_bias_coverage_requires_a_sample_when_the_packet_has_one(monkeypat
     body = client.get("/api/formfav-shadow?date=2026-10-12").json()
 
     assert body["races"][0]["feature_coverage"]["track_bias"] == 1
+
+
+def test_feature_coverage_is_computed_per_race_not_from_a_shared_loop_variable(monkeypatch):
+    packet = _packet()
+    race_a = packet["races"][0]
+    race_a["race_id"] = "race-a"
+    race_a["runners"] = [
+        {"ff_form_present": 1, "ff_class_fit_present": 0, "ff_barrier_bias_sample_ok": 1, "ff_speedmap_present": 0},
+        {"ff_form_present": 1, "ff_class_fit_present": 0, "ff_barrier_bias_sample_ok": 0, "ff_speedmap_present": 0},
+    ]
+    race_b = {
+        "race_id": "race-b",
+        "course": "Other Course",
+        "off_time": "3.00",
+        "runners": [
+            {"ff_form_present": 0, "ff_class_fit_present": 1, "ff_track_bias_present": 1, "ff_speedmap_present": 1},
+            {"ff_form_present": 0, "ff_class_fit_present": 1, "ff_track_bias_present": 1, "ff_speedmap_present": 1},
+            {"ff_form_present": 0, "ff_class_fit_present": 1, "ff_track_bias_present": 0, "ff_speedmap_present": 1},
+        ],
+    }
+    packet["races"].append(race_b)
+    monkeypatch.setattr(main, "_report_artifact", lambda artifact_type, date, local_path: (packet, "local_file"))
+
+    races = {r["race_id"]: r["feature_coverage"] for r in client.get("/api/formfav-shadow?date=2026-10-12").json()["races"]}
+
+    # race-a has the newer sample flag, so only the sampled runner counts; race-b falls back to the matched flag.
+    assert races["race-a"] == {"form": 2, "class_fit": 0, "track_bias": 1, "speed_map": 0}
+    assert races["race-b"] == {"form": 0, "class_fit": 3, "track_bias": 2, "speed_map": 3}

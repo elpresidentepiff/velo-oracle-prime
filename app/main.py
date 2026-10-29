@@ -1829,7 +1829,7 @@ def _formfav_cache_shadow(date: str) -> dict | None:
         if row.get("provider_race_key") in race_keys and row.get("model_version")
     })
     race_summaries = []
-    totals = {key: 0 for key in ("form", "class_profile", "class_fit", "track_bias", "speed_map")}
+    totals = dict.fromkeys(("form", "class_profile", "class_fit", "track_bias", "speed_map"), 0)
     for race in race_rows:
         key = str(race.get("provider_race_key") or "")
         runners = runners_by_key.get(key, [])
@@ -1930,12 +1930,12 @@ async def formfav_shadow(date: str = Query(default=None)):
             **boundary,
         }
 
+    def _present(rows: list, field: str) -> int:
+        return sum(1 for runner in rows if float(runner.get(field) or 0) > 0)
+
     race_summaries = []
     for race in data.get("races") or []:
         runners = race.get("runners") or []
-
-        def _present(field: str) -> int:
-            return sum(1 for runner in runners if float(runner.get(field) or 0) > 0)
 
         race_summaries.append(
             {
@@ -1949,16 +1949,17 @@ async def formfav_shadow(date: str = Query(default=None)):
                 "pace_scenario": race.get("formfav_pace_scenario"),
                 "speedmap_coverage": race.get("speedmap_coverage"),
                 "feature_coverage": {
-                    "form": _present("ff_form_present"),
-                    "class_fit": _present("ff_class_fit_present"),
+                    "form": _present(runners, "ff_form_present"),
+                    "class_fit": _present(runners, "ff_class_fit_present"),
                     # A matched barrier row without a sample is not evidence. Newer packets
                     # carry ff_barrier_bias_sample_ok; older ones only had the matched flag.
                     "track_bias": _present(
+                        runners,
                         "ff_barrier_bias_sample_ok"
                         if any("ff_barrier_bias_sample_ok" in rr for rr in runners)
                         else "ff_track_bias_present"
                     ),
-                    "speed_map": _present("ff_speedmap_present"),
+                    "speed_map": _present(runners, "ff_speedmap_present"),
                 },
             }
         )
