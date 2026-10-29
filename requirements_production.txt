@@ -9,6 +9,10 @@ numpy>=2.0.0,<3.0.0
 pandas>=2.2.0,<3.0.0
 joblib>=1.3.0
 xgboost>=2.0.0
+# New Build's persisted two-lane bundles are LightGBM pickles; keep the
+# production image on the verified local runtime version so unpickling is
+# deterministic rather than relying on an ambient dependency.
+lightgbm==4.6.0
 
 # Data Processing
 pyarrow>=15.0.0
