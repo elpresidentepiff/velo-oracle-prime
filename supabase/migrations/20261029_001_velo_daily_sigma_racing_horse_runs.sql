@@ -183,7 +183,8 @@ update public.velo_sigma_history
 set notes = 'INVALID_FALSE_ZERO: runner_results source dead since 2026-04-29; ' || coalesce(notes, '')
 where snapshot_date >= date '2026-04-30'
   and snapshot_date < current_date - 30
-  and coalesce(top1_precision, 0) = 0
+  and races_count > 0
+  and top1_precision = 0
   and coalesce(notes, '') not like 'INVALID_FALSE_ZERO%';
 
 commit;
