@@ -174,15 +174,18 @@ END $$;
 $cmd$
 );
 
--- One-time: recompute the window the view covers, replacing the false zeros.
+-- One-time: recompute the days the view reliably covers, replacing the false zeros. The view keeps
+-- 30 days of verdicts, so its oldest days are partial; start 28 days back, and only for days it has
+-- rows for, so an edge day is never overwritten with an empty or partial value.
 select public.velo_sigma_snapshot(d::date)
-from generate_series(current_date - 30, current_date - 1, interval '1 day') d;
+from generate_series(current_date - 28, current_date - 1, interval '1 day') d
+where exists (select 1 from public.velo_daily_sigma v where v.date::date = d::date);
 
--- Older rows from the dead-source era (2026-04-30 onward, outside the view window): annotate only.
+-- Older rows from the dead-source era (2026-04-30 onward, before the recomputed window): annotate only.
 update public.velo_sigma_history
 set notes = 'INVALID_FALSE_ZERO: runner_results source dead since 2026-04-29; ' || coalesce(notes, '')
 where snapshot_date >= date '2026-04-30'
-  and snapshot_date < current_date - 30
+  and snapshot_date < current_date - 28
   and races_count > 0
   and top1_precision = 0
   and coalesce(notes, '') not like 'INVALID_FALSE_ZERO%';
