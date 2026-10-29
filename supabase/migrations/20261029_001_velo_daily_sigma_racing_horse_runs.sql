@@ -18,7 +18,7 @@
 --     results write NULL precision and notes = 'NO_RESULTS_FOR_DATE (...)' instead of 0.000. The
 --     02:00 UTC job now recomputes the previous THREE days, so results ingested after 02:00 correct
 --     their own row the next night instead of staying stale.
---  4. One-time recompute of the last 30 days (the view's window), then older rows from the dead-source
+--  4. One-time recompute of the last 28 days that the view covers, then older rows from the dead-source
 --     era are annotated (notes only; numbers untouched).
 --  5. Separate latent bug fixed in the same view: confidence_level is stored lowercase
 --     ('high'/'normal'/'low') but high_conf_miss compared to 'HIGH', so it could never be true and
@@ -28,9 +28,9 @@
 -- NOT CHANGED. No scoring, model, ledger or staking path reads this view. Frozen-weights and
 -- SIM-only laws are unaffected. Racing API is not used.
 --
--- ROLLBACK. Recreate the view from the previous definition (runner_results join) and restore the
--- previous cron command; both previous definitions are quoted in the PR description.
--- Apply on a Supabase branch first and compare 2026-10-25..27 against the numbers in the PR.
+-- ROLLBACK. scripts/migrations/rollback_20261029_velo_daily_sigma.sql restores the exact previous view
+-- (runner_results join) and cron command. It does not undo the recomputed velo_sigma_history rows,
+-- which were all false zeros (top1_precision = 0) on every racing day since 2026-04-30.
 
 begin;
 
