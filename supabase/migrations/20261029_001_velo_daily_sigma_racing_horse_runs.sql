@@ -15,7 +15,9 @@
 --     0 / -1.0 / true. Absence of results is "no evidence", not a loss. A race that HAS results but
 --     whose top pick is missing from them (e.g. non-runner) is still counted as a miss, unchanged.
 --  3. The nightly insert moves into velo_sigma_snapshot(date). Days with scored races but zero
---     results write NULL precision and notes = 'NO_RESULTS_FOR_DATE (...)' instead of 0.000.
+--     results write NULL precision and notes = 'NO_RESULTS_FOR_DATE (...)' instead of 0.000. The
+--     02:00 UTC job now recomputes the previous THREE days, so results ingested after 02:00 correct
+--     their own row the next night instead of staying stale.
 --  4. One-time recompute of the last 30 days (the view's window), then older rows from the dead-source
 --     era are annotated (notes only; numbers untouched).
 --  5. Separate latent bug fixed in the same view: confidence_level is stored lowercase
@@ -157,13 +159,17 @@ $fn$;
 revoke execute on function public.velo_sigma_snapshot(date) from public, anon, authenticated;
 grant execute on function public.velo_sigma_snapshot(date) to service_role;
 
--- Nightly job 3: same schedule (0 2 * * *), now calls the function.
+-- Nightly job 3: same schedule (0 2 * * *), now calls the function for the last THREE days, not just
+-- yesterday. Results are ingested by the EOD procedure, which can run after 02:00 UTC (28 Oct results
+-- landed ~03:00 UTC, after that night's row was written). snapshot is an idempotent upsert, so
+-- re-running recent days lets late-arriving results correct their own row on the next night.
 select cron.alter_job(
     job_id  := (select jobid from cron.job where jobname like '%refresh and insert velo_sigma_history%' limit 1),
     command := $cmd$
 DO $$ BEGIN
   REFRESH MATERIALIZED VIEW public.velo_daily_sigma;
-  PERFORM public.velo_sigma_snapshot(CURRENT_DATE - 1);
+  PERFORM public.velo_sigma_snapshot(d::date)
+  FROM generate_series(CURRENT_DATE - 3, CURRENT_DATE - 1, interval '1 day') d;
 END $$;
 $cmd$
 );
