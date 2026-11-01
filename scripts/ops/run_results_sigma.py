@@ -17,6 +17,7 @@ Usage:
 
 import argparse
 import base64
+import hashlib
 import json
 import os
 import sys
@@ -25,6 +26,7 @@ import urllib.error
 import uuid
 from datetime import date, datetime
 from pathlib import Path
+from urllib.parse import urlparse
 
 ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
@@ -787,6 +789,132 @@ def main():
                     _r["off_time"] = f"{_h:02d}.{_m:02d}"
                 except Exception:
                     _r["off_time"] = _off
+        # Racing Post does not publish result pages for cancelled/abandoned
+        # races.  A date-scoped sidecar may therefore add only authoritative
+        # non-results from the authenticated RP date index.  This is an
+        # identity/completeness aid, never a substitute result or a threshold
+        # bypass.
+        _non_result_path = ROOT / "data" / "results" / f"rp_non_results_{race_date.replace('-', '_')}.json"
+        if _non_result_path.exists():
+            _allowed_rp_host = {"racingpost.com", "www.racingpost.com"}
+
+            def _valid_rp_url(value: object) -> bool:
+                try:
+                    parsed = urlparse(str(value or ""))
+                    return parsed.scheme == "https" and parsed.hostname in _allowed_rp_host
+                except Exception:
+                    return False
+
+            try:
+                _non_result_raw = _json.loads(_non_result_path.read_text(encoding="utf-8"))
+            except Exception as _exc:
+                _msg = f"invalid Racing Post non-result sidecar JSON: {_exc}"
+                print(f"  FAILED: {_msg}")
+                _close_sigma_run(run_id, status="FAIL", error=_msg)
+                sys.exit(1)
+
+            _sidecar_errors: list[str] = []
+            if not isinstance(_non_result_raw, dict):
+                _sidecar_errors.append("sidecar root must be an object")
+            elif _non_result_raw.get("source") != "racing_post":
+                _sidecar_errors.append("source must be racing_post")
+            elif _non_result_raw.get("date") != race_date:
+                _sidecar_errors.append("date does not match requested race date")
+            elif not _valid_rp_url(_non_result_raw.get("source_url")):
+                _sidecar_errors.append("source_url must be an HTTPS Racing Post URL")
+            _source_hash = _non_result_raw.get("source_html_sha256") if isinstance(_non_result_raw, dict) else None
+            if not isinstance(_source_hash, str) or len(_source_hash) != 64 or any(
+                ch not in "0123456789abcdefABCDEF" for ch in _source_hash
+            ):
+                _sidecar_errors.append("source_html_sha256 must be a 64-character hex digest")
+            _capture_dir_value = _non_result_raw.get("capture_dir") if isinstance(_non_result_raw, dict) else None
+            _capture_dir = Path(str(_capture_dir_value or ""))
+            if not _capture_dir.is_absolute():
+                _capture_dir = ROOT / _capture_dir
+            if not _capture_dir.is_dir():
+                _sidecar_errors.append("capture_dir must exist and contain the authenticated RP index capture")
+            elif isinstance(_source_hash, str) and len(_source_hash) == 64:
+                try:
+                    _capture_hashes = {
+                        hashlib.sha256(_path.read_bytes()).hexdigest()
+                        for _path in _capture_dir.glob("*.html")
+                    }
+                    if _source_hash.lower() not in _capture_hashes:
+                        _sidecar_errors.append("source_html_sha256 does not match any captured RP index HTML")
+                except Exception as _exc:
+                    _sidecar_errors.append(f"could not verify captured RP index HTML: {_exc}")
+
+            _sidecar_entries = _non_result_raw.get("entries", []) if isinstance(_non_result_raw, dict) else []
+            if not isinstance(_sidecar_entries, list) or not _sidecar_entries:
+                _sidecar_errors.append("entries must be a non-empty list")
+
+            _prediction_ids = {str(_rid) for _rid in predictions}
+            _existing_result_ids = {str(_r.get("race_id")) for _r in results_list if _r.get("race_id")}
+            _seen_non_result_ids: set[str] = set()
+            _validated_non_results: list[dict] = []
+            for _entry in (_sidecar_entries if isinstance(_sidecar_entries, list) else []):
+                if not isinstance(_entry, dict):
+                    _sidecar_errors.append("each sidecar entry must be an object")
+                    continue
+                _rid = str(_entry.get("race_id") or "").strip()
+                _status = str(_entry.get("status") or "").upper()
+                if not _rid.isdigit():
+                    _sidecar_errors.append(f"invalid race_id: {_rid!r}")
+                if _rid in _seen_non_result_ids:
+                    _sidecar_errors.append(f"duplicate sidecar race_id: {_rid}")
+                _seen_non_result_ids.add(_rid)
+                if _rid not in _prediction_ids:
+                    _sidecar_errors.append(f"sidecar race_id not present in scored predictions: {_rid}")
+                if _rid in _existing_result_ids:
+                    _sidecar_errors.append(f"sidecar race_id duplicates a parsed result: {_rid}")
+                if _status not in {"ABANDONED", "CANCELLED", "VOID"}:
+                    _sidecar_errors.append(f"invalid non-result status for {_rid}: {_status!r}")
+                if _entry.get("is_abandoned") is not True:
+                    _sidecar_errors.append(f"{_rid} is_abandoned must be true")
+                if _entry.get("is_result") is not False:
+                    _sidecar_errors.append(f"{_rid} is_result must be false")
+                if _entry.get("full_result_available") is not False:
+                    _sidecar_errors.append(f"{_rid} full_result_available must be false")
+                if _entry.get("runners_count") != 0:
+                    _sidecar_errors.append(f"{_rid} runners_count must be zero")
+                if not _valid_rp_url(_entry.get("full_result_link")):
+                    _sidecar_errors.append(f"{_rid} full_result_link must be an HTTPS Racing Post URL")
+                if _rid and _rid not in _existing_result_ids:
+                    _validated_non_results.append(
+                        {
+                            "race_id": _rid,
+                            "course": _entry.get("course", ""),
+                            "off": _entry.get("off", ""),
+                            "off_time": _entry.get("off", ""),
+                            "race_time_raw": _entry.get("race_time_raw"),
+                            "race_name": _entry.get("race_name", ""),
+                            "going": _entry.get("going", "Abandoned"),
+                            "status": _status,
+                            "race_status_code": _entry.get("race_status_code"),
+                            "official_non_result": True,
+                            "is_abandoned": True,
+                            "full_result_available": False,
+                            "runners_count": 0,
+                            "runners": [],
+                            "full_runners": [],
+                            "winner_id": "",
+                            "winner_name": "",
+                            "winner_horse": "",
+                            "winner_sp": 0,
+                            "top3_ids": [],
+                            "top3_names": [],
+                            "source": "racing_post_date_index",
+                            "source_url": _entry.get("full_result_link"),
+                        }
+                    )
+
+            if _sidecar_errors:
+                _msg = "invalid Racing Post non-result sidecar: " + "; ".join(_sidecar_errors[:8])
+                print(f"  FAILED: {_msg}")
+                _close_sigma_run(run_id, status="FAIL", error=_msg)
+                sys.exit(1)
+            results_list.extend(_validated_non_results)
+            print(f"  Official RP non-results loaded: {len(_validated_non_results)}")
         print(f"  Results loaded: {len(results_list)}")
     else:
         print("  Fetching from API...")
@@ -829,6 +957,7 @@ def main():
     misses = []  # top pick outside top 3
     no_result = []  # race result not found
     non_runners = []  # predicted horse did not participate (NR/WD only)
+    non_results = []  # official RP cancellation/abandonment/void — excluded from stats
     all_matched = []
 
     # Positions that mean "did not finish / was not a runner" — exclude from stats
@@ -862,6 +991,21 @@ def main():
         
         if not result:
             no_result.append(race_id)
+            continue
+
+        # Official RP non-results have no runners or winner and must be
+        # resolved for coverage while remaining outside win/frame statistics.
+        result_status = str(result.get("status") or "").upper()
+        if (
+            result.get("official_non_result")
+            or result.get("is_abandoned")
+            or result_status in {"ABANDONED", "CANCELLED", "VOID"}
+        ):
+            non_results.append(race_id)
+            print(
+                f"  [NON_RESULT] {race_id}: {result.get('course','')} "
+                f"{result.get('off','')} — {result_status}"
+            )
             continue
 
         # ── Step 3.2: Integrity Gate ──────────────────────────────────────────
@@ -989,12 +1133,16 @@ def main():
     total_frames = len(frames)
     total_misses = len(misses)
     total_nr = len(non_runners)
-    total_resolved = total_matched + total_nr
+    total_non_results = len(non_results)
+    total_resolved = total_matched + total_nr + total_non_results
     strike_rate = total_hits / total_matched if total_matched else 0
     frame_rate = (total_hits + total_frames) / total_matched if total_matched else 0
     no_result_ct = len(no_result)
 
-    print(f"\n  Matched: {total_matched}  No result: {no_result_ct}  Non-runners excluded: {total_nr}")
+    print(
+        f"\n  Matched: {total_matched}  No result: {no_result_ct}  "
+        f"Non-runners excluded: {total_nr}  Official non-results: {total_non_results}"
+    )
     print(f"  HITS:    {total_hits} ({strike_rate:.1%})")
     print(f"  FRAMES:  {total_frames}")
     print(f"  MISSES:  {total_misses}")
@@ -1057,6 +1205,8 @@ def main():
             "resolved": total_resolved,
             "matched": total_matched,
             "non_runners": total_nr,
+            "official_non_results": total_non_results,
+            "non_result_races": non_results,
             "coverage_ratio": round(coverage_ratio, 4),
             "threshold": COMPLETENESS_THRESHOLD,
             "no_result_count": no_result_ct,
@@ -1533,6 +1683,8 @@ def main():
         "frames": total_frames,
         "misses": total_misses,
         "true_non_runners": total_nr,
+        "official_non_results": total_non_results,
+        "official_non_result_races": non_results,
         "identity_failures": 0,
         "no_result_count": no_result_ct,
         "total_reviewed": total_matched,
@@ -1582,6 +1734,7 @@ def main():
         f"| Frames | {total_frames} |",
         f"| Misses | {total_misses} |",
         f"| Non-runners excluded | {total_nr} |",
+        f"| Official non-results | {total_non_results} |",
         f"| No-result | {no_result_ct} |",
         f"| High-conf (VP≥0.30) | {len(high_conf)} picks, {high_strike:.1%} SR |",
         f"| sigma_audits written | {sigma_ok}/{total_matched} |",
