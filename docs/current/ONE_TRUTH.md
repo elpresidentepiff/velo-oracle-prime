@@ -2,7 +2,7 @@
 
 > **IF THIS FILE CONFLICTS WITH ANY OTHER DOC, THIS FILE WINS UNTIL OPERATOR SAYS OTHERWISE.**
 
-**Effective:** 2026-10-21 (cloud RP capture cutover; prior baseline 2026-07-29) · **Branch:** `main` — THE only branch, local and remote; the sweep deleted 97 remote + 72 local branches, every non-bot unmerged tip preserved at `archive/2026-07-29/*` tags (see `docs/current/BRANCH_SWEEP_2026_07_29.md`) · **Verified against code and the 2026-10-20 Railway capture log.**
+**Effective:** 2026-11-02 (Railway cloud-EOD recovery contract; cloud RP capture cutover 2026-10-21) · **Branch:** `main` — THE only production branch · **Verified against code, Supabase morning truth, and Railway service state.**
 
 **This file supersedes:** `THE_NEW_TRUTH.md`, `CURRENT_RUNTIME_TRUTH.md`, root `CLAUDE.md` state claims, all numbered docs in `docs/` flat directory.
 **This file defers to:** root `THE_ONE_TRUTH.md` for step-by-step command detail (Steps 1–20), `docs/current/RACE_DAY_RUNBOOK.md` for the lifecycle.
@@ -32,7 +32,8 @@ Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing sc
 
 | Lane | Runs where | What | Status |
 |---|---|---|---|
-| 1. Capture + score + EOD | Railway `velo-rp-capture` (07:00 UTC) with local Windows fallback | RP HTML capture (logged-in Playwright in `Dockerfile.rpcapture`) → `rp_cloud_raceday.py` → canonical runner → Supabase; local `run_full_raceday.py` remains an operator fallback | LIVE. Cloud login and index capture were verified 2026-10-20; the first scheduled run was blocked by a missing `beautifulsoup4` dependency, fixed in `main`. |
+| 1. Capture + score | Railway `velo-rp-capture` (07:00 UTC) with local Windows fallback | RP HTML capture (logged-in Playwright in `Dockerfile.rpcapture`) → `rp_cloud_raceday.py` → canonical runner → Supabase; local `run_full_raceday.py` remains an operator fallback | LIVE. Cloud login and index capture were verified 2026-10-20. |
+| 1B. Results + EOD | Railway `velo-results-sigma` (21:00 UTC) after its service config is verified as `/railway.eod.toml`; local Windows fallback remains supported | `rp_cloud_eod.py` reconstructs the exact scored universe from durable Supabase morning RP truth → authenticated RP HTML result capture → existing full EOD/Sigma/Council/Mission Control/learning chain | RECOVERY PREPARED 2026-11-02. Do not call it live until Railway shows the current `main` SHA/config and a dated `pipeline_runs` PASS/completed row. |
 | 2. FormFav (world data) | Railway | `velo-formfav-live` 24/7 worker (ingest + hourly global EOD → `formfav_sigma_audits`); `velo-formfav-uk-shadow` cron `30 8 * * *` (enrichment packet) | LIVE, SHADOW ONLY. Prime does not read it. |
 | 3. Dashboard | Railway `velo-oracle` (`app.main:app`, auto-deploys on push to `main`) | Reads Supabase only | LIVE |
 | Storage | Supabase `ltbsxbvfsxtnharjvqcm` | System of record | LIVE |
@@ -47,7 +48,7 @@ Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing sc
 | `velo-formfav-us-shadow` | one-shot, **`--date 2026-10-11` hard-coded**, no cron | DEAD — runs nothing useful today |
 | `velo-rp-capture` | cron/container → `rp_cloud_raceday.py` (`Dockerfile.rpcapture`) | KEEP — governed Racing Post HTML capture; login/index capture PASS on 2026-10-20 |
 | `velo-prime-scoring` | no cron; live service setting still points at legacy `run_cloud_raceday.py` | LEGACY DUPLICATE — not the daily scheduler; do not run until its Railway start command is updated or the service is retired with operator approval |
-| `velo-results-sigma` | cron `0 21 * * *` → `scripts/run_results_sigma.py` @ Apr-26 commit, Racing API creds | LEGACY, FAILED 2026-10-17. Real sigma is `scripts/ops/run_results_sigma.py` |
+| `velo-results-sigma` | required config `/railway.eod.toml`; cron `0 21 * * *` → `scripts/ops/rp_cloud_eod.py --execute --no-notify` | RECOVERY TARGET. The 2026-11-02 audit found it pinned to an Apr-26 deployment and the wrong non-ops script. Activation requires a current deployment plus the durable postconditions above. |
 | `velo-daily-ingestion` | `workers/daily_pipeline.py`, Racing API creds, no schedule | LEGACY |
 | `ingestion-spine` | branch `feature/v10-launch` (deleted), Racing API creds, build step rewrites source | LEGACY — cannot be rebuilt reproducibly |
 | `velo-shadow-lab` | branch `shadow-lab` (deleted), no deployment | DEAD |
@@ -758,19 +759,18 @@ only, no external NLP/sentiment service.
 - **RPDC missing tags:** STABLE_WARM / MARK_READY / MARK_NEAR / COURSE_RETURN absent from all May–Jun 2026 data. Investigate Supabase `runner_release_candidates`.
 - **New scrapers/parsers:** `scripts/ops/scrape_bha_going_stick.py` (D-1, shell ready) · `scripts/ops/parse_runner_notes.py` (D-3, verdict intel only)
 
-## Railway — What It Actually Does (re-verified 2026-09-13)
+## Railway — What It Actually Does (2026-11-02 superseding the 2026-09-13 snapshot)
 
-Railway runs ONE thing: the FastAPI dashboard (`app.main:app`). Project `sincere-empathy`,
-service `velo-oracle`, environment `production`, public URL
-https://velo-oracle-production.up.railway.app. **It deploys automatically on every push to
-`main`** (Railway GitHub integration). It reads Supabase; it has no `data/` beyond what git
-carried at deploy time, and no RP browser session.
+Railway runs the FastAPI dashboard plus scheduled RP capture, FormFav, and recovery-target
+EOD services in project `sincere-empathy`, environment `production`. The dashboard service
+is `velo-oracle` at https://velo-oracle-production.up.railway.app. The 2026-09-13 claim that
+Railway ran only the dashboard is historical and must not be used for operations.
 
 | Railway service | Status | Verdict |
 |---|---|---|
 | Dashboard (`app.main:app`) | **RUNNING since 2026-09-13** (was DOWN from at least 2026-08-08) | `/health` 200 healthy, sqpe_v17 loaded; `/api/canonical-scorecard?date=2026-09-11` = 1,415 rows; report-artifact routes answer `source=supabase_report_artifacts`. |
-| Scoring cron | NOT ON RAILWAY | Structurally impossible there — needs the local RP browser session. Scoring runs from the two Windows tasks (see STANDARD DAILY OPERATION). |
-| EOD/sigma chain | NOT ON RAILWAY | Same reason — local result captures. |
+| Scoring cron | **ON RAILWAY** | `velo-rp-capture`, 07:00 UTC, authenticated RP HTML path. Local Windows remains fallback. |
+| EOD/sigma chain | **RECOVERY TARGET ON RAILWAY** | `velo-results-sigma`, 21:00 UTC, `/railway.eod.toml`. Separate containers share no files; Supabase carries morning truth and report artifacts into EOD. Treat as active only after service config/deployment and a dated PASS/completed row are verified. |
 
 **How the build really works (from the deployment manifest, not the files):** the service
 builds from `/Dockerfile` (`python:3.11-slim`, `pip install -r requirements_production.txt`)
@@ -809,8 +809,10 @@ overrides the Dockerfile `CMD`. `railway.json` is present but is not the config 
 - Non-fatal startup noise on Railway: `SECURITY VERIFICATION INCOMPLETE` (security validator
   cannot read `pg_class` through PostgREST) and the optional `shadow_verdicts` table missing.
 
-**Cost verdict (unchanged):** Railway hosts a dashboard that reads Supabase. Keep it if remote
-access matters; otherwise run `app.main:app` locally. Never wire scoring onto it.
+**Operational verdict:** Railway is the intended independent daily executor. A green build
+or container start is insufficient. Morning proof is date-specific race/verdict persistence;
+EOD proof is complete RP results coverage, every mandatory EOD report step passing, and a
+durable `pipeline_runs` PASS/completed row for `velo-results-sigma`.
 
 ## DEEP AUDIT 2026-08-01 — why work keeps needing 10 attempts
 
@@ -1003,9 +1005,12 @@ Step 21:  PASSPORT BANK REFRESH (wired 2026-08-02, commit 686488b)
           the queue is empty or the RP session is down.
 Step 20F: persist_nightly_learning_events.py --date YYYY-MM-DD --execute
           (runner's jsonl -> velo_learning_events; wired 2026-09-13, non-critical)
-Step 22:  persist_daily_artifacts.py --kind all --date YYYY-MM-DD --execute
-          (council, Mission Control, model ledger, passport bank, dashboard reports
-          -> Supabase; wired 2026-09-13, non-critical, runs after 21E)
+Step 22:  persist_daily_artifacts.py --kind council --kind mission --kind ledger
+          --kind reports --date YYYY-MM-DD --execute
+          (cloud/--skip-passport-refresh path: date-scoped Council, Mission Control,
+          model ledger and dashboard reports -> Supabase; never re-uploads the tracked
+          historical passport bank). When passport refresh actually ran, Step 22 also
+          adds --kind passports. Wired 2026-09-13; cloud scope hardened 2026-11-02.
 ```
 Morning also runs `persist_daily_artifacts.py --kind reports` as its last step (2026-09-13).
 `DAY COMPLETE` only when all pass plus final Council + Mission Control refresh.
