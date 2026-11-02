@@ -440,6 +440,57 @@ def _extract_pick_sp_from_prediction(prediction: dict) -> float | None:
     return None
 
 
+def _extract_top_pick_name_from_prediction(prediction: dict | None) -> str | None:
+    """Resolve the persisted top-pick name without guessing.
+
+    Production verdicts store runner rows under
+    ``full_analysis["predictions"]``.  Older artifacts may store the runner
+    list directly, or serialize either shape as JSON.  Sigma previously
+    treated the dictionary itself as the runner list, so every cloud-only
+    verdict fell through to ``"?"`` even though the horse ID and name were
+    present in the persisted row.
+
+    Match the declared ``top_rank_horse_id`` first.  The first-row fallback is
+    retained only for legacy rows where the ID is absent; no synthetic name is
+    invented.
+    """
+    if not prediction:
+        return None
+
+    full_analysis = prediction.get("full_analysis")
+    if isinstance(full_analysis, str):
+        try:
+            full_analysis = json.loads(full_analysis)
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return None
+
+    if isinstance(full_analysis, dict):
+        selections = full_analysis.get("predictions") or []
+    elif isinstance(full_analysis, list):
+        selections = full_analysis
+    else:
+        selections = []
+
+    selections = [row for row in selections if isinstance(row, dict)]
+    if not selections:
+        return None
+
+    top_horse_id = str(prediction.get("top_rank_horse_id") or "")
+    if top_horse_id:
+        for selection in selections:
+            selection_id = str(selection.get("horse_id") or selection.get("id") or "")
+            if selection_id == top_horse_id:
+                return (
+                    selection.get("horse")
+                    or selection.get("name")
+                    or selection.get("horse_name")
+                    or None
+                )
+
+    first = selections[0]
+    return first.get("horse") or first.get("name") or first.get("horse_name") or None
+
+
 def _extract_field_size_from_prediction(prediction: dict) -> int | None:
     """Read the persisted field size from a verdict row.
 
@@ -692,34 +743,7 @@ def main():
         )
 
     for rid, v in predictions.items():
-        top_horse_id = v.get("top_rank_horse_id") or ""
-        selections_raw = v.get("full_analysis")
-
-        # Parse selections — may arrive as string or list depending on Supabase client
-        selections = []
-        if isinstance(selections_raw, list):
-            selections = selections_raw
-        elif isinstance(selections_raw, str):
-            try:
-                selections = json.loads(selections_raw)
-            except Exception:
-                selections = []
-
-        pick_name = None
-        if top_horse_id and selections:
-            for sel in selections:
-                if not isinstance(sel, dict):
-                    continue
-                # selections entries may use horse_id or id
-                sel_hid = sel.get("horse_id") or sel.get("id") or ""
-                if sel_hid == top_horse_id:
-                    pick_name = sel.get("horse") or sel.get("name") or sel.get("horse_name")
-                    break
-            # If top_rank_horse_id not matched in selections, try rank position 0
-            if pick_name is None and selections:
-                first = selections[0]
-                if isinstance(first, dict):
-                    pick_name = first.get("horse") or first.get("name") or first.get("horse_name")
+        pick_name = _extract_top_pick_name_from_prediction(v)
 
         if pick_name:
             horse_names[rid] = {
