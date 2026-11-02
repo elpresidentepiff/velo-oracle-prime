@@ -71,6 +71,17 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _daily_artifact_persist_command(date: str, *, include_passports: bool) -> list[str]:
+    kinds = ["council", "mission", "ledger", "reports"]
+    if include_passports:
+        kinds.append("passports")
+    command = [PY, "scripts/ops/persist_daily_artifacts.py"]
+    for kind in kinds:
+        command.extend(["--kind", kind])
+    command.extend(["--date", date, "--execute"])
+    return command
+
+
 def run(label: str, cmd: list[str], *, critical: bool, results: list[dict]) -> bool:
     print(f"\n{'='*70}\n{label}\n{'='*70}")
     print("  $ " + " ".join(cmd))
@@ -150,6 +161,11 @@ def main() -> int:
     parser.add_argument("--skip-passport-refresh", action="store_true",
                         help="Skip Step 21 (passport bank refresh). The refresh is a ~500-URL "
                              "scrape that runs after learning has already completed.")
+    parser.add_argument(
+        "--no-notify",
+        action="store_true",
+        help="Suppress Telegram notifications in child steps that support it.",
+    )
     parser.add_argument("--passport-batch-limit", type=int, default=500,
                         help="Max horse profiles to queue for Step 21 (default 500, matching "
                              "build_rp_passport_bank_queue.py's own default).")
@@ -223,9 +239,12 @@ def main() -> int:
     )
 
     # ── Step 12: reconcile predictions vs results (sigma) ────────────────
+    sigma_command = [PY, "scripts/ops/run_results_sigma.py", "--date", date, "--source", "cache"]
+    if args.no_notify:
+        sigma_command.append("--no-notify")
     if not run(
         "Step 12: Results + sigma reconciliation",
-        [PY, "scripts/ops/run_results_sigma.py", "--date", date, "--source", "cache"],
+        sigma_command,
         critical=True, results=results,
     ):
         return 1
@@ -527,11 +546,13 @@ def main() -> int:
 
     # ── Step 22: persist local-only artifacts to Supabase ──────────────────
     # Wired 2026-09-13. Council runs, Mission Control, the multi-model ledger,
-    # the passport bank and the dashboard's report files had no Supabase home,
-    # so Railway could not see them. Runs last, after 21E has rebuilt the bank.
+    # passport bank and dashboard report files had no Supabase home. When the
+    # passport refresh was explicitly skipped (the normal ephemeral-cloud path),
+    # do not re-upload the tracked historical bank; only persist date-scoped EOD
+    # products. A real refresh still persists passports after 21E.
     run(
-        "Step 22: Persist daily artifacts (council, MC, ledger, passports, reports)",
-        [PY, "scripts/ops/persist_daily_artifacts.py", "--kind", "all", "--date", date, "--execute"],
+        "Step 22: Persist daily artifacts (council, MC, ledger, reports)",
+        _daily_artifact_persist_command(date, include_passports=not args.skip_passport_refresh),
         critical=False, results=results,
     )
 

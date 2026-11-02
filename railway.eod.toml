@@ -1,0 +1,13 @@
+# Dedicated Railway cron worker for governed Velo EOD.
+#
+# The morning worker is intentionally separate.  This worker reconstructs the
+# scored RP race universe from Supabase, captures authoritative RP result HTML,
+# and runs the existing EOD/Sigma/Council/Mission-Control/learning sequence.
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.rpcapture"
+
+[deploy]
+startCommand = "python scripts/ops/rp_cloud_eod.py --execute --no-notify"
+cronSchedule = "0 21 * * *"
+restartPolicyType = "NEVER"

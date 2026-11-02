@@ -19,6 +19,8 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
+import requests
+
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
@@ -224,6 +226,42 @@ def _load_lane_c_scorecards(date_str: str) -> dict[str, dict]:
     return result
 
 
+def _load_canonical_rank1(date_str: str, model_name: str) -> dict[str, dict]:
+    """Load a model's persisted morning rank-1 rows for cloud EOD fallback.
+
+    Morning and evening Railway workers do not share a filesystem.  The
+    canonical scorecard is the durable copy of the morning model packets, so
+    it is the only truthful fallback when the corresponding local report is
+    absent.  Local artifacts remain primary for laptop/backfill runs.
+    """
+    url = os.getenv("SUPABASE_URL", "").rstrip("/")
+    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY", "")
+    if not url or not key:
+        return {}
+    try:
+        response = requests.get(
+            f"{url}/rest/v1/canonical_model_scorecards",
+            params={
+                "select": "race_id,horse,score",
+                "run_date": f"eq.{date_str}",
+                "model_name": f"eq.{model_name}",
+                "rank": "eq.1",
+            },
+            headers={"apikey": key, "Authorization": f"Bearer {key}"},
+            timeout=30,
+        )
+        response.raise_for_status()
+        rows = response.json()
+    except Exception as exc:
+        print(f"  [WARN] canonical scorecard fallback failed for {model_name}: {exc}")
+        return {}
+    return {
+        str(row.get("race_id")): {"horse": row.get("horse"), "prob": row.get("score")}
+        for row in rows
+        if row.get("race_id") and row.get("horse")
+    }
+
+
 def _build_numeric_to_velo_map(date_str: str) -> dict[str, str]:
     """Maps raw numeric RP race_id (e.g. "921398") -> VELO race_id (e.g.
     "rp_NMK_20260710_1.50"), from the same results file _load_rp_results
@@ -338,10 +376,22 @@ def run(date_str: str, execute: bool = False) -> list[dict]:
         return rid if rid in sigma_ids else numeric_to_velo.get(rid, rid)
 
     nb_cards_raw = _load_nb_scorecards(date_str)
+    if not nb_cards_raw:
+        nb_cards_raw = _load_canonical_rank1(date_str, "NEW_BUILD_LANE_A_MODEL")
+        if nb_cards_raw:
+            print("  [cloud fallback] New Build rank-1 loaded from canonical_model_scorecards")
     nb_cards = {_join_key(rid): card for rid, card in nb_cards_raw.items()}
     champion_cards_raw = _load_champion_scorecards(date_str)
+    if not champion_cards_raw:
+        champion_cards_raw = _load_canonical_rank1(date_str, "CHAMPION_INTENT_SHADOW")
+        if champion_cards_raw:
+            print("  [cloud fallback] Champion rank-1 loaded from canonical_model_scorecards")
     champion_cards = {_join_key(rid): card for rid, card in champion_cards_raw.items()}
     mp_cards_raw = _load_midprice_scorecards(date_str)
+    if not mp_cards_raw:
+        mp_cards_raw = _load_canonical_rank1(date_str, "MIDPRICE_SPECIALIST_SHADOW")
+        if mp_cards_raw:
+            print("  [cloud fallback] Midprice rank-1 loaded from canonical_model_scorecards")
     mp_cards = {_join_key(rid): card for rid, card in mp_cards_raw.items()}
     nbc_cards_raw = _load_lane_c_scorecards(date_str)
     nbc_cards = {_join_key(rid): card for rid, card in nbc_cards_raw.items()}
