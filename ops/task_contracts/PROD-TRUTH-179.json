@@ -1,0 +1,101 @@
+{
+  "task_id": "PROD-TRUTH-179",
+  "title": "Production EOD Identity and Brief Truth Repair",
+  "classification": "POST_RACE_TRUTH_REPORTING_REPAIR",
+  "allowed_paths": [
+    "ops/task_contracts/PROD-TRUTH-179.json",
+    "scripts/ops/run_results_sigma.py",
+    "scripts/ops/run_llm_intel_brief.py",
+    "tests/test_sigma_eod_identity_truth.py",
+    "tests/test_llm_intel_brief.py",
+    "docs/current/PRODUCTION_TRUTH_AUDIT_2026_11_02.md",
+    "data/current/"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "app/agents/betfair_execution_agent.py",
+    "app/agents/betfair_trading_agents.py",
+    "src/velo/execution_bridge.py",
+    "data/sentient_state.json",
+    "railway.toml",
+    "Dockerfile",
+    ".env"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_production_logs",
+    "read_supabase_truth",
+    "repair_post_race_identity_reporting",
+    "repair_llm_brief_input_validation",
+    "create_tests",
+    "create_audit_report",
+    "run_tests",
+    "run_task_contract_audit"
+  ],
+  "forbidden_actions": [
+    "pre_race_scoring_change",
+    "model_weight_change",
+    "gate_bypass",
+    "live_execution_change",
+    "supabase_write",
+    "telegram_send",
+    "model_promotion",
+    "production_deploy",
+    "railway_configuration_change",
+    "credential_change",
+    "credential_exposure"
+  ],
+  "forbidden_keywords": [
+    "supabase.table(",
+    "requests.post(supabase",
+    "telegram send",
+    "bot.send_message",
+    "promote_model",
+    "VELO_ALLOW_SUPABASE_WRITES=true"
+  ],
+  "required_outputs": [
+    "ops/task_contracts/PROD-TRUTH-179.json",
+    "scripts/ops/run_results_sigma.py",
+    "scripts/ops/run_llm_intel_brief.py",
+    "tests/test_sigma_eod_identity_truth.py",
+    "tests/test_llm_intel_brief.py",
+    "docs/current/PRODUCTION_TRUTH_AUDIT_2026_11_02.md"
+  ],
+  "required_classifications": [
+    "POST_RACE_IDENTITY_REPORTING_REPAIRED",
+    "LLM_BRIEF_INPUTS_DETERMINISTICALLY_VALIDATED",
+    "RAILWAY_CRON_DRIFT_REPORTED",
+    "NO_PRE_RACE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_GATE_BYPASS",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION",
+    "NO_PRODUCTION_DEPLOY"
+  ],
+  "classification_required": [
+    "POST_RACE_IDENTITY_REPORTING_REPAIRED",
+    "LLM_BRIEF_INPUTS_DETERMINISTICALLY_VALIDATED",
+    "RAILWAY_CRON_DRIFT_REPORTED",
+    "NO_PRE_RACE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_GATE_BYPASS",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION",
+    "NO_PRODUCTION_DEPLOY"
+  ],
+  "final_classifications": [
+    "POST_RACE_IDENTITY_REPORTING_REPAIRED",
+    "LLM_BRIEF_INPUTS_DETERMINISTICALLY_VALIDATED",
+    "RAILWAY_CRON_DRIFT_REPORTED",
+    "NO_PRE_RACE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_GATE_BYPASS",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION",
+    "NO_PRODUCTION_DEPLOY"
+  ]
+}
