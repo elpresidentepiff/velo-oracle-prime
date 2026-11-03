@@ -29,12 +29,14 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from dotenv import load_dotenv
+
 load_dotenv(ROOT / ".env")
 
 OUTPUT_JSON = ROOT / "data" / "learning_loop_closure_audit_latest.json"
 OUTPUT_MD = ROOT / "data" / "learning_loop_closure_audit_latest.md"
 
 # ── Supabase REST helpers ───────────────────────────────────────────────────────
+
 
 def _sb_env() -> tuple[str, str]:
     url = os.getenv("SUPABASE_URL", "").rstrip("/")
@@ -85,6 +87,7 @@ import urllib.parse
 
 # ── CSV helpers ─────────────────────────────────────────────────────────────────
 
+
 def _read_csv(path: Path) -> list[dict]:
     if not path.exists():
         return []
@@ -104,7 +107,17 @@ def _check_ledger_fields(rows: list[dict], required_fields: list[str]) -> list[s
     return missing
 
 
+def canonical_result_race_ids(
+    runner_results: list[dict], racing_horse_runs: list[dict]
+) -> tuple[set[str], set[str], set[str]]:
+    """Return combined, canonical, and legacy closed race-ID sets."""
+    legacy = {str(row["race_id"]) for row in runner_results if row.get("race_id")}
+    canonical = {str(row["race_id"]) for row in racing_horse_runs if row.get("race_id")}
+    return canonical | legacy, canonical, legacy
+
+
 # ── Main audit ─────────────────────────────────────────────────────────────────
+
 
 def run_audit() -> dict[str, Any]:
     generated_at = datetime.now(UTC).isoformat().replace("+00:00", "Z")
@@ -115,10 +128,20 @@ def run_audit() -> dict[str, Any]:
     verdict_rows = _sb_get("velo_verdicts", "race_id,generated_at,decision_tier,velo_prime_prob")
     total_verdicts = len(verdict_rows)
 
-    # Build a set of race_ids that have results in runner_results
-    print("  Fetching runner_results (race_ids with closed results) ...")
+    # runner_results is a legacy FK-constrained sink and stopped being the
+    # production result authority.  racing_horse_runs is the governed RP result
+    # spine.  Keep the legacy rows as additive evidence, but never classify a
+    # modern verdict as unclosed merely because it is absent from runner_results.
+    print("  Fetching canonical + legacy result race IDs ...")
     result_rows_sb = _sb_get("runner_results", "race_id,horse_id,position,sp_dec,is_winner")
-    closed_race_ids: set[str] = {str(r["race_id"]) for r in result_rows_sb if r.get("race_id")}
+    horse_run_rows = _sb_get(
+        "racing_horse_runs",
+        "race_id,horse_id,position_int,sp_dec,is_win",
+        limit=200_000,
+    )
+    closed_race_ids, canonical_closed_race_ids, legacy_closed_race_ids = canonical_result_race_ids(
+        result_rows_sb, horse_run_rows
+    )
 
     verdict_race_ids: set[str] = {str(r["race_id"]) for r in verdict_rows if r.get("race_id")}
     verdicts_with_results = len(verdict_race_ids & closed_race_ids)
@@ -144,9 +167,7 @@ def run_audit() -> dict[str, Any]:
     api_ledger_path = ROOT / "data" / "racing_api_shadow_forward_ledger.csv"
     api_rows = _read_csv(api_ledger_path)
     racing_api_shadow_rows = len(api_rows)
-    racing_api_shadow_outcome_backfilled = sum(
-        1 for r in api_rows if r.get("won") or r.get("result_position")
-    )
+    racing_api_shadow_outcome_backfilled = sum(1 for r in api_rows if r.get("won") or r.get("result_position"))
 
     api_missing_fields = _check_ledger_fields(api_rows, ["race_id", "horse_id", "sp_decimal"]) if api_rows else []
     rows_missing_race_id_api = sum(1 for r in api_rows if not r.get("race_id"))
@@ -159,9 +180,9 @@ def run_audit() -> dict[str, Any]:
     paper_rows = _read_csv(paper_ledger_path)
     power_anchor_rows = sum(1 for r in paper_rows if r.get("directive_type") == "POWER_ANCHOR_MODE")
     power_anchor_outcome_backfilled = sum(
-        1 for r in paper_rows
-        if r.get("directive_type") == "POWER_ANCHOR_MODE"
-        and (r.get("won") or r.get("result_position"))
+        1
+        for r in paper_rows
+        if r.get("directive_type") == "POWER_ANCHOR_MODE" and (r.get("won") or r.get("result_position"))
     )
 
     paper_missing_fields = _check_ledger_fields(paper_rows, ["race_id", "horse_id", "sp_decimal"]) if paper_rows else []
@@ -231,7 +252,7 @@ def run_audit() -> dict[str, Any]:
 
     # ── 9. Daily closure status ────────────────────────────────────────────────
     print("  Computing daily closure status ...")
-    # A day is CLOSED if sigma has results AND verdicts have runner_results
+    # A day is CLOSED if Sigma has results and verdicts have canonical outcomes.
     # PARTIAL if some sigma rows are unclosed
     # BROKEN if sigma exists but no results at all
 
@@ -252,11 +273,7 @@ def run_audit() -> dict[str, Any]:
         sigma_total = sigma_closed + sigma_unclosed
 
         # Check if any verdicts for this day have results
-        day_verdict_ids = {
-            str(r["race_id"])
-            for r in verdict_rows
-            if str(r.get("generated_at", "")).startswith(d)
-        }
+        day_verdict_ids = {str(r["race_id"]) for r in verdict_rows if str(r.get("generated_at", "")).startswith(d)}
         day_has_results = bool(day_verdict_ids & closed_race_ids)
 
         if not has_sigma:
@@ -275,23 +292,19 @@ def run_audit() -> dict[str, Any]:
 
     if verdicts_without_results > 0:
         broken_connectors.append(
-            f"velo_verdicts: {verdicts_without_results}/{total_verdicts} verdicts have no runner_results"
+            f"velo_verdicts: {verdicts_without_results}/{total_verdicts} verdicts have no canonical or legacy result"
         )
     if racing_api_shadow_rows > 0 and racing_api_shadow_outcome_backfilled == 0:
         broken_connectors.append(
             f"racing_api_shadow_forward_ledger: {racing_api_shadow_rows} rows, 0 outcomes backfilled"
         )
     if power_anchor_rows > 0 and power_anchor_outcome_backfilled == 0:
-        broken_connectors.append(
-            f"paper_ledger POWER_ANCHOR: {power_anchor_rows} rows, 0 outcomes backfilled"
-        )
+        broken_connectors.append(f"paper_ledger POWER_ANCHOR: {power_anchor_rows} rows, 0 outcomes backfilled")
     if sentient_status == "NOT_FOUND":
         broken_connectors.append("sentient_state_shadow.json: NOT_FOUND — Playbook G state not persisted")
     broken_from_sigma = [d for d, s in daily_closure_status.items() if s == "BROKEN"]
     if broken_from_sigma:
-        broken_connectors.append(
-            f"sigma loop broken for {len(broken_from_sigma)} dates: {broken_from_sigma[:5]}"
-        )
+        broken_connectors.append(f"sigma loop broken for {len(broken_from_sigma)} dates: {broken_from_sigma[:5]}")
     if sidecar_status == "NOT_FOUND":
         broken_connectors.append("live_sidecar_ablation_audit_latest.json: NOT_FOUND")
 
@@ -312,6 +325,8 @@ def run_audit() -> dict[str, Any]:
         "total_verdicts": total_verdicts,
         "verdicts_with_results": verdicts_with_results,
         "verdicts_without_results": verdicts_without_results,
+        "canonical_result_races": len(canonical_closed_race_ids),
+        "legacy_result_races": len(legacy_closed_race_ids),
         "sigma_total_rows": len(sigma_rows),
         "sigma_closed_count": dict(sigma_closed_count),
         "sigma_unclosed_count": dict(sigma_unclosed_count),
@@ -363,8 +378,10 @@ def write_outputs(payload: dict[str, Any]) -> None:
         f"| Metric | Value |",
         f"|---|---|",
         f"| Total velo_verdicts | {payload['total_verdicts']} |",
-        f"| Verdicts with closed runner_results | {payload['verdicts_with_results']} |",
+        f"| Verdicts with closed canonical/legacy results | {payload['verdicts_with_results']} |",
         f"| Verdicts WITHOUT results | {payload['verdicts_without_results']} |",
+        f"| Canonical racing_horse_runs races | {payload['canonical_result_races']} |",
+        f"| Legacy runner_results races | {payload['legacy_result_races']} |",
         "",
         "## Sigma Audits",
         "",

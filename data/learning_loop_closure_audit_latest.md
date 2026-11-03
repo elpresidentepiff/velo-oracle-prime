@@ -1,85 +1,85 @@
 # VÉLØ Learning Loop Closure Audit
 
-- Generated at: `2026-05-15T01:28:53.301297Z`
+- Generated at: `2026-11-03T16:48:20.248261Z`
 
 ## Verdicts
 
 | Metric | Value |
 |---|---|
-| Total velo_verdicts | 2222 |
-| Verdicts with closed runner_results | 1038 |
-| Verdicts WITHOUT results | 1184 |
+| Total velo_verdicts | 6942 |
+| Verdicts with closed canonical/legacy results | 5384 |
+| Verdicts WITHOUT results | 1558 |
+| Canonical racing_horse_runs races | 13476 |
+| Legacy runner_results races | 1068 |
 
 ## Sigma Audits
 
-| Total sigma rows | 1938 |
+| Total sigma rows | 5302 |
 |---|---|
 
 | Date | Closed | Unclosed | Status |
 |---|---|---|---|
-| 2026-04-25 | 50 | 0 | PARTIAL |
-| 2026-04-26 | 0 | 0 | BROKEN |
-| 2026-04-27 | 26 | 0 | PARTIAL |
-| 2026-04-28 | 29 | 0 | PARTIAL |
-| 2026-04-29 | 33 | 0 | PARTIAL |
-| 2026-04-30 | 36 | 0 | PARTIAL |
-| 2026-05-01 | 34 | 0 | PARTIAL |
-| 2026-05-02 | 40 | 0 | PARTIAL |
-| 2026-05-03 | 35 | 0 | PARTIAL |
-| 2026-05-04 | 49 | 0 | PARTIAL |
-| 2026-05-05 | 31 | 0 | PARTIAL |
-| 2026-05-06 | 31 | 0 | PARTIAL |
-| 2026-05-07 | 36 | 0 | PARTIAL |
-| 2026-05-08 | 44 | 0 | PARTIAL |
-| 2026-05-09 | 56 | 0 | PARTIAL |
-| 2026-05-10 | 21 | 0 | PARTIAL |
-| 2026-05-11 | 0 | 0 | BROKEN |
-| 2026-05-12 | 38 | 0 | PARTIAL |
-| 2026-05-13 | 34 | 0 | PARTIAL |
-| 2026-05-14 | 28 | 0 | PARTIAL |
+| 2026-10-05 | 47 | 0 | CLOSED |
+| 2026-10-06 | 32 | 0 | CLOSED |
+| 2026-10-09 | 0 | 0 | BROKEN |
+| 2026-10-11 | 0 | 0 | BROKEN |
+| 2026-10-12 | 44 | 0 | CLOSED |
+| 2026-10-13 | 33 | 0 | PARTIAL |
+| 2026-10-14 | 38 | 0 | CLOSED |
+| 2026-10-15 | 39 | 0 | CLOSED |
+| 2026-10-17 | 58 | 0 | CLOSED |
+| 2026-10-21 | 34 | 0 | CLOSED |
+| 2026-10-22 | 38 | 0 | CLOSED |
+| 2026-10-24 | 0 | 0 | BROKEN |
+| 2026-10-25 | 0 | 0 | BROKEN |
+| 2026-10-27 | 30 | 0 | CLOSED |
+| 2026-10-28 | 37 | 0 | CLOSED |
+| 2026-10-29 | 0 | 0 | BROKEN |
+| 2026-10-30 | 42 | 0 | CLOSED |
+| 2026-10-31 | 38 | 0 | CLOSED |
+| 2026-11-01 | 35 | 0 | CLOSED |
+| 2026-11-03 | 0 | 0 | BROKEN |
 
 ## Ledger Closure Status
 
 | Ledger | Rows | Outcomes Backfilled |
 |---|---|---|
-| Racing API Shadow Forward | 638 | 504 |
-| Paper Ledger (POWER_ANCHOR) | 8 | 8 |
-| Paper Ledger (total) | 325 | — |
-| Router Shadow Ledger | 33 | — |
+| Racing API Shadow Forward | 0 | 0 |
+| Paper Ledger (POWER_ANCHOR) | 0 | 0 |
+| Paper Ledger (total) | 0 | — |
+| Router Shadow Ledger | 0 | — |
 
 ## Results JSON Files
 
-- Files found: `53`
-- Total races: `2348`
-- Races with positions: `2348`
+- Files found: `35`
+- Total races: `1451`
+- Races with positions: `1451`
 
 ## Missing Fields
 
-- api_ledger:sp_decimal (139/638 blank)
-- paper_ledger:horse_id (1/325 blank)
-- paper_ledger:sp_decimal (51/325 blank)
+- None detected
 
 ## Daily Summary
 
 | Status | Count |
 |---|---|
-| CLOSED | 29 |
-| PARTIAL | 22 |
-| BROKEN | 22 |
-| Total | 73 |
+| CLOSED | 120 |
+| PARTIAL | 27 |
+| BROKEN | 39 |
+| Total | 186 |
 
 ## Broken Connectors
 
-- velo_verdicts: 1184/2222 verdicts have no runner_results
-- sigma loop broken for 22 dates: ['2026-01-09', '2026-01-15', '2026-01-20', '2026-01-25', '2026-01-30']
+- velo_verdicts: 1558/6942 verdicts have no canonical or legacy result
+- sigma loop broken for 39 dates: ['2026-01-09', '2026-01-15', '2026-01-20', '2026-01-25', '2026-01-30']
 
 ## Learning State
 
 - Sentient state status: `FOUND_BOTH`
 - Has doctrine_strengths: `True`
 - Sidecar ablation audit: `FOUND`
-- Sidecar audit generated_at: `2026-05-09T00:08:05.518360Z`
-- Sidecar baseline matched: `1113`
+- Sidecar audit generated_at: `2026-05-15T01:29:53.152969Z`
+- Sidecar baseline matched: `1105`
 
 ---
 *Audit only — no mutations.*

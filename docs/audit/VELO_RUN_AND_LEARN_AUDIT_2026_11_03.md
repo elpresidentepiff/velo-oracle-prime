@@ -26,15 +26,20 @@ This removes operational paralysis without weakening result truth.
 `scripts/audit/learning_loop_closure_audit.py`, run on 2026-11-03, reported:
 
 - 6,942 Velo verdicts.
-- 1,038 verdicts joined to `runner_results`.
-- 5,904 verdicts without a `runner_results` join.
-- 29 closed days, 118 partial days, and 39 broken days across the audit universe.
+- The legacy-only audit initially found 1,038 verdicts joined to `runner_results` and
+  5,904 without that obsolete join.
+- After correcting the audit to use canonical `racing_horse_runs` plus legacy
+  `runner_results`, 5,384 verdict races have outcomes and 1,558 remain unresolved.
+- The corrected daily audit reports 120 closed days, 27 partial days, and 39 broken
+  days across the audit universe.
 - 76 local result files containing 3,236 races with positions.
 - 5,302 Sigma rows.
 
-The simultaneous presence of 3,236 locally settled races and only 1,038 verdict/result
-joins strongly suggests that the learning plane is fragmented across result stores and/or
-identity contracts. It does not prove that 5,904 races lack outcomes. Training directly
+The simultaneous presence of 3,236 locally settled races and only 1,038 legacy
+verdict/result joins proved that the audit was reading the wrong modern result authority.
+The canonical-source correction recovered 4,346 additional closed verdict races without
+inventing outcomes. The remaining 1,558 unresolved rows still require identity/date
+classification. Training directly
 from the `runner_results` join therefore selects a non-random subset.
 
 ### Existing gate law contradicts itself
@@ -188,8 +193,27 @@ races without alteration.
 6. Update the stale runbook language only after tests demonstrate the intended gate
    separation.
 
+## Remediation update — 2026-11-03
+
+- Commit `375187ea` was fast-forwarded to `main`; CI, GX, CodeQL, and the governed
+  safety perimeter passed; Railway built the repaired `velo-rp-capture` image.
+- 2 November cannot be back-scored because no pre-race verdict was frozen. Its RP
+  results were recaptured: 30 real races / 282 runners were persisted to
+  `racing_horse_runs`; six Fakenham entries were verified as an abandoned meeting and
+  are not missing results.
+- AutoResearch now defaults to canonical settled scorecards and paginates the complete
+  requested window instead of silently stopping at a selected local-file subset.
+- The closure audit now treats `racing_horse_runs` as the modern authority and retains
+  `runner_results` only as additive legacy evidence.
+- `monitor_one_dissenter_cohort.py` freezes the hypothesis after 2026-11-03 and refuses
+  in-sample starts. It is paper/shadow-only and has no promotion or staking path.
+- The runbook and learning-admission contract now distinguish availability,
+  integrity, shadow learning, and promotion states.
+
 ## Safety and mutation statement
 
-No production model, live weight, gate, database row, Railway configuration, execution
-mode, credential, or browser profile was changed. Research outputs are local shadow
-artifacts. No bets or messages were sent.
+No production model, live weight, execution mode, credential, or browser profile was
+changed. The cloud orchestration fix and clarified gate documentation were deployed;
+verified 2 November RP outcomes were upserted into the existing canonical horse-run
+table. No historical predictions were fabricated, no model was promoted, and no bets
+or messages were sent.
