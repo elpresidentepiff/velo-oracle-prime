@@ -1,0 +1,55 @@
+{
+  "task_id": "OPS-CLOUD-HYDRATE-01",
+  "title": "Hydrate local verdict artifact after an idempotent cloud scoring skip",
+  "classification": "OPERATIONS_RELIABILITY",
+  "allowed_paths": [
+    "scripts/ops/run_full_raceday.py",
+    "tests/test_run_full_raceday_cloud_hydration.py",
+    "docs/audit/VELO_RUN_AND_LEARN_AUDIT_2026_11_03.md",
+    "ops/task_contracts/OPS-CLOUD-HYDRATE-01.json"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "src/velo/execution_bridge.py",
+    "data/sentient_state.json",
+    "scripts/ops/run_results_sigma.py"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "update_cloud_orchestration",
+    "add_regression_test",
+    "run_tests",
+    "read_supabase"
+  ],
+  "forbidden_actions": [
+    "live_weight_change",
+    "supabase_write",
+    "telegram_send",
+    "model_promotion",
+    "production_deploy",
+    "credential_change",
+    "gate_bypass"
+  ],
+  "forbidden_keywords": [
+    "promote_model",
+    "VELO_ALLOW_SUPABASE_WRITES=true",
+    "bot.send_message"
+  ],
+  "required_outputs": [
+    "scripts/ops/run_full_raceday.py",
+    "tests/test_run_full_raceday_cloud_hydration.py"
+  ],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ]
+}
