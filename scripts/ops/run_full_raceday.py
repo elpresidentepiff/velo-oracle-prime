@@ -544,6 +544,27 @@ def main() -> int:
         return 1
     if already_scored:
         print(f"\n[SKIP] Step 9: {date} already scored (completed PASS pipeline_runs row) — not re-scoring/overwriting.")
+        # Railway cron containers start from a clean image.  A PASS row in
+        # Supabase therefore proves scoring completed, but does not imply the
+        # dated local verdict JSON exists in this container.  Every downstream
+        # shadow consumes that JSON.  Hydrate it read-only before continuing so
+        # an idempotent scoring skip cannot turn a successful day into a failed
+        # job (observed 2026-11-03).
+        local_verdict_archive = ROOT / "data" / f"velo_prime_verdicts_{date.replace('-', '_')}.json"
+        if not local_verdict_archive.exists():
+            if not run(
+                "Step 9 restore: hydrate local verdict archive from Supabase",
+                [PY, "scripts/ops/sync_verdicts_from_supabase.py", "--date", date],
+                critical=True,
+                results=results,
+            ):
+                return 1
+            if not local_verdict_archive.exists():
+                print(
+                    "\n[CRITICAL] Supabase reports a completed scoring run, but read-only "
+                    f"hydration did not create {local_verdict_archive}."
+                )
+                return 1
     else:
         if not run(
             "Step 9: Live scoring (run_prime_today.py)",
