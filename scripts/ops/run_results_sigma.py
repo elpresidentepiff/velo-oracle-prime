@@ -227,7 +227,7 @@ def _open_sigma_run(source_date: str) -> str | None:
     if not SB_URL or not SB_KEY:
         return None
     run_id = str(uuid.uuid4())
-    status, _body = _pipeline_request(
+    status, body = _pipeline_request(
         "POST",
         "/pipeline_runs",
         {
@@ -236,13 +236,21 @@ def _open_sigma_run(source_date: str) -> str | None:
             "run_type": SIGMA_RUN_TYPE,
             "source_date": source_date,
             "run_state": "running",
-            "status": "TRIGGERED",
+            # The canonical pipeline_runs contract is terminal-only: active
+            # rows must have a NULL status, and completed rows carry the
+            # PASS/DEGRADED/FAIL terminal status.
+            "status": None,
             "trigger_source": os.getenv("TRIGGER_SOURCE", "manual") or "manual",
             "started_at": utc_now_iso(),
             "environment": os.getenv("RAILWAY_ENVIRONMENT", "production"),
         },
     )
-    return run_id if status in (200, 201) else None
+    if status not in (200, 201):
+        detail = body.decode("utf-8", errors="replace")[:1000]
+        raise RuntimeError(
+            f"pipeline_runs open failed for {source_date}: HTTP {status}: {detail}"
+        )
+    return run_id
 
 
 def _close_sigma_run(run_id: str | None, *, status: str, error: str | None = None) -> None:
