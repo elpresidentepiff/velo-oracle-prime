@@ -1,0 +1,2047 @@
+{
+  "status": "SHADOW_ONLY",
+  "date": "2026-11-04",
+  "generated_at": "2026-11-04T14:27:13.662911+00:00",
+  "method": {
+    "prime": "frozen velo_prime_prob from velo_verdicts.full_analysis.predictions",
+    "formfav": "captured FormFav winProb",
+    "premium_market": "timestamped fairProbability; minute buckets; minimum 80% Prime-runner coverage",
+    "sensitivity_alphas": [
+      0.1,
+      0.2,
+      0.3
+    ],
+    "formula": "(1-alpha)*Prime + alpha*evidence",
+    "production_effect": "NONE"
+  },
+  "summary": {
+    "races": 47,
+    "races_with_prime_and_formfav": 47,
+    "top_pick_agreements": 9,
+    "races_with_premium_market": 24,
+    "formfav_blend_changes_0.10": 5,
+    "premium_market_changes_0.10": 2,
+    "formfav_blend_changes_0.20": 6,
+    "premium_market_changes_0.20": 2,
+    "formfav_blend_changes_0.30": 6,
+    "premium_market_changes_0.30": 3
+  },
+  "races": [
+    {
+      "race_id": "930680",
+      "provider_race_key": "formfav:gb:2026-11-04:musselburgh:r1",
+      "course": "Musselburgh",
+      "off_time": "12:05:00",
+      "prime_generated_at": "2026-11-04T07:27:17.049594+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:10.274417Z",
+      "formfav_captured_at": "2026-11-04T10:47:21.196713+00:00",
+      "scheduled_off_utc": "2026-11-04T12:05:00+00:00",
+      "prime_top": "alnofoor",
+      "formfav_top": "wenmoon",
+      "top_agreement": false,
+      "prime_runners": 12,
+      "formfav_runners": 11,
+      "matched_runners": 11,
+      "match_coverage": 0.9167,
+      "formfav_blends": {
+        "0.10": {
+          "top": "alnofoor",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.20": {
+          "top": "alnofoor",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.30": {
+          "top": "alnofoor",
+          "changed": false,
+          "matched_runners": 11
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930687",
+      "provider_race_key": "formfav:gb:2026-11-04:nottingham:r1",
+      "course": "Nottingham",
+      "off_time": "12:15:00",
+      "prime_generated_at": "2026-11-04T07:27:18.410104+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:13.645932Z",
+      "formfav_captured_at": "2026-11-04T10:47:52.408642+00:00",
+      "scheduled_off_utc": "2026-11-04T12:15:00+00:00",
+      "prime_top": "chevere",
+      "formfav_top": "chevere",
+      "top_agreement": true,
+      "prime_runners": 4,
+      "formfav_runners": 4,
+      "matched_runners": 4,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "chevere",
+          "changed": false,
+          "matched_runners": 4
+        },
+        "0.20": {
+          "top": "chevere",
+          "changed": false,
+          "matched_runners": 4
+        },
+        "0.30": {
+          "top": "chevere",
+          "changed": false,
+          "matched_runners": 4
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930470",
+      "provider_race_key": "formfav:gb:2026-11-04:chepstow:r1",
+      "course": "Chepstow",
+      "off_time": "12:20:00",
+      "prime_generated_at": "2026-11-04T07:27:12.765697+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:35.002651Z",
+      "formfav_captured_at": "2026-11-04T10:41:34.762926+00:00",
+      "scheduled_off_utc": "2026-11-04T12:20:00+00:00",
+      "prime_top": "gingerbred",
+      "formfav_top": "gingerbred",
+      "top_agreement": true,
+      "prime_runners": 5,
+      "formfav_runners": 5,
+      "matched_runners": 5,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "gingerbred",
+          "changed": false,
+          "matched_runners": 5
+        },
+        "0.20": {
+          "top": "gingerbred",
+          "changed": false,
+          "matched_runners": 5
+        },
+        "0.30": {
+          "top": "gingerbred",
+          "changed": false,
+          "matched_runners": 5
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930676",
+      "provider_race_key": "formfav:gb:2026-11-04:musselburgh:r2",
+      "course": "Musselburgh",
+      "off_time": "12:35:00",
+      "prime_generated_at": "2026-11-04T07:27:17.203541+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:11.048430Z",
+      "formfav_captured_at": "2026-11-04T10:47:24.509831+00:00",
+      "scheduled_off_utc": "2026-11-04T12:35:00+00:00",
+      "prime_top": "trueheart",
+      "formfav_top": "sequoiadendron",
+      "top_agreement": false,
+      "prime_runners": 8,
+      "formfav_runners": 8,
+      "matched_runners": 8,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "trueheart",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.20": {
+          "top": "trueheart",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.30": {
+          "top": "trueheart",
+          "changed": false,
+          "matched_runners": 8
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930688",
+      "provider_race_key": "formfav:gb:2026-11-04:nottingham:r2",
+      "course": "Nottingham",
+      "off_time": "12:45:00",
+      "prime_generated_at": "2026-11-04T07:27:18.581114+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:14.009224Z",
+      "formfav_captured_at": "2026-11-04T10:47:54.482614+00:00",
+      "scheduled_off_utc": "2026-11-04T12:45:00+00:00",
+      "prime_top": "maharajasexpress",
+      "formfav_top": "campenaerts",
+      "top_agreement": false,
+      "prime_runners": 10,
+      "formfav_runners": 10,
+      "matched_runners": 10,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "maharajasexpress",
+          "changed": false,
+          "matched_runners": 10
+        },
+        "0.20": {
+          "top": "maharajasexpress",
+          "changed": false,
+          "matched_runners": 10
+        },
+        "0.30": {
+          "top": "maharajasexpress",
+          "changed": false,
+          "matched_runners": 10
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930468",
+      "provider_race_key": "formfav:gb:2026-11-04:chepstow:r2",
+      "course": "Chepstow",
+      "off_time": "12:51:00",
+      "prime_generated_at": "2026-11-04T07:27:13.147352+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:35.303014Z",
+      "formfav_captured_at": "2026-11-04T10:41:37.686231+00:00",
+      "scheduled_off_utc": "2026-11-04T12:51:00+00:00",
+      "prime_top": "redacresmax",
+      "formfav_top": "redacresmax",
+      "top_agreement": true,
+      "prime_runners": 15,
+      "formfav_runners": 15,
+      "matched_runners": 15,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "redacresmax",
+          "changed": false,
+          "matched_runners": 15
+        },
+        "0.20": {
+          "top": "redacresmax",
+          "changed": false,
+          "matched_runners": 15
+        },
+        "0.30": {
+          "top": "redacresmax",
+          "changed": false,
+          "matched_runners": 15
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932389",
+      "provider_race_key": "formfav:ie:2026-11-04:wexford:r1",
+      "course": "Wexford",
+      "off_time": "13:00:00",
+      "prime_generated_at": "2026-11-04T07:27:19.587853+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:22.182626Z",
+      "formfav_captured_at": "2026-11-04T10:49:05.930712+00:00",
+      "scheduled_off_utc": "2026-11-04T13:00:00+00:00",
+      "prime_top": "dooks",
+      "formfav_top": "huntinboots",
+      "top_agreement": false,
+      "prime_runners": 17,
+      "formfav_runners": 17,
+      "matched_runners": 17,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "dooks",
+          "changed": false,
+          "matched_runners": 17
+        },
+        "0.20": {
+          "top": "dooks",
+          "changed": false,
+          "matched_runners": 17
+        },
+        "0.30": {
+          "top": "dooks",
+          "changed": false,
+          "matched_runners": 17
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930682",
+      "provider_race_key": "formfav:gb:2026-11-04:musselburgh:r3",
+      "course": "Musselburgh",
+      "off_time": "13:10:00",
+      "prime_generated_at": "2026-11-04T07:27:17.374404+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:11.471492Z",
+      "formfav_captured_at": "2026-11-04T13:45:09.695772+00:00",
+      "scheduled_off_utc": "2026-11-04T13:10:00+00:00",
+      "prime_top": "flyingmoonlight",
+      "formfav_top": "naturalia",
+      "top_agreement": false,
+      "prime_runners": 11,
+      "formfav_runners": 11,
+      "matched_runners": 11,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "flyingmoonlight",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.20": {
+          "top": "flyingmoonlight",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.30": {
+          "top": "flyingmoonlight",
+          "changed": false,
+          "matched_runners": 11
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930684",
+      "provider_race_key": "formfav:gb:2026-11-04:nottingham:r3",
+      "course": "Nottingham",
+      "off_time": "13:20:00",
+      "prime_generated_at": "2026-11-04T07:27:18.723332+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:14.790167Z",
+      "formfav_captured_at": "2026-11-04T13:45:55.311552+00:00",
+      "scheduled_off_utc": "2026-11-04T13:20:00+00:00",
+      "prime_top": "shaffron",
+      "formfav_top": "hellofriend",
+      "top_agreement": false,
+      "prime_runners": 13,
+      "formfav_runners": 13,
+      "matched_runners": 13,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "shaffron",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.20": {
+          "top": "shaffron",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.30": {
+          "top": "shaffron",
+          "changed": false,
+          "matched_runners": 13
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930469",
+      "provider_race_key": "formfav:gb:2026-11-04:chepstow:r3",
+      "course": "Chepstow",
+      "off_time": "13:25:00",
+      "prime_generated_at": "2026-11-04T07:27:13.35673+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:36.027799Z",
+      "formfav_captured_at": "2026-11-04T13:39:37.273888+00:00",
+      "scheduled_off_utc": "2026-11-04T13:25:00+00:00",
+      "prime_top": "staggehyll",
+      "formfav_top": "orderontime",
+      "top_agreement": false,
+      "prime_runners": 13,
+      "formfav_runners": 13,
+      "matched_runners": 13,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "orderontime",
+          "changed": true,
+          "matched_runners": 13
+        },
+        "0.20": {
+          "top": "orderontime",
+          "changed": true,
+          "matched_runners": 13
+        },
+        "0.30": {
+          "top": "orderontime",
+          "changed": true,
+          "matched_runners": 13
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932390",
+      "provider_race_key": "formfav:ie:2026-11-04:wexford:r2",
+      "course": "Wexford",
+      "off_time": "13:33:00",
+      "prime_generated_at": "2026-11-04T07:27:19.763882+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:22.838036Z",
+      "formfav_captured_at": "2026-11-04T13:47:40.702818+00:00",
+      "scheduled_off_utc": "2026-11-04T13:33:00+00:00",
+      "prime_top": "euroagent",
+      "formfav_top": "thebestywoman",
+      "top_agreement": false,
+      "prime_runners": 9,
+      "formfav_runners": 8,
+      "matched_runners": 8,
+      "match_coverage": 0.8889,
+      "formfav_blends": {
+        "0.10": {
+          "top": "euroagent",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.20": {
+          "top": "euroagent",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.30": {
+          "top": "euroagent",
+          "changed": false,
+          "matched_runners": 8
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932469",
+      "provider_race_key": "formfav:gb:2026-11-04:musselburgh:r4",
+      "course": "Musselburgh",
+      "off_time": "13:42:00",
+      "prime_generated_at": "2026-11-04T07:27:17.668787+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:11.840861Z",
+      "formfav_captured_at": "2026-11-04T13:45:17.451269+00:00",
+      "scheduled_off_utc": "2026-11-04T13:42:00+00:00",
+      "prime_top": "geminiman",
+      "formfav_top": "eaglesdream",
+      "top_agreement": false,
+      "prime_runners": 10,
+      "formfav_runners": 10,
+      "matched_runners": 10,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "geminiman",
+          "changed": false,
+          "matched_runners": 10
+        },
+        "0.20": {
+          "top": "geminiman",
+          "changed": false,
+          "matched_runners": 10
+        },
+        "0.30": {
+          "top": "geminiman",
+          "changed": false,
+          "matched_runners": 10
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930683",
+      "provider_race_key": "formfav:gb:2026-11-04:nottingham:r4",
+      "course": "Nottingham",
+      "off_time": "13:50:00",
+      "prime_generated_at": "2026-11-04T07:27:18.863755+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:15.339709Z",
+      "formfav_captured_at": "2026-11-04T13:45:59.722726+00:00",
+      "scheduled_off_utc": "2026-11-04T13:50:00+00:00",
+      "prime_top": "indhaar",
+      "formfav_top": "indhaar",
+      "top_agreement": true,
+      "prime_runners": 10,
+      "formfav_runners": 10,
+      "matched_runners": 10,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "indhaar",
+          "changed": false,
+          "matched_runners": 10
+        },
+        "0.20": {
+          "top": "indhaar",
+          "changed": false,
+          "matched_runners": 10
+        },
+        "0.30": {
+          "top": "indhaar",
+          "changed": false,
+          "matched_runners": 10
+        }
+      },
+      "premium_market_rows": 10,
+      "premium_market_first_capture": "2026-11-04T13:46:01.000882+00:00",
+      "premium_market_last_capture": "2026-11-04T13:46:01.000882+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932468",
+      "provider_race_key": "formfav:gb:2026-11-04:chepstow:r4",
+      "course": "Chepstow",
+      "off_time": "13:58:00",
+      "prime_generated_at": "2026-11-04T07:27:13.533474+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:36.329973Z",
+      "formfav_captured_at": "2026-11-04T13:39:41.12831+00:00",
+      "scheduled_off_utc": "2026-11-04T13:58:00+00:00",
+      "prime_top": "asighttosea",
+      "formfav_top": "asighttosea",
+      "top_agreement": true,
+      "prime_runners": 12,
+      "formfav_runners": 12,
+      "matched_runners": 12,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "asighttosea",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.20": {
+          "top": "asighttosea",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.30": {
+          "top": "asighttosea",
+          "changed": false,
+          "matched_runners": 12
+        }
+      },
+      "premium_market_rows": 36,
+      "premium_market_first_capture": "2026-11-04T13:39:42.601345+00:00",
+      "premium_market_last_capture": "2026-11-04T13:56:57.34467+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932391",
+      "provider_race_key": "formfav:ie:2026-11-04:wexford:r3",
+      "course": "Wexford",
+      "off_time": "14:05:00",
+      "prime_generated_at": "2026-11-04T07:27:20.043556+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:23.127603Z",
+      "formfav_captured_at": "2026-11-04T13:47:45.983146+00:00",
+      "scheduled_off_utc": "2026-11-04T14:05:00+00:00",
+      "prime_top": "mcallister",
+      "formfav_top": "walkingsaint",
+      "top_agreement": false,
+      "prime_runners": 17,
+      "formfav_runners": 14,
+      "matched_runners": 14,
+      "match_coverage": 0.8235,
+      "formfav_blends": {
+        "0.10": {
+          "top": "mcallister",
+          "changed": false,
+          "matched_runners": 14
+        },
+        "0.20": {
+          "top": "mcallister",
+          "changed": false,
+          "matched_runners": 14
+        },
+        "0.30": {
+          "top": "mcallister",
+          "changed": false,
+          "matched_runners": 14
+        }
+      },
+      "premium_market_rows": 85,
+      "premium_market_first_capture": "2026-11-04T13:47:47.306279+00:00",
+      "premium_market_last_capture": "2026-11-04T14:01:29.170375+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930681",
+      "provider_race_key": "formfav:gb:2026-11-04:musselburgh:r5",
+      "course": "Musselburgh",
+      "off_time": "14:15:00",
+      "prime_generated_at": "2026-11-04T07:27:17.832052+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:12.205159Z",
+      "formfav_captured_at": "2026-11-04T13:45:22.714359+00:00",
+      "scheduled_off_utc": "2026-11-04T14:15:00+00:00",
+      "prime_top": "galahadthreepwood",
+      "formfav_top": "nedbroy",
+      "top_agreement": false,
+      "prime_runners": 11,
+      "formfav_runners": 11,
+      "matched_runners": 11,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "galahadthreepwood",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.20": {
+          "top": "galahadthreepwood",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.30": {
+          "top": "galahadthreepwood",
+          "changed": false,
+          "matched_runners": 11
+        }
+      },
+      "premium_market_rows": 120,
+      "premium_market_first_capture": "2026-11-04T13:45:24.448357+00:00",
+      "premium_market_last_capture": "2026-11-04T14:14:33.19787+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930685",
+      "provider_race_key": "formfav:gb:2026-11-04:nottingham:r5",
+      "course": "Nottingham",
+      "off_time": "14:20:00",
+      "prime_generated_at": "2026-11-04T07:27:19.024065+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:15.732263Z",
+      "formfav_captured_at": "2026-11-04T13:46:04.827794+00:00",
+      "scheduled_off_utc": "2026-11-04T14:20:00+00:00",
+      "prime_top": "loveyouback",
+      "formfav_top": "arbaawy",
+      "top_agreement": false,
+      "prime_runners": 9,
+      "formfav_runners": 9,
+      "matched_runners": 9,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "loveyouback",
+          "changed": false,
+          "matched_runners": 9
+        },
+        "0.20": {
+          "top": "loveyouback",
+          "changed": false,
+          "matched_runners": 9
+        },
+        "0.30": {
+          "top": "loveyouback",
+          "changed": false,
+          "matched_runners": 9
+        }
+      },
+      "premium_market_rows": 99,
+      "premium_market_first_capture": "2026-11-04T13:46:06.587413+00:00",
+      "premium_market_last_capture": "2026-11-04T14:19:22.286626+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930716",
+      "provider_race_key": "formfav:gb:2026-11-04:kempton_park:r1",
+      "course": "Kempton (AW)",
+      "off_time": "14:25:00",
+      "prime_generated_at": "2026-11-04T07:27:15.671179+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:00.437251Z",
+      "formfav_captured_at": "2026-11-04T13:43:49.153203+00:00",
+      "scheduled_off_utc": "2026-11-04T14:25:00+00:00",
+      "prime_top": "kingofithaca",
+      "formfav_top": "mythicalcomposer",
+      "top_agreement": false,
+      "prime_runners": 12,
+      "formfav_runners": 12,
+      "matched_runners": 12,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "kingofithaca",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.20": {
+          "top": "kingofithaca",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.30": {
+          "top": "kingofithaca",
+          "changed": false,
+          "matched_runners": 12
+        }
+      },
+      "premium_market_rows": 156,
+      "premium_market_first_capture": "2026-11-04T13:43:50.357604+00:00",
+      "premium_market_last_capture": "2026-11-04T14:23:13.409657+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930467",
+      "provider_race_key": "formfav:gb:2026-11-04:chepstow:r5",
+      "course": "Chepstow",
+      "off_time": "14:30:00",
+      "prime_generated_at": "2026-11-04T07:27:13.688726+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:36.765684Z",
+      "formfav_captured_at": "2026-11-04T13:39:45.806665+00:00",
+      "scheduled_off_utc": "2026-11-04T14:30:00+00:00",
+      "prime_top": "tourovalie",
+      "formfav_top": "rulabula",
+      "top_agreement": false,
+      "prime_runners": 5,
+      "formfav_runners": 4,
+      "matched_runners": 4,
+      "match_coverage": 0.8,
+      "formfav_blends": {
+        "0.10": {
+          "top": "tourovalie",
+          "changed": false,
+          "matched_runners": 4
+        },
+        "0.20": {
+          "top": "tourovalie",
+          "changed": false,
+          "matched_runners": 4
+        },
+        "0.30": {
+          "top": "tourovalie",
+          "changed": false,
+          "matched_runners": 4
+        }
+      },
+      "premium_market_rows": 70,
+      "premium_market_first_capture": "2026-11-04T13:39:49.641918+00:00",
+      "premium_market_last_capture": "2026-11-04T14:25:26.200714+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932392",
+      "provider_race_key": "formfav:ie:2026-11-04:wexford:r4",
+      "course": "Wexford",
+      "off_time": "14:37:00",
+      "prime_generated_at": "2026-11-04T07:27:20.165944+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:23.492604Z",
+      "formfav_captured_at": "2026-11-04T13:47:50.149461+00:00",
+      "scheduled_off_utc": "2026-11-04T14:37:00+00:00",
+      "prime_top": "hobsangel",
+      "formfav_top": "thecobblerswife",
+      "top_agreement": false,
+      "prime_runners": 17,
+      "formfav_runners": 13,
+      "matched_runners": 13,
+      "match_coverage": 0.7647,
+      "formfav_blends": {
+        "0.10": {
+          "top": "hobsangel",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.20": {
+          "top": "hobsangel",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.30": {
+          "top": "hobsangel",
+          "changed": false,
+          "matched_runners": 13
+        }
+      },
+      "premium_market_rows": 221,
+      "premium_market_first_capture": "2026-11-04T13:47:51.765775+00:00",
+      "premium_market_last_capture": "2026-11-04T14:26:05.361877+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930678",
+      "provider_race_key": "formfav:gb:2026-11-04:musselburgh:r6",
+      "course": "Musselburgh",
+      "off_time": "14:45:00",
+      "prime_generated_at": "2026-11-04T07:27:17.956914+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:12.539265Z",
+      "formfav_captured_at": "2026-11-04T13:45:27.11201+00:00",
+      "scheduled_off_utc": "2026-11-04T14:45:00+00:00",
+      "prime_top": "motawaared",
+      "formfav_top": "ablon",
+      "top_agreement": false,
+      "prime_runners": 10,
+      "formfav_runners": 10,
+      "matched_runners": 10,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "motawaared",
+          "changed": false,
+          "matched_runners": 10
+        },
+        "0.20": {
+          "top": "motawaared",
+          "changed": false,
+          "matched_runners": 10
+        },
+        "0.30": {
+          "top": "motawaared",
+          "changed": false,
+          "matched_runners": 10
+        }
+      },
+      "premium_market_rows": 120,
+      "premium_market_first_capture": "2026-11-04T13:45:28.694591+00:00",
+      "premium_market_last_capture": "2026-11-04T14:25:44.355148+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932470",
+      "provider_race_key": "formfav:gb:2026-11-04:nottingham:r6",
+      "course": "Nottingham",
+      "off_time": "14:53:00",
+      "prime_generated_at": "2026-11-04T07:27:19.134116+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:16.077158Z",
+      "formfav_captured_at": "2026-11-04T13:46:10.529746+00:00",
+      "scheduled_off_utc": "2026-11-04T14:53:00+00:00",
+      "prime_top": "glenna",
+      "formfav_top": "deedaydiva",
+      "top_agreement": false,
+      "prime_runners": 9,
+      "formfav_runners": 9,
+      "matched_runners": 9,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "glenna",
+          "changed": false,
+          "matched_runners": 9
+        },
+        "0.20": {
+          "top": "borjina",
+          "changed": true,
+          "matched_runners": 9
+        },
+        "0.30": {
+          "top": "borjina",
+          "changed": true,
+          "matched_runners": 9
+        }
+      },
+      "premium_market_rows": 108,
+      "premium_market_first_capture": "2026-11-04T13:46:12.622937+00:00",
+      "premium_market_last_capture": "2026-11-04T14:25:58.295367+00:00",
+      "premium_market_first_flip": {
+        "0.10": {
+          "captured_minute_utc": "2026-11-04T13:46:00Z",
+          "from": "glenna",
+          "to": "borjina",
+          "coverage": 1.0,
+          "matched_runners": 9
+        },
+        "0.20": {
+          "captured_minute_utc": "2026-11-04T13:46:00Z",
+          "from": "glenna",
+          "to": "borjina",
+          "coverage": 1.0,
+          "matched_runners": 9
+        },
+        "0.30": {
+          "captured_minute_utc": "2026-11-04T13:46:00Z",
+          "from": "glenna",
+          "to": "borjina",
+          "coverage": 1.0,
+          "matched_runners": 9
+        }
+      }
+    },
+    {
+      "race_id": "930720",
+      "provider_race_key": "formfav:gb:2026-11-04:kempton_park:r2",
+      "course": "Kempton (AW)",
+      "off_time": "15:00:00",
+      "prime_generated_at": "2026-11-04T07:27:15.838706+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:00.936624Z",
+      "formfav_captured_at": "2026-11-04T13:43:53.287492+00:00",
+      "scheduled_off_utc": "2026-11-04T15:00:00+00:00",
+      "prime_top": "palliser",
+      "formfav_top": "snookermccrew",
+      "top_agreement": false,
+      "prime_runners": 14,
+      "formfav_runners": 14,
+      "matched_runners": 14,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "palliser",
+          "changed": false,
+          "matched_runners": 14
+        },
+        "0.20": {
+          "top": "palliser",
+          "changed": false,
+          "matched_runners": 14
+        },
+        "0.30": {
+          "top": "palliser",
+          "changed": false,
+          "matched_runners": 14
+        }
+      },
+      "premium_market_rows": 140,
+      "premium_market_first_capture": "2026-11-04T13:43:54.769172+00:00",
+      "premium_market_last_capture": "2026-11-04T14:25:39.046567+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930471",
+      "provider_race_key": "formfav:gb:2026-11-04:chepstow:r6",
+      "course": "Chepstow",
+      "off_time": "15:05:00",
+      "prime_generated_at": "2026-11-04T07:27:13.840044+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:36.980138Z",
+      "formfav_captured_at": "2026-11-04T13:39:51.867634+00:00",
+      "scheduled_off_utc": "2026-11-04T15:05:00+00:00",
+      "prime_top": "rangatirajack",
+      "formfav_top": "greatdance",
+      "top_agreement": false,
+      "prime_runners": 11,
+      "formfav_runners": 8,
+      "matched_runners": 8,
+      "match_coverage": 0.7273,
+      "formfav_blends": {
+        "0.10": {
+          "top": "rangatirajack",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.20": {
+          "top": "rangatirajack",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.30": {
+          "top": "rangatirajack",
+          "changed": false,
+          "matched_runners": 8
+        }
+      },
+      "premium_market_rows": 121,
+      "premium_market_first_capture": "2026-11-04T13:39:53.146617+00:00",
+      "premium_market_last_capture": "2026-11-04T14:25:27.88857+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932393",
+      "provider_race_key": "formfav:ie:2026-11-04:wexford:r5",
+      "course": "Wexford",
+      "off_time": "15:10:00",
+      "prime_generated_at": "2026-11-04T07:27:20.360904+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:23.851344Z",
+      "formfav_captured_at": "2026-11-04T13:47:54.133821+00:00",
+      "scheduled_off_utc": "2026-11-04T15:10:00+00:00",
+      "prime_top": "bossofthebrownies",
+      "formfav_top": "thebigwesterner",
+      "top_agreement": false,
+      "prime_runners": 6,
+      "formfav_runners": 4,
+      "matched_runners": 4,
+      "match_coverage": 0.6667,
+      "formfav_blends": {
+        "0.10": {
+          "top": "thebigwesterner",
+          "changed": true,
+          "matched_runners": 4
+        },
+        "0.20": {
+          "top": "thebigwesterner",
+          "changed": true,
+          "matched_runners": 4
+        },
+        "0.30": {
+          "top": "thebigwesterner",
+          "changed": true,
+          "matched_runners": 4
+        }
+      },
+      "premium_market_rows": 60,
+      "premium_market_first_capture": "2026-11-04T13:47:55.327239+00:00",
+      "premium_market_last_capture": "2026-11-04T14:26:06.866303+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930677",
+      "provider_race_key": "formfav:gb:2026-11-04:musselburgh:r7",
+      "course": "Musselburgh",
+      "off_time": "15:17:00",
+      "prime_generated_at": "2026-11-04T07:27:18.113753+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:12.844748Z",
+      "formfav_captured_at": "2026-11-04T13:45:37.42801+00:00",
+      "scheduled_off_utc": "2026-11-04T15:17:00+00:00",
+      "prime_top": "theresdevscholar",
+      "formfav_top": "witchhunter",
+      "top_agreement": false,
+      "prime_runners": 12,
+      "formfav_runners": 12,
+      "matched_runners": 12,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "theresdevscholar",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.20": {
+          "top": "theresdevscholar",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.30": {
+          "top": "theresdevscholar",
+          "changed": false,
+          "matched_runners": 12
+        }
+      },
+      "premium_market_rows": 96,
+      "premium_market_first_capture": "2026-11-04T13:45:38.755205+00:00",
+      "premium_market_last_capture": "2026-11-04T14:25:46.083687+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930686",
+      "provider_race_key": "formfav:gb:2026-11-04:nottingham:r7",
+      "course": "Nottingham",
+      "off_time": "15:23:00",
+      "prime_generated_at": "2026-11-04T07:27:19.296224+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:16.414827Z",
+      "formfav_captured_at": "2026-11-04T13:46:21.25332+00:00",
+      "scheduled_off_utc": "2026-11-04T15:23:00+00:00",
+      "prime_top": "susiesioux",
+      "formfav_top": "venetianlion",
+      "top_agreement": false,
+      "prime_runners": 15,
+      "formfav_runners": 14,
+      "matched_runners": 14,
+      "match_coverage": 0.9333,
+      "formfav_blends": {
+        "0.10": {
+          "top": "susiesioux",
+          "changed": false,
+          "matched_runners": 14
+        },
+        "0.20": {
+          "top": "susiesioux",
+          "changed": false,
+          "matched_runners": 14
+        },
+        "0.30": {
+          "top": "susiesioux",
+          "changed": false,
+          "matched_runners": 14
+        }
+      },
+      "premium_market_rows": 105,
+      "premium_market_first_capture": "2026-11-04T13:46:23.089859+00:00",
+      "premium_market_last_capture": "2026-11-04T14:26:00.197205+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930715",
+      "provider_race_key": "formfav:gb:2026-11-04:kempton_park:r3",
+      "course": "Kempton (AW)",
+      "off_time": "15:30:00",
+      "prime_generated_at": "2026-11-04T07:27:15.983083+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:01.839079Z",
+      "formfav_captured_at": "2026-11-04T13:43:58.733045+00:00",
+      "scheduled_off_utc": "2026-11-04T15:30:00+00:00",
+      "prime_top": "redcurry",
+      "formfav_top": "valentialight",
+      "top_agreement": false,
+      "prime_runners": 13,
+      "formfav_runners": 13,
+      "matched_runners": 13,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "redcurry",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.20": {
+          "top": "redcurry",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.30": {
+          "top": "redcurry",
+          "changed": false,
+          "matched_runners": 13
+        }
+      },
+      "premium_market_rows": 84,
+      "premium_market_first_capture": "2026-11-04T13:44:00.336219+00:00",
+      "premium_market_last_capture": "2026-11-04T14:21:01.952203+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930472",
+      "provider_race_key": "formfav:gb:2026-11-04:chepstow:r7",
+      "course": "Chepstow",
+      "off_time": "15:40:00",
+      "prime_generated_at": "2026-11-04T07:27:13.982134+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:37.339341Z",
+      "formfav_captured_at": "2026-11-04T13:39:56.069942+00:00",
+      "scheduled_off_utc": "2026-11-04T15:40:00+00:00",
+      "prime_top": "vpower",
+      "formfav_top": "midnightpass",
+      "top_agreement": false,
+      "prime_runners": 18,
+      "formfav_runners": 17,
+      "matched_runners": 17,
+      "match_coverage": 0.9444,
+      "formfav_blends": {
+        "0.10": {
+          "top": "vpower",
+          "changed": false,
+          "matched_runners": 17
+        },
+        "0.20": {
+          "top": "vpower",
+          "changed": false,
+          "matched_runners": 17
+        },
+        "0.30": {
+          "top": "vpower",
+          "changed": false,
+          "matched_runners": 17
+        }
+      },
+      "premium_market_rows": 90,
+      "premium_market_first_capture": "2026-11-04T13:54:23.38712+00:00",
+      "premium_market_last_capture": "2026-11-04T14:20:50.918613+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": {
+          "captured_minute_utc": "2026-11-04T13:54:00Z",
+          "from": "vpower",
+          "to": "angelwave",
+          "coverage": 0.9444,
+          "matched_runners": 17
+        }
+      }
+    },
+    {
+      "race_id": "932394",
+      "provider_race_key": "formfav:ie:2026-11-04:wexford:r6",
+      "course": "Wexford",
+      "off_time": "15:45:00",
+      "prime_generated_at": "2026-11-04T07:27:20.525386+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:24.043335Z",
+      "formfav_captured_at": "2026-11-04T13:47:59.128144+00:00",
+      "scheduled_off_utc": "2026-11-04T15:45:00+00:00",
+      "prime_top": "modeavion",
+      "formfav_top": "modeavion",
+      "top_agreement": true,
+      "prime_runners": 11,
+      "formfav_runners": 9,
+      "matched_runners": 9,
+      "match_coverage": 0.8182,
+      "formfav_blends": {
+        "0.10": {
+          "top": "modeavion",
+          "changed": false,
+          "matched_runners": 9
+        },
+        "0.20": {
+          "top": "modeavion",
+          "changed": false,
+          "matched_runners": 9
+        },
+        "0.30": {
+          "top": "modeavion",
+          "changed": false,
+          "matched_runners": 9
+        }
+      },
+      "premium_market_rows": 55,
+      "premium_market_first_capture": "2026-11-04T13:55:20.95477+00:00",
+      "premium_market_last_capture": "2026-11-04T14:21:29.782311+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930679",
+      "provider_race_key": "formfav:gb:2026-11-04:musselburgh:r8",
+      "course": "Musselburgh",
+      "off_time": "15:50:00",
+      "prime_generated_at": "2026-11-04T07:27:18.255092+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:13.257037Z",
+      "formfav_captured_at": "2026-11-04T13:45:41.821517+00:00",
+      "scheduled_off_utc": "2026-11-04T15:50:00+00:00",
+      "prime_top": "abduction",
+      "formfav_top": "ashen",
+      "top_agreement": false,
+      "prime_runners": 12,
+      "formfav_runners": 12,
+      "matched_runners": 12,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "abduction",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.20": {
+          "top": "abduction",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.30": {
+          "top": "abduction",
+          "changed": false,
+          "matched_runners": 12
+        }
+      },
+      "premium_market_rows": 60,
+      "premium_market_first_capture": "2026-11-04T13:55:04.495158+00:00",
+      "premium_market_last_capture": "2026-11-04T14:21:13.920729+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930689",
+      "provider_race_key": "formfav:gb:2026-11-04:nottingham:r8",
+      "course": "Nottingham",
+      "off_time": "15:55:00",
+      "prime_generated_at": "2026-11-04T07:27:19.43442+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:16.838950Z",
+      "formfav_captured_at": "2026-11-04T13:46:26.579239+00:00",
+      "scheduled_off_utc": "2026-11-04T15:55:00+00:00",
+      "prime_top": "justqueenhigh",
+      "formfav_top": "lookbacksmiling",
+      "top_agreement": false,
+      "prime_runners": 15,
+      "formfav_runners": 15,
+      "matched_runners": 15,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "justqueenhigh",
+          "changed": false,
+          "matched_runners": 15
+        },
+        "0.20": {
+          "top": "justqueenhigh",
+          "changed": false,
+          "matched_runners": 15
+        },
+        "0.30": {
+          "top": "justqueenhigh",
+          "changed": false,
+          "matched_runners": 15
+        }
+      },
+      "premium_market_rows": 75,
+      "premium_market_first_capture": "2026-11-04T13:57:34.102953+00:00",
+      "premium_market_last_capture": "2026-11-04T14:23:51.400193+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932467",
+      "provider_race_key": "formfav:gb:2026-11-04:kempton_park:r4",
+      "course": "Kempton (AW)",
+      "off_time": "16:00:00",
+      "prime_generated_at": "2026-11-04T07:27:16.150114+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:02.789544Z",
+      "formfav_captured_at": "2026-11-04T13:44:02.449125+00:00",
+      "scheduled_off_utc": "2026-11-04T16:00:00+00:00",
+      "prime_top": "lightofthestars",
+      "formfav_top": "lightofthestars",
+      "top_agreement": true,
+      "prime_runners": 13,
+      "formfav_runners": 12,
+      "matched_runners": 12,
+      "match_coverage": 0.9231,
+      "formfav_blends": {
+        "0.10": {
+          "top": "lightofthestars",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.20": {
+          "top": "lightofthestars",
+          "changed": false,
+          "matched_runners": 12
+        },
+        "0.30": {
+          "top": "lightofthestars",
+          "changed": false,
+          "matched_runners": 12
+        }
+      },
+      "premium_market_rows": 52,
+      "premium_market_first_capture": "2026-11-04T14:01:06.602921+00:00",
+      "premium_market_last_capture": "2026-11-04T14:21:03.869937+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932367",
+      "provider_race_key": "formfav:ie:2026-11-04:dundalk:r1",
+      "course": "Dundalk (AW)",
+      "off_time": "16:05:00",
+      "prime_generated_at": "2026-11-04T07:27:14.320005+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:40.975002Z",
+      "formfav_captured_at": "2026-11-04T13:40:59.198186+00:00",
+      "scheduled_off_utc": "2026-11-04T16:05:00+00:00",
+      "prime_top": "goathletico",
+      "formfav_top": "saintacclaim",
+      "top_agreement": false,
+      "prime_runners": 8,
+      "formfav_runners": 8,
+      "matched_runners": 8,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "goathletico",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.20": {
+          "top": "goathletico",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.30": {
+          "top": "goathletico",
+          "changed": false,
+          "matched_runners": 8
+        }
+      },
+      "premium_market_rows": 24,
+      "premium_market_first_capture": "2026-11-04T14:07:47.605666+00:00",
+      "premium_market_last_capture": "2026-11-04T14:20:53.685817+00:00",
+      "premium_market_first_flip": {
+        "0.10": {
+          "captured_minute_utc": "2026-11-04T14:07:00Z",
+          "from": "goathletico",
+          "to": "apacheoutlaw",
+          "coverage": 1.0,
+          "matched_runners": 8
+        },
+        "0.20": {
+          "captured_minute_utc": "2026-11-04T14:07:00Z",
+          "from": "goathletico",
+          "to": "apacheoutlaw",
+          "coverage": 1.0,
+          "matched_runners": 8
+        },
+        "0.30": {
+          "captured_minute_utc": "2026-11-04T14:07:00Z",
+          "from": "goathletico",
+          "to": "apacheoutlaw",
+          "coverage": 1.0,
+          "matched_runners": 8
+        }
+      }
+    },
+    {
+      "race_id": "930473",
+      "provider_race_key": "formfav:gb:2026-11-04:chepstow:r8",
+      "course": "Chepstow",
+      "off_time": "16:10:00",
+      "prime_generated_at": "2026-11-04T07:27:14.146877+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:37.824457Z",
+      "formfav_captured_at": "2026-11-04T13:39:58.206485+00:00",
+      "scheduled_off_utc": "2026-11-04T16:10:00+00:00",
+      "prime_top": "smokeandfire",
+      "formfav_top": "magimax",
+      "top_agreement": false,
+      "prime_runners": 15,
+      "formfav_runners": 13,
+      "matched_runners": 13,
+      "match_coverage": 0.8667,
+      "formfav_blends": {
+        "0.10": {
+          "top": "smokeandfire",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.20": {
+          "top": "smokeandfire",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.30": {
+          "top": "smokeandfire",
+          "changed": false,
+          "matched_runners": 13
+        }
+      },
+      "premium_market_rows": 45,
+      "premium_market_first_capture": "2026-11-04T14:10:30.438701+00:00",
+      "premium_market_last_capture": "2026-11-04T14:23:02.113804+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932395",
+      "provider_race_key": "formfav:ie:2026-11-04:wexford:r7",
+      "course": "Wexford",
+      "off_time": "16:20:00",
+      "prime_generated_at": "2026-11-04T07:27:20.78978+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:24.279701Z",
+      "formfav_captured_at": "2026-11-04T13:48:01.912668+00:00",
+      "scheduled_off_utc": "2026-11-04T16:20:00+00:00",
+      "prime_top": "hartford",
+      "formfav_top": "hartford",
+      "top_agreement": true,
+      "prime_runners": 7,
+      "formfav_runners": 7,
+      "matched_runners": 7,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "hartford",
+          "changed": false,
+          "matched_runners": 7
+        },
+        "0.20": {
+          "top": "hartford",
+          "changed": false,
+          "matched_runners": 7
+        },
+        "0.30": {
+          "top": "hartford",
+          "changed": false,
+          "matched_runners": 7
+        }
+      },
+      "premium_market_rows": 7,
+      "premium_market_first_capture": "2026-11-04T14:21:31.542436+00:00",
+      "premium_market_last_capture": "2026-11-04T14:21:31.542436+00:00",
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930714",
+      "provider_race_key": "formfav:gb:2026-11-04:kempton_park:r5",
+      "course": "Kempton (AW)",
+      "off_time": "16:30:00",
+      "prime_generated_at": "2026-11-04T07:27:16.27959+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:03.126549Z",
+      "formfav_captured_at": "2026-11-04T13:44:05.886386+00:00",
+      "scheduled_off_utc": "2026-11-04T16:30:00+00:00",
+      "prime_top": "unerring",
+      "formfav_top": "silkenwarrior",
+      "top_agreement": false,
+      "prime_runners": 14,
+      "formfav_runners": 13,
+      "matched_runners": 13,
+      "match_coverage": 0.9286,
+      "formfav_blends": {
+        "0.10": {
+          "top": "silkenwarrior",
+          "changed": true,
+          "matched_runners": 13
+        },
+        "0.20": {
+          "top": "silkenwarrior",
+          "changed": true,
+          "matched_runners": 13
+        },
+        "0.30": {
+          "top": "silkenwarrior",
+          "changed": true,
+          "matched_runners": 13
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932368",
+      "provider_race_key": "formfav:ie:2026-11-04:dundalk:r2",
+      "course": "Dundalk (AW)",
+      "off_time": "16:40:00",
+      "prime_generated_at": "2026-11-04T07:27:14.474485+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:41.552481Z",
+      "formfav_captured_at": "2026-11-04T13:41:07.042819+00:00",
+      "scheduled_off_utc": "2026-11-04T16:40:00+00:00",
+      "prime_top": "alwaysmagic",
+      "formfav_top": "thumamaglory",
+      "top_agreement": false,
+      "prime_runners": 11,
+      "formfav_runners": 11,
+      "matched_runners": 11,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "alwaysmagic",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.20": {
+          "top": "alwaysmagic",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.30": {
+          "top": "alwaysmagic",
+          "changed": false,
+          "matched_runners": 11
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930713",
+      "provider_race_key": "formfav:gb:2026-11-04:kempton_park:r6",
+      "course": "Kempton (AW)",
+      "off_time": "17:00:00",
+      "prime_generated_at": "2026-11-04T07:27:16.474322+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:03.361830Z",
+      "formfav_captured_at": "2026-11-04T13:44:09.121206+00:00",
+      "scheduled_off_utc": "2026-11-04T17:00:00+00:00",
+      "prime_top": "cosibello",
+      "formfav_top": "colombier",
+      "top_agreement": false,
+      "prime_runners": 9,
+      "formfav_runners": 9,
+      "matched_runners": 9,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "valvano",
+          "changed": true,
+          "matched_runners": 9
+        },
+        "0.20": {
+          "top": "valvano",
+          "changed": true,
+          "matched_runners": 9
+        },
+        "0.30": {
+          "top": "valvano",
+          "changed": true,
+          "matched_runners": 9
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932369",
+      "provider_race_key": "formfav:ie:2026-11-04:dundalk:r3",
+      "course": "Dundalk (AW)",
+      "off_time": "17:15:00",
+      "prime_generated_at": "2026-11-04T07:27:14.63201+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:42.038862Z",
+      "formfav_captured_at": "2026-11-04T13:41:15.40035+00:00",
+      "scheduled_off_utc": "2026-11-04T17:15:00+00:00",
+      "prime_top": "coincidentalglory",
+      "formfav_top": "caffuzafeen",
+      "top_agreement": false,
+      "prime_runners": 9,
+      "formfav_runners": 9,
+      "matched_runners": 9,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "coincidentalglory",
+          "changed": false,
+          "matched_runners": 9
+        },
+        "0.20": {
+          "top": "coincidentalglory",
+          "changed": false,
+          "matched_runners": 9
+        },
+        "0.30": {
+          "top": "coincidentalglory",
+          "changed": false,
+          "matched_runners": 9
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930718",
+      "provider_race_key": "formfav:gb:2026-11-04:kempton_park:r7",
+      "course": "Kempton (AW)",
+      "off_time": "17:30:00",
+      "prime_generated_at": "2026-11-04T07:27:16.639059+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:03.660959Z",
+      "formfav_captured_at": "2026-11-04T13:44:12.134493+00:00",
+      "scheduled_off_utc": "2026-11-04T17:30:00+00:00",
+      "prime_top": "phoenixmoon",
+      "formfav_top": "persianspirit",
+      "top_agreement": false,
+      "prime_runners": 7,
+      "formfav_runners": 7,
+      "matched_runners": 7,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "phoenixmoon",
+          "changed": false,
+          "matched_runners": 7
+        },
+        "0.20": {
+          "top": "phoenixmoon",
+          "changed": false,
+          "matched_runners": 7
+        },
+        "0.30": {
+          "top": "phoenixmoon",
+          "changed": false,
+          "matched_runners": 7
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932370",
+      "provider_race_key": "formfav:ie:2026-11-04:dundalk:r4",
+      "course": "Dundalk (AW)",
+      "off_time": "17:45:00",
+      "prime_generated_at": "2026-11-04T07:27:14.793236+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:42.399361Z",
+      "formfav_captured_at": "2026-11-04T13:41:17.972486+00:00",
+      "scheduled_off_utc": "2026-11-04T17:45:00+00:00",
+      "prime_top": "elmakaya",
+      "formfav_top": "otsana",
+      "top_agreement": false,
+      "prime_runners": 9,
+      "formfav_runners": 8,
+      "matched_runners": 8,
+      "match_coverage": 0.8889,
+      "formfav_blends": {
+        "0.10": {
+          "top": "elmakaya",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.20": {
+          "top": "elmakaya",
+          "changed": false,
+          "matched_runners": 8
+        },
+        "0.30": {
+          "top": "elmakaya",
+          "changed": false,
+          "matched_runners": 8
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930717",
+      "provider_race_key": "formfav:gb:2026-11-04:kempton_park:r8",
+      "course": "Kempton (AW)",
+      "off_time": "18:00:00",
+      "prime_generated_at": "2026-11-04T07:27:16.79072+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:03.958634Z",
+      "formfav_captured_at": "2026-11-04T13:44:15.589655+00:00",
+      "scheduled_off_utc": "2026-11-04T18:00:00+00:00",
+      "prime_top": "thecoffeepod",
+      "formfav_top": "lieutenantkije",
+      "top_agreement": false,
+      "prime_runners": 11,
+      "formfav_runners": 11,
+      "matched_runners": 11,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "thecoffeepod",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.20": {
+          "top": "thecoffeepod",
+          "changed": false,
+          "matched_runners": 11
+        },
+        "0.30": {
+          "top": "thecoffeepod",
+          "changed": false,
+          "matched_runners": 11
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932371",
+      "provider_race_key": "formfav:ie:2026-11-04:dundalk:r5",
+      "course": "Dundalk (AW)",
+      "off_time": "18:15:00",
+      "prime_generated_at": "2026-11-04T07:27:15.049942+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:42.729699Z",
+      "formfav_captured_at": "2026-11-04T13:41:20.694324+00:00",
+      "scheduled_off_utc": "2026-11-04T18:15:00+00:00",
+      "prime_top": "littlepacer",
+      "formfav_top": "littlepacer",
+      "top_agreement": true,
+      "prime_runners": 7,
+      "formfav_runners": 7,
+      "matched_runners": 7,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "littlepacer",
+          "changed": false,
+          "matched_runners": 7
+        },
+        "0.20": {
+          "top": "littlepacer",
+          "changed": false,
+          "matched_runners": 7
+        },
+        "0.30": {
+          "top": "littlepacer",
+          "changed": false,
+          "matched_runners": 7
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "930719",
+      "provider_race_key": "formfav:gb:2026-11-04:kempton_park:r9",
+      "course": "Kempton (AW)",
+      "off_time": "18:30:00",
+      "prime_generated_at": "2026-11-04T07:27:16.9106+00:00",
+      "formfav_predicted_at": "2026-11-04T09:40:04.290530Z",
+      "formfav_captured_at": "2026-11-04T13:44:18.506021+00:00",
+      "scheduled_off_utc": "2026-11-04T18:30:00+00:00",
+      "prime_top": "foinix",
+      "formfav_top": "ataturk",
+      "top_agreement": false,
+      "prime_runners": 14,
+      "formfav_runners": 14,
+      "matched_runners": 14,
+      "match_coverage": 1.0,
+      "formfav_blends": {
+        "0.10": {
+          "top": "foinix",
+          "changed": false,
+          "matched_runners": 14
+        },
+        "0.20": {
+          "top": "foinix",
+          "changed": false,
+          "matched_runners": 14
+        },
+        "0.30": {
+          "top": "foinix",
+          "changed": false,
+          "matched_runners": 14
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932372",
+      "provider_race_key": "formfav:ie:2026-11-04:dundalk:r6",
+      "course": "Dundalk (AW)",
+      "off_time": "18:45:00",
+      "prime_generated_at": "2026-11-04T07:27:15.284225+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:42.935707Z",
+      "formfav_captured_at": "2026-11-04T13:41:28.919958+00:00",
+      "scheduled_off_utc": "2026-11-04T18:45:00+00:00",
+      "prime_top": "glenbreeze",
+      "formfav_top": "carrigansgrove",
+      "top_agreement": false,
+      "prime_runners": 16,
+      "formfav_runners": 13,
+      "matched_runners": 13,
+      "match_coverage": 0.8125,
+      "formfav_blends": {
+        "0.10": {
+          "top": "glenbreeze",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.20": {
+          "top": "glenbreeze",
+          "changed": false,
+          "matched_runners": 13
+        },
+        "0.30": {
+          "top": "glenbreeze",
+          "changed": false,
+          "matched_runners": 13
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    },
+    {
+      "race_id": "932373",
+      "provider_race_key": "formfav:ie:2026-11-04:dundalk:r7",
+      "course": "Dundalk (AW)",
+      "off_time": "19:15:00",
+      "prime_generated_at": "2026-11-04T07:27:15.475002+00:00",
+      "formfav_predicted_at": "2026-11-04T09:39:43.330416Z",
+      "formfav_captured_at": "2026-11-04T13:41:31.870435+00:00",
+      "scheduled_off_utc": "2026-11-04T19:15:00+00:00",
+      "prime_top": "kingsgesture",
+      "formfav_top": "dancingsteve",
+      "top_agreement": false,
+      "prime_runners": 17,
+      "formfav_runners": 14,
+      "matched_runners": 14,
+      "match_coverage": 0.8235,
+      "formfav_blends": {
+        "0.10": {
+          "top": "onyeisi",
+          "changed": true,
+          "matched_runners": 14
+        },
+        "0.20": {
+          "top": "onyeisi",
+          "changed": true,
+          "matched_runners": 14
+        },
+        "0.30": {
+          "top": "onyeisi",
+          "changed": true,
+          "matched_runners": 14
+        }
+      },
+      "premium_market_rows": 0,
+      "premium_market_first_capture": null,
+      "premium_market_last_capture": null,
+      "premium_market_first_flip": {
+        "0.10": null,
+        "0.20": null,
+        "0.30": null
+      }
+    }
+  ]
+}

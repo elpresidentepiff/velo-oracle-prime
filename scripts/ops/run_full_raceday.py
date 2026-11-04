@@ -112,6 +112,44 @@ def ensure_local_verdict_archive(date: str, results: list[dict]) -> bool:
     return False
 
 
+def ensure_durable_runner_snapshot(date: str, results: list[dict]) -> bool:
+    """Verify canonical runner rows and materialize their latest local JSONL.
+
+    This intentionally runs even when a local snapshot exists.  A local file
+    proves only that the current ephemeral container wrote to disk; it does not
+    prove the batch can be recovered by tomorrow's clean container.
+    """
+    hydrated = run(
+        "Step 9 durable runner snapshots: verify and hydrate from Supabase",
+        [PY, "scripts/ops/sync_runner_snapshots_from_supabase.py", "--date", date],
+        critical=False,
+        results=results,
+    )
+    if not hydrated:
+        if not run(
+            "Step 9 recovery: persist runner snapshots from frozen verdicts",
+            [PY, "scripts/ops/recover_runner_snapshots_from_verdicts.py", "--date", date],
+            critical=True,
+            results=results,
+        ):
+            return False
+        if not run(
+            "Step 9 recovery proof: hydrate recovered runner snapshots",
+            [PY, "scripts/ops/sync_runner_snapshots_from_supabase.py", "--date", date],
+            critical=True,
+            results=results,
+        ):
+            return False
+    pattern = f"runner_snapshots_{date.replace('-', '_')}_*.jsonl"
+    if any((ROOT / "data").glob(pattern)):
+        return True
+    print(
+        "\n[CRITICAL] Durable runner snapshot hydration returned success but did "
+        f"not materialize data/{pattern}."
+    )
+    return False
+
+
 def verdicts_already_persisted(date: str) -> bool:
     """True if a completed, PASS-status "velo-prime-scoring" pipeline_runs row already
     exists for this date -- i.e. today has already been scored and must not be rescored.
@@ -587,6 +625,16 @@ def main() -> int:
             critical=True, results=results,
         ):
             return 1
+
+    # A verdict PASS is not sufficient for downstream model completeness.
+    # Railway cron containers are ephemeral, and Old VELO consumes the full
+    # per-runner JSONL rather than the top-pick verdict archive.  Hydrate the
+    # latest batch from canonical storage on every path: this reconstructs the
+    # file after an idempotent scoring skip and also proves a fresh scoring run
+    # actually persisted its runner rows.  The command is read-only against
+    # Supabase and must fail closed when durable rows are absent.
+    if not ensure_durable_runner_snapshot(date, results):
+        return 1
 
     # ── Steps 9.1-9.6: paper intelligence overlays ───────────────────────
     # The four core models (Old VELO, New Build, No-RPR/SQPE Shadow, Champion

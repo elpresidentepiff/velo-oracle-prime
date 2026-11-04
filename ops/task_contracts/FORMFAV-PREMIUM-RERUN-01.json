@@ -1,0 +1,93 @@
+{
+  "task_id": "FORMFAV-PREMIUM-RERUN-01",
+  "title": "Durable runner snapshot recovery and FormFav Premium shadow ablation",
+  "classification": "AUTHORIZED_OPERATIONAL_PERSISTENCE_REPAIR_AND_SHADOW_EVALUATION",
+  "allowed_paths": [
+    "ops/task_contracts/FORMFAV-PREMIUM-RERUN-01.json",
+    "supabase/migrations/",
+    "src/velo/runner_snapshot_store.py",
+    "scripts/ops/sync_runner_snapshots_from_supabase.py",
+    "scripts/ops/recover_runner_snapshots_from_verdicts.py",
+    "scripts/ops/run_full_raceday.py",
+    "scripts/ops/build_formfav_premium_shadow_ablation.py",
+    "tests/test_runner_snapshot_store.py",
+    "tests/test_runner_snapshot_hydration.py",
+    "tests/test_run_full_raceday_cloud_hydration.py",
+    "tests/test_formfav_premium_shadow_ablation.py",
+    "docs/engineering/FORMFAV_PREMIUM_GLOBAL_READINESS_PLAN_V1.md",
+    "data/reports/formfav_premium_shadow_ablation_2026_11_04.json",
+    "data/reports/formfav_premium_shadow_ablation_2026_11_04.md"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "app/agents/betfair_execution_agent.py",
+    "app/agents/betfair_trading_agents.py",
+    "src/velo/execution_bridge.py",
+    "data/sentient_state.json",
+    "scripts/ops/run_results_sigma.py",
+    ".env"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_supabase_truth",
+    "read_railway_state",
+    "add_additive_snapshot_columns",
+    "restore_runner_snapshots_read_only",
+    "repair_idempotent_rerun",
+    "build_timestamped_shadow_ablation",
+    "create_tests",
+    "run_tests",
+    "apply_reviewed_additive_migration",
+    "deploy_authorized_operational_repair",
+    "rerun_governed_raceday"
+  ],
+  "forbidden_actions": [
+    "model_weight_change",
+    "prime_probability_change",
+    "production_feature_injection",
+    "gate_bypass",
+    "live_betting",
+    "execution_mode_change",
+    "credential_change",
+    "credential_exposure",
+    "browser_profile_change",
+    "telegram_send",
+    "model_promotion",
+    "source_substitution"
+  ],
+  "forbidden_keywords": [],
+  "required_outputs": [
+    "ops/task_contracts/FORMFAV-PREMIUM-RERUN-01.json",
+    "scripts/ops/sync_runner_snapshots_from_supabase.py",
+    "scripts/ops/recover_runner_snapshots_from_verdicts.py",
+    "scripts/ops/build_formfav_premium_shadow_ablation.py",
+    "tests/test_runner_snapshot_hydration.py",
+    "tests/test_formfav_premium_shadow_ablation.py",
+    "docs/engineering/FORMFAV_PREMIUM_GLOBAL_READINESS_PLAN_V1.md"
+  ],
+  "classification_required": [
+    "RUNNER_SNAPSHOT_PERSISTENCE_REPAIRED",
+    "IDEMPOTENT_RERUN_HYDRATION_REPAIRED",
+    "FORMFAV_PREMIUM_ABLATION_SHADOW_ONLY",
+    "PREDICTION_CHANGE_TIMESTAMPED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_GATE_BYPASS",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION",
+    "PAPER_SIM_ONLY"
+  ],
+  "final_classifications": [
+    "RUNNER_SNAPSHOT_PERSISTENCE_REPAIRED",
+    "IDEMPOTENT_RERUN_HYDRATION_REPAIRED",
+    "FORMFAV_PREMIUM_ABLATION_SHADOW_ONLY",
+    "PREDICTION_CHANGE_TIMESTAMPED",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_GATE_BYPASS",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION",
+    "PAPER_SIM_ONLY"
+  ]
+}
