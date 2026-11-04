@@ -8,7 +8,9 @@ SQPE_NO_RPR_SHADOW lanes must never claim stake authorisation or promotion
 eligibility no matter what artifacts are present on disk.
 """
 import ast
+import json
 import sys
+import urllib.parse
 from pathlib import Path
 
 import pytest
@@ -16,9 +18,10 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient  # noqa: E402
 
-from scripts.ops.new_build_dashboard_server import app
+from scripts.ops import model_suggestions_builder  # noqa: E402
+from scripts.ops.new_build_dashboard_server import app  # noqa: E402
 
 client = TestClient(app)
 
@@ -201,3 +204,49 @@ def test_race_cards_fall_back_to_current_canonical_model_capture():
     assert "declared_runner_count" in html
     assert "LANE A · CANONICAL CAPTURE" in html
     assert "CANONICAL CURRENT-DAY CAPTURE" in html
+    assert "canonicalOldRoles" in html
+    assert "canonicalThreePicks" in html
+
+
+def test_canonical_fallback_requests_top_three_and_preserves_sp():
+    src = (ROOT / "scripts" / "ops" / "model_suggestions_builder.py").read_text(encoding="utf-8")
+
+    assert '"rank": "lte.3"' in src
+    assert '"sp_dec"' in src
+
+
+def test_canonical_fallback_paginates_past_supabase_row_limit(monkeypatch):
+    monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
+    monkeypatch.setenv("SUPABASE_SERVICE_ROLE_KEY", "test-only-key")
+    calls = []
+
+    class FakeResponse:
+        def __init__(self, payload):
+            self.payload = payload
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self):
+            return json.dumps(self.payload).encode("utf-8")
+
+    first_page = [{"race_id": str(i)} for i in range(1000)]
+    second_page = [{"race_id": "last", "model_name": "OLD_VELO_WIN_ROLE"}]
+
+    def fake_urlopen(request, timeout):
+        assert timeout == 12
+        query = urllib.parse.parse_qs(urllib.parse.urlparse(request.full_url).query)
+        offset = int(query["offset"][0])
+        calls.append(offset)
+        return FakeResponse(first_page if offset == 0 else second_page)
+
+    monkeypatch.setattr(model_suggestions_builder.urllib.request, "urlopen", fake_urlopen)
+    rows, error = model_suggestions_builder._canonical_supabase_top_picks("2026-11-04")
+
+    assert error is None
+    assert len(rows) == 1001
+    assert rows[-1]["model_name"] == "OLD_VELO_WIN_ROLE"
+    assert calls == [0, 1000]

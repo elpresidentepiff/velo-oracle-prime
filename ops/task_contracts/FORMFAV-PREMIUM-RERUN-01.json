@@ -10,10 +10,13 @@
     "scripts/ops/recover_runner_snapshots_from_verdicts.py",
     "scripts/ops/run_full_raceday.py",
     "scripts/ops/build_formfav_premium_shadow_ablation.py",
+    "scripts/ops/model_suggestions_builder.py",
+    "app/static/dashboard/index.html",
     "tests/test_runner_snapshot_store.py",
     "tests/test_runner_snapshot_hydration.py",
     "tests/test_run_full_raceday_cloud_hydration.py",
     "tests/test_formfav_premium_shadow_ablation.py",
+    "tests/test_dashboard_model_suggestions_api.py",
     "docs/engineering/FORMFAV_PREMIUM_GLOBAL_READINESS_PLAN_V1.md",
     "data/reports/formfav_premium_shadow_ablation_2026_11_04.json",
     "data/reports/formfav_premium_shadow_ablation_2026_11_04.md"
@@ -41,6 +44,7 @@
     "apply_reviewed_additive_migration",
     "deploy_authorized_operational_repair",
     "rerun_governed_raceday"
+    ,"repair_canonical_dashboard_fallback"
   ],
   "forbidden_actions": [
     "model_weight_change",

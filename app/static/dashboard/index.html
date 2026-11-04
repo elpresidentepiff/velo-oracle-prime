@@ -3925,6 +3925,11 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
     const nbMin = nbTimeKey(r0.off_time);
     const ovKey = normalizeCourseKey(r0.course) + '::' + nbMin;
     const canonicalOldWin = canonicalRows.find(r => r.model_label === 'OLD_VELO_WIN_ROLE' && Number(r.rank) === 1);
+    const canonicalOldRoles = {
+      WIN: canonicalOldWin,
+      PLACE: canonicalRows.find(r => r.model_label === 'OLD_VELO_PLACE_ROLE' && Number(r.rank) === 1),
+      LONGSHOT: canonicalRows.find(r => r.model_label === 'OLD_VELO_LONGSHOT_ROLE' && Number(r.rank) === 1),
+    };
     const ov = ovMap.get(ovKey) || (canonicalOldWin ? {
       horse: canonicalOldWin.horse,
       velo_prime_prob: canonicalOldWin.score,
@@ -4039,7 +4044,17 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
     }
 
     // ── Three-option picks (WIN / PLACE / LONGSHOT) ────────────────
-    const threePicks = threeOptMap.get(normalizeCourseKey(r0.course) + '::' + nbMin);
+    const canonicalThreePicks = Object.fromEntries(
+      Object.entries(canonicalOldRoles)
+        .filter(([, pick]) => Boolean(pick))
+        .map(([role, pick]) => [role, {
+          horse: pick.horse,
+          sp_dec: Number(pick.sp_dec || 0),
+          outcome: {},
+        }])
+    );
+    const threePicks = threeOptMap.get(normalizeCourseKey(r0.course) + '::' + nbMin)
+      || (Object.keys(canonicalThreePicks).length ? canonicalThreePicks : null);
     if (threePicks) {
       html += '<div style="margin-top:6px;border-top:1px solid var(--border);padding-top:5px">';
       [['WIN','var(--cyan)'],['PLACE','var(--amber)'],['LONGSHOT','var(--purple)']].forEach(([role, col]) => {

@@ -78,7 +78,7 @@ def _read_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
     try:
-        return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
     except Exception:
         return []
 
@@ -91,7 +91,7 @@ def _read_csv(path: Path) -> list[dict]:
 
 
 def _canonical_supabase_top_picks(date_str: str) -> tuple[list[dict], str | None]:
-    """Read captured rank-1 model outputs from the shared production truth store.
+    """Read captured top-three model outputs from the shared production truth store.
 
     Railway runs the web app and the scoring worker in separate containers, so
     today's scorer artifacts are not guaranteed to exist on the web container's
@@ -122,6 +122,7 @@ def _canonical_supabase_top_picks(date_str: str) -> tuple[list[dict], str | None
             "horse",
             "horse_id",
             "score",
+            "sp_dec",
             "policy_decision",
             "stake_authorised",
             "dashboard_visible",
@@ -130,30 +131,39 @@ def _canonical_supabase_top_picks(date_str: str) -> tuple[list[dict], str | None
             "created_at",
         ]
     )
-    query = urllib.parse.urlencode(
-        {
-            "select": select_cols,
-            "run_date": f"eq.{date_str}",
-            "rank": "eq.1",
-            "order": "off_time.asc,course.asc,model_name.asc",
-        }
-    )
-    req = urllib.request.Request(
-        f"{sb_url}/rest/v1/canonical_model_scorecards?{query}",
-        headers={
-            "apikey": sb_key,
-            "Authorization": f"Bearer {sb_key}",
-            "Accept": "application/json",
-        },
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=12) as resp:
-            payload = json.loads(resp.read().decode("utf-8"))
-    except Exception as exc:
-        return [], f"{type(exc).__name__}: {exc}"
+    query_params = {
+        "select": select_cols,
+        "run_date": f"eq.{date_str}",
+        "rank": "lte.3",
+        "order": "off_time.asc,course.asc,model_name.asc,rank.asc,horse.asc",
+    }
+    page_size = 1000
+    offset = 0
+    payload: list[dict] = []
+    while True:
+        query = urllib.parse.urlencode(
+            {**query_params, "limit": page_size, "offset": offset}
+        )
+        req = urllib.request.Request(
+            f"{sb_url}/rest/v1/canonical_model_scorecards?{query}",
+            headers={
+                "apikey": sb_key,
+                "Authorization": f"Bearer {sb_key}",
+                "Accept": "application/json",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                page = json.loads(resp.read().decode("utf-8"))
+        except Exception as exc:
+            return [], f"{type(exc).__name__}: {exc}"
 
-    if not isinstance(payload, list):
-        return [], "Supabase canonical model response was not a list"
+        if not isinstance(page, list):
+            return [], "Supabase canonical model response was not a list"
+        payload.extend(page)
+        if len(page) < page_size:
+            break
+        offset += page_size
     return payload, None
 
 
@@ -163,6 +173,11 @@ def _canonical_row_to_suggestion(row: dict) -> dict:
         score = float(score) if score is not None else None
     except (TypeError, ValueError):
         score = None
+    sp_dec = row.get("sp_dec")
+    try:
+        sp_dec = float(sp_dec) if sp_dec is not None else None
+    except (TypeError, ValueError):
+        sp_dec = None
     return {
         "date": str(row.get("run_date") or ""),
         "race_id": str(row.get("race_id") or ""),
@@ -174,6 +189,7 @@ def _canonical_row_to_suggestion(row: dict) -> dict:
         "horse": row.get("horse") or "",
         "horse_id": str(row.get("horse_id") or ""),
         "score": score,
+        "sp_dec": sp_dec,
         "source_path": row.get("source_path") or "public.canonical_model_scorecards",
         "source_field": row.get("source_field") or "score",
         "policy_decision": row.get("policy_decision"),
@@ -181,7 +197,7 @@ def _canonical_row_to_suggestion(row: dict) -> dict:
         "promotion_eligible": False,
         "dashboard_visible": bool(row.get("dashboard_visible")),
         "suggestion_status": "CANONICAL_CURRENT_DAY_CAPTURE",
-        "notes": row.get("notes") or "Durable rank-1 capture from public.canonical_model_scorecards",
+        "notes": row.get("notes") or "Durable top-three capture from public.canonical_model_scorecards",
         "capture_source": "public.canonical_model_scorecards",
         "result_position_present": row.get("result_position") is not None,
         "captured_at": row.get("created_at"),
