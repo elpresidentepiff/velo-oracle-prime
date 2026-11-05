@@ -40,7 +40,7 @@ jobs:
         working-directory: workers/velo-edge
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check required secrets
         run: |
