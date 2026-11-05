@@ -4079,8 +4079,9 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
     html += '<div class="tl-lane">';
     html += '<div class="tl-lane-header"><span class="tl-lane-label-nr">NO-RPR</span><span class="rc-full-field-note">DOCTRINE MODEL</span></div>';
 
-    const nrHorse = r0.no_rpr_top_horse || '';
-    const nrProb  = parseFloat(r0.no_rpr_top_prob || 0);
+    const canonicalNoRpr = canonicalRows.find(r => r.model_label === 'SQPE_NO_RPR_SHADOW' && Number(r.rank) === 1);
+    const nrHorse = r0.no_rpr_top_horse || (canonicalNoRpr ? canonicalNoRpr.horse : '') || '';
+    const nrProb  = parseFloat(r0.no_rpr_top_prob || (canonicalNoRpr ? canonicalNoRpr.score : 0) || 0);
     if (nrHorse && nrProb > 0) {
       const nrPct   = maxProb > 0 ? Math.round((nrProb / maxProb) * 100) : Math.round(nrProb * 100);
       const nrAgree = nrHorse.toLowerCase().trim() === ovTopHorse && ovTopHorse !== '';

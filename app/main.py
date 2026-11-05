@@ -2531,9 +2531,9 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     shadow_by_race: dict[str, dict] = {}
     shadow_path = root / "data" / "reports" / f"radical_shadow_{date_tag}.json"
-    if shadow_path.exists():
+    shadow_payload, _shadow_source = _report_artifact("radical_shadow", target_date, shadow_path)
+    if shadow_payload is not None:
         try:
-            shadow_payload = _json.loads(shadow_path.read_text(encoding="utf-8"))
             shadow_by_race = {
                 str(row.get("race_id")): row for row in shadow_payload.get("decisions") or [] if row.get("race_id")
             }
@@ -2542,9 +2542,9 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     tri_lane_by_race: dict[str, dict] = {}
     tri_lane_path = root / "data" / "reports" / f"tri_lane_stress_test_{date_tag}_v2.json"
-    if tri_lane_path.exists():
+    tri_lane_payload, _tri_lane_source = _report_artifact("tri_lane_stress_test_v2", target_date, tri_lane_path)
+    if tri_lane_payload is not None:
         try:
-            tri_lane_payload = _json.loads(tri_lane_path.read_text(encoding="utf-8"))
             for row in tri_lane_payload.get("races") or []:
                 _num = str(row.get("race_id", ""))
                 _vrid = _gc_num_to_velo.get(_num, _num)
@@ -2555,9 +2555,11 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     tri_review_by_race: dict[str, dict] = {}
     tri_review_path = root / "data" / "reports" / f"tri_lane_agent_review_{date_tag}_v2.json"
-    if tri_review_path.exists():
+    tri_review_payload, _tri_review_source = _report_artifact(
+        "tri_lane_agent_review_v2", target_date, tri_review_path
+    )
+    if tri_review_payload is not None:
         try:
-            tri_review_payload = _json.loads(tri_review_path.read_text(encoding="utf-8"))
             tri_review_by_race = {
                 str(row.get("race_id")): row
                 for row in tri_review_payload.get("review_cards") or []
@@ -2568,9 +2570,11 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     deep_agent_by_race: dict[str, dict] = {}
     deep_agent_path = root / "data" / "reports" / f"deep_race_agent_v1_{date_tag}_v2.json"
-    if deep_agent_path.exists():
+    deep_agent_payload, _deep_agent_source = _report_artifact(
+        "deep_race_agent_v1_v2", target_date, deep_agent_path
+    )
+    if deep_agent_payload is not None:
         try:
-            deep_agent_payload = _json.loads(deep_agent_path.read_text(encoding="utf-8"))
             deep_agent_by_race = {
                 str(row.get("race_id")): row
                 for row in deep_agent_payload.get("agent_cards") or []
@@ -2581,9 +2585,9 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     course_master_by_key: dict[str, dict] = {}
     course_master_path = root / "data" / "reports" / f"course_master_{date_tag}.json"
-    if course_master_path.exists():
+    course_master_payload, _course_master_source = _report_artifact("course_master", target_date, course_master_path)
+    if course_master_payload is not None:
         try:
-            course_master_payload = _json.loads(course_master_path.read_text(encoding="utf-8"))
             course_master_by_key = course_master_payload.get("courses") or {}
         except Exception as e:
             logger.warning("Could not read Course Master file %s: %s", course_master_path, e)
@@ -2999,14 +3003,10 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     # ── Commit SHA ───────────────────────────────────────────────────────────
     try:
-        commit = (
-            _sp.check_output(
-                ["git", "rev-parse", "--short", "HEAD"],
-                cwd=root,
-                stderr=_sp.DEVNULL,
-            )
-            .decode()
-            .strip()
+        railway_sha = os.getenv("RAILWAY_GIT_COMMIT_SHA", "").strip()
+        commit = railway_sha[:7] if railway_sha else (
+            _sp.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=root, stderr=_sp.DEVNULL)
+            .decode().strip()
         )
     except Exception:
         commit = "unknown"
@@ -3120,7 +3120,9 @@ async def dashboard_truth(date: str = Query(default=None)):
                 # finished_at. Confirmed against the live PostgREST OpenAPI
                 # schema 2026-07-08 after this endpoint was silently
                 # returning SUPABASE_UNAVAILABLE/HTTP 400 for every request.
-                f"?select=id,status,started_at,finished_at,source_date,run_type,error_message"
+                f"?select=id,service_name,status,run_state,trigger_source,started_at,finished_at,"
+                f"source_date,run_type,races_processed,runners_processed,commit_sha,error_message"
+                f"&source_date=eq.{target_date}"
                 f"&order=started_at.desc&limit=1",
                 headers=_hdrs,
             )
@@ -3132,27 +3134,13 @@ async def dashboard_truth(date: str = Query(default=None)):
                 sb_truth["latest_pipeline_run"] = r
                 sb_truth["run_status"] = r.get("status")
                 sb_truth["run_started_at"] = r.get("started_at")
+                # velo_verdicts has numeric RP race ids and no race_date column.
+                # The durable, date-scoped pipeline terminal row is therefore
+                # the honest daily race count; never search race_id for a date.
+                sb_truth["verdict_count_today"] = r.get("races_processed")
         except Exception as exc:
             sb_truth["status"] = "SUPABASE_UNAVAILABLE"
             sb_truth["error"] = str(exc)
-
-        if sb_truth["status"] == "CONNECTED":
-            try:
-                # NOTE: velo_verdicts has no `date` column -- race_id encodes
-                # the date as rp_<VENUE>_<YYYYMMDD>_<H.MM>. Same schema gap
-                # confirmed and worked around elsewhere this session
-                # (data/reports/july07_sigma_input_audit.md).
-                date_tag_compact = target_date.replace("-", "")
-                req = urllib.request.Request(
-                    f"{sb_url}/rest/v1/velo_verdicts?select=id&race_id=like.*{date_tag_compact}*",
-                    headers={**_hdrs, "Prefer": "count=exact", "Range-Unit": "items", "Range": "0-0"},
-                )
-                with urllib.request.urlopen(req, timeout=6) as resp:
-                    cr = resp.headers.get("content-range", "")
-                    total_str = cr.split("/")[-1] if "/" in cr else ""
-                    sb_truth["verdict_count_today"] = int(total_str) if total_str.isdigit() else None
-            except Exception:
-                pass
 
     # ── B. Local harness truth ────────────────────────────────────────────────
     obs_path, obs = _select_observability_artifact(root, date_tag)
@@ -3215,13 +3203,46 @@ async def dashboard_truth(date: str = Query(default=None)):
             nb_truth["status"] = "READ_ERROR"
             nb_truth["error"] = str(exc)
 
+    # Production dashboard and scoring are separate Railway containers.  The
+    # canonical scorecard is their durable bridge and outranks any deploy-time
+    # sidecar file.  Use it to prove that New Build actually ran today.
+    if sb_url and sb_key:
+        try:
+            req = urllib.request.Request(
+                f"{sb_url}/rest/v1/canonical_model_scorecards"
+                f"?select=race_id,horse,rank,model_name,created_at"
+                f"&run_date=eq.{target_date}&model_name=eq.NEW_BUILD_LANE_A_MODEL&rank=eq.1",
+                headers=_hdrs,
+            )
+            with urllib.request.urlopen(req, timeout=6) as resp:
+                canonical_nb = _json.loads(resp.read().decode())
+            if canonical_nb:
+                nb_truth = {
+                    "source": "SUPABASE_CANONICAL",
+                    "status": "FOUND",
+                    "data": {
+                        "record_count": len(canonical_nb),
+                        "date_matches_today": True,
+                        "paper_only": True,
+                        "model_name": "NEW_BUILD_LANE_A_MODEL",
+                        "captured_at": max(str(r.get("created_at") or "") for r in canonical_nb),
+                    },
+                }
+        except Exception as exc:
+            if nb_truth["status"] == "NOT_FOUND":
+                nb_truth["status"] = "READ_ERROR"
+                nb_truth["error"] = str(exc)
+
     # ── E. Old VELO RP newspaper source gate ────────────────────────────────
     gate_path = root / "data" / "reports" / f"old_velo_rp_newspaper_file_gate_{date_tag}.json"
     old_velo_gate_truth: dict = {"source": "LOCAL_ARTIFACT", "status": "NOT_FOUND", "data": None}
-    if gate_path.exists():
+    gate, gate_source = _report_artifact("old_velo_rp_gate", target_date, gate_path)
+    if gate is not None:
         try:
-            gate = _json.loads(gate_path.read_text(encoding="utf-8"))
             old_velo_gate_truth["status"] = gate.get("status", "UNKNOWN")
+            old_velo_gate_truth["source"] = (
+                "SUPABASE_REPORT_ARTIFACT" if gate_source == "supabase_report_artifacts" else "LOCAL_ARTIFACT"
+            )
             old_velo_gate_truth["file"] = gate_path.name
             old_velo_gate_truth["data"] = {
                 "blocked_reason": gate.get("blocked_reason"),

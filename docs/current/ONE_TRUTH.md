@@ -8,6 +8,8 @@
 **This file defers to:** root `THE_ONE_TRUTH.md` for step-by-step command detail (Steps 1–20), `docs/current/RACE_DAY_RUNBOOK.md` for the lifecycle.
 **Agent wiki (added 2026-07-06, DOCS-01):** `docs/current/SYSTEM_MAP.md` (architecture), `docs/current/AGENTS.md` (roles), `docs/current/VFU_INDEX.md` (VFU-01 to VFU-21 index), `docs/current/CURRENT_STATE.md` (fast orientation), `docs/current/FORBIDDEN_ACTIONS.md` / `docs/current/LIVE_VS_DRY_RUN.md` (safety vocabulary), `docs/current/ARTIFACT_REGISTRY.md` (output index). This file remains the single source of truth for state; the wiki is navigation, not a second truth file.
 
+**Operational inventory:** `docs/current/PLATFORM_CONTROL_REGISTER.md` records the currently verified GitHub, Railway, Supabase, branch and service state. It is an evidence register, not a competing doctrine file.
+
 ## Law (operator-decided, permanent unless stated otherwise)
 1. VÉLØ is a behavioural prediction engine for racing. Live weights are **frozen**.
 2. **Racing API is not live.** It may exist only as archived legacy, deleted dependency, sidecar reference, documented history, or non-live experimental adapter. Any live-path import of Racing API is a BLOCKER. No document may claim Racing API is connected.

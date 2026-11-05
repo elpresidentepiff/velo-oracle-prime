@@ -51,6 +51,17 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-05 — Platform control audit and dashboard cloud-truth repair
+
+- Verified today's UK/IRE Supabase terminal row: PASS, 45 races, 420 runners.
+- Verified ten canonical model families are durable for 2026-11-05.
+- Confirmed the live dashboard mixed canonical truth with deploy-time/local paper artifacts.
+- Added canonical No-RPR fallback to race cards and routed radical/tri-lane/deep-agent/course-master/RP-gate reports through `velo_report_artifacts`.
+- Date-scoped the Truth Cockpit pipeline query and derived New Build status from canonical scorecards.
+- Added `PLATFORM_CONTROL_REGISTER.md` as the single GitHub/Railway/Supabase/branch inventory.
+- No model weights, learning gates, staking mode or prediction outputs changed.
+
+
 ### 2026-11-05 — Claude Code (Sonnet 5.5) — World audit, settlement writer, price gate, status register
 Branch / commit:  `ops/recovery` from `main` @ `cc03a732`. Not pushed. Nothing deployed.
 Changed:          `src/velo/world_scorecard_store.py` (price provenance, freeze gate, run ledger, inserted-row counts),
