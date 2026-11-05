@@ -1377,10 +1377,24 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
     # 4. Supabase Status
     sb_url, sb_key = _pipeline_run_api_config()
     if sb_url and sb_key:
-        status_code, _ = _pipeline_request("GET", f"/pipeline_runs?source_date=eq.{target_date}&limit=1")
+        status_code, pipeline_body = _pipeline_request(
+            "GET",
+            f"/pipeline_runs?select=status,run_state,races_processed,runners_processed,commit_sha"
+            f"&source_date=eq.{target_date}&order=finished_at.desc&limit=1",
+        )
         if status_code == 200:
             res["supabase_persistence_status"] = "CONNECTED"
             res["supabase_readback_verified"] = "PASS"
+            try:
+                pipeline_rows = json.loads(pipeline_body.decode("utf-8"))
+                if pipeline_rows:
+                    terminal = pipeline_rows[0]
+                    res["races_scored"] = int(terminal.get("races_processed") or 0)
+                    res["runners_scored"] = int(terminal.get("runners_processed") or 0)
+                    res["live_velo_status"] = terminal.get("status") or terminal.get("run_state") or "UNKNOWN"
+                    res["source_files_used"].append("supabase:pipeline_runs")
+            except (ValueError, TypeError, json.JSONDecodeError):
+                pass
         else:
             res["supabase_persistence_status"] = "DISCONNECTED"
 
@@ -1408,6 +1422,19 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
             res["source_files_used"].append(f"new_build/reports/{nb_path.name}")
         except Exception:
             res["new_build_status"] = "ERROR"
+    elif sb_url and sb_key:
+        status_code, canonical_body = _pipeline_request(
+            "GET",
+            f"/canonical_model_scorecards?select=race_id&run_date=eq.{target_date}"
+            "&model_name=eq.NEW_BUILD_LANE_A_MODEL&rank=eq.1&limit=1",
+        )
+        if status_code == 200:
+            try:
+                if json.loads(canonical_body.decode("utf-8")):
+                    res["new_build_status"] = "FOUND"
+                    res["source_files_used"].append("supabase:canonical_model_scorecards")
+            except (ValueError, TypeError, json.JSONDecodeError):
+                pass
 
     # 7. Sigma Status
     sigma_path = root / "data" / "sigma_results" / f"sigma_results_{date_tag}.json"
@@ -1430,7 +1457,11 @@ async def dashboard_truth_summary(date: str = Query(default=None)):
                 res["sidecar_league_status"] = "CURRENT"
             else:
                 res["sidecar_league_status"] = "STALE"
-                res["stale_data_warnings"].append(f"Sidecar data is for {s_data.get('date')}")
+                # A deploy-time legacy sidecar is not production truth.  When
+                # today's durable pipeline row exists, do not present that old
+                # image-layer file as if the cloud race day itself were stale.
+                if res["races_scored"] == 0:
+                    res["stale_data_warnings"].append(f"Legacy local sidecar is for {s_data.get('date')}")
             res["source_files_used"].append(f"static/dashboard/{sidecar_path.name}")
         except Exception:
             res["sidecar_league_status"] = "ERROR"
