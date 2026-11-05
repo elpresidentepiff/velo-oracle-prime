@@ -2,6 +2,15 @@
 
 **Status:** PAPER/SHADOW only. UK/IRE remains a separate governed system.
 
+## Durable evidence spine
+
+World scorecards are isolated from UK/Irish canonical scorecards in
+`world_model_scorecards`. Only the first complete scorecard generated before a
+race's scheduled off is retained. Provider predictions, ranks, probabilities,
+confidence and tips are excluded from Velo inputs. Raw results remain retained
+even when identity or finality blocks learning; a blocked row must never be
+relabeled as eligible evidence.
+
 ## Provider boundary
 
 FormFav supplies cards, runner form/statistics, scratchings, captured prices and

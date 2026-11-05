@@ -29,6 +29,11 @@ def _stable_horse_id(country: str, name: str) -> str:
     return f"ff_{country}_{digest}"
 
 
+def _provider_race_key(date_str: str, country: str, slug: str, race_no: int) -> str:
+    safe_slug = re.sub(r"[^a-z0-9]+", "_", str(slug).lower()).strip("_")
+    return f"formfav:{country}:{date_str}:{safe_slug}:r{race_no}"
+
+
 def _kg_to_lbs(v: Any) -> int | None:
     try:
         f=float(v)
@@ -187,6 +192,7 @@ def fetch_formfav_racecards(
                     "source":"formfav",
                     "data_only":True,
                     "provider_predictions_consumed":False,
+                    "provider_race_key":_provider_race_key(date_str,country,slug,int(race_no)),
                     "country":country,
                     "slug":slug,
                     "raceNumber":race_no,

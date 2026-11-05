@@ -21,6 +21,7 @@ from app.services.velo_prime_service import score_race_velo_prime
 from app.core.runtime_env import load_optional_env_file
 from src.velo.formfav_cache_client import CachedFormFavClient
 from src.velo.formfav_card_adapter import fetch_formfav_racecards
+from src.velo.world_scorecard_store import build_rows, persist_rows
 from workers.racing_api_normalizer import normalize_race
 
 
@@ -33,6 +34,7 @@ def main() -> int:
     ap.add_argument("--timezone",default="Europe/London")
     ap.add_argument("--no-prices",action="store_true")
     ap.add_argument("--persist-artifact",action="store_true")
+    ap.add_argument("--persist-scorecard",action="store_true")
     args=ap.parse_args()
 
     date_str=args.date or datetime.now(UTC).date().isoformat()
@@ -50,15 +52,28 @@ def main() -> int:
     )
 
     races_out=[]
+    skipped_post_off=0
+    generated_at=datetime.now(UTC)
     for raw in raw_races:
+        scheduled_off=(raw.get("_formfav") or {}).get("startTime")
+        try:
+            off_dt=datetime.fromisoformat(str(scheduled_off).replace("Z","+00:00"))
+            if off_dt.tzinfo is None:
+                off_dt=off_dt.replace(tzinfo=UTC)
+        except (TypeError,ValueError):
+            continue
+        if off_dt <= generated_at:
+            skipped_post_off += 1
+            continue
         race=normalize_race(raw)
         preds=score_race_velo_prime(race)
         if not preds:
             continue
         # Keep this report compact but preserve the signals we need to study.
-        top3=[]
-        for p in preds[:3]:
-            top3.append({
+        scorecard=[]
+        for rank,p in enumerate(preds,start=1):
+            scorecard.append({
+                "rank":rank,
                 "horse":p.get("horse") or p.get("horse_name"),
                 "horse_id":p.get("horse_id"),
                 "velo_prime_prob":p.get("velo_prime_prob"),
@@ -69,17 +84,22 @@ def main() -> int:
                 "confidence_level":p.get("confidence_level"),
                 "sp_dec":p.get("sp_dec"),
             })
+        top3=scorecard[:3]
 
         priced=[p for p in preds if float(p.get("sp_dec") or 0) >= 6.0]
         longshot=max(priced,key=lambda p:float(p.get("longshot_prob") or 0),default=None)
         races_out.append({
             "race_id":race.get("race_id"),
+            "provider_race_key":(raw.get("_formfav") or {}).get("provider_race_key"),
+            "race_number":(raw.get("_formfav") or {}).get("raceNumber"),
+            "scheduled_off":scheduled_off,
             "course":race.get("course"),
             "off_time":race.get("off_time"),
             "race_name":race.get("race_name"),
             "country":raw.get("country"),
             "field_size":len(race.get("runners") or []),
             "top3":top3,
+            "scorecard":scorecard,
             "longshot":({
                 "horse":longshot.get("horse") or longshot.get("horse_name"),
                 "horse_id":longshot.get("horse_id"),
@@ -92,7 +112,7 @@ def main() -> int:
 
     payload={
         "date":date_str,
-        "generated_at":datetime.now(UTC).isoformat(),
+        "generated_at":generated_at.isoformat(),
         "status":"EXPERIMENTAL_CROSS_JURISDICTION_SHADOW_ONLY",
         "countries":sorted(countries),
         "tracks":sorted(tracks),
@@ -106,6 +126,7 @@ def main() -> int:
         "warning":"Existing Velo models were developed primarily on UK/IRE evidence. International outputs are research until independently validated.",
         "fetch_report":fetch_report,
         "race_count":len(races_out),
+        "races_skipped_post_off":skipped_post_off,
         "races":races_out,
     }
 
@@ -130,6 +151,12 @@ def main() -> int:
         rc=subprocess.run(cmd,cwd=ROOT,check=False).returncode
         if rc != 0:
             print(f"WARNING: artifact persistence exited {rc}",file=sys.stderr)
+    if args.persist_scorecard:
+        rows=build_rows(payload)
+        written=0
+        for i in range(0,len(rows),200):
+            written += persist_rows(rows[i:i+200])
+        print(f"[WORLD-SCORECARD] persisted_rows={written}",flush=True)
     return 0
 
 
