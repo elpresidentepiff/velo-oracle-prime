@@ -36,7 +36,9 @@ Next safe action: <one concrete step that needs no re-investigation>
 | U-3 | Local `main` carries commits not on GitHub: `dcdebf7e` (RP official non-results in Sigma), `fc3b2721` | `git log origin/main..main` | Recovery cherry-pick on `ops/recovery` |
 | U-4 | Champion Intent / New Build / Passport have no settled positions; Main has none for 10-25, 10-26, 10-29 | `canonical_model_scorecards.result_position` | Open. Needs U-1 first |
 | U-5 | Scoring is started by hand (`trigger_source = manual` every day since 11-02); cloud EOD light run reports PASS with 0 processed | `pipeline_runs` | Open |
-| O-1 | Branch law breached: many long-lived branches, several 20–42 commits ahead of `main` | `git rev-list --count origin/main..<branch>` | Recover first, delete second (`ops/recovery` is the one temporary branch the law allows) |
+| H-1 | Railway service `hermes-agent` (`71327cad`) fails to build on every push to `main` (checked back to 09:08 UTC today, before any of this work) | `list-deployments status=FAILED`; the 2 Nov audit already listed it failed/stopped, "retired-path residue" | Open, not caused by recent work. Disconnect it from `main` or delete it, so a red service stops hiding real failures |
+| L-1 | World run ledger showed `rows_inserted = null` instead of 0 when every row was a first-wins duplicate | `world_pipeline_runs` 16:04 UTC run | Fixed with a test (this commit); rows written before the fix keep `null` |
+| O-1 | Branch law breached: many long-lived branches, several 20–42 commits ahead of `main` | `git rev-list --count origin/main..<branch>` | **Backed up, nothing deleted.** Laptop-only work is now on origin as tags (secret-pattern scan: 0 hits): `archive/ops-monday-repair-20261012` (20 commits), `archive/ops-formfav-raceday-20261012` (17), `archive/fix-rp-session-alerting-and-venue-allowlist`, `archive/fix-railway-cloud-eod`, `archive/local-main-2026-11-05`. Next: decide per branch, then delete. Inventory: `PLATFORM_CONTROL_REGISTER.md` |
 
 ## Runtime facts that live nowhere else
 
@@ -52,8 +54,13 @@ Next safe action: <one concrete step that needs no re-investigation>
 ## Entries
 
 ### 2026-11-05 — Claude Code (Sonnet 5.5) — No-RPR lane shipped; World deployed
-Branch / commit:  `deploy/norpr` on top of `main` @ `14df0acb`. World work is on `main` as `b77bab5a` (deployed).
+Branch / commit:  `main` @ `2597d940` (No-RPR, pushed 16:32 UTC) on top of the other agent's `14df0acb`; World is `b77bab5a`.
                   `ops/recovery` is pushed to origin (UK settlement recovery + Captain fence), **not merged**.
+Live check (16:04 UTC run, first after the fix): ledger 6 rows, `last_deployed_commit` filled; US froze 5 priced and deferred 77
+                  (`AWAITING_PRICES`), FR 4 frozen / 4 deferred. Settlement graded 22 picks (5 final, 17 provisional): 0 wins, 4 frames,
+                  all price-blind morning freezes, far too few to judge. `unresolved_results` fell 120 -> 115.
+Not yet confirmed: that every Railway service finished building `2597d940` (only `velo-formfav-live` had when checked); No-RPR output
+                  (needs tomorrow's scoring run). Today's AU (43) and JP (17 of 24) races were already off when the job could freeze them.
 Changed:          `models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl` (force-added: `.gitignore` blocks `models/**/*.pkl`),
                   `tests/test_no_rpr_shadow_model.py`, contract `NORPR-SHIP-01`.
 Evidence:         pkl sha256 identical to the main checkout's copy; `CalibratedClassifierCV`, 25 features, none RPR/OR/TS,

@@ -134,6 +134,21 @@ def test_run_rows_are_per_country_and_split_errors_by_country() -> None:
     assert all(r["provider_predictions_consumed"] is False for r in rows.values())
 
 
+def test_run_rows_report_zero_inserted_not_null_when_everything_was_a_duplicate() -> None:
+    payload = {
+        "date": "2026-11-05", "generated_at": "2026-11-05T10:00:00+00:00",
+        "by_country": {"ca": {"seen": 8, "scored": 8, "runners_scored": 64, "freeze_states": {"NO_MARKET": 8}}},
+    }
+    # 64 rows attempted; PostgREST returned none (all first-wins duplicates), so "ca" is absent from inserted.
+    row = build_run_rows(payload, {"ca": 64}, {})[0]
+    assert row["details"]["rows_attempted"] == 64
+    assert row["details"]["rows_inserted"] == 0
+    assert row["details"]["rows_ignored_duplicates"] == 64
+    # no persistence happened at all: genuinely unknown
+    unknown = build_run_rows(payload)[0]
+    assert unknown["details"]["rows_inserted"] is None and unknown["details"]["rows_ignored_duplicates"] is None
+
+
 def test_persist_counts_inserted_rows_not_rows_sent(monkeypatch) -> None:
     seen: dict = {}
 

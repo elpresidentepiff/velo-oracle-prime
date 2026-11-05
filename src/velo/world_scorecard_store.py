@@ -173,8 +173,9 @@ def build_run_rows(
     out: list[dict[str, Any]] = []
     for cc, st in sorted((payload.get("by_country") or {}).items()):
         errs = [e for e in details_all if str(e.get("country") or "").lower() == cc]
-        attempted = (attempted_by_country or {}).get(cc)
-        inserted = (inserted_by_country or {}).get(cc)
+        # A country with no rows in the dict means zero, not "unknown": only a missing dict is unknown.
+        attempted = None if attempted_by_country is None else attempted_by_country.get(cc, 0)
+        inserted = None if inserted_by_country is None else inserted_by_country.get(cc, 0)
         out.append({
             "run_key": _key("run", payload["date"], cc, model, generated_at),
             "race_date": payload["date"],
