@@ -1,0 +1,28 @@
+{
+  "task_id": "NORPR-SHIP-01",
+  "title": "Ship the SQPE no-RPR shadow model so the lane produces output in production",
+  "classification": "AUTHORIZED_SHADOW_MODEL_ARTIFACT_PACKAGING",
+  "allowed_paths": [
+    "ops/task_contracts/NORPR-SHIP-01.json",
+    "models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl",
+    "tests/test_no_rpr_shadow_model.py",
+    "docs/current/DIARY.md"
+  ],
+  "forbidden_paths": [
+    ".env",
+    "src/intelligence/velo_prime_ensemble.py",
+    "app/services/velo_prime_service.py",
+    "models/sqpe_v17/",
+    "models/sqpe_v18/",
+    "models/specialist/",
+    "models/tie_v9/"
+  ],
+  "forbidden_keywords": [],
+  "classification_required": [
+    "SHADOW_ARTIFACT_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_PROMOTION",
+    "PAPER_SIM_ONLY"
+  ]
+}

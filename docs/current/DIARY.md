@@ -26,13 +26,13 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 | Id | Defect | Evidence | Status |
 | --- | --- | --- | --- |
-| W-1 | World freeze stored the scorer's 10.0 default as `captured_price`; 120 of 120 frozen races price-blind | `world_model_scorecards`: 1,100 rows, all `captured_price = 10.0`; 9 of 9 priced reruns changed the pick | Code fixed on `ops/recovery` (price provenance, freeze gate). **Not deployed.** The 120 frozen rows stay immutable and are reported `PRICE_BLIND` |
-| W-2 | Nothing settled Velo's own World picks (`world_sigma_audits`, `world_learning_events`, `world_pipeline_runs` had 0 rows and no writer) | table counts; `formfav_global_eod.py` grades FormFav only | `src/velo/world_sigma.py` + `scripts/ops/run_world_sigma.py` written, 82 tests pass. **Not deployed** |
+| W-1 | World freeze stored the scorer's 10.0 default as `captured_price`; 120 of 120 frozen races price-blind | `world_model_scorecards`: 1,100 rows, all `captured_price = 10.0`; 9 of 9 priced reruns changed the pick | **Fixed and deployed** (`b77bab5a` on `main`, Railway deploy 2026-11-05 15:08 UTC; price provenance + freeze gate). The 120 frozen rows stay immutable and are reported `PRICE_BLIND`. Confirm the first post-deploy run in `world_pipeline_runs` |
+| W-2 | Nothing settled Velo's own World picks (`world_sigma_audits`, `world_learning_events`, `world_pipeline_runs` had 0 rows and no writer) | table counts; `formfav_global_eod.py` grades FormFav only | `src/velo/world_sigma.py` + `scripts/ops/run_world_sigma.py` written, 82 tests pass. **Deployed** with W-1 (same commit) |
 | W-3 | The hourly World job is defined only in Railway (`velo-formfav-us-shadow`), not in the repo | no file references `run_formfav_global_shadow.py` | Recorded below. Start command must stay as written |
 | W-4 | 33 of 120 frozen top picks tie with rank 2 (rank 1 = list order) | ties query, FR 10/23, US 23/82 | Now flagged per race (`top_tie_size`) and excluded from `skill_sample` |
 | W-5 | AU/HK/JP early races are never frozen pre-off (AU 43 of 43 unfrozen, JP 17 of 24 on 2026-11-05) | `world_status_register` | Watch after deploy: hourly runs from 00:00 UTC should cover them |
 | U-1 | UK settlement-truth stage (`CANONICAL_TRUTH_V2`) stopped 2026-10-17; its code lives only on unmerged branches | no settled/eligible rows after 10-17; commits `45345db1`, `5787e97f` not in `main` | Recovery cherry-pick on `ops/recovery` |
-| U-2 | `SQPE_NO_RPR_SHADOW` has no model output in production; its picks are Main's picks | `sqpe_no_rpr_shadow_prob` NULL on every snapshot row; `models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl` is git-ignored | **Needs an operator decision:** ship the file (6.3 MB, exists in the main checkout) or retire the lane. Until then do not count it as a model |
+| U-2 | `SQPE_NO_RPR_SHADOW` has no model output in production; its picks are Main's picks | `sqpe_no_rpr_shadow_prob` NULL on every snapshot row; `models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl` is git-ignored | Operator decision: **ship it** (No-RPR is important). `NORPR-SHIP-01`: model file force-added (6.3 MB, sha256 `65b71b31…`, sklearn 1.8.0 = production pin), all 25 inputs verified present in the live feature vector, the ensemble never reads it (0 references), 6 guard tests. Check `sqpe_no_rpr_shadow_prob` is non-NULL in `runner_prediction_snapshots` after the next scoring run, and that its picks now differ from Main's |
 | U-3 | Local `main` carries commits not on GitHub: `dcdebf7e` (RP official non-results in Sigma), `fc3b2721` | `git log origin/main..main` | Recovery cherry-pick on `ops/recovery` |
 | U-4 | Champion Intent / New Build / Passport have no settled positions; Main has none for 10-25, 10-26, 10-29 | `canonical_model_scorecards.result_position` | Open. Needs U-1 first |
 | U-5 | Scoring is started by hand (`trigger_source = manual` every day since 11-02); cloud EOD light run reports PASS with 0 processed | `pipeline_runs` | Open |
@@ -50,6 +50,21 @@ Next safe action: <one concrete step that needs no re-investigation>
 - Project Python with pytest: `/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python`.
 
 ## Entries
+
+### 2026-11-05 — Claude Code (Sonnet 5.5) — No-RPR lane shipped; World deployed
+Branch / commit:  `deploy/norpr` on top of `main` @ `14df0acb`. World work is on `main` as `b77bab5a` (deployed).
+                  `ops/recovery` is pushed to origin (UK settlement recovery + Captain fence), **not merged**.
+Changed:          `models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl` (force-added: `.gitignore` blocks `models/**/*.pkl`),
+                  `tests/test_no_rpr_shadow_model.py`, contract `NORPR-SHIP-01`.
+Evidence:         pkl sha256 identical to the main checkout's copy; `CalibratedClassifierCV`, 25 features, none RPR/OR/TS,
+                  predicts under sklearn 1.8.0 / lightgbm 4.6.0 (production pins); `grep no_rpr src/intelligence/velo_prime_ensemble.py` = 0.
+Open / broken:    U-1 merge decision (it changes the UK performance panel: only governed rows count, so 2026-10-18 onward looks
+                  empty until rebuilt). O-1: ~40 commits sit only on this laptop (`ops/monday-repair-20261012`,
+                  `ops/formfav-raceday-20261012`); back up as `archive/*` tags before any deletion. Branch/service inventory:
+                  `PLATFORM_CONTROL_REGISTER.md`.
+Next safe action: after the next scoring run, prove the lane both exists and varies inside a race:
+                  `select race_id, count(*) n, count(sqpe_no_rpr_shadow_prob) filled, count(distinct round(sqpe_no_rpr_shadow_prob::numeric,4)) distinct_probs from runner_prediction_snapshots where created_at > now() - interval '1 day' group by 1 order by distinct_probs limit 10`.
+                  `filled = n` and `distinct_probs > 1` is a working lane. `distinct_probs = 1` means the extractor is falling back to defaults (no horse history reached it): then it is still not an independent opinion.
 
 ### 2026-11-05 — Platform control audit and dashboard cloud-truth repair
 
