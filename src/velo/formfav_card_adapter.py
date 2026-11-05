@@ -14,6 +14,11 @@ from zoneinfo import ZoneInfo
 
 from src.velo.formfav_client import FormFavClient, FormFavError, best_live_prices
 
+PROVIDER_OPINION_FIELDS = frozenset({
+    "modelRank", "winProb", "placeProb", "fairOdds", "edge", "confidence",
+    "modelVersion", "prediction", "predictions",
+})
+
 
 def _norm(s: Any) -> str:
     return re.sub(r"[^a-z0-9]+", "", str(s or "").lower())
@@ -49,8 +54,9 @@ def fetch_formfav_racecards(
     timezone: str = "Europe/London",
     include_prices: bool = True,
     tracks: set[str] | None = None,
+    client: Any | None = None,
 ) -> tuple[list[dict[str,Any]], dict[str,Any]]:
-    client=FormFavClient()
+    client=client or FormFavClient()
     countries={c.lower() for c in countries}
     track_filter={_norm(t) for t in (tracks or set())}
     meetings_payload=client.meetings(date_str,timezone=timezone)
@@ -147,6 +153,14 @@ def fetch_formfav_racecards(
                     },
                 })
 
+            # This adapter is a provider-data boundary. Velo may consume the
+            # card, factual form/statistics and captured market observations,
+            # but never FormFav's rank/probability/opinion payload.
+            for runner in raw_runners:
+                leaked = PROVIDER_OPINION_FIELDS.intersection((runner.get("_formfav") or {}).keys())
+                if leaked:
+                    raise RuntimeError(f"FormFav prediction opinion leaked into Velo input: {sorted(leaked)}")
+
             if not raw_runners:
                 continue
 
@@ -171,6 +185,8 @@ def fetch_formfav_racecards(
                 "runners":raw_runners,
                 "_formfav":{
                     "source":"formfav",
+                    "data_only":True,
+                    "provider_predictions_consumed":False,
                     "country":country,
                     "slug":slug,
                     "raceNumber":race_no,

@@ -9,9 +9,8 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -19,29 +18,35 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0,str(ROOT))
 
 from app.services.velo_prime_service import score_race_velo_prime
+from app.core.runtime_env import load_optional_env_file
+from src.velo.formfav_cache_client import CachedFormFavClient
 from src.velo.formfav_card_adapter import fetch_formfav_racecards
 from workers.racing_api_normalizer import normalize_race
 
 
 def main() -> int:
+    load_optional_env_file(ROOT / ".env")
     ap=argparse.ArgumentParser()
-    ap.add_argument("--date",required=True)
-    ap.add_argument("--countries",default="us")
+    ap.add_argument("--date",default=None)
+    ap.add_argument("--countries",default="us,ca,fr,au,hk,jp")
     ap.add_argument("--tracks",default="")
     ap.add_argument("--timezone",default="Europe/London")
     ap.add_argument("--no-prices",action="store_true")
     ap.add_argument("--persist-artifact",action="store_true")
     args=ap.parse_args()
 
+    date_str=args.date or datetime.now(UTC).date().isoformat()
+
     countries={c.strip().lower() for c in args.countries.split(",") if c.strip()}
     tracks={t.strip() for t in args.tracks.split(",") if t.strip()}
 
     raw_races,fetch_report=fetch_formfav_racecards(
-        date_str=args.date,
+        date_str=date_str,
         countries=countries,
         timezone=args.timezone,
         include_prices=not args.no_prices,
         tracks=tracks or None,
+        client=CachedFormFavClient(live=None, max_age_hours=36),
     )
 
     races_out=[]
@@ -86,12 +91,14 @@ def main() -> int:
         })
 
     payload={
-        "date":args.date,
-        "generated_at":datetime.now(timezone.utc).isoformat(),
+        "date":date_str,
+        "generated_at":datetime.now(UTC).isoformat(),
         "status":"EXPERIMENTAL_CROSS_JURISDICTION_SHADOW_ONLY",
         "countries":sorted(countries),
         "tracks":sorted(tracks),
         "source":"FormFav",
+        "source_contract":"CARDS_FORM_STATS_SCRATCHINGS_PRICES_ONLY",
+        "formfav_predictions_consumed":False,
         "scoring_engine":"existing_velo_prime_stack",
         "execution_allowed":False,
         "promotion_allowed":False,
@@ -102,12 +109,12 @@ def main() -> int:
         "races":races_out,
     }
 
-    out=ROOT/"data"/"reports"/f"formfav_global_shadow_{args.date.replace('-','_')}.json"
+    out=ROOT/"data"/"reports"/f"formfav_global_shadow_{date_str.replace('-','_')}.json"
     out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding="utf-8")
     print(json.dumps({
         "status":payload["status"],
-        "date":args.date,
+        "date":date_str,
         "countries":sorted(countries),
         "races":len(races_out),
         "output":str(out.relative_to(ROOT)),
@@ -117,7 +124,7 @@ def main() -> int:
     if args.persist_artifact:
         cmd=[
             sys.executable,"scripts/ops/persist_daily_artifacts.py",
-            "--kind","reports","--date",args.date,"--execute"
+            "--kind","reports","--date",date_str,"--execute"
         ]
         import subprocess
         rc=subprocess.run(cmd,cwd=ROOT,check=False).returncode

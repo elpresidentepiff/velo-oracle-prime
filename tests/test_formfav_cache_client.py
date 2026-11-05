@@ -29,6 +29,13 @@ def _fetch_factory(updated=FRESH):
                     {"updated_at": updated, "form_payload": {"number": 2, "name": "B"}}]
         if path.startswith("formfav_predictions"):
             return [{"updated_at": updated, "predictions_payload": {"predictions": [{"name": "A", "modelRank": 1}]}}]
+        if path.startswith("formfav_market_snapshots"):
+            return [
+                {"runner_number": 1, "captured_at": updated,
+                 "market_payload": {"number": 1, "name": "A", "bestWin": 4.0}},
+                {"runner_number": 1, "captured_at": STALE,
+                 "market_payload": {"number": 1, "name": "A", "bestWin": 5.0}},
+            ]
         raise AssertionError(path)
     return fetch
 
@@ -93,12 +100,14 @@ def test_miss_without_live_client_raises_clear_error() -> None:
         c.track_bias("Kempton", 2000)
 
 
-def test_predictions_from_cache_and_prices_go_live() -> None:
+def test_predictions_and_latest_prices_are_served_from_cache() -> None:
     live = _Live()
     c = cc.CachedFormFavClient(live, fetch=_fetch_factory(), now=lambda: NOW)
     assert c.predictions(date="2026-10-14", track="kempton-park", race=1, country="gb")["predictions"][0]["name"] == "A"
-    c.prices(date="2026-10-14", track="kempton-park", race=1, country="gb")
-    assert live.calls == ["prices"]
+    prices = c.prices(date="2026-10-14", track="kempton-park", race=1, country="gb")
+    assert live.calls == []
+    assert prices["_source"] == "formfav_market_cache"
+    assert prices["runners"][0]["bestWin"] == 4.0
 
 
 def test_build_client_respects_switch_and_missing_env(monkeypatch) -> None:

@@ -150,9 +150,37 @@ class CachedFormFavClient:
         return self._fallback("predictions", "no fresh row", date=date, track=track, race=race,
                               country=country, race_code=race_code, timezone=timezone)
 
-    # -- not cached: live only ------------------------------------------
-    def prices(self, **kwargs: Any) -> dict[str, Any]:
-        return self._fallback("prices", "prices are not cached", **kwargs)
+    def prices(
+        self, *, date: str, track: str, race: int, country: str,
+        race_code: str = "gallops", timezone: str = "Europe/London",
+    ) -> dict[str, Any]:
+        """Return the latest pre-off market payload already captured per runner.
+
+        The live worker has persisted market snapshots since the Premium feed
+        was enabled. Reading those rows keeps Velo World independent of both a
+        second provider call and FormFav's prediction endpoint.
+        """
+        enc = urllib.parse.quote(race_key(date, country, track, race), safe="")
+        rows = self._fetch(
+            "formfav_market_snapshots?"
+            f"provider_race_key=eq.{enc}&select=runner_number,market_payload,captured_at"
+            "&order=captured_at.desc&limit=500"
+        )
+        latest: dict[int, dict[str, Any]] = {}
+        for row in rows:
+            try:
+                number = int(row.get("runner_number"))
+            except (TypeError, ValueError):
+                continue
+            if number not in latest and isinstance(row.get("market_payload"), dict):
+                latest[number] = row["market_payload"]
+        if latest:
+            self.stats["cache_hits"] += 1
+            return {"runners": list(latest.values()), "_source": "formfav_market_cache"}
+        return self._fallback(
+            "prices", "no stored market snapshot", date=date, track=track,
+            race=race, country=country, race_code=race_code, timezone=timezone,
+        )
 
     def track_bias(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
         if self.live is None:
