@@ -1,0 +1,22 @@
+{
+  "task_id": "SIDE-SHADOW-CAPTAIN-01",
+  "title": "Fence Captain Velo as a side shadow: recorded, never actioned, never on the main board",
+  "classification": "AUTHORIZED_SIDE_SHADOW_FENCE",
+  "allowed_paths": [
+    "ops/task_contracts/SIDE-SHADOW-CAPTAIN-01.json",
+    "src/velo/side_shadow.py",
+    "scripts/ops/build_canonical_model_scorecard.py",
+    "app/core/canonical_dashboard_metrics.py",
+    "tests/test_side_shadow_isolation.py",
+    "docs/current/DIARY.md"
+  ],
+  "forbidden_paths": ["models/", ".env", "src/intelligence/velo_prime_ensemble.py", "app/services/velo_prime_service.py"],
+  "forbidden_keywords": [],
+  "classification_required": [
+    "SIDE_SHADOW_FENCED",
+    "NO_STAKE_AUTHORITY",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "PAPER_SIM_ONLY"
+  ]
+}

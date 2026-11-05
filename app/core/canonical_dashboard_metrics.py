@@ -14,6 +14,8 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any
 
+from src.velo.side_shadow import is_side_shadow
+
 
 def _cdm_true(value: Any) -> bool:
     return value is True or str(value).strip().lower() == "true"
@@ -286,6 +288,8 @@ def build_canonical_dashboard_payload(
     for row in top_rows:
         grouped[str(row.get("model_name") or "UNKNOWN")].append(row)
     models = [_cdm_model_summary(model, grouped[model]) for model in sorted(grouped)]
+    for model in models:
+        model["side_shadow"] = is_side_shadow(model["model_name"])
 
     production_by_race: dict[tuple[str, str], str] = {}
     for row in top_rows:
@@ -338,6 +342,7 @@ def build_canonical_dashboard_payload(
             "forward_evidence_status": "UNAVAILABLE_NOT_PROVEN_FOR_WHOLE_WINDOW",
         },
         "models": models,
+        "side_shadow_models": [m["model_name"] for m in models if m["side_shadow"]],
         "correlated_families": _cdm_family_groups(models),
         "captain": {"date": through_date, "canonical_selections": captain},
         "post_learning_mission_control": {

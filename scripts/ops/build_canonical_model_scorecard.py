@@ -31,6 +31,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from src.velo.side_shadow import is_side_shadow  # noqa: E402
 from src.velo.verdict_loader import load_verdicts  # noqa: E402
 from src.velo.learning.result_source_selector import (  # noqa: E402
     OUTCOME_FINISHED,
@@ -237,6 +238,10 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
             base["learning_class"] = "UNSETTLED_UNKNOWN"
         elif base.get("subject_outcome_status") == OUTCOME_TERMINAL:
             base["learning_class"] = "TERMINAL_LOSS"
+        if is_side_shadow(base.get("model_name")):
+            # Recorded, never actioned: nothing a packet says can stake it or put it on the main board.
+            base["stake_authorised"] = False
+            base["dashboard_visible"] = False
         rows.append(base)
 
     # ── Main VELO Prime + No-RPR shadow (Supabase, read-only) ──────────────

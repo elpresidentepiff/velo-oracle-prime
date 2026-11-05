@@ -31,11 +31,13 @@ Next safe action: <one concrete step that needs no re-investigation>
 | W-3 | The hourly World job is defined only in Railway (`velo-formfav-us-shadow`), not in the repo | no file references `run_formfav_global_shadow.py` | Recorded below. Start command must stay as written |
 | W-4 | 33 of 120 frozen top picks tie with rank 2 (rank 1 = list order) | ties query, FR 10/23, US 23/82 | Now flagged per race (`top_tie_size`) and excluded from `skill_sample` |
 | W-5 | AU/HK/JP early races are never frozen pre-off (AU 43 of 43 unfrozen, JP 17 of 24 on 2026-11-05) | `world_status_register` | Watch after deploy: hourly runs from 00:00 UTC should cover them |
-| U-1 | UK settlement-truth stage (`CANONICAL_TRUTH_V2`) stopped 2026-10-17; its code lives only on unmerged branches | no settled/eligible rows after 10-17; commits `45345db1`, `5787e97f` not in `main` | Recovery cherry-pick on `ops/recovery` |
+| U-1 | UK settlement-truth stage (`CANONICAL_TRUTH_V2`) stopped 2026-10-17; its code lived only on unmerged branches | no settled/eligible rows after 10-17; commits `45345db1`, `5787e97f` not in `main` | **Recovered** on `ops/recovery` as `495f4b6e`, `ed8a5b66` (one conflict, resolved; its own tests pass). **Merging it changes UK dashboard denominators** (only governed rows count): decide before merge |
 | U-2 | `SQPE_NO_RPR_SHADOW` has no model output in production; its picks are Main's picks | `sqpe_no_rpr_shadow_prob` NULL on every snapshot row; `models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl` is git-ignored | **Needs an operator decision:** ship the file (6.3 MB, exists in the main checkout) or retire the lane. Until then do not count it as a model |
-| U-3 | Local `main` carries commits not on GitHub: `dcdebf7e` (RP official non-results in Sigma), `fc3b2721` | `git log origin/main..main` | Recovery cherry-pick on `ops/recovery` |
+| U-3 | Local `main` carries commits not on GitHub: `dcdebf7e` (RP official non-results in Sigma), `fc3b2721` | `git log origin/main..main` | `dcdebf7e` recovered on `ops/recovery` as `0c3cccde`. `fc3b2721` is an older copy of `375187ea` (already on `main`); nothing to recover |
 | U-4 | Champion Intent / New Build / Passport have no settled positions; Main has none for 10-25, 10-26, 10-29 | `canonical_model_scorecards.result_position` | Open. Needs U-1 first |
 | U-5 | Scoring is started by hand (`trigger_source = manual` every day since 11-02); cloud EOD light run reports PASS with 0 processed | `pipeline_runs` | Open |
+| C-1 | Captain Velo (value picker the earlier ChatGPT/Codex work added) was wired into the main scorecard and dashboard | forward record 2026-09-26…10-17: 83 picks, 65 settled, 9 wins; **+6.75 units at captured pre-off odds, −20.50 at stored SP**; backtest claimed +36.5% ROI and is labelled "not forward proven" | **Side shadow** (`SIDE-SHADOW-CAPTAIN-01`): rows are recorded but never stake-authorised or main-board visible (`src/velo/side_shadow.py`, enforced in the row writer, flagged in the dashboard payload, isolation-tested). Its daily runner (`scripts/ops/run_captain_velo_shadow.py`) is **parked on branches and not running**. Revisit at 300 forward settled picks |
+| T-1 | Three tests fail in this checkout for reasons unrelated to World or Captain: `test_new_build_sources::test_racing_api_results_ingest_is_archive_only`, `test_phase4_full::test_07_backtest_results_exist`, `test_vfu_doctrine::test_vfu_doctrine_passport_canonical` | they need files absent here (`backtest_full_v1.json`, `docs/current/VELO_FORENSICS_UNIT_V1.md`, Racing API result rows) | Open; not caused by this work |
 | O-1 | Branch law breached: many long-lived branches, several 20–42 commits ahead of `main` | `git rev-list --count origin/main..<branch>` | Recover first, delete second (`ops/recovery` is the one temporary branch the law allows) |
 
 ## Runtime facts that live nowhere else
@@ -50,6 +52,20 @@ Next safe action: <one concrete step that needs no re-investigation>
 - Project Python with pytest: `/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python`.
 
 ## Entries
+
+### 2026-11-05 — Claude Code (Sonnet 5.5) — Recovery of stranded UK settlement code; Captain Velo to a side shadow
+Branch / commit:  `ops/recovery`: `b77bab5a` (World, below) → `0c3cccde` (RP non-results in Sigma, was local-only)
+                  → `495f4b6e` (settlement + price truth) → `ed8a5b66` (governed canonical dashboard) → side-shadow commit.
+                  Not pushed. Nothing deployed.
+Changed:          Cherry-picks with `-x` (original shas in the messages). One conflict, in
+                  `scripts/ops/build_canonical_model_scorecard.py`: `main` had neither the forecasting nor the Captain block;
+                  kept both so the original commit's own tests pass (inert on `main`: they read packet files nothing produces).
+                  New: `src/velo/side_shadow.py`, fence in `_add_row`, `side_shadow` flag in
+                  `build_canonical_dashboard_payload`, `tests/test_side_shadow_isolation.py`, contract `SIDE-SHADOW-CAPTAIN-01`.
+Evidence:         125 passed, 10 skipped (isolation, all `*canonical*` tests, World sigma / price gate / store).
+                  Adding Captain rows leaves the MAIN_VELO_PRIME dashboard summary byte-for-byte equal (test).
+Open / broken:    C-1, T-1, and the U-1 merge decision above.
+Next safe action: merge `ops/recovery` up to `b77bab5a` first (World only, no UK change), watch `world_status_summary`, then decide U-1.
 
 ### 2026-11-05 — Claude Code (Sonnet 5.5) — World audit, settlement writer, price gate, status register
 Branch / commit:  `ops/recovery` from `main` @ `cc03a732`. Not pushed. Nothing deployed.
