@@ -71,6 +71,7 @@ Every mission should close with (at minimum):
 - Safety classifications (see `docs/current/FORBIDDEN_ACTIONS.md` for the standard
   classification vocabulary: `NO_LIVE_SCORING_CHANGE`, `NO_SUPABASE_WRITES`,
   `NO_TELEGRAM_SEND`, `NO_MODEL_PROMOTION`, etc.)
+- A new entry at the top of `docs/current/DIARY.md`, and its open-defects table updated
 - Next recommended mission
 
 ## No Supabase / Telegram / model promotion unless explicitly approved

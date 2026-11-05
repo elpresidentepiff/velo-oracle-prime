@@ -1,0 +1,32 @@
+{
+  "task_id": "WORLD-SETTLE-01",
+  "title": "Settle frozen Velo World picks, stop price-blind freezes, keep a run ledger and a diary",
+  "classification": "AUTHORIZED_WORLD_SHADOW_SETTLEMENT_AND_AFTERCARE",
+  "allowed_paths": [
+    "ops/task_contracts/WORLD-SETTLE-01.json",
+    "src/velo/world_scorecard_store.py",
+    "src/velo/world_sigma.py",
+    "src/velo/formfav_card_adapter.py",
+    "scripts/ops/run_formfav_global_shadow.py",
+    "scripts/ops/run_world_sigma.py",
+    "tests/test_world_scorecard_store.py",
+    "tests/test_world_sigma.py",
+    "tests/test_world_price_gate.py",
+    "supabase/migrations/20261105120000_world_status_register.sql",
+    "docs/current/WORLD_ONE_TRUTH.md",
+    "docs/current/DIARY.md",
+    "docs/current/CLAUDE.md",
+    "CLAUDE.md"
+  ],
+  "forbidden_paths": ["models/", ".env", "src/intelligence/velo_prime_ensemble.py", "app/services/velo_prime_service.py"],
+  "forbidden_keywords": [],
+  "classification_required": [
+    "WORLD_SHADOW_ONLY",
+    "WORLD_SETTLEMENT_ADDED",
+    "PRICE_PROVENANCE_ADDED",
+    "UK_PIPELINE_UNCHANGED",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "PAPER_SIM_ONLY"
+  ]
+}

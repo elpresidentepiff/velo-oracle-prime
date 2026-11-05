@@ -76,7 +76,16 @@ def fetch_formfav_racecards(
         "price_calls_ok":0,
         "price_calls_forbidden":0,
         "errors":[],
+        "error_detail":[],
     }
+
+    def _fail(kind: str, track: str, race_no: Any, country: str, message: str) -> None:
+        # `errors` stays a flat list of strings for existing readers; `error_detail`
+        # carries the country so a per-country run ledger can be written.
+        report["errors"].append(f"{kind} {track} R{race_no}: {message}")
+        report["error_detail"].append({
+            "kind": kind, "country": country, "track": track, "race": race_no, "message": message,
+        })
 
     for meeting in meetings_payload.get("meetings") or []:
         if not isinstance(meeting,dict) or meeting.get("abandoned"):
@@ -101,7 +110,7 @@ def fetch_formfav_racecards(
                     timezone=mrace.get("timezone") or timezone,
                 )
             except Exception as exc:
-                report["errors"].append(f"form {track} R{race_no}: {type(exc).__name__}: {exc}")
+                _fail("form", track, race_no, country, f"{type(exc).__name__}: {exc}")
                 continue
 
             prices={}
@@ -116,9 +125,9 @@ def fetch_formfav_racecards(
                     if "403" in str(exc):
                         report["price_calls_forbidden"]+=1
                     else:
-                        report["errors"].append(f"prices {track} R{race_no}: {exc}")
+                        _fail("prices", track, race_no, country, str(exc))
                 except Exception as exc:
-                    report["errors"].append(f"prices {track} R{race_no}: {type(exc).__name__}: {exc}")
+                    _fail("prices", track, race_no, country, f"{type(exc).__name__}: {exc}")
 
             price_map={_norm(r.get("name")):r for r in (prices.get("runners") or []) if isinstance(r,dict)}
             raw_runners=[]

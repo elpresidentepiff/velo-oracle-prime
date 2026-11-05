@@ -16,6 +16,7 @@ def test_build_rows_is_world_only_data_only_and_pre_off() -> None:
                 "rank": 1, "horse": "North Star", "horse_id": "ff_ca_1",
                 "velo_prime_prob": 0.24, "place_prob": 0.61,
                 "longshot_prob": 0.05, "sp_dec": 5.0,
+                "captured_price": 5.0, "price_state": "REAL",
                 "improvement_score": 0.2, "market_deception_score": 0.1,
                 "confidence_level": "medium",
             }],
@@ -26,6 +27,7 @@ def test_build_rows_is_world_only_data_only_and_pre_off() -> None:
     assert rows[0]["provider_predictions_consumed"] is False
     assert rows[0]["generated_pre_off"] is True
     assert rows[0]["country"] == "ca"
+    assert rows[0]["captured_price"] == 5.0
 
 
 def test_build_rows_excludes_uk_and_ire() -> None:

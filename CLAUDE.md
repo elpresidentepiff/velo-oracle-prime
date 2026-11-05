@@ -5,6 +5,8 @@
 
 ## Quick orientation
 
+- **Diary and open defects — read first, write last:** `docs/current/DIARY.md`. Append an entry before you stop; no entry means the work is not finished.
+- **World status (live):** `select * from world_status_summary;` — contract in `docs/current/WORLD_ONE_TRUTH.md`
 - **Operational law:** `docs/current/ONE_TRUTH.md`
 - **Step-by-step daily commands (Steps 1–20):** `THE_ONE_TRUTH.md` (root)
 - **Race day lifecycle:** `docs/current/RACE_DAY_RUNBOOK.md`
