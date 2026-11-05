@@ -113,9 +113,9 @@ def main() -> int:
     ap.add_argument(
         "--min-coverage",
         type=float,
-        default=float(os.getenv("FORMFAV_MIN_COVERAGE", "0.8")),
+        default=float(os.getenv("FORMFAV_MIN_COVERAGE", "1.0")),
         help="Fail closed unless this share of in-scope RP races got FormFav enrichment "
-             "(default 0.8; 0 = only require at least one race).",
+             "(default 1.0; 0 = only require at least one race).",
     )
     args = ap.parse_args()
 

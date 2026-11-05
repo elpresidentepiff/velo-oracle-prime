@@ -20,6 +20,11 @@ def test_ready_when_stored_complete_and_fresh() -> None:
     assert fr.evaluate(_stats(), now=NOW) == []
 
 
+def test_default_gate_requires_every_published_race() -> None:
+    assert any("form stored" in f for f in fr.evaluate(_stats(races_with_form=39), now=NOW))
+    assert any("predictions" in f for f in fr.evaluate(_stats(races_with_predictions=39), now=NOW))
+
+
 def test_each_gap_is_reported() -> None:
     assert "only 0" in fr.evaluate(_stats(races=0), now=NOW)[0]
     assert any("form stored" in f for f in fr.evaluate(_stats(races_with_form=30), now=NOW))

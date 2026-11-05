@@ -1,0 +1,67 @@
+{
+  "task_id": "FORMFAV-COMPLETE-BEFORE-SCORING-01",
+  "title": "Require complete FormFav race enrichment before governed scoring",
+  "classification": "AUTHORIZED_OPERATIONAL_GATE_HARDENING",
+  "allowed_paths": [
+    "ops/task_contracts/FORMFAV-COMPLETE-BEFORE-SCORING-01.json",
+    "scripts/ops/formfav_readiness.py",
+    "scripts/ops/run_formfav_uk_enhanced_shadow.py",
+    "scripts/ops/run_full_raceday.py",
+    "tests/test_formfav_readiness.py",
+    "tests/test_formfav_shadow_gate.py"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    ".env"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_supabase_truth",
+    "read_railway_state",
+    "strengthen_formfav_readiness_gate",
+    "strengthen_formfav_race_match_gate",
+    "create_tests",
+    "run_tests",
+    "deploy_authorized_gate_hardening"
+  ],
+  "forbidden_actions": [
+    "model_weight_change",
+    "prime_probability_change",
+    "production_feature_injection",
+    "gate_bypass",
+    "live_betting",
+    "execution_mode_change",
+    "credential_change",
+    "credential_exposure",
+    "browser_profile_change",
+    "telegram_send",
+    "model_promotion",
+    "source_substitution"
+  ],
+  "forbidden_keywords": [],
+  "required_outputs": [
+    "ops/task_contracts/FORMFAV-COMPLETE-BEFORE-SCORING-01.json",
+    "scripts/ops/formfav_readiness.py",
+    "scripts/ops/run_formfav_uk_enhanced_shadow.py",
+    "scripts/ops/run_full_raceday.py",
+    "tests/test_formfav_readiness.py",
+    "tests/test_formfav_shadow_gate.py"
+  ],
+  "classification_required": [
+    "FORMFAV_COMPLETE_RACE_GATE",
+    "NO_SYNTHETIC_RUNNER_FEATURES",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_GATE_BYPASS",
+    "PAPER_SIM_ONLY"
+  ],
+  "final_classifications": [
+    "FORMFAV_COMPLETE_RACE_GATE",
+    "NO_SYNTHETIC_RUNNER_FEATURES",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_GATE_BYPASS",
+    "PAPER_SIM_ONLY"
+  ]
+}

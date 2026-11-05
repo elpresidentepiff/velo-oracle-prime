@@ -86,10 +86,15 @@ def collect(date: str, countries: set[str], fetch: Callable[[str], list[dict[str
 
 
 def evaluate(
-    stats: dict[str, Any], *, now: datetime, min_races: int = 1, min_form: float = 0.95,
-    min_predictions: float = 0.9, min_stats: float = 0.8, max_age: timedelta = timedelta(hours=3),
+    stats: dict[str, Any], *, now: datetime, min_races: int = 1, min_form: float = 1.0,
+    min_predictions: float = 1.0, min_stats: float = 0.8, max_age: timedelta = timedelta(hours=3),
 ) -> list[str]:
-    """Return a list of failures (empty = ready)."""
+    """Return failures; every provider-published race must have form and predictions.
+
+    Runner-level feature sparsity is evaluated separately because debutants and
+    lightly raced horses can truthfully have no historical form.  We never
+    manufacture those unavailable features merely to make this gate green.
+    """
     fails: list[str] = []
     n = stats["races"]
     if n < min_races:

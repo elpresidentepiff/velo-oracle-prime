@@ -3,9 +3,9 @@ from __future__ import annotations
 from scripts.ops.run_formfav_uk_enhanced_shadow import _count_primary_in_scope, coverage_gate
 
 
-def test_full_and_threshold_coverage_pass() -> None:
-    assert coverage_gate(40, 40, 0.8) == (True, 1.0)
-    assert coverage_gate(32, 40, 0.8)[0] is True
+def test_full_coverage_passes_complete_gate() -> None:
+    assert coverage_gate(40, 40, 1.0) == (True, 1.0)
+    assert coverage_gate(39, 40, 1.0)[0] is False
 
 
 def test_partial_enrichment_fails_closed() -> None:

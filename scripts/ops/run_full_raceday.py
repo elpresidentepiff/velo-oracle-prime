@@ -253,7 +253,7 @@ def main() -> int:
     parser.add_argument(
         "--allow-partial-formfav",
         action="store_true",
-        help="Steps 0 and 5.6 normally STOP the run unless FormFav is ready and enriches >=80%% of GB/IE races. "
+        help="Steps 0 and 5.6 normally STOP the run unless FormFav is ready and enriches 100%% of GB/IE races. "
              "This lets the run continue to scoring even if FormFav is partial or down (use only on purpose).",
     )
     parser.add_argument(
