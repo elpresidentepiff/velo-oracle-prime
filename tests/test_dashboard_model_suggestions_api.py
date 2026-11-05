@@ -250,3 +250,33 @@ def test_canonical_fallback_paginates_past_supabase_row_limit(monkeypatch):
     assert len(rows) == 1001
     assert rows[-1]["model_name"] == "OLD_VELO_WIN_ROLE"
     assert calls == [0, 1000]
+
+
+def test_canonical_rows_inherit_race_metadata_for_cross_provider_display_join(monkeypatch):
+    rows = [
+        {
+            "run_date": "2026-11-05",
+            "race_id": "930490",
+            "course": "Newcastle",
+            "off_time": "2026-11-05T13:34:00",
+            "model_name": "MAIN_VELO_PRIME",
+            "rank": 1,
+            "horse": "Aire Spray",
+        },
+        {
+            "run_date": "2026-11-05",
+            "race_id": "930490",
+            "course": None,
+            "off_time": None,
+            "model_name": "SQPE_NO_RPR_SHADOW",
+            "rank": 1,
+            "horse": "William Yeats",
+        },
+    ]
+    monkeypatch.setattr(model_suggestions_builder, "_canonical_supabase_top_picks", lambda _date: (rows, None))
+
+    payload = model_suggestions_builder.build_model_suggestions("2026-11-05")
+    no_rpr = next(row for row in payload["rows"] if row["model_label"] == "SQPE_NO_RPR_SHADOW")
+
+    assert no_rpr["course"] == "Newcastle"
+    assert no_rpr["off_time"] == "2026-11-05T13:34:00"

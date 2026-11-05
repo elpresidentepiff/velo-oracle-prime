@@ -477,6 +477,28 @@ def build_model_suggestions(date_str: str, race_id: str | None = None) -> dict:
                 if str(r.get("race_id") or "") in main_race_ids
             ]
 
+        # Some model writers persist the horse/rank under the canonical race id
+        # but omit repeated course/off-time metadata.  Propagate those display
+        # fields from another lane for the same race so the web app can join the
+        # scorecard to the governed RP card by course+time.  This is a read-only
+        # presentation repair; scores, ranks and horse identities are untouched.
+        race_metadata: dict[str, dict[str, object]] = {}
+        for row in canonical_rows:
+            rid = str(row.get("race_id") or "")
+            if not rid:
+                continue
+            meta = race_metadata.setdefault(rid, {})
+            if row.get("course"):
+                meta["course"] = row["course"]
+            if row.get("off_time"):
+                meta["off_time"] = row["off_time"]
+        for row in canonical_rows:
+            meta = race_metadata.get(str(row.get("race_id") or ""), {})
+            if not row.get("course") and meta.get("course"):
+                row["course"] = meta["course"]
+            if not row.get("off_time") and meta.get("off_time"):
+                row["off_time"] = meta["off_time"]
+
         rows = [_canonical_row_to_suggestion(r) for r in canonical_rows]
         if race_id:
             rows = [r for r in rows if r["race_id"] == str(race_id)]
