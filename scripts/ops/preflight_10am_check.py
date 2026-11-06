@@ -8,7 +8,7 @@ Checks:
   2. Canonical repo/branch/service confirmed in git
   3. Prediction endpoint live (/health)
   4. OpenAPI route present (/api/v1/predict/race)
-  5. Racing API reachable
+  5. Racing Post capture credentials/profile ready
   6. Supabase connectivity (write access to velo_verdicts)
   7. Telegram bot reachable
   8. Normalizer imports OK
@@ -92,10 +92,10 @@ check("SUPABASE_URL set",
     lambda: os.environ["SUPABASE_URL"][:30] + "..." if os.environ.get("SUPABASE_URL") else (_ for _ in ()).throw(AssertionError("missing")))
 check("SUPABASE_SERVICE_KEY set",
     lambda: "OK" if (os.environ.get("SUPABASE_SERVICE_KEY") or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")) else (_ for _ in ()).throw(AssertionError("missing")))
-check("RACING_API_USERNAME set",
-    lambda: "OK" if os.environ.get("RACING_API_USERNAME") else (_ for _ in ()).throw(AssertionError("missing")))
-check("RACING_API_PASSWORD set",
-    lambda: "OK" if os.environ.get("RACING_API_PASSWORD") else (_ for _ in ()).throw(AssertionError("missing")))
+check("Racing Post identity set",
+    lambda: "OK" if (os.environ.get("RP_EMAIL") or os.environ.get("RACING_POST_EMAIL")) else (_ for _ in ()).throw(AssertionError("RP_EMAIL missing")))
+check("Racing Post credential set",
+    lambda: "OK" if (os.environ.get("RP_PASSWORD") or os.environ.get("RACING_POST_PASSWORD")) else (_ for _ in ()).throw(AssertionError("RP_PASSWORD missing")))
 check("TELEGRAM_BOT_TOKEN set",
     lambda: "OK" if os.environ.get("TELEGRAM_BOT_TOKEN") else (_ for _ in ()).throw(AssertionError("missing")))
 check("TELEGRAM_CHAT_ID set",
@@ -136,24 +136,21 @@ def check_openapi():
 
 check(f"openapi contains {CANONICAL['predict_route']}", check_openapi)
 
-# --- 5. Racing API reachable ---
-def check_racing_api():
-    username = os.environ.get("RACING_API_USERNAME", "")
-    password = os.environ.get("RACING_API_PASSWORD", "")
-    if not username or not password:
-        raise AssertionError("credentials missing")
-    import base64
-    token = base64.b64encode(f"{username}:{password}".encode()).decode()
-    req = urllib.request.Request(
-        "https://api.theracingapi.com/v1/courses",
-        headers={"Authorization": f"Basic {token}"}
+# --- 5. Racing Post cloud capture readiness ---
+def check_rp_capture_readiness():
+    email = os.environ.get("RP_EMAIL") or os.environ.get("RACING_POST_EMAIL")
+    password = os.environ.get("RP_PASSWORD") or os.environ.get("RACING_POST_PASSWORD")
+    profile = ROOT / "data" / "browser_profiles" / "racing_post_account"
+    if email and password:
+        return "cloud auto-login credentials present"
+    if profile.exists() and any(profile.iterdir()):
+        return f"persistent browser profile present: {profile}"
+    raise AssertionError(
+        "no Racing Post auto-login credentials or persistent profile; "
+        "governed capture must fail closed"
     )
-    with urllib.request.urlopen(req, timeout=10) as r:
-        d = json.loads(r.read())
-    count = len(d) if isinstance(d, list) else d.get("total", "?")
-    return f"{count} courses returned"
 
-check("Racing API reachable", check_racing_api)
+check("Racing Post capture ready", check_rp_capture_readiness)
 
 # --- 6. Supabase write access ---
 def check_supabase():
@@ -228,7 +225,7 @@ tg_lines = [
     f"service:    {CANONICAL['service']}",
     f"endpoint:   {'LIVE' if RESULTS.get('endpoint /health') else 'DOWN'}",
     f"supabase:   {'OK' if RESULTS.get('Supabase velo_verdicts reachable') else 'FAIL'}",
-    f"racing api: {'OK' if RESULTS.get('Racing API reachable') else 'FAIL'}",
+    f"racing post: {'OK' if RESULTS.get('Racing Post capture ready') else 'FAIL'}",
     f"telegram:   {'OK' if RESULTS.get('Telegram bot reachable') else 'FAIL'}",
     f"normalizer: {'OK' if RESULTS.get('normalizer imports and smoke test') else 'FAIL'}",
     f"",

@@ -13,7 +13,10 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 def run(target_date: str | None = None, trigger_source: str = "manual", run_id: str | None = None):
-    script_path = ROOT / "scripts" / "ops" / "run_cloud_raceday.py"
+    # ONE_TRUTH: the governed UK/IRE live source is authenticated Racing Post
+    # HTML.  The retired run_cloud_raceday.py entry point fetches Racing API
+    # Standard cards and must never be reachable from the public/manual trigger.
+    script_path = ROOT / "scripts" / "ops" / "rp_cloud_raceday.py"
     if not script_path.exists():
         raise FileNotFoundError(f"Scoring script not found: {script_path}")
 

@@ -17,8 +17,8 @@ Source truth labels (canonical):
   RP_MERGED_CLEAN     — full RP PDF set, all features present
   RP_MERGED_DEGRADED  — partial RP PDFs, feature degradation active
   LOCAL_JSON_FALLBACK — verified local standard cache
-  RACING_API_STANDARD_CLEAN — authenticated Standard-plan Racing API card
-  RACING_API_BLOCKED  — retained historical label for old observability packets
+  RACING_API_STANDARD_CLEAN — retained historical label; live execution blocked
+  RACING_API_BLOCKED  — retired Racing API source; live execution blocked
   SOURCE_UNKNOWN_BLOCK — unknown origin; execution must be blocked
 """
 from __future__ import annotations
@@ -48,10 +48,10 @@ class SourceLabel:
     })
 
     # Labels that allow execution to proceed
-    ALLOWED = frozenset({RP_MERGED_CLEAN, RP_MERGED_DEGRADED, LOCAL_JSON_FALLBACK, RACING_API_STANDARD_CLEAN})
+    ALLOWED = frozenset({RP_MERGED_CLEAN, RP_MERGED_DEGRADED, LOCAL_JSON_FALLBACK})
 
     # Labels that must block execution
-    BLOCKED = frozenset({SOURCE_UNKNOWN_BLOCK, RACING_API_BLOCKED})
+    BLOCKED = frozenset({SOURCE_UNKNOWN_BLOCK, RACING_API_STANDARD_CLEAN, RACING_API_BLOCKED})
 
     # Labels that require a degradation warning
     DEGRADED = frozenset({RP_MERGED_DEGRADED})
@@ -139,9 +139,11 @@ def enforce_source_truth(
             "Execution is blocked until source is declared."
         )
     elif canonical == SourceLabel.RACING_API_STANDARD_CLEAN:
-        # Cloud-native production source. RP remains an enrichment layer, not
-        # an execution dependency. The API source is explicit in observability.
-        pass
+        warnings.append(
+            "RACING_API_BLOCKED: The Racing API is retired from the governed "
+            "UK/IRE live path. Provide authenticated Racing Post evidence; "
+            "supplier fallback is forbidden."
+        )
 
     # RP merged truth is built from the validated Racing Post HTML injection.
     # Legacy PDF-only fields are optional and must not downgrade an HTML-clean day.

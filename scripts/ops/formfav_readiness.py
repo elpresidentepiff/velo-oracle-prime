@@ -56,6 +56,7 @@ def collect(date: str, countries: set[str], fetch: Callable[[str], list[dict[str
     keys = [r["provider_race_key"] for r in races]
     with_form: set[str] = set()
     with_pred: set[str] = set()
+    prediction_errors: list[str] = []
     runners = scratched = with_stats = with_speed = with_class = 0
     newest: datetime | None = None
     for i in range(0, len(keys), IN_CHUNK):
@@ -73,21 +74,28 @@ def collect(date: str, countries: set[str], fetch: Callable[[str], list[dict[str
             ts = _parse(row.get("updated_at"))
             if ts and (newest is None or ts > newest):
                 newest = ts
-        for row in fetch("formfav_predictions?" + urllib.parse.urlencode({
-                "provider_race_key": in_k, "select": "provider_race_key"})):
-            with_pred.add(row["provider_race_key"])
+        try:
+            for row in fetch("formfav_predictions?" + urllib.parse.urlencode({
+                    "provider_race_key": in_k, "select": "provider_race_key"})):
+                with_pred.add(row["provider_race_key"])
+        except Exception as exc:
+            # Predictions are an independent benchmark. Their endpoint may be
+            # unavailable without invalidating the factual form/context gate.
+            prediction_errors.append(f"{type(exc).__name__}: {exc}")
     return {
         "date": date, "countries": sorted(countries), "races": len(keys),
         "races_with_form": len(with_form), "races_with_predictions": len(with_pred),
         "runners": runners, "scratched": scratched,
         "runners_with_stats": with_stats, "runners_with_speedmap": with_speed, "runners_with_class": with_class,
         "newest_form_update": newest.isoformat() if newest else None,
+        "prediction_benchmark_errors": prediction_errors,
     }
 
 
 def evaluate(
     stats: dict[str, Any], *, now: datetime, min_races: int = 1, min_form: float = 1.0,
     min_predictions: float = 1.0, min_stats: float = 0.8, max_age: timedelta = timedelta(hours=3),
+    require_predictions: bool = True,
 ) -> list[str]:
     """Return failures; every provider-published race must have form and predictions.
 
@@ -101,7 +109,7 @@ def evaluate(
         return [f"only {n} FormFav races stored for {stats['date']} (need >= {min_races})"]
     if stats["races_with_form"] / n < min_form:
         fails.append(f"form stored for {stats['races_with_form']}/{n} races (< {min_form:.0%})")
-    if stats["races_with_predictions"] / n < min_predictions:
+    if require_predictions and stats["races_with_predictions"] / n < min_predictions:
         fails.append(f"predictions stored for {stats['races_with_predictions']}/{n} races (< {min_predictions:.0%})")
     live = max(stats["runners"] - stats["scratched"], 0)
     if live == 0:
@@ -125,8 +133,22 @@ def main() -> int:
               "Step 5.6 still enforces FormFav coverage before scoring.", flush=True)
         return 0
     stats = collect(args.date, {c.strip().lower() for c in args.countries.split(",") if c.strip()})
-    fails = evaluate(stats, now=datetime.now(UTC), min_races=args.min_races)
-    print(json.dumps({"formfav_readiness": stats, "ready": not fails, "failures": fails}, indent=2), flush=True)
+    # Provider predictions are an isolated benchmark. They must never gate the
+    # factual enrichment used by the governed morning sequence.
+    fails = evaluate(
+        stats,
+        now=datetime.now(UTC),
+        min_races=args.min_races,
+        require_predictions=False,
+    )
+    benchmark_ready = bool(stats["races"]) and stats["races_with_predictions"] / stats["races"] >= 1.0
+    print(json.dumps({
+        "formfav_readiness": stats,
+        "factual_ready": not fails,
+        "prediction_benchmark_ready": benchmark_ready,
+        "ready": not fails,
+        "failures": fails,
+    }, indent=2), flush=True)
     if fails:
         print("[FORMFAV-READY] NOT READY: " + "; ".join(fails), file=sys.stderr, flush=True)
         return 2

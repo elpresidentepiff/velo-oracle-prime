@@ -35,6 +35,38 @@ def test_each_gap_is_reported() -> None:
     assert any("worker may be down" in f for f in fr.evaluate(_stats(newest_form_update=None), now=NOW))
 
 
+def test_prediction_coverage_never_gates_factual_readiness() -> None:
+    assert fr.evaluate(
+        _stats(races_with_predictions=0),
+        now=NOW,
+        min_form=0.8,
+        require_predictions=False,
+    ) == []
+
+
+def test_prediction_endpoint_failure_does_not_break_factual_collection() -> None:
+    def fetch(path: str):
+        if path.startswith("formfav_races"):
+            return [{"provider_race_key": "a"}]
+        if path.startswith("formfav_runner_form"):
+            return [{
+                "provider_race_key": "a",
+                "scratched": False,
+                "updated_at": FRESH,
+                "form_payload": {"stats": {"x": 1}},
+            }]
+        if path.startswith("formfav_predictions"):
+            raise RuntimeError("benchmark offline")
+        raise AssertionError(path)
+
+    stats = fr.collect("2026-10-15", {"gb", "ie"}, fetch=fetch)
+
+    assert stats["races_with_form"] == 1
+    assert stats["races_with_predictions"] == 0
+    assert stats["prediction_benchmark_errors"] == ["RuntimeError: benchmark offline"]
+    assert fr.evaluate(stats, now=NOW, min_form=0.8, require_predictions=False) == []
+
+
 def test_collect_counts_from_rest_rows() -> None:
     def fetch(path: str):
         if path.startswith("formfav_races"):
