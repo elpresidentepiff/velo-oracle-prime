@@ -2,20 +2,20 @@
 Tests for Issue #83 — VÉLØ Racecard Loader source contract fix.
 
 Validates:
-  - cache source wins before API call
-  - RP merged source works when Racing API creds absent
-  - VELO_DISABLE_RACING_API=1 prevents API call
-  - API 401 fails clearly when no local source exists
+  - cache source wins before RP lookup
+  - RP merged source works without retired supplier credentials
+  - missing RP/cache evidence fails closed
+  - explicit API source is rejected
   - load_rp_merged_as_racecards: synthesises races with region and runners
   - Irish venues get region=IRE; GB venues get region=GB
-  - Explicit --source cache / rp / api flags behave correctly
+  - Explicit --source cache / rp flags behave correctly
 """
 
 import json
 import sys
 import urllib.error
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -267,7 +267,7 @@ def test_api_not_called_when_rp_exists_in_auto(tmp_path):
 
 
 
-def test_api_provenance_cache_reports_api_source(tmp_path):
+def test_api_provenance_cache_retains_archived_source_label(tmp_path):
     payload = {
         "_velo_source": "racing_api_standard",
         "racecards": _CACHE_RACES,
@@ -278,18 +278,23 @@ def test_api_provenance_cache_reports_api_source(tmp_path):
     assert races[0]["race_id"] == "rac_cache_001"
 
 
-def test_explicit_api_source_fetches_standard_plan(tmp_path):
-    response = MagicMock()
-    response.__enter__.return_value.read.return_value = json.dumps({"racecards": _CACHE_RACES}).encode()
-    response.__exit__.return_value = False
-    with patch("src.velo.racecard_loader._standard_day_for_date", return_value="today"), \
-         patch("urllib.request.urlopen", return_value=response) as mock_open:
-        races, src = _loader(tmp_path, source="api")
-    assert src == "api"
-    assert races[0]["race_id"] == "rac_cache_001"
-    requested_url = mock_open.call_args.args[0].full_url
-    assert "/racecards/standard" in requested_url
-    assert "day=today" in requested_url
+def test_explicit_api_source_is_blocked(tmp_path):
+    import pytest
+    with pytest.raises(RuntimeError, match="retired and blocked"):
+        _loader(tmp_path, source="api")
+
+
+def test_auto_fails_closed_even_when_retired_credentials_exist(tmp_path):
+    import pytest
+    with patch.dict(
+        "os.environ",
+        {"RACING_API_USERNAME": "legacy", "RACING_API_PASSWORD": "legacy"},
+        clear=False,
+    ):
+        with patch("urllib.request.urlopen") as mock_open:
+            with pytest.raises(RuntimeError, match="supplier fallback is forbidden"):
+                _loader(tmp_path)
+    mock_open.assert_not_called()
 
 
 # ── Explicit source flags ─────────────────────────────────────────────────────

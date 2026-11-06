@@ -226,12 +226,18 @@ class TestSourceTruthEnforcer:
         assert result.canonical_label == SourceLabel.RP_MERGED_CLEAN
         assert result.execution_allowed is True
 
-    def test_api_maps_to_racing_api_standard_clean(self):
-        """Authenticated Standard Racing API is an allowed cloud source."""
+    def test_api_maps_to_blocked_historical_label(self):
+        """Retired Racing API aliases retain provenance but block execution."""
         result = enforce_source_truth("api", raise_on_block=False)
         assert result.canonical_label == SourceLabel.RACING_API_STANDARD_CLEAN
-        assert result.execution_allowed is True
-        assert result.blocked is False
+        assert result.execution_allowed is False
+        assert result.blocked is True
+        assert any("RACING_API_BLOCKED" in warning for warning in result.warnings)
+
+    @pytest.mark.parametrize("label", ["api", "api_clean", "racing_api", "racing_api_standard", "racing api", "theracingapi"])
+    def test_all_racing_api_aliases_raise_by_default(self, label):
+        with pytest.raises(SourceTruthBlockError, match="RACING_API_STANDARD_CLEAN"):
+            enforce_source_truth(label)
 
     def test_unknown_label_maps_to_source_unknown_block(self):
         """Unknown loader label must map to SOURCE_UNKNOWN_BLOCK."""

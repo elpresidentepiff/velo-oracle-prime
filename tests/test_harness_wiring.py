@@ -351,11 +351,17 @@ class TestSourceTruthWiring:
             enforce_source_truth("mystery_source_xyz", raise_on_block=True)
 
     def test_valid_sources_do_not_raise(self):
-        """Allowed loader labels must not raise."""
+        """Only governed local/RP loader labels may execute."""
         from velo.source_truth_enforcer import enforce_source_truth
-        for label in ("cache", "rp_merged", "api", "racing_api"):
+        for label in ("cache", "rp_merged"):
             result = enforce_source_truth(label, races=[])
             assert result.execution_allowed is True
+
+    def test_retired_api_sources_raise(self):
+        from velo.source_truth_enforcer import SourceTruthBlockError, enforce_source_truth
+        for label in ("api", "racing_api"):
+            with pytest.raises(SourceTruthBlockError):
+                enforce_source_truth(label, races=[])
 
     def test_block_error_message_contains_source_unknown(self):
         """SourceTruthBlockError message must mention SOURCE_UNKNOWN_BLOCK."""

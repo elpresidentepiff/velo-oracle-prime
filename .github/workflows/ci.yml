@@ -119,13 +119,13 @@ jobs:
         run: |
           pytest tests/test_no_live_order_path.py tests/test_execution_risk.py -q -p no:warnings
 
-      - name: Verify Racing API source truth
+      - name: Verify retired Racing API source fails closed
         run: |
           python - <<'PY'
           from src.velo.source_truth_enforcer import SourceLabel, enforce_source_truth
           result = enforce_source_truth("api", raise_on_block=False)
           assert result.canonical_label == SourceLabel.RACING_API_STANDARD_CLEAN
-          assert result.execution_allowed is True
-          assert result.blocked is False
-          print("RACING_API_STANDARD_CLEAN OK")
+          assert result.execution_allowed is False
+          assert result.blocked is True
+          print("RACING_API_BLOCKED OK")
           PY

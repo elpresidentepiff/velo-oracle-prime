@@ -31,7 +31,7 @@ def test_bootstrap_runtime_keeps_telegram_when_enabled(monkeypatch):
 
     assert run_prime_today.TOKEN == "token"
     assert run_prime_today.CHAT_ID == "chat"
-    assert run_prime_today.RACING_HEADERS["Authorization"].startswith("Basic ")
+    assert not hasattr(run_prime_today, "RACING_HEADERS")
 
 
 def test_attach_rpdc_marks_ambiguous_latest_and_uses_newest_row(monkeypatch):

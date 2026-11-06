@@ -29,8 +29,10 @@ import os
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from enum import StrEnum
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).parent.parent
 
@@ -202,36 +204,74 @@ def _check_canonical_constants() -> PreflightCheck:
         )
 
 
-def _check_racing_api() -> PreflightCheck:
-    """Racing API must be reachable (degraded if down — scoring uses cached cards)."""
-    import base64
+def _check_rp_capture_readiness() -> PreflightCheck:
+    """The governed RP capture must be able to authenticate or reuse its profile."""
+    email = os.getenv("RP_EMAIL") or os.getenv("RACING_POST_EMAIL")
+    password = os.getenv("RP_PASSWORD") or os.getenv("RACING_POST_PASSWORD")
+    profile = ROOT / "data" / "browser_profiles" / "racing_post_account"
+    if email and password:
+        return PreflightCheck(
+            name="racing_post_capture",
+            severity=Severity.CRITICAL,
+            passed=True,
+            detail="cloud auto-login credentials present",
+        )
+    if profile.exists() and any(profile.iterdir()):
+        return PreflightCheck(
+            name="racing_post_capture",
+            severity=Severity.CRITICAL,
+            passed=True,
+            detail=f"persistent profile present: {profile}",
+        )
+    return PreflightCheck(
+        name="racing_post_capture",
+        severity=Severity.CRITICAL,
+        passed=False,
+        detail="no RP auto-login credentials or persistent profile; capture must fail closed",
+    )
 
-    user = os.getenv("RACING_API_USERNAME", "")
-    pwd = os.getenv("RACING_API_PASSWORD", "")
-    if not user or not pwd:
-        return PreflightCheck(
-            name="racing_api",
-            severity=Severity.DEGRADED,
-            passed=False,
-            detail="credentials absent — will rely on cached racecards",
-        )
+
+def _check_formfav_factual_readiness() -> PreflightCheck:
+    """Require fresh factual FormFav coverage; predictions never affect this gate."""
     try:
-        req = urllib.request.Request(
-            "https://api.theracingapi.com/v1/courses",
-            headers={
-                "Authorization": "Basic " + base64.b64encode(f"{user}:{pwd}".encode()).decode(),
-                "User-Agent": "Mozilla/5.0",
-            },
+        from scripts.ops.formfav_readiness import collect, evaluate
+
+        date_str = datetime.now(ZoneInfo("Europe/London")).date().isoformat()
+        stats = collect(date_str, {"gb", "ie"})
+        failures = evaluate(
+            stats,
+            now=datetime.now(UTC),
+            min_form=0.8,
+            min_stats=0.8,
+            require_predictions=False,
         )
-        with urllib.request.urlopen(req, timeout=8):
-            pass
-        return PreflightCheck(name="racing_api", severity=Severity.DEGRADED, passed=True, detail="reachable")
-    except Exception as e:
+        if failures:
+            return PreflightCheck(
+                name="formfav_factual",
+                severity=Severity.CRITICAL,
+                passed=False,
+                detail="; ".join(failures),
+            )
+        prediction_note = (
+            f"; benchmark predictions {stats['races_with_predictions']}/{stats['races']} "
+            "(non-gating)"
+        )
         return PreflightCheck(
-            name="racing_api",
-            severity=Severity.DEGRADED,
+            name="formfav_factual",
+            severity=Severity.CRITICAL,
+            passed=True,
+            detail=(
+                f"factual form {stats['races_with_form']}/{stats['races']} races; "
+                f"runner stats {stats['runners_with_stats']}/{max(stats['runners'] - stats['scratched'], 0)}"
+                + prediction_note
+            ),
+        )
+    except Exception as exc:
+        return PreflightCheck(
+            name="formfav_factual",
+            severity=Severity.CRITICAL,
             passed=False,
-            detail=f"unreachable: {e} — will rely on cached racecards",
+            detail=f"readiness check failed: {type(exc).__name__}: {exc}",
         )
 
 
@@ -339,6 +379,8 @@ def preflight(*, require_telegram: bool = True) -> PreflightResult:
     result.add(_check_env_vars(require_telegram=require_telegram))
     result.add(_check_canonical_constants())
     result.add(_check_supabase())
+    result.add(_check_rp_capture_readiness())
+    result.add(_check_formfav_factual_readiness())
     result.add(_check_sqpe_model())
     result.add(_check_specialist_models())
     result.add(_check_supabase_schema())

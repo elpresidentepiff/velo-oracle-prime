@@ -85,6 +85,12 @@ def test_system_preflight_does_not_require_or_check_racing_api(monkeypatch):
     monkeypatch.setattr(preflight, "_check_supabase", lambda: preflight.PreflightCheck(
         "supabase", preflight.Severity.CRITICAL, True, "test"
     ))
+    monkeypatch.setattr(preflight, "_check_rp_capture_readiness", lambda: preflight.PreflightCheck(
+        "racing_post_capture", preflight.Severity.CRITICAL, True, "test"
+    ))
+    monkeypatch.setattr(preflight, "_check_formfav_factual_readiness", lambda: preflight.PreflightCheck(
+        "formfav_factual", preflight.Severity.CRITICAL, True, "test"
+    ))
     monkeypatch.setattr(preflight, "_check_sqpe_model", lambda: preflight.PreflightCheck(
         "sqpe_model", preflight.Severity.CRITICAL, True, "test"
     ))

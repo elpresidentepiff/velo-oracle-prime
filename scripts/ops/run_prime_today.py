@@ -1605,9 +1605,9 @@ def main():
     parser.add_argument("--env-file", default=None)
     parser.add_argument(
         "--source",
-        choices=["auto", "cache", "rp", "api"],
+        choices=["auto", "cache", "rp"],
         default=None,
-        help="Racecard source: auto (default, tries cache→rp→api), cache, rp, api",
+        help="Racecard source: auto (default, tries cache→rp and fails closed), cache, rp",
     )
     parser.add_argument(
         "--allow-missing-pdfs",
@@ -1782,8 +1782,8 @@ def main():
             loaded_dates.add(d)
     loaded_date_str = ", ".join(sorted(loaded_dates)) if loaded_dates else "unknown"
     date_mismatch = loaded_dates and date_str not in loaded_dates
-    is_live = racecard_source == "api"
-    live_label = {"api": "LIVE_API", "cache": "CACHE", "rp_merged": "RP_MERGED"}.get(racecard_source, racecard_source.upper())
+    is_live = racecard_source == "rp_merged"
+    live_label = {"cache": "CACHE", "rp_merged": "RP_MERGED"}.get(racecard_source, racecard_source.upper())
     commit_sha = get_commit_sha()
     _snapshot_run_id = _build_run_id(date_tag, commit_sha)
 
@@ -1800,7 +1800,7 @@ def main():
     elif not is_live:
         print("  ℹ Source = CACHE. Card date matches request.")
     else:
-        print("  ✓ Source = LIVE API. Card date matches request.")
+        print("  ✓ Source = authenticated Racing Post evidence. Card date matches request.")
     print(f"{'=' * 60}\n")
 
     if date_mismatch and notify_enabled:
