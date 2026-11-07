@@ -199,6 +199,38 @@ def test_london_off_time_is_resolved_to_utc() -> None:
     assert summer == datetime(2026, 7, 7, 9, 30, tzinfo=UTC)
 
 
+@pytest.mark.parametrize(
+    ("card_time", "expected_utc"),
+    [
+        # Racing Post prints afternoon times in 12-hour form with no am/pm. These are
+        # the exact strings that produced no history or Spotlight on 2026-11-07.
+        ("1.52", datetime(2026, 11, 7, 13, 52, tzinfo=UTC)),
+        ("3.00", datetime(2026, 11, 7, 15, 0, tzinfo=UTC)),
+        ("4.30", datetime(2026, 11, 7, 16, 30, tzinfo=UTC)),
+        ("8.45", datetime(2026, 11, 7, 20, 45, tzinfo=UTC)),
+        # Morning and noon times are already on the 24-hour clock.
+        ("10.05", datetime(2026, 11, 7, 10, 5, tzinfo=UTC)),
+        ("11.55", datetime(2026, 11, 7, 11, 55, tzinfo=UTC)),
+        ("12.45", datetime(2026, 11, 7, 12, 45, tzinfo=UTC)),
+        # A 24-hour feed is unchanged.
+        ("15:00", datetime(2026, 11, 7, 15, 0, tzinfo=UTC)),
+    ],
+)
+def test_afternoon_card_times_resolve_to_the_pm_clock(card_time: str, expected_utc: datetime) -> None:
+    assert resolve_race_off_time_utc({"date": "2026-11-07", "off_time": card_time}) == expected_utc
+
+
+def test_afternoon_summer_time_is_converted_from_london_to_utc() -> None:
+    assert resolve_race_off_time_utc({"date": "2026-07-07", "off_time": "3.00"}) == datetime(
+        2026, 7, 7, 14, 0, tzinfo=UTC
+    )
+
+
+@pytest.mark.parametrize("bad", ["", "noon", "25:00", "11.75", "3", "3.5"])
+def test_unparseable_card_time_is_unknown_not_guessed(bad: str) -> None:
+    assert resolve_race_off_time_utc({"date": "2026-11-07", "off_time": bad}) is None
+
+
 def test_run_prime_builds_shadow_packet_before_unchanged_prime_call() -> None:
     source = (Path(__file__).parents[1] / "scripts" / "ops" / "run_prime_today.py").read_text(
         encoding="utf-8"

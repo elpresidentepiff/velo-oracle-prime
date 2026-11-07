@@ -12,7 +12,7 @@ from __future__ import annotations
 import hashlib
 import re
 from collections.abc import Iterable
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime, time
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -147,16 +147,38 @@ def resolve_race_off_time_utc(race: dict[str, Any]) -> datetime | None:
             return parsed
 
     race_date = str(race.get("date") or raw.get("date") or "").strip()
-    off_time = str(race.get("off_time") or raw.get("off_time") or "").strip().replace(".", ":")
-    if not race_date or not re.fullmatch(r"\d{1,2}:\d{2}", off_time):
+    clock = _london_clock(str(race.get("off_time") or raw.get("off_time") or ""))
+    if not race_date or clock is None:
         return None
     try:
-        local = datetime.fromisoformat(f"{race_date}T{off_time}").replace(
-            tzinfo=ZoneInfo("Europe/London")
+        local = datetime.combine(
+            date.fromisoformat(race_date[:10]), clock, tzinfo=ZoneInfo("Europe/London")
         )
     except ValueError:
         return None
     return local.astimezone(UTC)
+
+
+_OFF_CLOCK_RE = re.compile(r"(\d{1,2})[:.](\d{2})")
+
+
+def _london_clock(text: str) -> time | None:
+    """Parse a card off time such as ``11.55``, ``3.25`` or ``15:25``.
+
+    Racing Post prints afternoon and evening off times in 12-hour form with no
+    am/pm (``3.25`` is 15:25) and no leading zero. UK and Irish cards never
+    start before 10:00, so a one-digit hour is always pm. A two-digit hour is
+    already on the 24-hour clock (``10``-``12`` are morning/noon, ``13``+ pm).
+    """
+    match = _OFF_CLOCK_RE.fullmatch(text.strip())
+    if not match:
+        return None
+    hour, minute = int(match.group(1)), int(match.group(2))
+    if len(match.group(1)) == 1:
+        hour += 12
+    if hour > 23 or minute > 59:
+        return None
+    return time(hour, minute)
 
 
 def _sentences(raw_text: str) -> Iterable[str]:

@@ -32,10 +32,11 @@ Next safe action: <one concrete step that needs no re-investigation>
 | W-4 | 33 of 120 frozen top picks tie with rank 2 (rank 1 = list order) | ties query, FR 10/23, US 23/82 | Now flagged per race (`top_tie_size`) and excluded from `skill_sample` |
 | W-5 | AU/HK/JP early races are never frozen pre-off (AU 43 of 43 unfrozen, JP 17 of 24 on 2026-11-05) | `world_status_register` | Watch after deploy: hourly runs from 00:00 UTC should cover them |
 | U-1 | UK settlement-truth stage (`CANONICAL_TRUTH_V2`) stopped 2026-10-17; its code lives only on unmerged branches | no settled/eligible rows after 10-17; commits `45345db1`, `5787e97f` not in `main` | Recovery cherry-pick on `ops/recovery` |
-| U-2 | `SQPE_NO_RPR_SHADOW` has no model output in production; its picks are Main's picks | `sqpe_no_rpr_shadow_prob` NULL on every snapshot row; `models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl` is git-ignored | Operator decision: **ship it** (No-RPR is important). `NORPR-SHIP-01`: model file force-added (6.3 MB, sha256 `65b71b31…`, sklearn 1.8.0 = production pin), all 25 inputs verified present in the live feature vector, the ensemble never reads it (0 references), 6 guard tests. Check `sqpe_no_rpr_shadow_prob` is non-NULL in `runner_prediction_snapshots` after the next scoring run, and that its picks now differ from Main's |
+| U-2 | `SQPE_NO_RPR_SHADOW` has no model output in production; its picks are Main's picks | `sqpe_no_rpr_shadow_prob` NULL on every snapshot row; `models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl` is git-ignored | Operator decision: **ship it** (No-RPR is important). `NORPR-SHIP-01`: model file force-added (6.3 MB, sha256 `65b71b31…`, sklearn 1.8.0 = production pin), all 25 inputs verified present in the live feature vector, the ensemble never reads it (0 references), 6 guard tests. **Proven live 2026-11-07 07:20 run:** 472/472 filled, 25 features, 44 of 46 races vary inside the race, top pick differs from Prime in 42 of 46 races (two flat races tie, so ~40). Disagreement is not skill: judge it on settled results |
 | U-3 | Local `main` carries commits not on GitHub: `dcdebf7e` (RP official non-results in Sigma), `fc3b2721` | `git log origin/main..main` | Recovery cherry-pick on `ops/recovery` |
 | U-4 | Champion Intent / New Build / Passport have no settled positions; Main has none for 10-25, 10-26, 10-29 | `canonical_model_scorecards.result_position` | Open. Needs U-1 first |
 | U-5 | Scoring is started by hand (`trigger_source = manual` every day since 11-02); cloud EOD light run reports PASS with 0 processed | `pipeline_runs` | Open |
+| U-6 | Rich Context history + Spotlight never reached afternoon races: `resolve_race_off_time_utc` could not parse Racing Post's 12-hour one-digit-hour times (`3.00`), so no cutoff, so no history call | 2026-11-07 packets: 8 races with history, 38 with none; every race with history was 10.xx-12.xx; 56 of 465 runners had history although 310 have prior rows under the same numeric RP id | **Fixed** (`WAKE-VELO-OFFTIME-01`): one-digit hour = pm; 5 regression tests fail on the old code |
 | H-1 | Railway service `hermes-agent` (`71327cad`) fails to build on every push to `main` (checked back to 09:08 UTC today, before any of this work) | `list-deployments status=FAILED`; the 2 Nov audit already listed it failed/stopped, "retired-path residue" | Open, not caused by recent work. Disconnect it from `main` or delete it, so a red service stops hiding real failures |
 | L-1 | World run ledger showed `rows_inserted = null` instead of 0 when every row was a first-wins duplicate | `world_pipeline_runs` 16:04 UTC run | Fixed with a test (this commit); rows written before the fix keep `null` |
 | O-1 | Branch law breached: many long-lived branches, several 20–42 commits ahead of `main` | `git rev-list --count origin/main..<branch>` | **Backed up, nothing deleted.** Laptop-only work is now on origin as tags (secret-pattern scan: 0 hits): `archive/ops-monday-repair-20261012` (20 commits), `archive/ops-formfav-raceday-20261012` (17), `archive/fix-rp-session-alerting-and-venue-allowlist`, `archive/fix-railway-cloud-eod`, `archive/local-main-2026-11-05`. Next: decide per branch, then delete. Inventory: `PLATFORM_CONTROL_REGISTER.md` |
@@ -52,6 +53,19 @@ Next safe action: <one concrete step that needs no re-investigation>
 - Project Python with pytest: `/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python`.
 
 ## Entries
+
+### 2026-11-07 — Claude Code (Sonnet 5.5) — Wake Velo: audit of the Rich Context lane, off-time bug fixed
+Branch / commit:  `main`, fix commit follows `55a636e7` (other agent's last commit; that agent ran out of credits and was not available).
+Verified:          rescore at 10:18 UTC PASS (`authorised_rescore`, 46 races / 465 runners) wrote 465 `rich_context_shadow_packets`, 0 with
+                  `challenger_probability`/`challenger_rank` (`AWAITING_FROZEN_MODEL_FIT`). `runner_prediction_snapshots` was NOT rewritten:
+                  today's Prime picks are the 07:20 set (472 rows). The lane cannot have changed any selection and was not designed to yet.
+Found:            history + Spotlight were available only for races with a two-digit hour (8 of 46 races). Cause U-6. Fixed + tested.
+Changed:          `src/velo/rich_context_comment_intelligence.py`, `tests/test_rich_context_comment_intelligence.py`, contract `WAKE-VELO-OFFTIME-01`.
+                  Railway `velo-prime-scoring`: `VELO_AUTHORISED_RESCORE_REASON` set to empty (no redeploy) so the guard is back on.
+Open / broken:    Rich Context challenger still unfitted (protocol `config/rich_context_challenger_protocol_v1.json` frozen, dates null);
+                  7 Prime runners absent from the packets (incl. race 932271 rank 1); `comments_processed` still 0 on the daily run.
+Next safe action: after the next scoring run check coverage by race: `select race_id, count(*), count(*) filter (where (family_coverage::jsonb->>'canonical_history')::boolean) from rich_context_shadow_packets where race_date = current_date group by 1`.
+                  Expect history on afternoon races now. Then settle tonight's results and compare No-RPR vs Prime.
 
 ### 2026-11-05 — Claude Code (Sonnet 5.5) — No-RPR lane shipped; World deployed
 Branch / commit:  `main` @ `2597d940` (No-RPR, pushed 16:32 UTC) on top of the other agent's `14df0acb`; World is `b77bab5a`.
