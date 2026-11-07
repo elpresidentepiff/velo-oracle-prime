@@ -2114,6 +2114,7 @@ async def rich_context(date: str = Query(default=None)):
     from app.world_dashboard import (
         RICH_CONTEXT_STATUS,
         SHADOW_BOUNDARY,
+        enriched_suggestions,
         model_scoreboard,
         race_grid,
         summarise_rich_context,
@@ -2131,6 +2132,9 @@ async def rich_context(date: str = Query(default=None)):
     picks = _sb_rest_rows(
         f"wake_velo_model_picks?race_date=eq.{d}&order=off_minutes.asc.nullslast,race_id.asc&limit=2000"
     )
+    picks_now = _sb_rest_rows(
+        f"wake_velo_enriched_picks?race_date=eq.{d}&order=off_minutes.asc.nullslast,race_id.asc&limit=300"
+    )
     runs = _sb_rest_rows(
         "pipeline_runs?service_name=eq.velo-prime-scoring"
         f"&source_date=eq.{d}&order=started_at.asc&limit=20"
@@ -2141,9 +2145,10 @@ async def rich_context(date: str = Query(default=None)):
     )
     return {
         "date": d,
-        "available": picks is not None or coverage is not None,
+        "available": picks is not None or coverage is not None or picks_now is not None,
         "rich_context_status": RICH_CONTEXT_STATUS,
         "rich_context_ranks_anything": bool(scored),
+        "suggestions": enriched_suggestions(picks_now or []),
         "evidence": summarise_rich_context(coverage or []),
         "models": model_scoreboard(picks or []),
         "races": race_grid(picks or []),

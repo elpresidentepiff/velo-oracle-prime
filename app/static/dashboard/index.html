@@ -767,6 +767,9 @@ td:last-child  { padding-right: 20px; }
     WAKE VELO &middot; ALL MODELS <span id="rc-count" style="color:#888;font-weight:400"></span>
     <span style="float:right;font-size:10px;color:#666;font-weight:400">GB/IE &middot; SHADOW ONLY &middot; RICH CONTEXT HAS NO MODEL YET AND PICKS NOTHING &middot; PRIME IS UNCHANGED</span>
   </div>
+  <div style="font-size:10px;color:#777;margin-bottom:4px;">TODAY'S SUGGESTIONS &middot; PRIME'S PICK FROM THE NEWEST RUN, WITH EVERYTHING VELO NOW HOLDS ON THAT HORSE <span id="rc-suggest-run" style="color:#999"></span></div>
+  <div id="rc-suggest-summary" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;"></div>
+  <div id="rc-suggest" style="max-height:460px;overflow:auto;margin-bottom:12px;"></div>
   <div style="font-size:10px;color:#777;margin-bottom:4px;">EVIDENCE VELO NOW HOLDS PER RUNNER (first packet of the day &rarr; latest)</div>
   <div id="rc-evidence" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
   <div id="rc-runs" style="font-size:10px;color:#777;margin-top:6px;"></div>
@@ -4540,6 +4543,58 @@ async function loadRichContext() {
     document.getElementById('rc-runs').innerHTML = runs.length
       ? 'Scoring runs today: ' + runs.map(r => `${esc(r.run_type || '')} ${esc(r.status || '')} ${esc(String(r.started_at || '').slice(11, 16))}Z (${esc(String(r.runners_processed ?? ''))} runners)`).join(' &middot; ')
       : '';
+    const sg = data.suggestions || {};
+    const sm = sg.summary || {};
+    const ord = (n) => { n = Math.round(Number(n)); if (!isFinite(n)) return '—'; const s = ['th', 'st', 'nd', 'rd']; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+    const pcnt = (v) => v === null || v === undefined ? '—' : `${Math.round(Number(v) * 100)}%`;
+    document.getElementById('rc-suggest-run').textContent = sm.run_at ? `(newest run ${String(sm.run_at).slice(11, 16)}Z)` : '';
+    document.getElementById('rc-suggest-summary').innerHTML = [
+      _wdChip('PICKS CHANGED SINCE FIRST RUN', `${sm.pick_changed || 0}/${sm.races || 0}`, sm.pick_changed ? '#ffa726' : '#ddd'),
+      _wdChip('PICK WIN% MOVED', `${sm.pick_probability_moved || 0}/${sm.races || 0}`),
+      _wdChip('PICKS WITH HISTORY', `${sm.with_history || 0}/${sm.races || 0}`, '#66bb6a'),
+      _wdChip('PICKS WITH SPOTLIGHT', `${sm.with_spotlight || 0}/${sm.races || 0}`, '#66bb6a'),
+      _wdChip('RACES WITH A WITHDRAWAL', `${sm.with_withdrawal || 0}/${sm.races || 0}`, sm.with_withdrawal ? '#ffb74d' : '#ddd'),
+    ].join('');
+    const gradeColour = { FULL: '#66bb6a', HISTORY: '#9ccc65', SPOTLIGHT: '#9ccc65', 'FORMFAV ONLY': '#777' };
+    const histLine = (x) => {
+      if (!x || x.runs === undefined) return '<span style="color:#666">no history yet</span>';
+      const bits = [`${x.runs} run${x.runs === 1 ? '' : 's'}`];
+      if (x.win_rate !== undefined) bits.push(`${pcnt(x.win_rate)} win`);
+      if (x.last_position !== undefined) bits.push(`last ${ord(x.last_position)}`);
+      if (x.days_since_last_run !== undefined) bits.push(`${x.days_since_last_run}d off`);
+      if (x.course_runs) bits.push(`${x.course_runs} here`);
+      return esc(bits.join(' · '));
+    };
+    const paceLine = (x) => (x && x.runningStyle)
+      ? esc(`style ${x.runningStyle} · early ${x.earlySpeedIndex ?? '—'} · settles ~${x.settlingPosition ?? '—'}`)
+      : '<span style="color:#666">—</span>';
+    const classLine = (x) => (x && x.assessment)
+      ? esc(String(x.assessment).replace(/_/g, ' ')) : '<span style="color:#666">—</span>';
+    const sgRows = sg.races || [];
+    document.getElementById('rc-suggest').innerHTML = sgRows.length
+      ? '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap;">'
+        + '<tr style="color:#777;text-align:left"><th>TIME</th><th>COURSE</th><th>PRIME PICK</th><th>WIN %</th><th>PRICE</th><th>FORM</th><th>HISTORY</th><th>PACE</th><th>CLASS</th><th>SPOTLIGHT</th><th>EVIDENCE</th><th>FIELD</th></tr>'
+        + sgRows.map(r => {
+          const moved = Math.abs(Number(r.prob_delta || 0)) > 0.00005;
+          const winCell = moved ? `${pcnt(r.morning_prob)} → ${pcnt(r.now_prob)}` : pcnt(r.now_prob);
+          const pickCell = esc(r.pick || '') + (r.pick_changed ? ` <span style="color:#ffa726">(was ${esc(r.morning_pick || '')})</span>` : '');
+          const spot = (r.spotlight_families || []);
+          const field = `${r.field_now ?? ''}${r.withdrawn > 0 ? ` <span style="color:#ffb74d">(−${r.withdrawn})</span>` : ''}`;
+          return `<tr style="border-top:1px solid #222"><td style="padding:2px 10px 2px 0">${esc(r.off_time || '')}</td>`
+            + `<td style="padding-right:10px;color:#ccc">${esc(r.course || '')}</td>`
+            + `<td style="padding-right:10px;color:#ffa726;font-weight:600">${pickCell}</td>`
+            + `<td style="padding-right:10px;color:${moved ? '#ffb74d' : '#ddd'}">${winCell}</td>`
+            + `<td style="padding-right:10px">${r.price === null || r.price === undefined ? '—' : esc(String(r.price))}</td>`
+            + `<td style="padding-right:10px;color:#999">${esc(r.form || '—')}</td>`
+            + `<td style="padding-right:10px">${histLine(r.history)}</td>`
+            + `<td style="padding-right:10px">${paceLine(r.pace)}</td>`
+            + `<td style="padding-right:10px">${classLine(r.class_fit)}</td>`
+            + `<td style="padding-right:10px;color:#9ccc65">${spot.length ? esc(spot.join(', ').replace(/_/g, ' ')) : '<span style="color:#666">—</span>'}</td>`
+            + `<td style="padding-right:10px;color:${gradeColour[r.evidence_grade] || '#777'}">${esc(r.evidence_grade || '')}</td>`
+            + `<td>${field}</td></tr>`;
+        }).join('')
+        + '</table><div style="font-size:10px;color:#666;margin-top:4px;">The pick is Prime\'s own: Rich Context has no fitted model, so this evidence does not re-rank anyone. EVIDENCE = what Velo holds on the pick beyond the FormFav baseline (FULL = history + Spotlight). (−n) = withdrawn since the first run.</div>'
+      : '<div style="font-size:11px;color:#777;">No run recorded for this date yet.</div>';
     const models = data.models || [];
     const boardRow = (m) => {
       const pct = (a, b) => b ? ` <span style="color:#777">(${Math.round(100 * a / b)}%)</span>` : '';

@@ -44,6 +44,7 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Runtime facts that live nowhere else
 
+- `runner_prediction_snapshots.rank` is **0-based**: rank 0 is Prime's top pick (rank 1 is the second choice). `canonical_model_scorecards.rank` is 1-based. Mixing them up misreports the pick (it happened once on 2026-11-07).
 - Hourly World job: Railway project `sincere-empathy`, service `velo-formfav-us-shadow`, cron `0 * * * *`,
   start command `python scripts/ops/run_formfav_global_shadow.py --countries au,ca,fr,hk,jp,us --persist-artifact --persist-scorecard`.
   Settlement now runs inside that same command (`--no-settle` turns it off), so no second service exists.
@@ -55,6 +56,17 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-07 (evening) — Claude Code (Sonnet 5.5) — Did Velo change its mind? New-run suggestions with evidence
+Compared:         Prime's 07:20 picks against its 11:13 rescore (Prime's output is stored in each Rich Context packet). **Top pick identical in 46 of 46 races.**
+                  Win probability moved on 166 of 465 runners (mean shift 0.002, max 0.13): all 69 runners in the 7 races with a withdrawal (field renormalised) plus
+                  97 runners at Doncaster only (7 races, max shift 0.02: a track-level input, not the new evidence). Prices (`sp_dec`) unchanged on every runner.
+                  The enrichment did not change Prime's mind, by design: Prime does not read it and Rich Context has no fitted model.
+Mistake fixed:    an earlier note called Off The Jury (race 932271) Prime's morning top pick. It was the second choice (snapshot rank is 0-based). See Runtime facts.
+Changed:          view `wake_velo_enriched_picks` (migration `wake_velo_enriched_picks`), `/api/rich-context` field `suggestions`, panel section "TODAY'S SUGGESTIONS".
+                  Contract `WAKE-VELO-DASH-02`.
+Open / broken:    no fitted challenger, so no re-ranked suggestions exist; outcomes show after sigma.
+Next safe action: after tonight's results are recorded, open the panel for today and read settled/won/top-3 per model.
+
 ### 2026-11-07 (afternoon) — Claude Code (Sonnet 5.5) — Wake Velo: rescore, all-models dashboard panel, daily schedule
 Branch / commit:  `main`; dashboard + views follow `0412446`. Operator approved the rescore, the daily schedule and the panel in chat.
 Rescore:          `VELO_AUTHORISED_RESCORE_REASON=WAKE-VELO-OFFTIME-FIX-20261107` set on `velo-prime-scoring` (redeploy ran the governed rescore on
@@ -62,7 +74,7 @@ Rescore:          `VELO_AUTHORISED_RESCORE_REASON=WAKE-VELO-OFFTIME-FIX-20261107
                   Result (second `authorised_rescore`, 11:13-11:14 UTC, PASS, 46 races / 465 runners): canonical history 56 -> 310 of 465 runners (12.0% -> 66.7%),
                   Spotlight facts 10 -> 77 (2.2% -> 16.6%), 310 runners eligible for a future fit, 6 races with full history, 4 with none. Packets 465 -> 859
                   (394 new, 71 unchanged). Prime's picks are the 07:20 set: the rescore wrote no new snapshots (that is U-7). The 7 runners absent from the packets are
-                  late scratchings (FormFav `scratched = true`), including race 932271's morning top pick Off The Jury.
+                  late scratchings (FormFav `scratched = true`), including Off The Jury (race 932271). Correction: Off The Jury was Prime's SECOND choice there; its top pick Talk To The Man is unchanged, so no Prime top pick was withdrawn.
 Dashboard:        panel `WAKE VELO · ALL MODELS` (`#rc-panel`, `/api/rich-context`): evidence coverage first batch -> latest, one scoreboard row per
                   model (clean races, same pick as Prime, settled, won, top 3) and a race-by-race grid of every model's top pick.
                   Views (read-only, `security_invoker`, service_role select only): `wake_velo_model_picks`, `rich_context_vs_prime`
@@ -70,7 +82,7 @@ Dashboard:        panel `WAKE VELO · ALL MODELS` (`#rc-panel`, `/api/rich-conte
                   A pick is a clean read only if not `TIED_*` and the lane wrote one rank-1 row (`tie_status = N/A` is not a tie). Contract `WAKE-VELO-DASH-01`.
 Schedule:         `velo-prime-scoring` cronSchedule `0 7 * * *` (was none). See U-5.
 Correction:       the earlier "No-RPR differs from Prime in 42 of 46" was wrong (tie-break and tied races). Clean figure is 31 of 37. See U-2.
-Open / broken:    Rich Context challenger still unfitted; 7 Prime runners absent from packets; `comments_processed` still 0; `hermes-agent` (H-1).
+Open / broken:    Rich Context challenger still unfitted; 7 runners absent from packets are late scratchings, none a Prime top pick; `comments_processed` still 0; `hermes-agent` (H-1).
 Next safe action: tonight after the 21:00 UTC sigma, open the panel for today: settled/won/top-3 per model fill in. Judge over weeks, not a day.
 
 ### 2026-11-07 — Claude Code (Sonnet 5.5) — Wake Velo: audit of the Rich Context lane, off-time bug fixed

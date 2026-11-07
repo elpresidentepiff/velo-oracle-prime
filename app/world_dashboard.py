@@ -159,3 +159,46 @@ def race_grid(picks: list[dict[str, Any]]) -> list[dict[str, Any]]:
         races.values(),
         key=lambda r: (r["off_minutes"] is None, r["off_minutes"] or 0, str(r["race_id"])),
     )
+
+
+def _obj(value: Any) -> dict[str, Any]:
+    """A JSON object, or {} for missing / JSON null / anything else."""
+    return value if isinstance(value, dict) else {}
+
+
+def evidence_grade(row: dict[str, Any]) -> str:
+    """How much beyond the FormFav baseline Velo holds on the pick. Not a quality or confidence score."""
+    history = bool(_obj(row.get("history")))
+    spotlight = bool(row.get("spotlight_families"))
+    if history and spotlight:
+        return "FULL"
+    if history:
+        return "HISTORY"
+    if spotlight:
+        return "SPOTLIGHT"
+    return "FORMFAV ONLY"
+
+
+def enriched_suggestions(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Prime's picks from the newest run with the evidence held on each pick.
+
+    The pick is Prime's own: Rich Context has no fitted model and re-ranks nothing here.
+    """
+    races = [
+        {**r, "history": _obj(r.get("history")), "pace": _obj(r.get("pace")),
+         "class_fit": _obj(r.get("class_fit")), "evidence_grade": evidence_grade(r)}
+        for r in rows
+    ]
+    moved = [r for r in races if abs(float(r.get("prob_delta") or 0.0)) > 0.00005]
+    return {
+        "races": races,
+        "summary": {
+            "races": len(races),
+            "pick_changed": sum(1 for r in races if r.get("pick_changed")),
+            "pick_probability_moved": len(moved),
+            "with_history": sum(1 for r in races if r["history"]),
+            "with_spotlight": sum(1 for r in races if r.get("spotlight_families")),
+            "with_withdrawal": sum(1 for r in races if (_int(r.get("withdrawn")) or 0) > 0),
+            "run_at": max((r["run_at"] for r in races if r.get("run_at")), default=None),
+        },
+    }

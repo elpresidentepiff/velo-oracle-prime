@@ -124,3 +124,51 @@ def test_panel_is_wired_read_only_and_never_claims_rich_context_ranks() -> None:
     assert "wake_velo_model_picks" in route and "rich_context_vs_prime" in route
     for write in ("method=\"POST\"", ".insert(", ".upsert(", ".delete(", "supabase_write"):
         assert write not in route
+
+
+# --- WAKE-VELO-DASH-02: today's enriched suggestions ----------------------------------------------
+from app.world_dashboard import enriched_suggestions, evidence_grade  # noqa: E402
+
+
+def _sug(race, pick="A", **kw):
+    row = {"race_id": race, "pick": pick, "morning_pick": pick, "pick_changed": False, "morning_prob": 0.40,
+           "now_prob": 0.40, "prob_delta": 0.0, "field_morning": 8, "field_now": 8, "withdrawn": 0,
+           "history": {"runs": 3}, "pace": {"runningStyle": "L"}, "class_fit": {"assessment": "comfort_zone"},
+           "spotlight_families": None, "run_at": "2026-11-07T11:14:13Z"}
+    row.update(kw)
+    return row
+
+
+def test_evidence_grade_describes_coverage_not_quality() -> None:
+    assert evidence_grade(_sug("1", spotlight_families=["pace_position"])) == "FULL"
+    assert evidence_grade(_sug("1")) == "HISTORY"
+    assert evidence_grade(_sug("1", history={}, spotlight_families=["pace_position"])) == "SPOTLIGHT"
+    assert evidence_grade(_sug("1", history={})) == "FORMFAV ONLY"
+    # JSON null from the view is treated as missing, not as evidence
+    assert evidence_grade(_sug("1", history=None, spotlight_families=None)) == "FORMFAV ONLY"
+
+
+def test_enriched_suggestions_counts_changes_and_tolerates_json_null() -> None:
+    rows = [
+        _sug("1"),
+        _sug("2", pick="B", morning_pick="A", pick_changed=True, prob_delta=0.08, now_prob=0.48, withdrawn=2,
+             spotlight_families=["pace_position"]),
+        _sug("3", history=None, pace=None, class_fit=None),
+    ]
+    out = enriched_suggestions(rows)
+    s = out["summary"]
+    assert (s["races"], s["pick_changed"], s["pick_probability_moved"]) == (3, 1, 1)
+    assert (s["with_history"], s["with_spotlight"], s["with_withdrawal"]) == (2, 1, 1)
+    assert s["run_at"] == "2026-11-07T11:14:13Z"
+    assert out["races"][2]["history"] == {} and out["races"][2]["pace"] == {} and out["races"][2]["class_fit"] == {}
+    assert enriched_suggestions([])["summary"]["races"] == 0
+
+
+def test_suggestions_are_wired_read_only_and_say_the_pick_is_primes() -> None:
+    root = Path(__file__).parents[1]
+    html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+    main = (root / "app" / "main.py").read_text(encoding="utf-8")
+    assert 'id="rc-suggest"' in html and "TODAY'S SUGGESTIONS" in html
+    assert "does not re-rank anyone" in html
+    route = main[main.index('@app.get("/api/rich-context")'):main.index('@app.get("/api/llm-brief")')]
+    assert "wake_velo_enriched_picks" in route and "enriched_suggestions" in route
