@@ -124,9 +124,14 @@ class CachedFormFavClient:
     ) -> dict[str, Any]:
         key = race_key(date, country, track, race)
         enc = urllib.parse.quote(key, safe="")
-        races = self._fetch(f"formfav_races?provider_race_key=eq.{enc}&select=metadata,form_meta,updated_at")
+        races = self._fetch(
+            f"formfav_races?provider_race_key=eq.{enc}"
+            "&select=provider_race_key,metadata,form_meta,updated_at"
+        )
         runners = self._fetch(
-            f"formfav_runner_form?provider_race_key=eq.{enc}&select=form_payload,updated_at&order=runner_number.asc"
+            f"formfav_runner_form?provider_race_key=eq.{enc}"
+            "&select=provider_race_key,runner_number,horse_name,form_payload,updated_at"
+            "&order=runner_number.asc"
         )
         if races and runners and all(self._fresh(r.get("updated_at")) for r in runners):
             # Race-level fields: meeting-race dict as the base, /form extras on top.
@@ -134,7 +139,33 @@ class CachedFormFavClient:
             base = races[0].get("metadata") or {}
             meta = {**base, **(races[0].get("form_meta") or {})}
             self.stats["cache_hits"] += 1
-            return {**meta, "runners": [r["form_payload"] for r in runners], "_source": "formfav_cache"}
+            reconstructed = []
+            for row in runners:
+                payload = dict(row["form_payload"])
+                payload["_provenance"] = {
+                    "provider_race_key": row.get("provider_race_key") or key,
+                    "provider_runner_number": row.get("runner_number"),
+                    "provider_runner_name": row.get("horse_name"),
+                    "captured_at": row.get("updated_at"),
+                    "source_table": "formfav_runner_form",
+                    "source_is_immutable": False,
+                    "evaluation_eligible": False,
+                    "ineligibility_reason": "mutable_current_cache_row",
+                }
+                reconstructed.append(payload)
+            return {
+                **meta,
+                "runners": reconstructed,
+                "_source": "formfav_cache",
+                "_provenance": {
+                    "provider_race_key": races[0].get("provider_race_key") or key,
+                    "captured_at": races[0].get("updated_at"),
+                    "source_table": "formfav_races",
+                    "source_is_immutable": False,
+                    "evaluation_eligible": False,
+                    "ineligibility_reason": "mutable_current_cache_row",
+                },
+            }
         return self._fallback("race_form", "no fresh row", date=date, track=track, race=race,
                               country=country, race_code=race_code, timezone=timezone)
 

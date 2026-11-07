@@ -82,6 +82,9 @@ def test_race_form_rebuilt_from_cache() -> None:
     assert live.calls == [] and form["raceClass"] == "Class 4"
     assert form["distance"] == "2212m" and form["weather"] == "Overcast"  # form_meta wins, meeting race fills gaps
     assert [r["name"] for r in form["runners"]] == ["A", "B"]
+    assert form["_provenance"]["source_is_immutable"] is False
+    assert form["_provenance"]["evaluation_eligible"] is False
+    assert form["runners"][0]["_provenance"]["captured_at"] == FRESH
 
 
 def test_stale_rows_fall_back_to_live() -> None:
@@ -168,4 +171,5 @@ def test_real_enrichment_runs_end_to_end_on_cached_data_with_no_live_client() ->
     assert audit["races_matched"] == 1 and audit["runners_matched"] == 1 and audit["form_calls_ok"] == 1
     assert f["ff_speedmap_present"] == 1.0 and f["ff_class_fit_present"] == 1.0
     assert f["ff_pace_scenario_present"] == 1.0 and f["ff_form_present"] == 1.0
+    assert not any("badge" in key for key in f)
     assert client.stats["cache_hits"] >= 2 and client.stats["live_fallbacks"] == 0

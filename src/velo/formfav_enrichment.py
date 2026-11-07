@@ -398,6 +398,7 @@ def enrich_existing_racecards(
                 "prizeMoney": form.get("prizeMoney") or mrace.get("prizeMoney"),
                 "distance": distance_raw,
                 "trackBias": track_bias,
+                "provenance": form.get("_provenance") or {},
             }
 
             price_map = _price_by_runner(prices)
@@ -453,12 +454,12 @@ def enrich_existing_racecards(
                     "form": ff.get("form"),
                     "last20Starts": ff.get("last20Starts"),
                     "stats": ff.get("stats") or {},
-                    "decorators": ff.get("decorators") or [],
                     "speedMap": ff.get("speedMap"),
                     "classProfile": ff.get("classProfile"),
                     "raceClassFit": ff.get("raceClassFit"),
                     "market": market,
                     "identity_match_method": runner_match_method,
+                    "provenance": ff.get("_provenance") or {},
                 }
 
                 # Fill missing primary fields. Never overwrite existing values.

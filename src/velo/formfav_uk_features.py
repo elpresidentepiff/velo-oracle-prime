@@ -352,23 +352,8 @@ def build_formfav_uk_shadow_features(race: dict[str, Any], runner: dict[str, Any
     # A matched row with no sample is not evidence; keep the distinction explicit.
     out["ff_barrier_bias_sample_ok"] = 1.0 if (out.get("ff_barrier_bias_starts") or 0.0) > 0 else 0.0
 
-    # Decorators are derived summaries of data already present. Keep only
-    # diagnostic counts to avoid double-counting the same fact in a future model.
-    decorators = ff.get("decorators") if isinstance(ff.get("decorators"), list) else []
-    pos = neg = neutral = 0
-    for badge in decorators:
-        if not isinstance(badge, dict):
-            continue
-        sentiment = str(badge.get("sentiment") or "")
-        if sentiment == "+":
-            pos += 1
-        elif sentiment == "-":
-            neg += 1
-        else:
-            neutral += 1
-    out["ff_badge_positive_count"] = float(pos)
-    out["ff_badge_negative_count"] = float(neg)
-    out["ff_badge_neutral_count"] = float(neutral)
+    # Provider badges/decorators encode recommendations and are deliberately
+    # absent from the challenger vector. They belong only in diagnostics.
 
     # Quality gate. This is intentionally strict because the US test proved
     # provider-derived history can be incomplete or misidentified.
