@@ -96,10 +96,14 @@ def summarise_rich_context(rows: list[dict[str, Any]]) -> dict[str, Any]:
     out: dict[str, Any] = {"races": len(rows), "runners": runners}
     for family in ("history", "spotlight"):
         before, now = total(f"{family}_before"), total(f"{family}_now")
-        out.update({
-            f"{family}_before": before, f"{family}_now": now,
-            f"{family}_before_pct": pct(before), f"{family}_now_pct": pct(now),
-        })
+        out.update(
+            {
+                f"{family}_before": before,
+                f"{family}_now": now,
+                f"{family}_before_pct": pct(before),
+                f"{family}_now_pct": pct(now),
+            }
+        )
     out["formfav_now"] = total("formfav_now")
     out["formfav_now_pct"] = pct(out["formfav_now"])
     out["packet_batches"] = max((_int(r.get("packet_batches")) or 0 for r in rows), default=0)
@@ -129,16 +133,22 @@ def model_scoreboard(picks: list[dict[str, Any]]) -> list[dict[str, Any]]:
         comparable = [r for r in clean if r["race_id"] in prime_clean]
         settled = [r for r in clean if _int(r.get("result_position")) is not None]
         label, note = MODEL_META.get(name, (name, None))
-        board.append({
-            "model": name, "label": label, "note": note,
-            "lane": rows[0].get("lane_name"),
-            "races": len(rows), "clean": len(clean), "unclean": len(rows) - len(clean),
-            "comparable_with_prime": len(comparable),
-            "agree_with_prime": sum(1 for r in comparable if r.get("agrees_with_prime")),
-            "settled": len(settled),
-            "won": sum(1 for r in settled if r.get("win")),
-            "top3": sum(1 for r in settled if (_int(r.get("result_position")) or 99) <= 3),
-        })
+        board.append(
+            {
+                "model": name,
+                "label": label,
+                "note": note,
+                "lane": rows[0].get("lane_name"),
+                "races": len(rows),
+                "clean": len(clean),
+                "unclean": len(rows) - len(clean),
+                "comparable_with_prime": len(comparable),
+                "agree_with_prime": sum(1 for r in comparable if r.get("agrees_with_prime")),
+                "settled": len(settled),
+                "won": sum(1 for r in settled if r.get("win")),
+                "top3": sum(1 for r in settled if (_int(r.get("result_position")) or 99) <= 3),
+            }
+        )
     return board
 
 
@@ -146,15 +156,23 @@ def race_grid(picks: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """One row per race with every model's top pick, in card order."""
     races: dict[str, dict[str, Any]] = {}
     for row in picks:
-        race = races.setdefault(str(row.get("race_id")), {
-            "race_id": row.get("race_id"), "course": row.get("course"),
-            "off_time": row.get("off_time"), "off_minutes": row.get("off_minutes"),
-            "prime_horse": row.get("prime_horse"), "cells": {},
-        })
+        race = races.setdefault(
+            str(row.get("race_id")),
+            {
+                "race_id": row.get("race_id"),
+                "course": row.get("course"),
+                "off_time": row.get("off_time"),
+                "off_minutes": row.get("off_minutes"),
+                "prime_horse": row.get("prime_horse"),
+                "cells": {},
+            },
+        )
         race["cells"][str(row.get("model_name"))] = {
-            "horse": row.get("top_horse"), "clean": is_clean_pick(row),
+            "horse": row.get("top_horse"),
+            "clean": is_clean_pick(row),
             "agrees": bool(row.get("agrees_with_prime")),
-            "position": _int(row.get("result_position")), "won": row.get("win"),
+            "position": _int(row.get("result_position")),
+            "won": row.get("win"),
         }
     return sorted(
         races.values(),
@@ -186,8 +204,13 @@ def enriched_suggestions(rows: list[dict[str, Any]]) -> dict[str, Any]:
     The pick is Prime's own: Rich Context has no fitted model and re-ranks nothing here.
     """
     races = [
-        {**r, "history": _obj(r.get("history")), "pace": _obj(r.get("pace")),
-         "class_fit": _obj(r.get("class_fit")), "evidence_grade": evidence_grade(r)}
+        {
+            **r,
+            "history": _obj(r.get("history")),
+            "pace": _obj(r.get("pace")),
+            "class_fit": _obj(r.get("class_fit")),
+            "evidence_grade": evidence_grade(r),
+        }
         for r in rows
     ]
     moved = [r for r in races if abs(float(r.get("prob_delta") or 0.0)) > 0.00005]
@@ -253,8 +276,12 @@ def world_picks(
     races: list[dict[str, Any]] = []
     for r in rows:
         off = _when(r.get("start_time"))
-        ff = ff_by_race.get((str(r.get("country") or "").lower(), str(r.get("track") or "").lower(),
-                             _int(r.get("race_number")))) or {}
+        ff = (
+            ff_by_race.get(
+                (str(r.get("country") or "").lower(), str(r.get("track") or "").lower(), _int(r.get("race_number")))
+            )
+            or {}
+        )
         flags = []
         if r.get("tied_top"):
             flags.append("TIED")
@@ -263,23 +290,31 @@ def world_picks(
         if r.get("price_state") != "REAL":
             flags.append("NO_MARKET")
         ff_pick = ff.get("pick1_name")
-        races.append({
-            **r,
-            "off_label": ff.get("off_uk") or (off.strftime("%H:%M") if off else ""),
-            "upcoming": bool(off and off > now),
-            "outcome": _outcome(r),
-            "result_is_final": r.get("result_basis") == "final",
-            "clean": "TIED" not in flags and "DUP_RANK" not in flags,
-            "flags": flags,
-            "formfav_pick": ff_pick,
-            "formfav_win_prob": ff.get("pick1_win"),
-            "agrees_with_formfav": (_name_key(ff_pick) == _name_key(r.get("pick_name"))) if ff_pick else None,
-        })
-    races.sort(key=lambda x: (x["upcoming"] is False, _when(x.get("start_time")) or now,
-                              str(x.get("country")), str(x.get("track")), _int(x.get("race_number")) or 0))
+        races.append(
+            {
+                **r,
+                "off_label": ff.get("off_uk") or (off.strftime("%H:%M") if off else ""),
+                "upcoming": bool(off and off > now),
+                "outcome": _outcome(r),
+                "result_is_final": r.get("result_basis") == "final",
+                "clean": "TIED" not in flags and "DUP_RANK" not in flags,
+                "flags": flags,
+                "formfav_pick": ff_pick,
+                "formfav_win_prob": ff.get("pick1_win"),
+                "agrees_with_formfav": (_name_key(ff_pick) == _name_key(r.get("pick_name"))) if ff_pick else None,
+            }
+        )
+    races.sort(
+        key=lambda x: (
+            x["upcoming"] is False,
+            _when(x.get("start_time")) or now,
+            str(x.get("country")),
+            str(x.get("track")),
+            _int(x.get("race_number")) or 0,
+        )
+    )
     priced = [x for x in races if x.get("price_state") == "REAL"]
-    final = [x for x in races if x["outcome"] != "PENDING" and x["result_is_final"]
-             and x["outcome"] != "NO_RESULT"]
+    final = [x for x in races if x["outcome"] != "PENDING" and x["result_is_final"] and x["outcome"] != "NO_RESULT"]
     final_clean = [x for x in final if x["clean"]]
     with_ff = [x for x in races if x["agrees_with_formfav"] is not None]
     by_country: dict[str, int] = {}
