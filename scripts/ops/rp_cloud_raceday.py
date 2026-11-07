@@ -78,7 +78,7 @@ def main() -> int:
     parser.add_argument("--no-notify", action="store_true")
     parser.add_argument(
         "--authorised-rescore-reason",
-        default=None,
+        default=os.getenv("VELO_AUTHORISED_RESCORE_REASON"),
         help="Explicit incident/reason forwarded to the governed scorer; prior PASS rows are preserved.",
     )
     parser.add_argument(
