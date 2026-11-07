@@ -99,3 +99,10 @@ def test_immutable_migration_is_service_role_only_and_append_only() -> None:
     assert "revoke all on function public.reject_formfav_evidence_mutation() from public, anon, authenticated" in lowered
     assert "grant update" not in lowered
     assert "grant delete" not in lowered
+
+    hardening = Path(
+        "supabase/migrations/20261107095000_harden_formfav_factual_evidence_grants.sql"
+    ).read_text().lower()
+    for privilege in ("update", "delete", "truncate", "references", "trigger"):
+        assert privilege in hardening
+    assert "from service_role" in hardening
