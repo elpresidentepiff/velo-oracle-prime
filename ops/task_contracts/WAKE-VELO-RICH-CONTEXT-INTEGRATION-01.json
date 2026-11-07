@@ -1,0 +1,72 @@
+{
+  "task_id": "WAKE-VELO-RICH-CONTEXT-INTEGRATION-01",
+  "title": "Wire auditable Rich Context evidence into a separate unfitted shadow challenger",
+  "classification": "AUTHORIZED_SHADOW_EVIDENCE_INTEGRATION",
+  "allowed_paths": [
+    "app/services/rich_context_history_provider.py",
+    "config/rich_context_challenger_protocol_v1.json",
+    "ops/task_contracts/OPS-TASK-CONTRACT-WINDOWS-01.json",
+    "ops/task_contracts/WAKE-VELO-FORMFAV-EVIDENCE-01.classification.txt",
+    "ops/task_contracts/WAKE-VELO-FORMFAV-EVIDENCE-01.json",
+    "ops/task_contracts/WAKE-VELO-PHASE3.json",
+    "ops/task_contracts/WAKE-VELO-RICH-CONTEXT-INTEGRATION-01.classification.txt",
+    "ops/task_contracts/WAKE-VELO-RICH-CONTEXT-INTEGRATION-01.json",
+    "ops/task_contracts/WAKE-VELO-SPOTLIGHT-SHADOW-01.json",
+    "scripts/ops/formfav_live_worker.py",
+    "scripts/ops/run_formfav_uk_enhanced_shadow.py",
+    "scripts/ops/run_prime_today.py",
+    "scripts/ops/task_contract_runner.py",
+    "src/velo/formfav_cache_client.py",
+    "src/velo/formfav_enrichment.py",
+    "src/velo/formfav_evidence_store.py",
+    "src/velo/rich_context_challenger.py",
+    "src/velo/rich_context_comment_intelligence.py",
+    "src/velo/rich_context_shadow_store.py",
+    "src/velo/runner_snapshot_store.py",
+    "supabase/migrations/20261107100000_rich_context_shadow_packets.sql",
+    "tests/test_formfav_cache_client.py",
+    "tests/test_formfav_evidence_store.py",
+    "tests/test_rich_context_challenger.py",
+    "tests/test_rich_context_comment_intelligence.py",
+    "tests/test_rich_context_history_provider.py",
+    "tests/test_rich_context_shadow_store.py",
+    "tests/test_task_contract_runner.py"
+  ],
+  "forbidden_paths": [
+    ".env",
+    "src/intelligence/velo_prime_ensemble.py",
+    "app/services/velo_prime_service.py",
+    "models/sqpe_v17/",
+    "models/sqpe_v18/",
+    "models/specialist/",
+    "models/tie_v9/"
+  ],
+  "allowed_actions": [
+    "freeze_protocol",
+    "capture_pre_off_factual_evidence",
+    "build_shadow_packets",
+    "run_tests",
+    "audit_prime_invariance"
+  ],
+  "forbidden_actions": [
+    "production_model_change",
+    "model_weight_change",
+    "gate_bypass",
+    "provider_prediction_consumption",
+    "live_betting",
+    "telegram_send",
+    "model_promotion"
+  ],
+  "forbidden_keywords": [
+    "provider_predictions_consumed\": true",
+    "production_influence\": true"
+  ],
+  "classification_required": [
+    "SHADOW_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_PROVIDER_PREDICTION_CONSUMPTION",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "PAPER_SIM_ONLY"
+  ]
+}

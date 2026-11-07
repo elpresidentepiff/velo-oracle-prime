@@ -1,0 +1,54 @@
+{
+  "task_id": "WAKE-VELO-SPOTLIGHT-SHADOW-01",
+  "title": "Build time-safe Racing Post Spotlight factual shadow evidence",
+  "classification": "AUTHORIZED_SHADOW_EVIDENCE_HARDENING",
+  "allowed_paths": [
+    "ops/task_contracts/WAKE-VELO-SPOTLIGHT-SHADOW-01.json",
+    "src/velo/rich_context_comment_intelligence.py",
+    "scripts/ops/run_prime_today.py",
+    "tests/test_rich_context_comment_intelligence.py"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "app/services/velo_prime_service.py",
+    "models/",
+    ".env"
+  ],
+  "allowed_actions": [
+    "parse_preoff_spotlight_facts",
+    "reject_tip_and_verdict_language",
+    "bind_exact_shadow_identity",
+    "attach_shadow_packet_after_prime_returns",
+    "create_tests",
+    "run_tests"
+  ],
+  "forbidden_actions": [
+    "model_weight_change",
+    "prime_probability_change",
+    "production_feature_injection",
+    "name_only_identity_join",
+    "post_off_feature_consumption",
+    "tip_or_verdict_consumption",
+    "gate_bypass",
+    "live_betting",
+    "telegram_send",
+    "model_promotion"
+  ],
+  "forbidden_keywords": [],
+  "required_outputs": [
+    "src/velo/rich_context_comment_intelligence.py",
+    "tests/test_rich_context_comment_intelligence.py"
+  ],
+  "classification_required": [
+    "NO_PROVIDER_PREDICTION_CONSUMPTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "PAPER_SIM_ONLY"
+  ],
+  "final_classifications": [
+    "NO_PROVIDER_PREDICTION_CONSUMPTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "PAPER_SIM_ONLY"
+  ]
+}

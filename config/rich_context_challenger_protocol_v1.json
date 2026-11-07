@@ -1,0 +1,58 @@
+{
+  "protocol_version": "RICH_CONTEXT_PROTOCOL_V1",
+  "status": "FROZEN_BEFORE_MODEL_FIT",
+  "production_influence": false,
+  "paper_sim_only": true,
+  "estimator": {
+    "class": "logistic_regression",
+    "objective": "binary_win_probability",
+    "penalty": "l2",
+    "solver": "lbfgs",
+    "max_iter": 2000,
+    "random_seed": 2607,
+    "class_weight": "balanced_by_training_fold",
+    "candidate_C": [0.05, 0.1, 0.25, 0.5, 1.0],
+    "selection_metric": "validation_log_loss"
+  },
+  "calibration": {
+    "method": "isotonic_when_validation_rows_gte_1000_else_sigmoid",
+    "fit_scope": "validation_only",
+    "holdout_refit_forbidden": true
+  },
+  "universe": {
+    "jurisdictions": ["uk", "ire"],
+    "identity_minimum": "exact_numeric_rp_horse_id",
+    "pre_off_evidence_required": true,
+    "scratched_runners_excluded": true,
+    "settled_result_required_for_labels": true,
+    "same_runner_universe_for_all_ablations": true
+  },
+  "split_policy": {
+    "method": "chronological_three_way",
+    "training_end": null,
+    "validation_end": null,
+    "untouched_holdout_end": null,
+    "dates_must_be_frozen_in_dataset_manifest_before_fit": true
+  },
+  "feature_families": [
+    "prime_baseline_snapshot",
+    "canonical_history",
+    "rp_spotlight_facts",
+    "formfav_raw_facts",
+    "formfav_pace_context",
+    "formfav_class_context",
+    "formfav_track_bias_context",
+    "connections_passports",
+    "market_facts"
+  ],
+  "provider_prediction_features_forbidden": true,
+  "promotion_criteria": {
+    "minimum_forward_races": 500,
+    "minimum_identity_coverage": 0.8,
+    "primary_metric": "log_loss_lift_vs_prime_same_universe",
+    "calibration_must_not_degrade": true,
+    "bootstrap_confidence_required": true,
+    "longshot_sensitivity_required": true,
+    "human_tribunal_required": true
+  }
+}

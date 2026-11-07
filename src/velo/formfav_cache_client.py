@@ -22,6 +22,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from src.velo.formfav_client import FormFavClient, FormFavError
+from src.velo.formfav_feature_contract import SCHEMA_VERSION, content_hash, parse_timestamp
 
 
 def race_key(date_str: str, country: str, slug: str, race_no: int) -> str:
@@ -133,6 +134,65 @@ class CachedFormFavClient:
             "&select=provider_race_key,runner_number,horse_name,form_payload,updated_at"
             "&order=runner_number.asc"
         )
+        captures = self._fetch(
+            f"formfav_factual_captures?provider_race_key=eq.{enc}"
+            "&select=id,provider_race_key,provider_runner_number,provider_runner_name,"
+            "source_payload,source_payload_sha256,captured_at,off_time_utc,capture_schema_version"
+            "&order=captured_at.desc&limit=1000"
+        )
+        latest_captures: dict[int, dict[str, Any]] = {}
+        for capture in captures:
+            captured_at = parse_timestamp(capture.get("captured_at"))
+            off_time = parse_timestamp(capture.get("off_time_utc"))
+            payload = capture.get("source_payload")
+            if (
+                capture.get("capture_schema_version") != SCHEMA_VERSION
+                or captured_at is None
+                or off_time is None
+                or captured_at >= off_time
+                or not isinstance(payload, dict)
+                or content_hash(payload) != capture.get("source_payload_sha256")
+            ):
+                continue
+            try:
+                number = int(capture.get("provider_runner_number"))
+            except (TypeError, ValueError):
+                continue
+            if number not in latest_captures:
+                latest_captures[number] = capture
+        if races and latest_captures:
+            base = races[0].get("metadata") or {}
+            meta = {**base, **(races[0].get("form_meta") or {})}
+            reconstructed = []
+            for number in sorted(latest_captures):
+                row = latest_captures[number]
+                payload = dict(row.get("source_payload") or {})
+                payload["_provenance"] = {
+                    "capture_id": row.get("id"),
+                    "provider_race_key": row.get("provider_race_key") or key,
+                    "provider_runner_number": number,
+                    "provider_runner_name": row.get("provider_runner_name"),
+                    "captured_at": row.get("captured_at"),
+                    "off_time_utc": row.get("off_time_utc"),
+                    "source_table": "formfav_factual_captures",
+                    "source_is_immutable": True,
+                    "evaluation_eligible": True,
+                    "capture_schema_version": row.get("capture_schema_version"),
+                }
+                reconstructed.append(payload)
+            self.stats["cache_hits"] += 1
+            return {
+                **meta,
+                "runners": reconstructed,
+                "_source": "formfav_immutable_factual_capture",
+                "_provenance": {
+                    "provider_race_key": key,
+                    "captured_at": max(str(r.get("captured_at") or "") for r in latest_captures.values()),
+                    "source_table": "formfav_factual_captures",
+                    "source_is_immutable": True,
+                    "evaluation_eligible": True,
+                },
+            }
         if races and runners and all(self._fresh(r.get("updated_at")) for r in runners):
             # Race-level fields: meeting-race dict as the base, /form extras on top.
             # (The enrichment already prefers form values and falls back to these.)

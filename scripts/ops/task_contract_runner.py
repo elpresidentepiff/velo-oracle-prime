@@ -16,7 +16,7 @@ import os
 import subprocess
 import sys
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import List, Optional, Tuple
 
 # Identify ROOT
@@ -35,11 +35,20 @@ TASK_CONTRACT_FAILED = "TASK_CONTRACT_FAILED"
 
 def _run_git(args: List[str], cwd: Path = ROOT) -> str:
     try:
-        return subprocess.check_output(
-            ["git"] + args, cwd=cwd, stderr=subprocess.STDOUT, text=True
-        ).strip()
+        completed = subprocess.run(
+            ["git"] + args,
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True,
+        )
+        # Successful Git commands may emit line-ending advisories on stderr.
+        # Diagnostics are never repository paths or diff evidence.
+        return completed.stdout.strip()
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Git command failed: {e.output}")
+        detail = (e.stderr or e.stdout or str(e)).strip()
+        raise RuntimeError(f"Git command failed: {detail}")
     except Exception as e:
         raise RuntimeError(f"Failed to run git: {str(e)}")
 
@@ -94,6 +103,17 @@ def check_keywords(diff_text: str, forbidden_keywords: List[str]) -> List[str]:
         if kw in diff_text:
             hits.append(kw)
     return hits
+
+
+def _normalise_repo_relative_path(path: str | Path) -> str:
+    """Return a stable Git-style path on every supported host.
+
+    Git reports changed files with ``/`` separators even on Windows, while
+    ``str(Path.relative_to(...))`` uses the host separator.  Normalising both
+    sides prevents a task contract from scanning its own forbidden-keyword
+    declarations without weakening keyword checks for any implementation file.
+    """
+    return PurePosixPath(str(path).replace("\\", "/")).as_posix()
 
 def main():
     parser = argparse.ArgumentParser(description="VÉLØ Task Contract Runner")
@@ -189,11 +209,13 @@ def main():
             # Keywords
             forbidden_keywords = contract["forbidden_keywords"]
             keyword_hits = []
-            rel_contract_path = str(contract_path.relative_to(ROOT))
+            rel_contract_path = _normalise_repo_relative_path(
+                contract_path.resolve().relative_to(ROOT.resolve())
+            )
             
             for f in changed_files:
                 # SKIP keyword check on the contract file itself to avoid self-triggering
-                if f == rel_contract_path:
+                if _normalise_repo_relative_path(f) == rel_contract_path:
                     continue
                 
                 f_diff = ""

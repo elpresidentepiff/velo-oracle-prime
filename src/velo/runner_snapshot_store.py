@@ -83,6 +83,8 @@ _PRED_FIELDS = [
     "router_reasons",
     "sp_dec",
     "is_fav",
+    "rich_context_comment_shadow",
+    "rich_context_shadow",
 ]
 
 # Safety invariants written on every snapshot row

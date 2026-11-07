@@ -1,0 +1,13 @@
+WAKE-VELO-FORMFAV-EVIDENCE-01 final classifications
+
+NO_PROVIDER_PREDICTION_CONSUMPTION
+NO_LIVE_SCORING_CHANGE
+NO_MODEL_WEIGHT_CHANGE
+PAPER_SIM_ONLY
+
+Atomic audit note: this classification belongs only to the files in the
+contract's allowed_paths. The shared worktree concurrently contains uncommitted
+history-provider and Spotlight changes owned by other agents. A whole-worktree
+task_contract_runner audit will correctly report those paths as out of scope;
+the phase must be committed atomically or verified in an isolated worktree
+before that audit can be PASS without broadening this contract.

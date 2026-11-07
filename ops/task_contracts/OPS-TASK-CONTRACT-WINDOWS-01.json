@@ -1,0 +1,36 @@
+{
+  "task_id": "OPS-TASK-CONTRACT-WINDOWS-01",
+  "title": "Normalise task-contract self-skip paths on Windows",
+  "classification": "GOVERNANCE_TOOLING_REPAIR",
+  "allowed_paths": [
+    "scripts/ops/task_contract_runner.py",
+    "tests/test_task_contract_runner.py",
+    "ops/task_contracts/OPS-TASK-CONTRACT-WINDOWS-01.json"
+  ],
+  "forbidden_paths": [
+    "app/services/velo_prime_service.py",
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    ".env"
+  ],
+  "allowed_actions": [
+    "normalise_repository_relative_paths",
+    "preserve_forbidden_keyword_enforcement",
+    "add_regression_tests",
+    "run_governance_verification"
+  ],
+  "forbidden_actions": [
+    "weaken_keyword_scanning",
+    "model_weight_change",
+    "live_scoring_change",
+    "model_promotion",
+    "credential_change"
+  ],
+  "forbidden_keywords": [],
+  "classification_required": [
+    "GOVERNANCE_TOOLING_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_MODEL_PROMOTION"
+  ]
+}

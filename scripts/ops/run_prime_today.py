@@ -1917,10 +1917,57 @@ def main():
     # scored entries: (race, preds, tier, reasons)
     print("\nSTEP 3: Score through score_race_velo_prime (velo_prime_v1)")
     from src.velo.product_router import ProductRouter
+    from app.services.rich_context_history_provider import (
+        CanonicalHistoryProvider,
+        SupabaseHistoricalRunRepository,
+    )
+    from src.velo.rich_context_challenger import (
+        assert_prime_invariant as _assert_rich_context_prime_invariant,
+        build_runner_shadow_packet as _build_rich_context_packet,
+    )
 
     router = ProductRouter()
 
+    # FormFav runs first in the governed orchestrator. Load only immutable,
+    # already-eligible manifests and bind them by exact canonical IDs. Missing
+    # evidence remains missing; there is no name or cross-date fallback.
+    _formfav_manifest_by_key: dict[tuple[str, str], dict] = {}
+    _history_provider = CanonicalHistoryProvider(SupabaseHistoricalRunRepository(db)) if db else None
+    if db:
+        try:
+            _race_ids = [str(r.get("race_id") or "") for r in normalized if r.get("race_id")]
+            if _race_ids:
+                _manifest_rows = (
+                    db.table("formfav_rich_context_manifests")
+                    .select("*")
+                    .in_("canonical_race_id", _race_ids)
+                    .eq("training_eligible", True)
+                    .order("created_at", desc=True)
+                    .execute()
+                    .data
+                    or []
+                )
+                for _row in _manifest_rows:
+                    _key = (
+                        str(_row.get("canonical_race_id") or ""),
+                        str(_row.get("canonical_runner_id") or ""),
+                    )
+                    if not all(_key) or _key in _formfav_manifest_by_key:
+                        continue
+                    _formfav_manifest_by_key[_key] = {
+                        "training_eligible": bool(_row.get("training_eligible")),
+                        "derived_vector_hash": _row.get("derived_vector_sha256"),
+                        "families": _row.get("feature_families") or {},
+                    }
+        except Exception as _manifest_err:
+            log.warning("Rich Context FormFav manifest preload failed closed: %s", _manifest_err)
+            _formfav_manifest_by_key = {}
+
     # Initialize Spotlight Engine
+    from src.velo.rich_context_comment_intelligence import (
+        attach_comment_shadow_by_horse_id,
+        build_race_comment_shadow_packet,
+    )
     from workers.spotlight_parser import extract_spotlight_signals
 
     # Sentient bridge — Phase 1 (audit only, no scoring change)
@@ -1988,8 +2035,10 @@ def main():
     score_errors = []
     _race_timings: list[dict] = []
     _spotlight_total = 0
+    _rich_context_comment_eligible_total = 0
     _pdf_intel_attached_total = 0
     _flatlines: list[dict] = []
+    _rich_context_packets: list[dict] = []
     for race in normalized:
         cid = f"{race.get('course')} {race.get('off_time', '?')}"
 
@@ -2036,11 +2085,86 @@ def main():
         _pdf_attached_this_race = sum(1 for r in race.get("runners", []) if r.get("pdf_intel"))
         _pdf_intel_attached_total += _pdf_attached_this_race
 
+        # Rich Context shadow parses RP Spotlight evidence before any shadow
+        # challenger can score it.  The builder is read-only: the canonical
+        # ``race`` object passed to production Prime below is not mutated, and
+        # Prime never receives this packet.
+        _comment_shadow_packet = build_race_comment_shadow_packet(
+            race,
+            captured_at=race.get("fetch_timestamp"),
+        )
+        _rich_context_comment_eligible_total += _comment_shadow_packet["eligible_runner_count"]
+
         _t_score_start = time.perf_counter()
         try:
             preds = score_race_velo_prime(race, sentient_state=_sentient_state)
             _t_score_vp = time.perf_counter() - _t_score_start
             if preds:
+                _prime_before_rich_context = [dict(pred) for pred in preds]
+                # Exact prediction horse_id join only. Missing, unknown, or
+                # duplicate IDs fail closed; horse names are never consulted.
+                attach_comment_shadow_by_horse_id(preds, _comment_shadow_packet)
+
+                # Build the separate Rich Context evidence lane. Production
+                # Prime has already returned; this code cannot feed any value
+                # back into its probability, rank, tier, router or execution.
+                _runner_by_id = {
+                    str(item.get("horse_id") or ""): item
+                    for item in race.get("runners", [])
+                    if item.get("horse_id")
+                }
+                _off_iso = _comment_shadow_packet.get("off_time_utc")
+                try:
+                    _history_cutoff = datetime.fromisoformat(str(_off_iso)) if _off_iso else None
+                except ValueError:
+                    _history_cutoff = None
+                for _pred in preds:
+                    _horse_id = str(_pred.get("horse_id") or "")
+                    _raw = _runner_by_id.get(_horse_id, {})
+                    if _history_provider and _history_cutoff:
+                        try:
+                            _history = _history_provider.build(
+                                horse_id=_horse_id,
+                                as_of_cutoff=_history_cutoff,
+                                current_course=race.get("course"),
+                                current_distance_f=race.get("distance_f"),
+                                current_going=race.get("going"),
+                                current_race_class=race.get("race_class") or race.get("class"),
+                                current_jockey_id=_raw.get("jockey_id"),
+                                current_trainer_id=_raw.get("trainer_id"),
+                            )
+                        except Exception as _history_err:
+                            _history = {
+                                "eligible": False,
+                                "source_row_ids": [],
+                                "features": {},
+                                "ineligibility_reasons": [f"HISTORY_PROVIDER_ERROR:{type(_history_err).__name__}"],
+                            }
+                    else:
+                        _history = {
+                            "eligible": False,
+                            "source_row_ids": [],
+                            "features": {},
+                            "ineligibility_reasons": ["HISTORY_PROVIDER_UNAVAILABLE"],
+                        }
+                    _packet = _build_rich_context_packet(
+                        race_id=str(race.get("race_id") or ""),
+                        horse_id=_horse_id,
+                        race_date=date_str,
+                        prime_snapshot=_pred,
+                        formfav_manifest=_formfav_manifest_by_key.get(
+                            (str(race.get("race_id") or ""), _horse_id)
+                        ),
+                        history_packet=_history,
+                        comment_packet=_pred.get("rich_context_comment_shadow"),
+                        market_facts={
+                            "sp_dec": _pred.get("sp_dec"),
+                            "is_fav": _pred.get("is_fav"),
+                        },
+                    )
+                    _pred["rich_context_shadow"] = _packet
+                    _rich_context_packets.append(_packet)
+                _assert_rich_context_prime_invariant(_prime_before_rich_context, preds)
                 # Load RPDC data for this race to inform RPD-C tags
                 race_rpdc = _fetch_race_rpdc(race.get("race_id", ""))
                 # Deterministic fallback (June 9 pattern): exact race_id join
@@ -2364,6 +2488,42 @@ def main():
             print(f"  FAIL  {cid} — {e}")
 
     print(f"\n  Scored: {len(scored)}  Errors: {len(score_errors)}")
+    print(
+        "  Rich Context comment shadow: "
+        f"{_rich_context_comment_eligible_total} runners eligible "
+        "(pre-off + exact identity + allowlisted facts; Prime unchanged)"
+    )
+    _rich_context_store_result = {"attempted": 0, "inserted": 0, "existing": 0}
+    try:
+        from src.velo.rich_context_shadow_store import (
+            persist_supabase_rows as _persist_rich_context_rows,
+            write_local_jsonl as _write_rich_context_jsonl,
+        )
+
+        _rich_context_path = (
+            ROOT / "data" / "rich_context" / f"rich_context_shadow_{date_tag}_{commit_sha[:8]}.jsonl"
+        )
+        _local_packet_count = _write_rich_context_jsonl(
+            _rich_context_packets,
+            output_path=_rich_context_path,
+            code_sha=commit_sha,
+        )
+        if persistence_enabled and db:
+            _rich_context_store_result = _persist_rich_context_rows(
+                _rich_context_packets,
+                client=db,
+                code_sha=commit_sha,
+            )
+        else:
+            _rich_context_store_result["attempted"] = len(_rich_context_packets)
+        print(
+            "  Rich Context shadow packets: "
+            f"local={_local_packet_count} db={_rich_context_store_result} "
+            "model=AWAITING_FROZEN_MODEL_FIT"
+        )
+    except Exception as _rich_context_store_err:
+        log.warning("Rich Context shadow persistence failed without affecting Prime: %s", _rich_context_store_err)
+        print(f"  Rich Context shadow persistence: FAIL_CLOSED ({_rich_context_store_err})")
 
     # ── Flatline summary (Issue #85) ──────────────────────────────────────────
     _flatline_summary = _flatline_summary_for_run(_flatlines, total_races=len(scored))

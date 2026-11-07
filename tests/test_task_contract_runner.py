@@ -6,7 +6,8 @@ from pathlib import Path
 from scripts.ops.task_contract_runner import (
     TASK_CONTRACT_OK, TASK_CONTRACT_MISSING, TASK_CONTRACT_INVALID_JSON,
     TASK_CONTRACT_FORBIDDEN_PATH_TOUCHED, TASK_CONTRACT_OUT_OF_SCOPE_PATH_TOUCHED,
-    TASK_CONTRACT_FORBIDDEN_KEYWORD_FOUND, TASK_CONTRACT_CLASSIFICATION_MISSING
+    TASK_CONTRACT_FORBIDDEN_KEYWORD_FOUND, TASK_CONTRACT_CLASSIFICATION_MISSING,
+    _normalise_repo_relative_path,
 )
 
 @pytest.fixture
@@ -251,4 +252,48 @@ def test_json_schema_completeness(temp_git_repo, base_contract, tmp_path):
     ]
     for key in keys:
         assert key in data, f"Missing key in JSON: {key}"
+
+
+def test_contract_self_skip_normalises_windows_and_git_separators():
+    """Windows Path output and Git path output identify the same contract."""
+    windows_path = r"ops\task_contracts\WAKE-VELO-PHASE3.json"
+    git_path = "ops/task_contracts/WAKE-VELO-PHASE3.json"
+
+    assert _normalise_repo_relative_path(windows_path) == git_path
+    assert _normalise_repo_relative_path(git_path) == git_path
+
+
+def test_contract_forbidden_keywords_do_not_self_trigger_with_windows_path(
+    temp_git_repo, base_contract
+):
+    """A contract's own declarations are skipped after separator normalisation."""
+    contract_dir = temp_git_repo / "ops" / "task_contracts"
+    contract_dir.mkdir(parents=True)
+    contract_path = contract_dir / "contract.json"
+    base_contract["allowed_paths"].append("ops/task_contracts/contract.json")
+    contract_path.write_text(json.dumps(base_contract))
+
+    changed_files = ["ops/task_contracts/contract.json"]
+    windows_contract_path = r"ops\task_contracts\contract.json"
+    normalised_contract = _normalise_repo_relative_path(windows_contract_path)
+    scanned = [
+        path
+        for path in changed_files
+        if _normalise_repo_relative_path(path) != normalised_contract
+    ]
+
+    assert scanned == []
+
+
+def test_run_git_does_not_mix_stderr_advisories_into_stdout(monkeypatch):
+    """Successful Git warnings must never become changed-file evidence."""
+    import scripts.ops.task_contract_runner as runner
+
+    class Completed:
+        stdout = "src/velo/example.py\n"
+        stderr = "warning: line endings will be replaced\n"
+
+    monkeypatch.setattr(runner.subprocess, "run", lambda *args, **kwargs: Completed())
+
+    assert runner._run_git(["diff", "--name-only"]) == "src/velo/example.py"
 

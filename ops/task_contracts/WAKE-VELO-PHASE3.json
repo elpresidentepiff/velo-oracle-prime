@@ -1,0 +1,65 @@
+{
+  "task_id": "WAKE-VELO-PHASE3",
+  "title": "Canonical time-safe historical provider for Rich Context shadow",
+  "classification": "SHADOW_RESEARCH_INFRASTRUCTURE",
+  "allowed_paths": [
+    "app/services/rich_context_history_provider.py",
+    "tests/test_rich_context_history_provider.py",
+    "ops/task_contracts/WAKE-VELO-PHASE3.json"
+  ],
+  "forbidden_paths": [
+    "app/services/velo_prime_service.py",
+    "app/services/sqpe_v17_service.py",
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "scripts/ops/run_prime_today.py",
+    "scripts/ops/run_results_sigma.py",
+    "app/agents/",
+    "src/velo/execution_bridge.py"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "create_shadow_provider",
+    "create_injected_repository_adapter",
+    "create_task_contract",
+    "run_focused_tests",
+    "run_existing_safety_tests"
+  ],
+  "forbidden_actions": [
+    "live_scoring_change",
+    "supabase_write",
+    "telegram_send",
+    "model_promotion",
+    "production_deploy",
+    "credential_exposure",
+    "racing_api_call",
+    "horse_name_identity_join"
+  ],
+  "forbidden_keywords": [
+    "requests.",
+    "urllib.",
+    "RACING_API_",
+    "bot.send_message",
+    "promote_model",
+    "VELO_ALLOW_SUPABASE_WRITES=true"
+  ],
+  "required_outputs": [
+    "app/services/rich_context_history_provider.py",
+    "tests/test_rich_context_history_provider.py",
+    "ops/task_contracts/WAKE-VELO-PHASE3.json"
+  ],
+  "classification_required": [
+    "SHADOW_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "SHADOW_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_WRITES",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ]
+}

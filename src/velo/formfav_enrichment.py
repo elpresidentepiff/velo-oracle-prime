@@ -398,6 +398,7 @@ def enrich_existing_racecards(
                 "prizeMoney": form.get("prizeMoney") or mrace.get("prizeMoney"),
                 "distance": distance_raw,
                 "trackBias": track_bias,
+                "identity_match_method": matching_method,
                 "provenance": form.get("_provenance") or {},
             }
 

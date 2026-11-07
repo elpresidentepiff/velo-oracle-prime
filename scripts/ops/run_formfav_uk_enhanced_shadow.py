@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: E402
 """Build a UK/IRE FormFav-enhanced shadow feature card without touching Prime.
 
 Purpose:
@@ -23,11 +24,12 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from app.core.runtime_env import load_optional_env_file
 from src.velo.formfav_cache_client import build_enrichment_client
 from src.velo.formfav_enrichment import enrich_existing_racecards
+from src.velo.formfav_evidence_store import build_manifest_rows, persist_manifest_rows
 from src.velo.formfav_uk_features import FEATURE_SCHEMA_VERSION, build_race_shadow_packet
 from src.velo.racecard_loader import load_racecards
-from app.core.runtime_env import load_optional_env_file
 from src.velo.supabase_racecard_source import (
     SupabaseRacecardError,
     load_supabase_rp_racecards,
@@ -144,6 +146,12 @@ def main() -> int:
         client=build_enrichment_client(),
     )
 
+    manifest_rows, manifest_stats = build_manifest_rows(enriched)
+    manifest_persistence = {"attempted": 0, "inserted": 0, "existing": 0}
+    if manifest_rows:
+        from scripts.ops.formfav_live_worker import _sb_request
+        manifest_persistence = persist_manifest_rows(manifest_rows, request=_sb_request)
+
     packets = []
     for race in enriched:
         ff = race.get("_formfav") or {}
@@ -209,6 +217,10 @@ def main() -> int:
             if runners else 0.0
         ),
         "enrichment_audit": enrich_report,
+        "immutable_evidence": {
+            **manifest_stats,
+            "manifest_persistence": manifest_persistence,
+        },
         "races": packets,
     }
 

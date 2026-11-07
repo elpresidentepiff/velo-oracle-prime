@@ -25,6 +25,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from src.velo.formfav_client import FormFavClient, FormFavError, best_live_prices
+from src.velo.formfav_evidence_store import build_capture_rows, persist_capture_rows
 
 POLL_SECONDS = max(20, int(os.getenv("FORMFAV_WORKER_TICK_SECONDS", "30")))
 MEETINGS_REFRESH_SECONDS = max(120, int(os.getenv("FORMFAV_MEETINGS_REFRESH_SECONDS", "600")))
@@ -366,8 +367,19 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
             # bare meeting-race dict and would erase it within a minute.
             race_row["form_meta"] = {k: v for k, v in form.items() if k != "runners"}
             _persist_form(race_key, race_row, form)
+            capture_rows = build_capture_rows(
+                provider_race_key=race_key,
+                form=form,
+                captured_at=now,
+                off_time_utc=start,
+            )
+            frozen = persist_capture_rows(capture_rows, request=_sb_request)
             _last_form[race_key] = time.time()
-            print(f"[FORMFAV-LIVE] form OK {country}:{track} R{race_no}", flush=True)
+            print(
+                f"[FORMFAV-LIVE] form OK {country}:{track} R{race_no} "
+                f"immutable_factual={len(frozen)}",
+                flush=True,
+            )
 
             # Pro's own probability model is captured as an independent benchmark.
             # It never replaces or directly drives VÉLØ's rankings.

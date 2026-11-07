@@ -6,6 +6,7 @@ import pytest
 
 from src.velo import formfav_cache_client as cc
 from src.velo.formfav_client import FormFavError
+from src.velo.formfav_feature_contract import content_hash
 
 NOW = datetime(2026, 10, 14, 20, 0, tzinfo=UTC)
 FRESH = (NOW - timedelta(minutes=20)).isoformat()
@@ -27,6 +28,8 @@ def _fetch_factory(updated=FRESH):
         if path.startswith("formfav_runner_form"):
             return [{"updated_at": updated, "form_payload": {"number": 1, "name": "A"}},
                     {"updated_at": updated, "form_payload": {"number": 2, "name": "B"}}]
+        if path.startswith("formfav_factual_captures"):
+            return []
         if path.startswith("formfav_predictions"):
             return [{"updated_at": updated, "predictions_payload": {"predictions": [{"name": "A", "modelRank": 1}]}}]
         if path.startswith("formfav_market_snapshots"):
@@ -85,6 +88,61 @@ def test_race_form_rebuilt_from_cache() -> None:
     assert form["_provenance"]["source_is_immutable"] is False
     assert form["_provenance"]["evaluation_eligible"] is False
     assert form["runners"][0]["_provenance"]["captured_at"] == FRESH
+
+
+def test_race_form_prefers_immutable_factual_capture() -> None:
+    frozen_payload = {"number": 1, "name": "Frozen"}
+    def fetch(path: str):
+        if path.startswith("formfav_races?provider_race_key"):
+            return [{"provider_race_key": "ff:r1", "metadata": {"raceNumber": 1}, "form_meta": {}}]
+        if path.startswith("formfav_runner_form"):
+            return [{"updated_at": FRESH, "form_payload": {"number": 1, "name": "Mutable"}}]
+        if path.startswith("formfav_factual_captures"):
+            return [{
+                "id": 77, "provider_race_key": "ff:r1", "provider_runner_number": 1,
+                "provider_runner_name": "Frozen", "source_payload": frozen_payload,
+                "source_payload_sha256": content_hash(frozen_payload),
+                "captured_at": FRESH, "off_time_utc": NOW.isoformat(),
+                "capture_schema_version": "FORMFAV_FACTUAL_V1",
+            }]
+        raise AssertionError(path)
+    c = cc.CachedFormFavClient(None, fetch=fetch, now=lambda: NOW)
+    form = c.race_form(date="2026-10-14", track="kempton", race=1, country="gb")
+    assert form["runners"][0]["name"] == "Frozen"
+    assert form["runners"][0]["_provenance"]["capture_id"] == 77
+    assert form["runners"][0]["_provenance"]["source_is_immutable"] is True
+
+
+@pytest.mark.parametrize("override", [
+    {"capture_schema_version": "UNSUPPORTED"},
+    {"captured_at": None},
+    {"captured_at": NOW.isoformat()},
+    {"captured_at": (NOW + timedelta(seconds=1)).isoformat()},
+    {"off_time_utc": None},
+    {"source_payload_sha256": "0" * 64},
+])
+def test_race_form_rejects_unproven_immutable_capture(override) -> None:
+    payload = {"number": 1, "name": "Frozen"}
+    capture = {
+        "id": 77, "provider_race_key": "ff:r1", "provider_runner_number": 1,
+        "provider_runner_name": "Frozen", "source_payload": payload,
+        "source_payload_sha256": content_hash(payload),
+        "captured_at": FRESH, "off_time_utc": NOW.isoformat(),
+        "capture_schema_version": "FORMFAV_FACTUAL_V1",
+    }
+    capture.update(override)
+    def fetch(path: str):
+        if path.startswith("formfav_races?provider_race_key"):
+            return [{"provider_race_key": "ff:r1", "metadata": {}, "form_meta": {}}]
+        if path.startswith("formfav_runner_form"):
+            return [{"updated_at": FRESH, "form_payload": {"number": 1, "name": "Mutable"}}]
+        if path.startswith("formfav_factual_captures"):
+            return [capture]
+        raise AssertionError(path)
+    c = cc.CachedFormFavClient(None, fetch=fetch, now=lambda: NOW)
+    form = c.race_form(date="2026-10-14", track="kempton", race=1, country="gb")
+    assert form["runners"][0]["name"] == "Mutable"
+    assert form["runners"][0]["_provenance"]["source_is_immutable"] is False
 
 
 def test_stale_rows_fall_back_to_live() -> None:
@@ -155,6 +213,8 @@ def test_real_enrichment_runs_end_to_end_on_cached_data_with_no_live_client() ->
                      "form_meta": {"track": "Kempton Park", "condition": "Standard"}}]
         if path.startswith("formfav_runner_form"):
             return [{"updated_at": FRESH, "form_payload": runner_form}]
+        if path.startswith("formfav_factual_captures"):
+            return []
         raise AssertionError(path)
 
     client = cc.CachedFormFavClient(None, fetch=fetch, now=lambda: NOW)

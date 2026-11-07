@@ -1,0 +1,57 @@
+{
+  "task_id": "WAKE-VELO-FORMFAV-EVIDENCE-01",
+  "title": "Freeze and bind pre-off FormFav factual evidence for Rich Context shadow",
+  "classification": "AUTHORIZED_SHADOW_EVIDENCE_HARDENING",
+  "allowed_paths": [
+    "ops/task_contracts/WAKE-VELO-FORMFAV-EVIDENCE-01.json",
+    "ops/task_contracts/WAKE-VELO-FORMFAV-EVIDENCE-01.classification.txt",
+    "src/velo/formfav_evidence_store.py",
+    "src/velo/formfav_cache_client.py",
+    "src/velo/formfav_enrichment.py",
+    "scripts/ops/formfav_live_worker.py",
+    "scripts/ops/run_formfav_uk_enhanced_shadow.py",
+    "tests/test_formfav_evidence_store.py",
+    "tests/test_formfav_cache_client.py"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "app/services/velo_prime_service.py",
+    "models/",
+    ".env"
+  ],
+  "allowed_actions": [
+    "freeze_preoff_formfav_facts",
+    "append_immutable_evidence",
+    "bind_canonical_shadow_identity",
+    "create_tests",
+    "run_tests"
+  ],
+  "forbidden_actions": [
+    "persist_provider_predictions",
+    "model_weight_change",
+    "prime_probability_change",
+    "production_feature_injection",
+    "gate_bypass",
+    "live_betting",
+    "telegram_send",
+    "model_promotion"
+  ],
+  "forbidden_keywords": [],
+  "required_outputs": [
+    "src/velo/formfav_evidence_store.py",
+    "tests/test_formfav_evidence_store.py",
+    "ops/task_contracts/WAKE-VELO-FORMFAV-EVIDENCE-01.classification.txt"
+  ],
+  "classification_required": [
+    "NO_PROVIDER_PREDICTION_CONSUMPTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "PAPER_SIM_ONLY"
+  ],
+  "final_classifications": [
+    "NO_PROVIDER_PREDICTION_CONSUMPTION",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "PAPER_SIM_ONLY"
+  ]
+}
