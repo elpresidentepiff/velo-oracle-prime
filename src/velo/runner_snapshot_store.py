@@ -83,9 +83,10 @@ _PRED_FIELDS = [
     "router_reasons",
     "sp_dec",
     "is_fav",
-    "rich_context_comment_shadow",
-    "rich_context_shadow",
 ]
+# Rich Context evidence is NOT written here: runner_prediction_snapshots has no such columns, so one
+# extra key makes PostgREST reject the whole bulk insert (PGRST204). It is stored in full, with
+# provenance, in rich_context_shadow_packets by src/velo/rich_context_shadow_store.py.
 
 # Safety invariants written on every snapshot row
 _LIVE_SCORING_CHANGED = False

@@ -371,3 +371,34 @@ def test_supabase_called_when_client_provided(tmp_path):
 def test_supabase_not_called_when_no_client(tmp_path):
     n = _write(_scored_1race_2runners(), tmp_path)
     assert n == 2
+
+
+
+# ── Writer must not outgrow the table (WAKE-VELO-SNAPFIX-01) ────────────────────────────────────
+# Columns of public.runner_prediction_snapshots as of 2026-11-07. The writer does one bulk INSERT,
+# so a single key the table lacks makes PostgREST reject every row (PGRST204) and the failure is
+# swallowed as "non-fatal". Adding a field to the writer therefore needs a migration AND this list.
+_TABLE_COLUMNS = frozenset("""
+id run_id created_at race_date race_id course off_time tier rank horse horse_id velo_prime_prob
+sqpe_v17_prob market_deception_score improvement_score place_prob longshot_prob release_day_prob
+comment_intel_score mark_compression_score spotlight_score postdata_score plot_conviction
+top_pick_name top_pick_vp prob_gap cash_run_flag setup_run_flag decoy_support_flag tie_gate_fires
+tie_gate_tier_upgrade rpd_tag rpd_confidence rpd_evidence_codes rpdc_primary_tag rpdc_release_score
+rpdc_cash_window_flag rpdc_tags active_components excluded_from_ensemble assigned_product
+confidence_level decision_tier execution_allowed race_archetype archetype_confidence router_reasons
+sp_dec is_fav live_scoring_changed write_execution_allowed sqpe_no_rpr_shadow_prob
+sqpe_no_rpr_shadow_feature_count nds_narrative nds_score nds_disruption nds_is_fade
+nds_overround_signal chain_pace_shape chain_narrative chain_market_status midprice_shadow_action
+midprice_shadow_evidence midprice_shadow_field_band midprice_shadow_rule_version
+""".split())
+
+
+def test_snapshot_row_only_has_columns_the_table_has() -> None:
+    from src.velo.runner_snapshot_store import _build_snapshot_row
+
+    pred = {"horse": "A", "horse_id": "1", "velo_prime_prob": 0.2,
+            "rich_context_shadow": {"x": 1}, "rich_context_comment_shadow": {"y": 2}}
+    row = _build_snapshot_row(pred, 0, _RUN_ID, "r1", _DATE_STR, "Ascot", "3.00", "T", "A", 0.2, "2026-05-20T00:00:00Z")
+    unknown = sorted(set(row) - _TABLE_COLUMNS)
+    assert unknown == [], f"writer would be rejected by runner_prediction_snapshots: {unknown}"
+    assert not [k for k in row if k.startswith("rich_context")]
