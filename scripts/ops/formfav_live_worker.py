@@ -509,6 +509,35 @@ def _maybe_run_global_eod(client: FormFavClient, now: datetime) -> None:
             print(f"[FORMFAV-EOD] ERROR date={race_date}: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
 
 
+def _run_live_cycle(client: FormFavClient, now: datetime) -> int:
+    """Capture live evidence before doing any historical settlement work.
+
+    The global EOD sweep can legitimately take minutes across the world card.
+    Running it first on container startup starved today's pre-off evidence and
+    made an apparently healthy worker temporally useless.  Current/future
+    meetings and immutable factual captures therefore have strict priority.
+    """
+    remaining = _provider_backoff_remaining()
+    if remaining > 0:
+        print(
+            f"[FORMFAV-LIVE] provider cooldown active remaining={remaining}s",
+            flush=True,
+        )
+        return 0
+
+    _refresh_meetings(client, now)
+    processed = 0
+    for date_str, meetings in list(_meeting_cache.items()):
+        for meeting in meetings:
+            for mrace in meeting.get("races") or []:
+                if not isinstance(mrace, dict) or mrace.get("abandoned"):
+                    continue
+                _process_race(client, date_str, meeting, mrace, now)
+                processed += 1
+    print(f"[FORMFAV-LIVE] heartbeat processed={processed} utc={now.isoformat()}", flush=True)
+    return processed
+
+
 def main() -> int:
     client = FormFavClient()
     _sb_env()  # fail fast on durable-storage misconfiguration
@@ -521,26 +550,11 @@ def main() -> int:
     while True:
         now = datetime.now(UTC)
         try:
-            # DB-only reconciliation must keep running through provider cooldowns.
+            _run_live_cycle(client, now)
+            # Historical settlement is intentionally lower priority than the
+            # time-sensitive live capture above. DB reconciliation still runs
+            # when the provider enters cooldown.
             _maybe_run_global_eod(client, now)
-            remaining = _provider_backoff_remaining()
-            if remaining > 0:
-                print(
-                    f"[FORMFAV-LIVE] provider cooldown active remaining={remaining}s",
-                    flush=True,
-                )
-                time.sleep(min(POLL_SECONDS, remaining))
-                continue
-            _refresh_meetings(client, now)
-            processed = 0
-            for date_str, meetings in list(_meeting_cache.items()):
-                for meeting in meetings:
-                    for mrace in meeting.get("races") or []:
-                        if not isinstance(mrace, dict) or mrace.get("abandoned"):
-                            continue
-                        _process_race(client, date_str, meeting, mrace, now)
-                        processed += 1
-            print(f"[FORMFAV-LIVE] heartbeat processed={processed} utc={now.isoformat()}", flush=True)
         except Exception as exc:
             print(f"[FORMFAV-LIVE] LOOP ERROR {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
         time.sleep(POLL_SECONDS)
