@@ -314,4 +314,3 @@ def attach_comment_shadow_by_horse_id(
         prediction["rich_context_comment_shadow"] = packet
         attached += int(packet is not None)
     return attached
-
