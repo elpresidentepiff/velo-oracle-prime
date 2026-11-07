@@ -9,6 +9,5 @@ dockerfilePath = "Dockerfile.rpcapture"
 
 [deploy]
 startCommand = "python scripts/ops/rp_cloud_eod.py --execute --no-notify"
-# TEMPORARY 2026-11-07 (operator order: run the EOD now). RESTORE the line below straight after the run:
-# cronSchedule = "0 21 * * *"
+cronSchedule = "0 21 * * *"
 restartPolicyType = "NEVER"
