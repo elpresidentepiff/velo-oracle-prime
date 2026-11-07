@@ -64,7 +64,20 @@ REPORTS = {
     "deep_race_agent_v1_v2":       ("data/reports/deep_race_agent_v1_{tag}_v2.json", None),
     "course_master":               ("data/reports/course_master_{tag}.json", None),
     "old_velo_rp_gate":            ("data/reports/old_velo_rp_newspaper_file_gate_{tag}.json", None),
+    # Inputs of the end-of-day canonical scorecard rebuild (Step 20C). The morning container writes them; the
+    # EOD container starts clean, so without these rows the rebuild skipped New Build A/B/C, the Passport proxy
+    # and Champion Intent and none of those lanes ever received a result (2026-11-07: 0 settled of ~75 picks each).
+    "new_build_two_lane_readiness": ("data/new_build/reports/two_lane_readiness_{tag}.json", None),
 }
+
+# Same purpose, for the inputs that are not JSON. The file is stored whole inside the JSON payload and written back
+# byte for byte by rp_cloud_eod._hydrate_report_artifacts.
+TEXT_PAYLOAD_KEY = "__text"
+TEXT_REPORTS = {
+    "new_build_current_card_passport_feed": "data/new_build/current_cards/current_card_passport_feed_{tag}.jsonl",
+    "champion_intent_shadow_scorecard":     "data/reports/intent_shadow_scorecard_{tag}.csv",
+}
+TEXT_REPORT_MAX_BYTES = 8_000_000  # a larger file is skipped with a warning rather than failing the whole persist
 
 LEDGER_NUMERIC = {"norpr_prob", "nb_prob", "champion_prob", "mp_prob", "nbc_prob", "winner_sp"}
 
@@ -234,6 +247,23 @@ def build_reports(dates: list[str] | None) -> list[dict]:
                 continue
             rows.append({
                 "artifact_type": atype, "run_date": d, "payload": payload, "source_path": _rel(path),
+                "source_mtime": datetime.fromtimestamp(path.stat().st_mtime, tz=UTC).isoformat(),
+                "source_sha256": _sha(path),
+            })
+    for atype, pattern in TEXT_REPORTS.items():
+        ds = dates if dates is not None else _dates_from(pattern.replace("{tag}", "*"))
+        for d in ds:
+            path = ROOT / pattern.format(tag=d.replace("-", "_"))
+            if not path.exists():
+                continue
+            if path.stat().st_size > TEXT_REPORT_MAX_BYTES:
+                print(f"  [WARN] too large to persist, skipped: {_rel(path)} ({path.stat().st_size} bytes)")
+                continue
+            rows.append({
+                "artifact_type": atype, "run_date": d,
+                # read_bytes, not read_text: text mode would turn CRLF into LF and the file would not round-trip
+                "payload": {TEXT_PAYLOAD_KEY: path.read_bytes().decode("utf-8"), "format": path.suffix.lstrip(".")},
+                "source_path": _rel(path),
                 "source_mtime": datetime.fromtimestamp(path.stat().st_mtime, tz=UTC).isoformat(),
                 "source_sha256": _sha(path),
             })

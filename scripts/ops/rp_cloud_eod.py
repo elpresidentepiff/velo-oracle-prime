@@ -28,6 +28,8 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.ops.persist_daily_artifacts import TEXT_PAYLOAD_KEY  # noqa: E402
+
 LONDON = ZoneInfo("Europe/London")
 PROFILE = ROOT / "data" / "browser_profiles" / "racing_post_account"
 RAW = ROOT / "data" / "racing_post_account_raw"
@@ -131,7 +133,13 @@ def _hydrate_report_artifacts(date_str: str) -> int:
         if target is None or row.get("payload") is None:
             continue
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(json.dumps(row["payload"], indent=2), encoding="utf-8")
+        payload = row["payload"]
+        # CSV / JSONL inputs of the scorecard rebuild are stored whole under one key (see
+        # persist_daily_artifacts.TEXT_REPORTS) and must come back exactly as written, not re-serialised.
+        if isinstance(payload, dict) and isinstance(payload.get(TEXT_PAYLOAD_KEY), str):
+            target.write_text(payload[TEXT_PAYLOAD_KEY], encoding="utf-8", newline="")
+        else:
+            target.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         written += 1
     return written
 

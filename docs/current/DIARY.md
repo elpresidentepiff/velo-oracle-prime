@@ -56,6 +56,25 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — Why four shadow lanes never get results, and the fix
+Cause:            Champion Intent, New Build A/B and the Passport proxy are rebuilt at EOD (Step 20C) from three files the MORNING container writes
+                  (`data/new_build/reports/two_lane_readiness_<tag>.json`, `data/new_build/current_cards/current_card_passport_feed_<tag>.jsonl`,
+                  `data/reports/intent_shadow_scorecard_<tag>.csv`). The EOD container (`velo-results-sigma`) starts clean and only restores what is in
+                  `velo_report_artifacts`; those three were never persisted (13 artifacts for 2026-11-07, none of them these). The rebuild therefore
+                  skipped the four lanes and their morning rows stayed result-less: ~75 rank-1 rows each, 0 results, although ~71 of 75 picks join to
+                  `racing_horse_runs`.
+Fix:              `persist_daily_artifacts.py` now also persists those three files (the JSON one as ordinary JSON, the CSV and JSONL whole inside the JSON
+                  payload under `__text`, read as bytes so CRLF survives; a file over 8 MB is skipped with a warning). `rp_cloud_eod._hydrate_report_artifacts`
+                  writes a `__text` payload back byte for byte and still re-serialises ordinary JSON, still skips the verdict backup, still refuses unsafe paths.
+                  Contract WAKE-VELO-SETTLE-01. 7 new tests, 5 fail on the old code; the end-to-end test persists in a "morning" root, restores into a clean
+                  "evening" root and rebuilds the scorecard with results for all four lanes.
+Effect:           takes hold from tomorrow: the 07:00Z run persists the files, the 21:00Z EOD restores them. 2026-11-07's four lanes stay unsettled in
+                  `canonical_model_scorecards` (their inputs were never saved); their governed numbers are in the entry above, computed from `racing_horse_runs`.
+Not changed:      the scorecard builder, scoring, models, gates and every other EOD step.
+Next safe action: 2026-11-08 after the 21:00Z EOD: `select model_name, count(*) filter (where result_position is not null) from canonical_model_scorecards
+                  where run_date='2026-11-08' and model_name in ('CHAMPION_INTENT_SHADOW','NEW_BUILD_LANE_A_MODEL','NEW_BUILD_LANE_B_MODEL','PASSPORT_STRENGTH_SCORE_PROXY') group by 1`
+                  should be well above 0.
+
 ### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — Full wiring check: EOD logs, all-model results, a duplicate 07:00 schedule, red CI
 EOD log:          21 of 22 steps PASS. Step 12C (place-stack shadow settlement) exited 1, non-critical. Step 20 finished `FAIL_GATE_BLOCKED` (the learning gate), council
                   `EVIDENCE_INCOMPLETE`. Step 21 skipped by flag. 13 mandatory steps passed. Step 8 Telegram not sent (`--no-notify`).

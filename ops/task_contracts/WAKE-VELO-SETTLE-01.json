@@ -1,0 +1,35 @@
+{
+  "task_id": "WAKE-VELO-SETTLE-01",
+  "title": "Persist the morning inputs of the shadow-lane scorecards so the EOD container can rebuild them with results",
+  "classification": "SHADOW_RESEARCH_INFRASTRUCTURE",
+  "allowed_paths": [
+    "scripts/ops/persist_daily_artifacts.py",
+    "scripts/ops/rp_cloud_eod.py",
+    "tests/test_eod_shadow_lane_inputs.py",
+    "ops/task_contracts/WAKE-VELO-SETTLE-01.json",
+    "docs/current/DIARY.md"
+  ],
+  "forbidden_paths": [
+    "app/services/velo_prime_service.py",
+    "app/services/sqpe_v17_service.py",
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "scripts/ops/run_prime_today.py",
+    "scripts/ops/run_full_raceday.py",
+    "scripts/ops/run_results_sigma.py",
+    "scripts/ops/build_canonical_model_scorecard.py",
+    "app/agents/",
+    "src/velo/execution_bridge.py"
+  ],
+  "allowed_actions": ["read_repo", "persist_additional_report_artifacts", "hydrate_report_artifacts_verbatim", "run_focused_tests"],
+  "forbidden_actions": ["live_scoring_change", "model_promotion", "credential_exposure", "racing_api_call", "stake_authorisation", "rewrite_frozen_scorecard"],
+  "forbidden_keywords": ["RACING_API_", "bot.send_message", "promote_model"],
+  "required_outputs": [
+    "scripts/ops/persist_daily_artifacts.py",
+    "scripts/ops/rp_cloud_eod.py",
+    "tests/test_eod_shadow_lane_inputs.py",
+    "ops/task_contracts/WAKE-VELO-SETTLE-01.json"
+  ],
+  "classification_required": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"],
+  "final_classifications": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"]
+}
