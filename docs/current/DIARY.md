@@ -56,6 +56,21 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — EOD run now, at the operator's order; governed UK results in
+Ran:              `rp_cloud_eod.py --execute` in the cloud, 20:06:55-20:12:26Z, `[CLOUD-EOD] PASS`: 47 races, 46 scored, 46 results pages, RP login PASS.
+Result (governed, from Racing Post): 460 horse runs in 46 races. Prime top pick: 44 with a result, **12 won, 27 in the frame**, the same 12 as the provisional FormFav read.
+                  Two top picks have no result position (Kelso 2.00 Wal Buck's, Southwell 6.00 Cavalry Call: outcome UNKNOWN); neither won.
+                  No-RPR 4/36, MDS 10/42, Old Velo place 9/42, longshot 4/42 (clean settled races). Champion Intent, New Build A/B and Passport show 0 settled:
+                  nothing in the cloud EOD attaches results to those four lanes.
+Learning:         `canonical_learning_events` +1,772 (661 with a result), 0 promotion-eligible, all `UNSETTLED`, block reason `PROMOTION_GATED_BY_STANDING_HARD_LAW`.
+                  `velo_learning_events` +0 (latest 2026-10-27). World events +39, 0 eligible. Council WATCH_ONLY, learning gate BLOCKED, source_truth UNKNOWN: unchanged.
+How it was run:   the cron service only runs on its schedule. Clearing the schedule in Railway did nothing (a redeploy re-runs the old deployment's saved config, and
+                  `railway.eod.toml` sets `cronSchedule` itself, which overrides the dashboard). The one-off run came from commenting that line out for one deploy (803ec4f)
+                  and restoring it (e276b04, byte-identical to before). The 21:00Z run did not fire tonight (schedule was off until 22:02Z); the EOD had already run.
+                  Live config again: cron `0 21 * * *`, last run row 20:11Z. A sleep I used to wait overshot by ~1.5 h; nothing was lost.
+Open / broken:    four lanes with no results; `velo_learning_events` stale since 10-27; UK truth contract still only on `ops/recovery`; Rich Context unfitted.
+Next safe action: 2026-11-08 07:25Z check `railway_cron` / PASS and snapshots for the 07:00 run; 21:00Z check the nightly EOD fires with the restored schedule.
+
 ### 2026-11-07 (late evening) — Claude Code (Sonnet 5.5) — Results check, UK and World, before and after the Rich Context wiring
 Read:             UK from FormFav's stored results (16 final, 30 provisional; NOT the Racing Post governed truth), World from `world_velo_picks`. 19:30Z.
 UK:               Prime 12/46 winners (26.1%), identical for the 07:20 run and the 11:13 rescore (the top pick is the same in 46/46). Prior five UK days 46/202
