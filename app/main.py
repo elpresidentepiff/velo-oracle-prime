@@ -2129,7 +2129,7 @@ async def world_velo_picks(date: str = Query(default=None)):
         "available": rows is not None,
         "model": "existing_velo_prime_stack",
         "picks_label": "VELO's frozen pre-off World pick. Shadow only, not a tip, nothing staked.",
-        "as_of": _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
+        "as_of": _dt.datetime.now(_dt.UTC).isoformat(timespec="seconds"),
         **shaped,
         **SHADOW_BOUNDARY,
     }

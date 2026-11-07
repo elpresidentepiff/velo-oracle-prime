@@ -56,6 +56,28 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — Full wiring check: EOD logs, all-model results, a duplicate 07:00 schedule, red CI
+EOD log:          21 of 22 steps PASS. Step 12C (place-stack shadow settlement) exited 1, non-critical. Step 20 finished `FAIL_GATE_BLOCKED` (the learning gate), council
+                  `EVIDENCE_INCOMPLETE`. Step 21 skipped by flag. 13 mandatory steps passed. Step 8 Telegram not sent (`--no-notify`).
+All models (governed, 2026-11-07 UK): Prime 12 won / 27 framed of 44 settled; Old Velo win identical; MDS 10/42; No-RPR 4/36 clean (8/46 counting tied picks); Old Velo place
+                  9/42; longshot 4/42. Champion Intent 4/19, New Build A 4/20, New Build B 6/25, Passport 3/19 clean, settled here directly from `racing_horse_runs`
+                  because the EOD never writes results onto those four lanes (their picks join fine: ~71 of 75 match a result). They list more than one pick in
+                  22-28 of 47 races.
+Duplicate schedule: `velo-rp-capture` (cron `0 7 * * *`, Dockerfile.rpcapture, `rp_cloud_raceday.py`) is the real daily morning job: `races` rows land 07:05-07:13Z on
+                  10-28, 10-31, 11-01, 11-02, 11-05, 11-07 and the scoring row opens 07:19-07:31Z. An earlier note here said `velo-prime-scoring` had no scheduler: WRONG.
+                  I then gave `velo-prime-scoring` the same `0 7 * * *`, so two services now run the same chain at the same minute against one Racing Post account
+                  (session collision, and the loser dies on the pipeline_runs overlap constraint). A change to a later backup time was DENIED by the permission check and
+                  is left for the operator. Before the cron existed, every push re-ran the chain on `velo-prime-scoring` (that is where the 00:36 / 01:57 / 02:30Z
+                  daily_scoring rows come from).
+CI:               the `ci` workflow has been red on main since 2026-11-05 15:19Z (lint, and `cloud-raceday-contract` "Verify Racing API source truth" which asserts
+                  the retired API is clean). The only lint error left was mine (`datetime.timezone.utc` in the world-picks route): fixed. `cloud-raceday-contract`
+                  is untouched and still fails.
+Services:         velo-oracle, velo-formfav-live online; prime-scoring, results-sigma, rp-capture, formfav-uk/us-shadow cron-ready; `hermes-agent` fails every push (old
+                  April deployment still online); `velo-daily-ingestion` and `velo-shadow-lab` have no deployment at all.
+Open / broken:    07:00 collision (operator decision), `cloud-raceday-contract`, hermes-agent, four lanes without results, `velo_learning_events` stale since 10-27,
+                  `velo_vs_formfav` 8 s, UK truth contract on `ops/recovery`, Rich Context unfitted.
+Next safe action: operator picks the 07:00 owner before 07:00Z; then 2026-11-08 07:25Z check `trigger_source = railway_cron` and PASS.
+
 ### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — EOD run now, at the operator's order; governed UK results in
 Ran:              `rp_cloud_eod.py --execute` in the cloud, 20:06:55-20:12:26Z, `[CLOUD-EOD] PASS`: 47 races, 46 scored, 46 results pages, RP login PASS.
 Result (governed, from Racing Post): 460 horse runs in 46 races. Prime top pick: 44 with a result, **12 won, 27 in the frame**, the same 12 as the provisional FormFav read.
