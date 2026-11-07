@@ -1,0 +1,60 @@
+{
+  "task_id": "WAKE-VELO-DASH-01",
+  "title": "Dashboard panel: every model's top pick side by side with Rich Context evidence coverage",
+  "classification": "SHADOW_RESEARCH_INFRASTRUCTURE",
+  "allowed_paths": [
+    "app/main.py",
+    "app/world_dashboard.py",
+    "app/static/dashboard/index.html",
+    "tests/test_world_dashboard.py",
+    "supabase/migrations/20261107120000_rich_context_vs_prime.sql",
+    "supabase/migrations/20261107123000_wake_velo_model_picks.sql",
+    "ops/task_contracts/WAKE-VELO-DASH-01.json",
+    "docs/current/DIARY.md"
+  ],
+  "forbidden_paths": [
+    "app/services/velo_prime_service.py",
+    "app/services/sqpe_v17_service.py",
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "scripts/ops/run_prime_today.py",
+    "scripts/ops/run_results_sigma.py",
+    "app/agents/",
+    "src/velo/execution_bridge.py"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "create_read_only_views",
+    "add_read_only_dashboard_endpoint",
+    "add_dashboard_panel",
+    "run_focused_tests"
+  ],
+  "forbidden_actions": [
+    "live_scoring_change",
+    "model_promotion",
+    "credential_exposure",
+    "racing_api_call",
+    "horse_name_identity_join",
+    "table_write_from_dashboard"
+  ],
+  "forbidden_keywords": [
+    "RACING_API_",
+    "bot.send_message",
+    "promote_model"
+  ],
+  "required_outputs": [
+    "app/world_dashboard.py",
+    "tests/test_world_dashboard.py",
+    "ops/task_contracts/WAKE-VELO-DASH-01.json"
+  ],
+  "classification_required": [
+    "SHADOW_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "SHADOW_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_PROMOTION"
+  ]
+}

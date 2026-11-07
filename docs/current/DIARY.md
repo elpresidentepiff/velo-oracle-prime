@@ -32,10 +32,10 @@ Next safe action: <one concrete step that needs no re-investigation>
 | W-4 | 33 of 120 frozen top picks tie with rank 2 (rank 1 = list order) | ties query, FR 10/23, US 23/82 | Now flagged per race (`top_tie_size`) and excluded from `skill_sample` |
 | W-5 | AU/HK/JP early races are never frozen pre-off (AU 43 of 43 unfrozen, JP 17 of 24 on 2026-11-05) | `world_status_register` | Watch after deploy: hourly runs from 00:00 UTC should cover them |
 | U-1 | UK settlement-truth stage (`CANONICAL_TRUTH_V2`) stopped 2026-10-17; its code lives only on unmerged branches | no settled/eligible rows after 10-17; commits `45345db1`, `5787e97f` not in `main` | Recovery cherry-pick on `ops/recovery` |
-| U-2 | `SQPE_NO_RPR_SHADOW` has no model output in production; its picks are Main's picks | `sqpe_no_rpr_shadow_prob` NULL on every snapshot row; `models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl` is git-ignored | Operator decision: **ship it** (No-RPR is important). `NORPR-SHIP-01`: model file force-added (6.3 MB, sha256 `65b71b31…`, sklearn 1.8.0 = production pin), all 25 inputs verified present in the live feature vector, the ensemble never reads it (0 references), 6 guard tests. **Proven live 2026-11-07 07:20 run:** 472/472 filled, 25 features, 44 of 46 races vary inside the race, top pick differs from Prime in 42 of 46 races (two flat races tie, so ~40). Disagreement is not skill: judge it on settled results |
+| U-2 | `SQPE_NO_RPR_SHADOW` has no model output in production; its picks are Main's picks | `sqpe_no_rpr_shadow_prob` NULL on every snapshot row; `models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl` is git-ignored | Operator decision: **ship it** (No-RPR is important). `NORPR-SHIP-01`: model file force-added (6.3 MB, sha256 `65b71b31…`, sklearn 1.8.0 = production pin), all 25 inputs verified present in the live feature vector, the ensemble never reads it (0 references), 6 guard tests. **Proven live 2026-11-07 07:20 run:** 472/472 filled, 25 features, 44 of 46 races vary inside the race. **Corrected 2026-11-07:** 9 races have a tied No-RPR top (`TIED_n_WAY`, arbitrary pick); in the 37 clean races it picks a different horse from Prime in 31 and the same in 6. (An earlier note said 42 of 46: that used a different tie-break and counted tied races.) Disagreement is not skill: judge it on settled results |
 | U-3 | Local `main` carries commits not on GitHub: `dcdebf7e` (RP official non-results in Sigma), `fc3b2721` | `git log origin/main..main` | Recovery cherry-pick on `ops/recovery` |
 | U-4 | Champion Intent / New Build / Passport have no settled positions; Main has none for 10-25, 10-26, 10-29 | `canonical_model_scorecards.result_position` | Open. Needs U-1 first |
-| U-5 | Scoring is started by hand (`trigger_source = manual` every day since 11-02); cloud EOD light run reports PASS with 0 processed | `pipeline_runs` | Open |
+| U-5 | Scoring is started by hand (`trigger_source = manual` every day since 11-02); cloud EOD light run reports PASS with 0 processed | `pipeline_runs`; `velo-prime-scoring` had no `cronSchedule` (the World job has `0 * * * *`; `railway.toml` has it commented out) | **Schedule set 2026-11-07:** `0 7 * * *` on `velo-prime-scoring`, applies from its next deployment. Confirm tomorrow ~07:00 UTC that `pipeline_runs` shows `trigger_source = railway_cron`. The EOD light run is still open |
 | U-6 | Rich Context history + Spotlight never reached afternoon races: `resolve_race_off_time_utc` could not parse Racing Post's 12-hour one-digit-hour times (`3.00`), so no cutoff, so no history call | 2026-11-07 packets: 8 races with history, 38 with none; every race with history was 10.xx-12.xx; 56 of 465 runners had history although 310 have prior rows under the same numeric RP id | **Fixed** (`WAKE-VELO-OFFTIME-01`): one-digit hour = pm; 5 regression tests fail on the old code |
 | H-1 | Railway service `hermes-agent` (`71327cad`) fails to build on every push to `main` (checked back to 09:08 UTC today, before any of this work) | `list-deployments status=FAILED`; the 2 Nov audit already listed it failed/stopped, "retired-path residue" | Open, not caused by recent work. Disconnect it from `main` or delete it, so a red service stops hiding real failures |
 | L-1 | World run ledger showed `rows_inserted = null` instead of 0 when every row was a first-wins duplicate | `world_pipeline_runs` 16:04 UTC run | Fixed with a test (this commit); rows written before the fix keep `null` |
@@ -53,6 +53,20 @@ Next safe action: <one concrete step that needs no re-investigation>
 - Project Python with pytest: `/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python`.
 
 ## Entries
+
+### 2026-11-07 (afternoon) — Claude Code (Sonnet 5.5) — Wake Velo: rescore, all-models dashboard panel, daily schedule
+Branch / commit:  `main`; dashboard + views follow `0412446`. Operator approved the rescore, the daily schedule and the panel in chat.
+Rescore:          `VELO_AUTHORISED_RESCORE_REASON=WAKE-VELO-OFFTIME-FIX-20261107` set on `velo-prime-scoring` (redeploy ran the governed rescore on
+                  the off-time fix; prior PASS rows preserved, packets append-only), then blanked again. Result is in the entry below.
+Dashboard:        panel `WAKE VELO · ALL MODELS` (`#rc-panel`, `/api/rich-context`): evidence coverage first batch -> latest, one scoreboard row per
+                  model (clean races, same pick as Prime, settled, won, top 3) and a race-by-race grid of every model's top pick.
+                  Views (read-only, `security_invoker`, service_role select only): `wake_velo_model_picks`, `rich_context_vs_prime`
+                  (migrations `rich_context_vs_prime`, `rich_context_vs_prime_tie_flags`, `wake_velo_model_picks`, `wake_velo_model_picks_rank1_rows`).
+                  A pick is a clean read only if not `TIED_*` and the lane wrote one rank-1 row (`tie_status = N/A` is not a tie). Contract `WAKE-VELO-DASH-01`.
+Schedule:         `velo-prime-scoring` cronSchedule `0 7 * * *` (was none). See U-5.
+Correction:       the earlier "No-RPR differs from Prime in 42 of 46" was wrong (tie-break and tied races). Clean figure is 31 of 37. See U-2.
+Open / broken:    Rich Context challenger still unfitted; 7 Prime runners absent from packets; `comments_processed` still 0; `hermes-agent` (H-1).
+Next safe action: tonight after the 21:00 UTC sigma, open the panel for today: settled/won/top-3 per model fill in. Judge over weeks, not a day.
 
 ### 2026-11-07 — Claude Code (Sonnet 5.5) — Wake Velo: audit of the Rich Context lane, off-time bug fixed
 Branch / commit:  `main`, fix commit follows `55a636e7` (other agent's last commit; that agent ran out of credits and was not available).

@@ -2102,6 +2102,56 @@ async def velo_vs_formfav(date: str = Query(default=None)):
     }
 
 
+@app.get("/api/rich-context")
+async def rich_context(date: str = Query(default=None)):
+    """Every model's top pick side by side, plus how much Rich Context evidence each race had.
+
+    Rich Context has no fitted model, so it ranks nothing and cannot change a pick. This endpoint
+    only reads: the evidence packets, the governed scorecards and the scoring-run ledger.
+    """
+    import datetime as _dt
+
+    from app.world_dashboard import (
+        RICH_CONTEXT_STATUS,
+        SHADOW_BOUNDARY,
+        model_scoreboard,
+        race_grid,
+        summarise_rich_context,
+        valid_date,
+    )
+
+    d = date or _dt.date.today().isoformat()
+    if not valid_date(d):
+        return JSONResponse({"error": "date must be YYYY-MM-DD"}, status_code=400)
+    coverage = _sb_rest_rows(
+        f"rich_context_vs_prime?race_date=eq.{d}&limit=300"
+        "&select=race_id,runners,history_before,history_now,spotlight_before,spotlight_now,"
+        "formfav_now,packet_batches,latest_packet_at"
+    )
+    picks = _sb_rest_rows(
+        f"wake_velo_model_picks?race_date=eq.{d}&order=off_minutes.asc.nullslast,race_id.asc&limit=2000"
+    )
+    runs = _sb_rest_rows(
+        "pipeline_runs?service_name=eq.velo-prime-scoring"
+        f"&source_date=eq.{d}&order=started_at.asc&limit=20"
+        "&select=run_type,status,started_at,finished_at,races_processed,runners_processed,commit_sha"
+    )
+    scored = _sb_rest_rows(
+        f"rich_context_shadow_packets?race_date=eq.{d}&challenger_probability=not.is.null&select=id&limit=1"
+    )
+    return {
+        "date": d,
+        "available": picks is not None or coverage is not None,
+        "rich_context_status": RICH_CONTEXT_STATUS,
+        "rich_context_ranks_anything": bool(scored),
+        "evidence": summarise_rich_context(coverage or []),
+        "models": model_scoreboard(picks or []),
+        "races": race_grid(picks or []),
+        "scoring_runs": runs or [],
+        **SHADOW_BOUNDARY,
+    }
+
+
 @app.get("/api/llm-brief")
 async def llm_brief(date: str = Query(default=None), mode: str = Query(default=None)):
     """LLM intel brief (2026-07-29, DeepSeek v4 pro via OpenRouter).

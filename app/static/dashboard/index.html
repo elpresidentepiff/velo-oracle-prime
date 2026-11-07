@@ -762,6 +762,21 @@ td:last-child  { padding-right: 20px; }
     <div id="wd-picks" style="max-height:340px;overflow:auto;margin-top:6px;"></div>
   </details>
 </div>
+<div id="rc-panel" style="display:none;background:#111;border:1px solid #ab47bc;border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:#ab47bc;letter-spacing:0.05em;margin-bottom:6px;">
+    WAKE VELO &middot; ALL MODELS <span id="rc-count" style="color:#888;font-weight:400"></span>
+    <span style="float:right;font-size:10px;color:#666;font-weight:400">GB/IE &middot; SHADOW ONLY &middot; RICH CONTEXT HAS NO MODEL YET AND PICKS NOTHING &middot; PRIME IS UNCHANGED</span>
+  </div>
+  <div style="font-size:10px;color:#777;margin-bottom:4px;">EVIDENCE VELO NOW HOLDS PER RUNNER (first packet of the day &rarr; latest)</div>
+  <div id="rc-evidence" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  <div id="rc-runs" style="font-size:10px;color:#777;margin-top:6px;"></div>
+  <div style="font-size:10px;color:#777;margin:10px 0 4px;">EVERY MODEL, ON ITS OWN CLEAN RACES (tied or multi-list picks are not counted as a read)</div>
+  <div id="rc-models" style="overflow:auto;"></div>
+  <details open style="margin-top:8px;color:#aaa;">
+    <summary style="cursor:pointer;font-size:11px;color:#ab47bc;">Race by race: each model's top pick</summary>
+    <div id="rc-races" style="max-height:420px;overflow:auto;margin-top:6px;"></div>
+  </details>
+</div>
 <div id="vvf-panel" style="display:none;background:#111;border:1px solid #ffa726;border-radius:6px;margin:8px 12px;padding:10px 14px;">
   <div style="font-weight:600;color:#ffa726;letter-spacing:0.05em;margin-bottom:6px;">
     VELO vs FORMFAV <span id="vvf-count" style="color:#888;font-weight:400"></span>
@@ -4501,6 +4516,69 @@ async function loadVeloVsFormfav() {
   } catch (_vvfErr) { panel.style.display = 'none'; }
 }
 
+async function loadRichContext() {
+  const params = new URLSearchParams(window.location.search);
+  const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
+  const panel = document.getElementById('rc-panel');
+  if (!panel) return;
+  try {
+    const res = await fetch(`/api/rich-context?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`rich-context ${res.status}`);
+    const data = await res.json();
+    const ev = data.evidence || {};
+    if (!data.available || !ev.races) { panel.style.display = 'none'; return; }
+    const pc = (v) => v === null || v === undefined ? '—' : `${v}%`;
+    document.getElementById('rc-count').textContent = `(${ev.races} races · ${ev.runners} runners · ${data.date})`;
+    document.getElementById('rc-evidence').innerHTML = [
+      _wdChip('HISTORY', `${pc(ev.history_before_pct)} → ${pc(ev.history_now_pct)}`, ev.history_now_pct > ev.history_before_pct ? '#66bb6a' : '#ddd'),
+      _wdChip('RP SPOTLIGHT', `${pc(ev.spotlight_before_pct)} → ${pc(ev.spotlight_now_pct)}`, ev.spotlight_now_pct > ev.spotlight_before_pct ? '#66bb6a' : '#ddd'),
+      _wdChip('FORMFAV FACTS', pc(ev.formfav_now_pct)),
+      _wdChip('PACKET BATCHES', ev.packet_batches || 0),
+      _wdChip('RICH CONTEXT MODEL', data.rich_context_ranks_anything ? 'RANKING' : 'NOT FITTED', data.rich_context_ranks_anything ? '#ffa726' : '#888'),
+    ].join('');
+    const runs = data.scoring_runs || [];
+    document.getElementById('rc-runs').innerHTML = runs.length
+      ? 'Scoring runs today: ' + runs.map(r => `${esc(r.run_type || '')} ${esc(r.status || '')} ${esc(String(r.started_at || '').slice(11, 16))}Z (${esc(String(r.runners_processed ?? ''))} runners)`).join(' &middot; ')
+      : '';
+    const models = data.models || [];
+    const boardRow = (m) => {
+      const pct = (a, b) => b ? ` <span style="color:#777">(${Math.round(100 * a / b)}%)</span>` : '';
+      const isPrime = m.model === 'MAIN_VELO_PRIME';
+      return `<tr style="border-top:1px solid #222"><td style="padding:3px 12px 3px 0;color:${isPrime ? '#ffa726' : '#ccc'}">${esc(m.label)}</td>`
+        + `<td>${m.races}</td><td>${m.clean}${m.unclean ? ` <span style="color:#ffb74d">(${m.unclean} not clean)</span>` : ''}</td>`
+        + `<td>${isPrime ? '—' : `${m.agree_with_prime}/${m.comparable_with_prime}${pct(m.agree_with_prime, m.comparable_with_prime)}`}</td>`
+        + `<td>${m.settled}</td><td>${m.settled ? `${m.won}/${m.settled}${pct(m.won, m.settled)}` : '—'}</td>`
+        + `<td>${m.settled ? `${m.top3}/${m.settled}${pct(m.top3, m.settled)}` : '—'}</td>`
+        + `<td style="color:#666;white-space:normal">${esc(m.note || '')}</td></tr>`;
+    };
+    document.getElementById('rc-models').innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:11px;white-space:nowrap;">'
+      + '<tr style="color:#777;text-align:left"><th>MODEL</th><th>RACES</th><th>CLEAN</th><th>SAME PICK AS PRIME</th><th>SETTLED</th><th>WON</th><th>TOP 3</th><th>NOTE</th></tr>'
+      + models.map(boardRow).join('') + '</table>'
+      + '<div style="font-size:10px;color:#666;margin-top:4px;">Outcomes appear after tonight\'s sigma. A single day says nothing about skill: this is judged over weeks of settled races.</div>';
+    const others = models.filter(m => m.model !== 'MAIN_VELO_PRIME');
+    const cell = (c) => {
+      if (!c) return '<td style="color:#444">·</td>';
+      const settled = c.position !== null && c.position !== undefined;
+      const tail = settled ? (c.won ? ' <span style="color:#66bb6a">✓</span>' : ` <span style="color:#777">(${c.position})</span>`) : '';
+      const colour = !c.clean ? '#777' : c.agrees ? '#8bc34a' : '#ddd';
+      return `<td style="padding-right:10px;color:${colour}">${c.clean ? '' : '~ '}${esc(c.horse || '')}${tail}</td>`;
+    };
+    document.getElementById('rc-races').innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap;">'
+      + '<tr style="color:#777;text-align:left"><th>TIME</th><th>COURSE</th><th>PRIME</th>' + others.map(m => `<th>${esc(m.label)}</th>`).join('') + '</tr>'
+      + (data.races || []).map(r => {
+        const pr = (r.cells || {})['MAIN_VELO_PRIME'];
+        const settled = pr && pr.position !== null && pr.position !== undefined;
+        const prTail = settled ? (pr.won ? ' <span style="color:#66bb6a">✓</span>' : ` <span style="color:#777">(${pr.position})</span>`) : '';
+        return `<tr style="border-top:1px solid #222"><td style="padding:2px 10px 2px 0">${esc(r.off_time || '')}</td>`
+          + `<td style="padding-right:10px;color:#ccc">${esc(r.course || '')}</td>`
+          + `<td style="padding-right:10px;color:#ffa726">${esc(r.prime_horse || '')}${prTail}</td>`
+          + others.map(m => cell((r.cells || {})[m.model])).join('') + '</tr>';
+      }).join('')
+      + '</table><div style="font-size:10px;color:#666;margin-top:4px;"><span style="color:#8bc34a">Green</span> = same pick as Prime. <span style="color:#777">~ grey</span> = tied or multi-list, arbitrary. ✓ = won, (n) = finishing position.</div>';
+    panel.style.display = 'block';
+  } catch (_rcErr) { panel.style.display = 'none'; }
+}
+
 async function loadLlmBrief() {
   const params = new URLSearchParams(window.location.search);
   const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
@@ -4527,6 +4605,7 @@ loadMidpriceShadow();
 loadFormfavShadow();
 loadWorldDay();
 loadVeloVsFormfav();
+loadRichContext();
 loadLlmBrief();
 </script>
 </body>
