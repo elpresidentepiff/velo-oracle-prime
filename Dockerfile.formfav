@@ -7,6 +7,8 @@ ENV PYTHONPATH=/app
 WORKDIR /app
 
 COPY src/velo/formfav_client.py src/velo/formfav_client.py
+COPY src/velo/formfav_feature_contract.py src/velo/formfav_feature_contract.py
+COPY src/velo/formfav_evidence_store.py src/velo/formfav_evidence_store.py
 COPY scripts/ops/formfav_live_worker.py scripts/ops/formfav_live_worker.py
 COPY scripts/ops/formfav_global_eod.py scripts/ops/formfav_global_eod.py
 

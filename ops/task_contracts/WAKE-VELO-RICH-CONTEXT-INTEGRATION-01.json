@@ -3,6 +3,7 @@
   "title": "Wire auditable Rich Context evidence into a separate unfitted shadow challenger",
   "classification": "AUTHORIZED_SHADOW_EVIDENCE_INTEGRATION",
   "allowed_paths": [
+    "Dockerfile.formfav",
     "app/services/rich_context_history_provider.py",
     "config/rich_context_challenger_protocol_v1.json",
     "ops/task_contracts/OPS-TASK-CONTRACT-WINDOWS-01.json",
@@ -26,6 +27,7 @@
     "supabase/migrations/20261107100000_rich_context_shadow_packets.sql",
     "tests/test_formfav_cache_client.py",
     "tests/test_formfav_evidence_store.py",
+    "tests/test_formfav_dockerfile.py",
     "tests/test_rich_context_challenger.py",
     "tests/test_rich_context_comment_intelligence.py",
     "tests/test_rich_context_history_provider.py",
