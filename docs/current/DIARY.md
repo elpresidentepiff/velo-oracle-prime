@@ -89,6 +89,9 @@ Changed:          view `world_velo_picks` (migrations `world_velo_picks`, `world
                   (TO RUN / OFF / ALL, per-country, TODAY / TOMORROW, refreshes every 5 min), helper `world_picks`. Contract `WORLD-PICKS-01`.
                   Frozen scorecards, the World job, Prime and every model weight untouched. Final and provisional results are counted apart.
 Results gap:      Japan has no result source: all 36 JP races are `no_result` (AU 16 and FR 5 more). 95 final, 22 provisional, 57 no_result of 283.
+Fixed later:      the view's `pick_is_shortest_price` was true for every price-blind row on earlier days (they store the 10.0 default, and 10.0 equals 10.0):
+                  120 of 120 on 2026-11-05. It now counts a verified price only (migration `world_velo_picks_real_prices_only`). The panel already gated on REAL,
+                  so the numbers it showed were right; only the raw column was misleading.
 Open / broken:    World learning events 0 eligible (identity grade D, price-blind): the World lane still cannot teach anything. US has no market feed.
                   `/api/velo-vs-formfav` returned `available: false` for 2026-11-07 (UK view, not looked at yet).
 Next safe action: tomorrow read the panel for 2026-11-07 once the World sigma has run, then split AU/JP wins by "pick = shortest price".

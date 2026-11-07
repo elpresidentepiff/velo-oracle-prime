@@ -8,17 +8,24 @@
 -- view says plainly when it is not a clean read: tied_top, rank1_rows > 1, price_state, pick_is_shortest_price.
 create or replace view public.world_velo_picks
 with (security_invoker = true) as
-with ranked as not materialized (
-  select s.race_date, s.provider_race_key, s.country, s.runner_rank, s.horse_name, s.score,
-         s.place_prob, s.longshot_prob, s.captured_price, s.identity_grade, s.feature_payload,
-         row_number() over (partition by s.race_date, s.provider_race_key
-                            order by s.runner_rank asc, s.score desc nulls last, s.horse_name asc) as ord,
-         count(*) filter (where s.runner_rank = 1)
-           over (partition by s.race_date, s.provider_race_key) as rank1_rows,
-         min(s.captured_price) over (partition by s.race_date, s.provider_race_key) as shortest_price
+with base as not materialized (
+  select s.*,
+         coalesce(s.feature_payload ->> 'price_state',
+                  case when s.captured_price is null or s.captured_price = 10 then 'MISSING' else 'UNVERIFIED' end) as ps
   from public.world_model_scorecards s
   where s.model_name = 'existing_velo_prime_stack'
     and s.freeze_stage = 'FIRST_COMPLETE'
+), ranked as not materialized (
+  select b.race_date, b.provider_race_key, b.country, b.runner_rank, b.horse_name, b.score,
+         b.place_prob, b.longshot_prob, b.captured_price, b.identity_grade, b.feature_payload, b.ps,
+         row_number() over (partition by b.race_date, b.provider_race_key
+                            order by b.runner_rank asc, b.score desc nulls last, b.horse_name asc) as ord,
+         count(*) filter (where b.runner_rank = 1)
+           over (partition by b.race_date, b.provider_race_key) as rank1_rows,
+         -- only a verified market price counts: earlier days stored a 10.0 default on every price-blind row
+         min(case when b.ps = 'REAL' then b.captured_price end)
+           over (partition by b.race_date, b.provider_race_key) as shortest_price
+  from base b
 )
 select
   t1.race_date,
@@ -34,9 +41,7 @@ select
   t1.place_prob                                         as pick_place_prob,
   t1.longshot_prob                                      as pick_longshot_prob,
   t1.captured_price                                     as pick_price,
-  coalesce(t1.feature_payload ->> 'price_state',
-           case when t1.captured_price is null or t1.captured_price = 10 then 'MISSING' else 'UNVERIFIED' end)
-                                                        as price_state,
+  t1.ps                                                 as price_state,
   t1.feature_payload ->> 'race_price_state'             as race_price_state,
   (t1.feature_payload ->> 'priced_runners')::int        as priced_runners,
   t1.feature_payload ->> 'confidence_level'             as confidence_level,
@@ -57,7 +62,7 @@ select
   res.winner_names                                      as winner_names,
   -- Where a market exists the VELO World pick is almost always the shortest price (123 of 126 priced
   -- races on 2026-11-07), so a good strike rate there is the favourite's, not evidence of skill.
-  (t1.captured_price is not null and t1.captured_price = t1.shortest_price) as pick_is_shortest_price
+  (t1.ps = 'REAL' and t1.captured_price = t1.shortest_price) as pick_is_shortest_price
 from ranked t1
 left join ranked t2 on t2.race_date = t1.race_date and t2.provider_race_key = t1.provider_race_key and t2.ord = 2
 left join ranked t3 on t3.race_date = t1.race_date and t3.provider_race_key = t1.provider_race_key and t3.ord = 3

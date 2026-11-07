@@ -272,3 +272,12 @@ def test_world_picks_panel_is_wired_read_only_and_never_calls_itself_a_tip() -> 
     assert "FIRST_COMPLETE" in sql  # reads the frozen first-complete pick, never a later rewrite
     for verb in ("insert into", "update public", "delete from"):
         assert verb not in sql.lower()
+
+
+def test_world_picks_view_only_counts_a_verified_price_as_the_shortest() -> None:
+    # Earlier days stored the scorer's 10.0 default on every price-blind row; comparing those defaults to
+    # each other made "pick is the shortest price" true for all of them (120 of 120 on 2026-11-05).
+    root = Path(__file__).parents[1]
+    sql = (root / "supabase" / "migrations" / "20261107190000_world_velo_picks.sql").read_text(encoding="utf-8")
+    assert "min(case when b.ps = 'REAL' then b.captured_price end)" in sql
+    assert "(t1.ps = 'REAL' and t1.captured_price = t1.shortest_price) as pick_is_shortest_price" in sql
