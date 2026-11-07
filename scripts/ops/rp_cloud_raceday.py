@@ -77,6 +77,11 @@ def main() -> int:
     parser.add_argument("--date", default=None, help="Race date YYYY-MM-DD; defaults to London today")
     parser.add_argument("--no-notify", action="store_true")
     parser.add_argument(
+        "--authorised-rescore-reason",
+        default=None,
+        help="Explicit incident/reason forwarded to the governed scorer; prior PASS rows are preserved.",
+    )
+    parser.add_argument(
         "--capture-only",
         action="store_true",
         help="capture and archive published RP cards, then stop before parsing/scoring",
@@ -175,6 +180,8 @@ def main() -> int:
         "--execute",
         "--skip-capture",
     ]
+    if args.authorised_rescore_reason:
+        score.extend(["--authorised-rescore-reason", args.authorised_rescore_reason])
     if args.no_notify:
         score.append("--no-notify")
     _run("canonical FormFav-first parse/score/persist", score)

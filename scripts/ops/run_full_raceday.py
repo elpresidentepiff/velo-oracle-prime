@@ -246,6 +246,11 @@ def main() -> int:
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
     parser.add_argument("--execute", action="store_true", required=True, help="Required — this runs real captures and scoring.")
     parser.add_argument("--skip-capture", action="store_true", help="Skip Steps 1-3 (assumes racecard_injection.json already exists for --date)")
+    parser.add_argument(
+        "--authorised-rescore-reason",
+        default=None,
+        help="Explicit incident/reason for an append-only governed rescore of an already-PASS date.",
+    )
     parser.add_argument("--skip-passport-topup", action="store_true",
                         help="Skip the pre-scoring passport top-up for today's runners.")
     parser.add_argument("--passport-topup-limit", type=int, default=400,
@@ -607,7 +612,7 @@ def main() -> int:
     except IdempotenceCheckError as e:
         print(f"\n[CRITICAL] Idempotence check failed — refusing to risk a double scoring pass: {e}")
         return 1
-    if already_scored:
+    if already_scored and not args.authorised_rescore_reason:
         print(f"\n[SKIP] Step 9: {date} already scored (completed PASS pipeline_runs row) — not re-scoring/overwriting.")
         # Railway cron containers start from a clean image.  A PASS row in
         # Supabase therefore proves scoring completed, but does not imply the
@@ -618,10 +623,16 @@ def main() -> int:
         if not ensure_local_verdict_archive(date, results):
             return 1
     else:
+        rescore_args = (
+            ["--authorised-rescore-reason", args.authorised_rescore_reason]
+            if args.authorised_rescore_reason
+            else []
+        )
         if not run(
             "Step 9: Live scoring (run_prime_today.py)",
             [PY, "scripts/ops/run_prime_today.py", "--date", date, "--source", "rp", "--no-notify"]
-            + (["--allow-missing-pdfs"] if args.allow_missing_pdfs else []),
+            + (["--allow-missing-pdfs"] if args.allow_missing_pdfs else [])
+            + rescore_args,
             critical=True, results=results,
         ):
             return 1
