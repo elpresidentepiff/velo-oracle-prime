@@ -56,6 +56,19 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-07 (late evening) — Claude Code (Sonnet 5.5) — Results check, UK and World, before and after the Rich Context wiring
+Read:             UK from FormFav's stored results (16 final, 30 provisional; NOT the Racing Post governed truth), World from `world_velo_picks`. 19:30Z.
+UK:               Prime 12/46 winners (26.1%), identical for the 07:20 run and the 11:13 rescore (the top pick is the same in 46/46). Prior five UK days 46/202
+                  (22.8%, daily range 11-33%). Other lanes today: MDS 10/45, Old Velo place 9/46, New Build B 6/25, Champion Intent 4/19, No-RPR 4/36,
+                  New Build A 4/20, Old Velo longshot 4/46, Passport 3/21 (clean races only for the lanes that tie). Prime picks with history 6/31 vs 6/15 without;
+                  with Spotlight 1/8 vs 11/38: tiny samples, and the evidence does not change a pick, so this is not an effect of Rich Context.
+World:            AU/JP/FR done; CA 8 and US 56 run until 02:24Z. AU 93 final: 35 won, 53 framed (priced, picks are the favourite). Price-blind: AU 11-06 2/40 final,
+                  US 11-05+06 23/168 incl. provisional (13.7% vs ~11% chance). JP has no result source.
+Ops:              the 21:00Z `velo-results-sigma` cron was cleared at 19:55Z so a deploy would run the EOD once, at the operator's order. A `redeploy` re-ran the old
+                  deployment's saved config and did not run it (no logs, no pipeline_runs row); only a new deployment from a push picks the cleared schedule up.
+                  The cron MUST be restored (`0 21 * * *`) after the run. See the next entry for the outcome.
+Next safe action: confirm the `velo-results-sigma` run for 2026-11-07 finished PASS, then restore the cron and check it is live.
+
 ### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — Wake Velo: end-to-end connection check
 Checked:          every link from tomorrow's 07:00 UTC cron to the dashboard, read-only.
 Connected:        cron `0 7 * * *` on `velo-prime-scoring` is live; the whole chain ran in the cloud on 2026-11-07 10:52-11:15Z (FormFav gate, RP login PASS,
