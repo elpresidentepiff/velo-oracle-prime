@@ -29,11 +29,25 @@ PROFILE = ROOT / "data" / "browser_profiles" / "racing_post_account"
 RAW = ROOT / "data" / "racing_post_account_raw"
 
 
-def _run(label: str, command: list[str]) -> None:
+def _run(label: str, command: list[str], env: dict[str, str] | None = None) -> None:
     print(f"\n[CLOUD-RP] {label}: {' '.join(command)}", flush=True)
-    result = subprocess.run(command, cwd=ROOT, check=False)
+    result = subprocess.run(command, cwd=ROOT, check=False, env={**os.environ, **env} if env else None)
     if result.returncode:
         raise RuntimeError(f"{label} failed with exit code {result.returncode}")
+
+
+def _trigger_source(rescore_reason: str | None, environ: dict[str, str] | os._Environ[str] = os.environ) -> str:
+    """What the pipeline_runs row records as having started this run.
+
+    The scoring service has no TRIGGER_SOURCE variable, so without this every scheduled morning run
+    would be written as ``manual`` (the scorer's default) and the ledger could not tell the 07:00 cron
+    from a hand-started run. An explicit TRIGGER_SOURCE still wins; an authorised rescore is a person
+    asking for a rerun, not the schedule.
+    """
+    explicit = (environ.get("TRIGGER_SOURCE") or "").strip()
+    if explicit:
+        return explicit
+    return "railway_manual" if (rescore_reason or "").strip() else "railway_cron"
 
 
 def _capture_index_and_tomorrow(date_str: str) -> None:
@@ -184,7 +198,11 @@ def main() -> int:
         score.extend(["--authorised-rescore-reason", args.authorised_rescore_reason])
     if args.no_notify:
         score.append("--no-notify")
-    _run("canonical FormFav-first parse/score/persist", score)
+    _run(
+        "canonical FormFav-first parse/score/persist",
+        score,
+        env={"TRIGGER_SOURCE": _trigger_source(args.authorised_rescore_reason)},
+    )
     print(f"\n[CLOUD-RP] PASS — canonical race-day pipeline completed for {date_str}", flush=True)
     return 0
 

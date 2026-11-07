@@ -1,0 +1,32 @@
+{
+  "task_id": "WAKE-VELO-CONNECT-01",
+  "title": "Record scheduled morning scoring runs as railway_cron in pipeline_runs (label only)",
+  "classification": "SHADOW_RESEARCH_INFRASTRUCTURE",
+  "allowed_paths": [
+    "scripts/ops/rp_cloud_raceday.py",
+    "tests/test_rp_cloud_raceday_trigger.py",
+    "ops/task_contracts/WAKE-VELO-CONNECT-01.json",
+    "docs/current/DIARY.md"
+  ],
+  "forbidden_paths": [
+    "app/services/velo_prime_service.py",
+    "app/services/sqpe_v17_service.py",
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "scripts/ops/run_prime_today.py",
+    "scripts/ops/run_full_raceday.py",
+    "scripts/ops/run_results_sigma.py",
+    "app/agents/",
+    "src/velo/execution_bridge.py"
+  ],
+  "allowed_actions": ["read_repo", "label_pipeline_run_trigger_source", "run_focused_tests"],
+  "forbidden_actions": ["live_scoring_change", "model_promotion", "credential_exposure", "racing_api_call", "table_write_from_dashboard", "stake_authorisation"],
+  "forbidden_keywords": ["RACING_API_", "bot.send_message", "promote_model"],
+  "required_outputs": [
+    "scripts/ops/rp_cloud_raceday.py",
+    "tests/test_rp_cloud_raceday_trigger.py",
+    "ops/task_contracts/WAKE-VELO-CONNECT-01.json"
+  ],
+  "classification_required": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"],
+  "final_classifications": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"]
+}

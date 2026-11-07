@@ -56,6 +56,22 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — Wake Velo: end-to-end connection check
+Checked:          every link from tomorrow's 07:00 UTC cron to the dashboard, read-only.
+Connected:        cron `0 7 * * *` on `velo-prime-scoring` is live; the whole chain ran in the cloud on 2026-11-07 10:52-11:15Z (FormFav gate, RP login PASS,
+                  index + race-page capture, parse/score/persist, PASS), no laptop. FormFav gate inputs are fresh: the always-on `velo-formfav-live` worker
+                  has already stored form for 2026-11-08 (GB 14 races, IE 8; newest update 18:33Z; the gate needs < 3 h). The snapshot writer matches the
+                  live `runner_prediction_snapshots` columns exactly (no drift). Dashboard endpoints: rich-context, world-picks, world-day answer 200 with data.
+Fixed:            the service has no TRIGGER_SOURCE variable, so the scheduled run would have been recorded as `manual`. `rp_cloud_raceday.py` now passes
+                  `railway_cron` (or `railway_manual` for an authorised rescore) to the score step. Label only. Contract WAKE-VELO-CONNECT-01, 14 tests.
+Learned:          since the cron was set, a deploy no longer re-runs the morning chain (it did before: the rescores were run by deploys). Pushes are safe.
+                  UK result positions in `canonical_model_scorecards` DO arrive (11-04 43/47, 11-05 43/45, 11-06 34/36 top picks, all equal to
+                  `racing_horse_runs`): the `velo-results-sigma` light row showing 0 processed is a legacy counter, not the settlement path.
+                  Those rows stay `UNSETTLED` / `official_evaluation_eligible = false`: the truth contract is still only on `ops/recovery`.
+Open / broken:    `velo_vs_formfav` takes ~8.7 s (blank UK-vs-FormFav panel). Japan has no result source. UK recovery merge not decided.
+Next safe action: 2026-11-08 ~07:25Z: `select trigger_source, status from pipeline_runs where service_name='velo-prime-scoring' and source_date='2026-11-08'`
+                  should read `railway_cron` / PASS, and `select count(*) from runner_prediction_snapshots where race_date='2026-11-08'` should be > 0.
+
 ### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — World: VELO's own picks ready and visible
 Found:            the hourly World job (`velo-formfav-us-shadow`) was already freezing every World race by itself: on 2026-11-07 all 283 races
                   outside GB/IE (AU 110, CA 11, FR 23, JP 36, US 103) were frozen `FIRST_COMPLETE`, pre-off. Each day's races freeze from 00:00 UTC
