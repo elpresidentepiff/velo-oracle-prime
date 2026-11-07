@@ -7,6 +7,7 @@ read-only presentation of shadow data: FormFav never feeds Prime scoring.
 from __future__ import annotations
 
 import re
+from datetime import UTC, datetime
 from typing import Any
 
 SHADOW_BOUNDARY = {
@@ -200,5 +201,114 @@ def enriched_suggestions(rows: list[dict[str, Any]]) -> dict[str, Any]:
             "with_spotlight": sum(1 for r in races if r.get("spotlight_families")),
             "with_withdrawal": sum(1 for r in races if (_int(r.get("withdrawn")) or 0) > 0),
             "run_at": max((r["run_at"] for r in races if r.get("run_at")), default=None),
+        },
+    }
+
+
+WORLD_MODEL = "existing_velo_prime_stack"
+_NAME_SUFFIX = re.compile(r"\s*\([a-z]{2,3}\)\s*$", re.IGNORECASE)
+
+
+def _name_key(name: Any) -> str:
+    """Match a horse across providers: drop a trailing state/country tag like ``(Ny)``, keep letters."""
+    return re.sub(r"[^a-z0-9]", "", _NAME_SUFFIX.sub("", str(name or "")).lower())
+
+
+def _when(value: Any) -> datetime | None:
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00").replace(" ", "T"))
+    except (TypeError, ValueError):
+        return None
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
+
+
+def _outcome(row: dict[str, Any]) -> str:
+    basis = row.get("result_basis")
+    if basis == "no_result":
+        return "NO_RESULT"
+    if basis not in ("final", "provisional"):
+        return "PENDING"
+    if row.get("won"):
+        return "WON"
+    return "PLACED" if row.get("framed") else "LOST"
+
+
+def world_picks(
+    rows: list[dict[str, Any]],
+    formfav: list[dict[str, Any]],
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """VELO's frozen World pick per race, with how much of a read each one is.
+
+    The pick is the first-complete, pre-off freeze and is never rewritten. A pick is a clean read only
+    when it is not tied and the lane wrote a single rank-1 row; with no market the score is price-blind;
+    where a market exists the pick is nearly always the shortest price, so its strike rate is the
+    favourite's. Nothing here feeds Prime and nothing is staked.
+    """
+    now = now or datetime.now(UTC)
+    ff_by_race = {
+        (str(f.get("country") or "").lower(), str(f.get("track") or "").lower(), _int(f.get("race_number"))): f
+        for f in formfav
+    }
+    races: list[dict[str, Any]] = []
+    for r in rows:
+        off = _when(r.get("start_time"))
+        ff = ff_by_race.get((str(r.get("country") or "").lower(), str(r.get("track") or "").lower(),
+                             _int(r.get("race_number")))) or {}
+        flags = []
+        if r.get("tied_top"):
+            flags.append("TIED")
+        if (_int(r.get("rank1_rows")) or 1) > 1:
+            flags.append("DUP_RANK")
+        if r.get("price_state") != "REAL":
+            flags.append("NO_MARKET")
+        ff_pick = ff.get("pick1_name")
+        races.append({
+            **r,
+            "off_label": ff.get("off_uk") or (off.strftime("%H:%M") if off else ""),
+            "upcoming": bool(off and off > now),
+            "outcome": _outcome(r),
+            "result_is_final": r.get("result_basis") == "final",
+            "clean": "TIED" not in flags and "DUP_RANK" not in flags,
+            "flags": flags,
+            "formfav_pick": ff_pick,
+            "formfav_win_prob": ff.get("pick1_win"),
+            "agrees_with_formfav": (_name_key(ff_pick) == _name_key(r.get("pick_name"))) if ff_pick else None,
+        })
+    races.sort(key=lambda x: (x["upcoming"] is False, _when(x.get("start_time")) or now,
+                              str(x.get("country")), str(x.get("track")), _int(x.get("race_number")) or 0))
+    priced = [x for x in races if x.get("price_state") == "REAL"]
+    final = [x for x in races if x["outcome"] != "PENDING" and x["result_is_final"]
+             and x["outcome"] != "NO_RESULT"]
+    final_clean = [x for x in final if x["clean"]]
+    with_ff = [x for x in races if x["agrees_with_formfav"] is not None]
+    by_country: dict[str, int] = {}
+    for x in races:
+        by_country[str(x.get("country"))] = by_country.get(str(x.get("country")), 0) + 1
+    return {
+        "races": races,
+        "summary": {
+            "races": len(races),
+            "by_country": by_country,
+            "upcoming": sum(1 for x in races if x["upcoming"]),
+            "priced": len(priced),
+            "no_market": len(races) - len(priced),
+            "tied": sum(1 for x in races if "TIED" in x["flags"]),
+            "dup_rank": sum(1 for x in races if "DUP_RANK" in x["flags"]),
+            "priced_pick_is_shortest": sum(1 for x in priced if x.get("pick_is_shortest_price")),
+            "agree_with_formfav": sum(1 for x in with_ff if x["agrees_with_formfav"]),
+            "with_formfav": len(with_ff),
+            "settled_final": len(final),
+            "settled_provisional": sum(1 for x in races if x.get("result_basis") == "provisional"),
+            "no_result": sum(1 for x in races if x["outcome"] == "NO_RESULT"),
+            "won_final": sum(1 for x in final if x["outcome"] == "WON"),
+            "placed_final": sum(1 for x in final if x["outcome"] in ("WON", "PLACED")),
+            "clean_settled_final": len(final_clean),
+            "clean_won_final": sum(1 for x in final_clean if x["outcome"] == "WON"),
+            "note": (
+                "Frozen before the off and never rewritten. With no market the score is price-blind. "
+                "Where a market exists the pick is almost always the shortest price, so a strike rate "
+                "there is the favourite's, not evidence of skill."
+            ),
         },
     }

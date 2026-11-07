@@ -2102,6 +2102,39 @@ async def velo_vs_formfav(date: str = Query(default=None)):
     }
 
 
+@app.get("/api/world-picks")
+async def world_velo_picks(date: str = Query(default=None)):
+    """VELO's own frozen World pick for every race outside GB/IE, beside FormFav's and the result.
+
+    Read-only: the picks are the first-complete pre-off freeze in world_model_scorecards and are
+    never rewritten here. They are price-blind where no market was captured.
+    """
+    import datetime as _dt
+
+    from app.world_dashboard import SHADOW_BOUNDARY, valid_date, world_picks
+
+    d = date or _dt.date.today().isoformat()
+    if not valid_date(d):
+        return JSONResponse({"error": "date must be YYYY-MM-DD"}, status_code=400)
+    rows = _sb_rest_rows(
+        f"world_velo_picks?race_date=eq.{d}&order=start_time.asc.nullslast,country.asc,race_number.asc&limit=600"
+    )
+    formfav = _sb_rest_rows(
+        f"formfav_race_picks?race_date=eq.{d}"
+        "&select=country,track,race_number,off_uk,pick1_name,pick1_win,confidence&limit=1000"
+    )
+    shaped = world_picks(rows or [], formfav or [])
+    return {
+        "date": d,
+        "available": rows is not None,
+        "model": "existing_velo_prime_stack",
+        "picks_label": "VELO's frozen pre-off World pick. Shadow only, not a tip, nothing staked.",
+        "as_of": _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
+        **shaped,
+        **SHADOW_BOUNDARY,
+    }
+
+
 @app.get("/api/rich-context")
 async def rich_context(date: str = Query(default=None)):
     """Every model's top pick side by side, plus how much Rich Context evidence each race had.

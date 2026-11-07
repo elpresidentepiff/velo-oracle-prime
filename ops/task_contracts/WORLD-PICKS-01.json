@@ -1,0 +1,36 @@
+{
+  "task_id": "WORLD-PICKS-01",
+  "title": "Dashboard: VELO's frozen World pick for every race outside GB/IE, with price state, tie flags and result",
+  "classification": "SHADOW_RESEARCH_INFRASTRUCTURE",
+  "allowed_paths": [
+    "app/main.py",
+    "app/world_dashboard.py",
+    "app/static/dashboard/index.html",
+    "tests/test_world_dashboard.py",
+    "supabase/migrations/20261107190000_world_velo_picks.sql",
+    "ops/task_contracts/WORLD-PICKS-01.json",
+    "docs/current/DIARY.md"
+  ],
+  "forbidden_paths": [
+    "app/services/velo_prime_service.py",
+    "app/services/sqpe_v17_service.py",
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "scripts/ops/run_prime_today.py",
+    "scripts/ops/run_results_sigma.py",
+    "scripts/ops/run_world_sigma.py",
+    "scripts/ops/run_formfav_global_shadow.py",
+    "app/agents/",
+    "src/velo/execution_bridge.py"
+  ],
+  "allowed_actions": ["read_repo", "create_read_only_views", "add_read_only_dashboard_endpoint", "add_dashboard_panel", "display_only_pick_name_comparison_within_one_race", "run_focused_tests"],
+  "forbidden_actions": ["live_scoring_change", "model_promotion", "credential_exposure", "racing_api_call", "table_write_from_dashboard", "rewrite_frozen_scorecard", "stake_authorisation"],
+  "forbidden_keywords": ["RACING_API_", "bot.send_message", "promote_model"],
+  "required_outputs": [
+    "app/world_dashboard.py",
+    "tests/test_world_dashboard.py",
+    "ops/task_contracts/WORLD-PICKS-01.json"
+  ],
+  "classification_required": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"],
+  "final_classifications": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"]
+}

@@ -56,6 +56,24 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — World: VELO's own picks ready and visible
+Found:            the hourly World job (`velo-formfav-us-shadow`) was already freezing every World race by itself: on 2026-11-07 all 283 races
+                  outside GB/IE (AU 110, CA 11, FR 23, JP 36, US 103) were frozen `FIRST_COMPLETE`, pre-off, and 2026-11-08 had 137 of 166.
+                  What was missing was any dashboard surface for VELO's picks: the WORLD DAY panel shows FormFav's picks ("not a VELO selection").
+Price state:      only AU (90 of 110) and JP (36 of 36) have a market. CA 0/11, FR 0/23, US 0/103 are `NO_MARKET`, i.e. price-blind.
+                  (An earlier count that said "all priced" treated NULL as present; it was wrong and is corrected here.)
+Not a skill read: where a market exists the VELO World pick is the shortest price in 123 of 126 races (AU 87/90, JP 36/36). AU's 35 wins from
+                  93 final results (37.6%) is therefore what backing favourites gives, not evidence of an edge. The view carries
+                  `pick_is_shortest_price` and the panel prints it beside every pick.
+Data quality:     ties on the top score: AU 2, FR 12 of 23, US 22 of 103. Three US races carry two rank-1 rows (a runner listed under two name
+                  variants, e.g. "Crazy Busted" and "Crazy Busted (Ny)", Belmont R10). Both are flagged (`TIED`, `DUP_RANK`) and kept out of the "clean picks" win count.
+Changed:          view `world_velo_picks` (migrations `world_velo_picks`, `world_velo_picks_shortest_price`), `/api/world-picks`, panel "WORLD - VELO PICKS"
+                  (TO RUN / OFF / ALL, per-country, TODAY / TOMORROW, refreshes every 5 min), helper `world_picks`. Contract `WORLD-PICKS-01`.
+                  Frozen scorecards, the World job, Prime and every model weight untouched. Final and provisional results are counted apart.
+Open / broken:    World learning events 0 eligible (identity grade D, price-blind): the World lane still cannot teach anything. US has no market feed.
+                  `/api/velo-vs-formfav` returned `available: false` for 2026-11-07 (UK view, not looked at yet).
+Next safe action: tomorrow read the panel for 2026-11-07 once the World sigma has run, then split AU/JP wins by "pick = shortest price".
+
 ### 2026-11-07 (evening) — Claude Code (Sonnet 5.5) — Did Velo change its mind? New-run suggestions with evidence
 Compared:         Prime's 07:20 picks against its 11:13 rescore (Prime's output is stored in each Rich Context packet). **Top pick identical in 46 of 46 races.**
                   Win probability moved on 166 of 465 runners (mean shift 0.002, max 0.13): all 69 runners in the 7 races with a withdrawal (field renormalised) plus
