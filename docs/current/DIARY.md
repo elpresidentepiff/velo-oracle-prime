@@ -58,7 +58,9 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — World: VELO's own picks ready and visible
 Found:            the hourly World job (`velo-formfav-us-shadow`) was already freezing every World race by itself: on 2026-11-07 all 283 races
-                  outside GB/IE (AU 110, CA 11, FR 23, JP 36, US 103) were frozen `FIRST_COMPLETE`, pre-off, and 2026-11-08 had 137 of 166.
+                  outside GB/IE (AU 110, CA 11, FR 23, JP 36, US 103) were frozen `FIRST_COMPLETE`, pre-off. Each day's races freeze from 00:00 UTC
+                  (first row 00:03), so nothing is frozen for the next date until then. (`world_day_status.world_predicted` for 11-08 is FormFav's
+                  predictions, not VELO's freeze; an earlier draft of this entry mixed the two.)
                   What was missing was any dashboard surface for VELO's picks: the WORLD DAY panel shows FormFav's picks ("not a VELO selection").
 Price state:      only AU (90 of 110) and JP (36 of 36) have a market. CA 0/11, FR 0/23, US 0/103 are `NO_MARKET`, i.e. price-blind.
                   (An earlier count that said "all priced" treated NULL as present; it was wrong and is corrected here.)
@@ -70,6 +72,7 @@ Data quality:     ties on the top score: AU 2, FR 12 of 23, US 22 of 103. Three 
 Changed:          view `world_velo_picks` (migrations `world_velo_picks`, `world_velo_picks_shortest_price`), `/api/world-picks`, panel "WORLD - VELO PICKS"
                   (TO RUN / OFF / ALL, per-country, TODAY / TOMORROW, refreshes every 5 min), helper `world_picks`. Contract `WORLD-PICKS-01`.
                   Frozen scorecards, the World job, Prime and every model weight untouched. Final and provisional results are counted apart.
+Results gap:      Japan has no result source: all 36 JP races are `no_result` (AU 16 and FR 5 more). 95 final, 22 provisional, 57 no_result of 283.
 Open / broken:    World learning events 0 eligible (identity grade D, price-blind): the World lane still cannot teach anything. US has no market feed.
                   `/api/velo-vs-formfav` returned `available: false` for 2026-11-07 (UK view, not looked at yet).
 Next safe action: tomorrow read the panel for 2026-11-07 once the World sigma has run, then split AU/JP wins by "pick = shortest price".

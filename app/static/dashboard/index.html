@@ -4622,7 +4622,8 @@ function _wpRender() {
         + `<td style="padding-right:10px;color:#42a5f5">${r.agrees_with_formfav ? '= same' : esc(String(r.formfav_pick || ''))}</td>`
         + `<td>${_wpResult(r)}</td></tr>`).join('')
       + '</table>'
-    : '<div style="color:#777;font-size:11px;padding:6px 0">No races match this filter.</div>';
+    : `<div style="color:#777;font-size:11px;padding:6px 0">${all.length ? 'No races match this filter.'
+      : `Nothing is frozen for ${esc(String(data.date))} yet. The World job freezes each race before the off, from 00:00 UTC.`}</div>`;
   panel.style.display = 'block';
 }
 
