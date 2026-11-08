@@ -549,3 +549,15 @@ def test_legacy_rls_migration_is_idempotent_for_existing_policies():
     for name in policy_names:
         assert f'DROP POLICY IF EXISTS "{name}"' in sql
         assert f'CREATE POLICY "{name}"' in sql
+
+
+def test_pr22_migration_recreates_batch_status_view_before_reordering_columns():
+    sql = (
+        ROOT
+        / "supabase"
+        / "migrations"
+        / "20260109000000_add_pr22_validation_gates.sql"
+    ).read_text(encoding="utf-8")
+    drop_index = sql.index("DROP VIEW IF EXISTS batch_status_overview")
+    create_index = sql.index("CREATE OR REPLACE VIEW batch_status_overview")
+    assert drop_index < create_index
