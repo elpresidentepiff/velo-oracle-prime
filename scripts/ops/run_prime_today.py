@@ -1925,6 +1925,18 @@ def main():
         assert_prime_invariant as _assert_rich_context_prime_invariant,
         build_runner_shadow_packet as _build_rich_context_packet,
     )
+    from src.velo.rich_context_challenger_scorer import (
+        load_artifact as _load_rich_context_artifact,
+        rank_scored_packets as _rank_rich_context_packets,
+        score_packet as _score_rich_context_packet,
+    )
+
+    # Loaded once; None when no fitted artifact exists yet (packets are still built either way).
+    _rich_context_artifact = _load_rich_context_artifact()
+    print(
+        "  Rich Context challenger artifact: "
+        + (_rich_context_artifact["metadata"].get("model_version") if _rich_context_artifact else "NONE (unfitted)")
+    )
 
     router = ProductRouter()
 
@@ -2108,6 +2120,7 @@ def main():
                 # Build the separate Rich Context evidence lane. Production
                 # Prime has already returned; this code cannot feed any value
                 # back into its probability, rank, tier, router or execution.
+                _race_rich_context_packets: list[dict] = []
                 _runner_by_id = {
                     str(item.get("horse_id") or ""): item
                     for item in race.get("runners", [])
@@ -2164,6 +2177,28 @@ def main():
                     )
                     _pred["rich_context_shadow"] = _packet
                     _rich_context_packets.append(_packet)
+                    _race_rich_context_packets.append(_packet)
+                # Shadow scoring only: writes challenger_probability/challenger_rank onto this race's
+                # OWN packets, never onto _pred (the Prime-facing dict), so the invariant check right
+                # below still proves Prime's own output is untouched. A scoring failure here is caught
+                # and skipped per runner; it can never block or alter Prime.
+                if _rich_context_artifact is not None:
+                    _scored_this_race = []
+                    for _rc_packet in _race_rich_context_packets:
+                        try:
+                            _rc_result = _score_rich_context_packet(_rc_packet, artifact=_rich_context_artifact)
+                        except Exception as _rc_score_err:
+                            _rc_result = None
+                            log.warning(
+                                "Rich Context scoring failed for race=%s horse=%s (non-fatal): %s",
+                                _rc_packet.get("race_id"), _rc_packet.get("horse_id"), _rc_score_err,
+                            )
+                        if _rc_result is not None:
+                            _rc_packet["challenger_probability"] = _rc_result["challenger_probability"]
+                            _rc_packet["challenger_version"] = _rc_result["model_version"]
+                            _rc_packet["model_status"] = "SHADOW_SCORED_V1"
+                        _scored_this_race.append((_rc_packet, _rc_result))
+                    _rank_rich_context_packets(_scored_this_race)
                 _assert_rich_context_prime_invariant(_prime_before_rich_context, preds)
                 # Load RPDC data for this race to inform RPD-C tags
                 race_rpdc = _fetch_race_rpdc(race.get("race_id", ""))

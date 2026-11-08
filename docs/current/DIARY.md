@@ -56,6 +56,30 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-08 (early) — Claude Code (Sonnet 5.5) — Rich Context challenger v1: fitted, not just evidence-collecting
+Why:              Carlos: "rich context has to work... this needs to be wired in." The earlier audit found packets had no model because nobody had fitted one on the
+                  two families with real pre-November history (prime_baseline_snapshot, canonical_history) plus market_facts. Spotlight/FormFav have no history before
+                  2026-11-06 so they stay declared-but-unfitted; nothing was waiting on new data, only on doing the fit.
+Fit:              `scripts/research/fit_rich_context_challenger_v1.py`. Frozen split (declared before any result was read): train 2026-05-26..06-12 (2,046 rows),
+                  validation 06-13..06-19 (2,847 rows), untouched holdout 2026-11-04..11-06 (1,220 rows, read exactly once below), forward shadow from 11-07. Logistic
+                  regression (L2, lbfgs, seed 2607, class_weight balanced), C selected on validation log loss from the frozen grid (0.1 won), isotonic calibration fit
+                  on validation only (>=1000 rows). History came from the existing `CanonicalHistoryProvider` (as-of, leak-proof) via a bulk in-memory repository
+                  (one load instead of ~17,000 per-horse HTTP calls). sklearn 1.8 dropped `CalibratedClassifierCV(cv="prefit")`; used `sklearn.frozen.FrozenEstimator`.
+Honest result (untouched holdout, never refit on): log loss — Prime alone 0.344, market alone 0.272, challenger 0.271. Brier — Prime 0.093, challenger 0.079. Most of
+                  the "lift over Prime" is the challenger also using the market price, calibrated; over the market alone the lift is real but small and consistent in
+                  sign across train/validation/holdout (not a dramatic result — reported as such, not oversold).
+Wired in:         `src/velo/rich_context_challenger_features.py` (the one feature-vector function training and live scoring both use, so they cannot drift — missing
+                  history gets an explicit `_missing` flag and a neutral placeholder, never a favourable guess), `src/velo/rich_context_challenger_scorer.py`
+                  (loads the artifact once, scores a packet, ranks a race's packets by probability). `run_prime_today.py` now scores every new packet right after it is
+                  built and ranks each race, writing only `challenger_probability`/`challenger_rank`/`challenger_version`/`model_status` onto that packet — never onto
+                  `_pred`, so the existing Prime-invariance assertion still covers this. A scoring failure is caught per runner and is non-fatal.
+Backfill:         `scripts/ops/backfill_rich_context_challenger_scores.py --date X --execute` scores the ~1,300 packets written on 11-06/11-07 before a model existed,
+                  reading each row's already-stored `feature_families` (never re-derived) and updating only those four fields by row id.
+Still not done:   promotion needs 500 forward races and a tribunal (Phase 7); this is a shadow score only, picks nothing, changes nothing Prime reads. FormFav/Spotlight
+                  ablations wait for their own forward history. Contract WAKE-VELO-CHALLENGER-FIT-01; 11 new tests (one is a live smoke test against the real artifact).
+Next safe action: run the backfill for 2026-11-06 and 2026-11-07; from tomorrow's 07:00Z run, check new packets carry a `challenger_probability` and compare its daily
+                  top pick against Prime's, building toward the 500-race forward record.
+
 ### 2026-11-08 (early) — Claude Code (Sonnet 5.5) — Panel: four lanes now show today's results (read-only fallback)
 Changed:          view `wake_velo_model_picks` (migration `wake_velo_model_picks_ingested_results`): where a lane's scorecard row has no result, read it from
                   `racing_horse_runs` by EXACT race_id + horse_id (never by name); the scorecard's own result still wins; new column `result_source`

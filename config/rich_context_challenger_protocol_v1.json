@@ -1,6 +1,8 @@
 {
   "protocol_version": "RICH_CONTEXT_PROTOCOL_V1",
-  "status": "FROZEN_BEFORE_MODEL_FIT",
+  "status": "FITTED_V1_SHADOW_ONLY",
+  "status_note": "scripts/research/fit_rich_context_challenger_v1.py fitted on 2026-11-08 using only the two families with real pre-November history (prime_baseline_snapshot, canonical_history) plus market_facts; the other families below remain declared but unfitted until enough forward daily packets exist to give them their own train/validation/holdout. Not promoted: scores only the shadow lane, never Prime.",
+  "model_version": "rich_context_challenger_v1_fit_20261108",
   "production_influence": false,
   "paper_sim_only": true,
   "estimator": {
@@ -29,11 +31,19 @@
   },
   "split_policy": {
     "method": "chronological_three_way",
-    "training_end": null,
-    "validation_end": null,
-    "untouched_holdout_end": null,
-    "dates_must_be_frozen_in_dataset_manifest_before_fit": true
+    "training_start": "2026-05-26",
+    "training_end": "2026-06-12",
+    "validation_start": "2026-06-13",
+    "validation_end": "2026-06-19",
+    "untouched_holdout_start": "2026-11-04",
+    "untouched_holdout_end": "2026-11-06",
+    "forward_shadow_start": "2026-11-07",
+    "dates_must_be_frozen_in_dataset_manifest_before_fit": true,
+    "dataset_manifest_hash": "60e2daf4f8e7e371b43fb57bd4de982bc412d6ff999531761989f2f2a12f7f6c",
+    "row_counts": {"training": 2046, "validation": 2847, "untouched_holdout": 1220},
+    "note": "May-June runners have a numeric RP identity, but few have any PRIOR numeric-id run to draw history from (~9% in June, since the numeric identity space itself only started filling from May/June); July-October have almost no full-field runner_prediction_snapshots rows at all. This is the earliest real chronological block available with both a settled label and Prime's own probability, declared and used as-is (has_history/*_missing flags carry the thin coverage honestly) rather than waited on."
   },
+  "fitted_v1_feature_families": ["prime_baseline_snapshot", "canonical_history", "market_facts"],
   "feature_families": [
     "prime_baseline_snapshot",
     "canonical_history",
@@ -45,6 +55,20 @@
     "connections_passports",
     "market_facts"
   ],
+  "feature_families_not_yet_fitted": {
+    "families": ["rp_spotlight_facts", "formfav_raw_facts", "formfav_pace_context", "formfav_class_context", "formfav_track_bias_context", "connections_passports"],
+    "reason": "no family history exists before 2026-11-06; each needs its own chronological train/validation/holdout once enough forward daily packets accumulate"
+  },
+  "fitted_v1_holdout_metrics": {
+    "log_loss_prime_only": 0.3443463314207259,
+    "log_loss_market_only": 0.2718762464038364,
+    "log_loss_challenger": 0.2712852687684342,
+    "brier_prime_only": 0.09339655326229508,
+    "brier_challenger": 0.07875765623823973,
+    "lift_vs_prime": 0.07306106265229173,
+    "lift_vs_market": 0.0005909776354021578,
+    "honest_reading": "most of the lift over 'Prime alone' comes from the challenger also using the market price as a feature and being calibrated; over market price alone the lift is real but small (consistent in sign across train/validation/holdout, not dramatic)."
+  },
   "provider_prediction_features_forbidden": true,
   "promotion_criteria": {
     "minimum_forward_races": 500,
