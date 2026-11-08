@@ -2054,6 +2054,61 @@ def _sb_rest_rows(path: str, timeout: int = 8) -> list[dict] | None:
         return None
 
 
+def _sb_rest_rows_paged(
+    path: str,
+    *,
+    page_size: int = 1000,
+    max_pages: int = 10,
+) -> tuple[list[dict] | None, dict[str, int | str | bool]]:
+    """Read every REST row within an explicit bound, never silently truncate.
+
+    A failed page discards the partial result. If the configured bound is
+    reached, one extra row is probed: presence means the read fails explicitly
+    as ``MAX_PAGES_EXCEEDED`` instead of presenting partial truth.
+    """
+    rows: list[dict] = []
+    separator = "&" if "?" in path else "?"
+    for page in range(max_pages):
+        batch = _sb_rest_rows(f"{path}{separator}limit={page_size}&offset={page * page_size}")
+        if batch is None:
+            return None, {
+                "status": "READ_FAILED",
+                "pages_read": page,
+                "rows_read": len(rows),
+                "truncated": False,
+            }
+        rows.extend(batch)
+        if len(batch) < page_size:
+            return rows, {
+                "status": "OK",
+                "pages_read": page + 1,
+                "rows_read": len(rows),
+                "truncated": False,
+            }
+
+    probe = _sb_rest_rows(f"{path}{separator}limit=1&offset={max_pages * page_size}")
+    if probe is None:
+        return None, {
+            "status": "READ_FAILED",
+            "pages_read": max_pages,
+            "rows_read": len(rows),
+            "truncated": False,
+        }
+    if probe:
+        return None, {
+            "status": "MAX_PAGES_EXCEEDED",
+            "pages_read": max_pages,
+            "rows_read": len(rows),
+            "truncated": True,
+        }
+    return rows, {
+        "status": "OK",
+        "pages_read": max_pages,
+        "rows_read": len(rows),
+        "truncated": False,
+    }
+
+
 @app.get("/api/world-day")
 async def world_day(date: str = Query(default=None)):
     """End-of-day checklist and FormFav's own picks for the whole world.
@@ -2137,19 +2192,19 @@ async def world_velo_picks(date: str = Query(default=None)):
 
 @app.get("/api/rich-context")
 async def rich_context(date: str = Query(default=None)):
-    """Every model's top pick side by side, plus how much Rich Context evidence each race had.
+    """Every model's top pick plus Rich Context evidence and fitted shadow ranks.
 
-    Rich Context has no fitted model, so it ranks nothing and cannot change a pick. This endpoint
-    only reads: the evidence packets, the governed scorecards and the scoring-run ledger.
+    The challenger overlay is joined to immutable packets only by ``packet_input_sha256`` and is
+    displayed as shadow evidence.  It cannot change Prime, authorise a stake or promote a model.
     """
     import datetime as _dt
 
     from app.world_dashboard import (
-        RICH_CONTEXT_STATUS,
         SHADOW_BOUNDARY,
         enriched_suggestions,
         model_scoreboard,
         race_grid,
+        rich_context_challenger_overlay,
         summarise_rich_context,
         valid_date,
     )
@@ -2173,14 +2228,55 @@ async def rich_context(date: str = Query(default=None)):
         f"&source_date=eq.{d}&order=started_at.asc&limit=20"
         "&select=run_type,status,started_at,finished_at,races_processed,runners_processed,commit_sha"
     )
-    scored = _sb_rest_rows(
-        f"rich_context_shadow_packets?race_date=eq.{d}&challenger_probability=not.is.null&select=id&limit=1"
+    packets, packet_page = _sb_rest_rows_paged(
+        f"rich_context_shadow_packets?race_date=eq.{d}"
+        "&select=race_id,horse_id,input_sha256&order=id.asc"
+    )
+    scores, score_page = _sb_rest_rows_paged(
+        f"rich_context_challenger_scores?race_date=eq.{d}&order=id.asc"
+        "&select=race_id,horse_id,packet_input_sha256,model_version,challenger_probability,"
+        "challenger_rank,production_influence,paper_sim_only,scored_at"
+    )
+    race_ids = sorted(
+        {
+            str(row.get("race_id"))
+            for row in (packets or [])
+            if row.get("race_id") and re.fullmatch(r"[A-Za-z0-9_-]+", str(row.get("race_id")))
+        }
+    )
+    runner_rows, runner_page = (
+        _sb_rest_rows_paged(
+            "runners?race_id=in.(" + ",".join(race_ids) + ")"
+            "&select=race_id,horse_id,horse_name,created_at&order=id.asc"
+        )
+        if race_ids
+        else ([], {"status": "NOT_REQUESTED", "pages_read": 0, "rows_read": 0, "truncated": False})
+    )
+    challenger = rich_context_challenger_overlay(
+        packets,
+        scores,
+        runner_rows,
+        packet_read_status=str(packet_page["status"]),
+        score_read_status=str(score_page["status"]),
+        runner_read_status=str(runner_page["status"]),
     )
     return {
         "date": d,
-        "available": picks is not None or coverage is not None or picks_now is not None,
-        "rich_context_status": RICH_CONTEXT_STATUS,
-        "rich_context_ranks_anything": bool(scored),
+        "available": (
+            picks is not None
+            or coverage is not None
+            or picks_now is not None
+            or bool(packets)
+            or challenger["status"] == "OVERLAY_UNAVAILABLE"
+        ),
+        "rich_context_status": challenger["status"],
+        "rich_context_ranks_anything": bool(challenger["selections"]),
+        "rich_context_challenger": challenger,
+        "rich_context_pagination": {
+            "packets": packet_page,
+            "scores": score_page,
+            "runner_labels": runner_page,
+        },
         "suggestions": enriched_suggestions(picks_now or []),
         "evidence": summarise_rich_context(coverage or []),
         "models": model_scoreboard(picks or []),

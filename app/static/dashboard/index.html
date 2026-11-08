@@ -775,13 +775,17 @@ td:last-child  { padding-right: 20px; }
 <div id="rc-panel" style="display:none;background:#111;border:1px solid #ab47bc;border-radius:6px;margin:8px 12px;padding:10px 14px;">
   <div style="font-weight:600;color:#ab47bc;letter-spacing:0.05em;margin-bottom:6px;">
     WAKE VELO &middot; ALL MODELS <span id="rc-count" style="color:#888;font-weight:400"></span>
-    <span style="float:right;font-size:10px;color:#666;font-weight:400">GB/IE &middot; SHADOW ONLY &middot; RICH CONTEXT HAS NO MODEL YET AND PICKS NOTHING &middot; PRIME IS UNCHANGED</span>
+    <span id="rc-boundary" style="float:right;font-size:10px;color:#666;font-weight:400">GB/IE &middot; RICH CONTEXT SHADOW ONLY &middot; PRIME IS UNCHANGED &middot; NO STAKING</span>
   </div>
   <div style="font-size:10px;color:#777;margin-bottom:4px;">TODAY'S SUGGESTIONS &middot; PRIME'S PICK FROM THE NEWEST RUN, WITH EVERYTHING VELO NOW HOLDS ON THAT HORSE <span id="rc-suggest-run" style="color:#999"></span></div>
   <div id="rc-suggest-summary" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;"></div>
   <div id="rc-suggest" style="max-height:460px;overflow:auto;margin-bottom:12px;"></div>
   <div style="font-size:10px;color:#777;margin-bottom:4px;">EVIDENCE VELO NOW HOLDS PER RUNNER (first packet of the day &rarr; latest)</div>
   <div id="rc-evidence" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  <div style="font-size:10px;color:#777;margin:10px 0 4px;">RICH CONTEXT CHALLENGER &middot; FITTED SHADOW OVERLAY JOINED TO FROZEN PACKETS &middot; NEVER REPLACES PRIME</div>
+  <div id="rc-challenger-summary" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  <div id="rc-challenger-read-status" style="font-size:10px;color:#ef5350;margin-top:5px;"></div>
+  <div id="rc-challenger" style="max-height:300px;overflow:auto;margin-top:6px;"></div>
   <div id="rc-runs" style="font-size:10px;color:#777;margin-top:6px;"></div>
   <div style="font-size:10px;color:#777;margin:10px 0 4px;">EVERY MODEL, ON ITS OWN CLEAN RACES (tied or multi-list picks are not counted as a read)</div>
   <div id="rc-models" style="overflow:auto;"></div>
@@ -4653,16 +4657,58 @@ async function loadRichContext() {
     if (!res.ok) throw new Error(`rich-context ${res.status}`);
     const data = await res.json();
     const ev = data.evidence || {};
-    if (!data.available || !ev.races) { panel.style.display = 'none'; return; }
+    const rc = data.rich_context_challenger || {};
+    const rcFailure = rc.status === 'OVERLAY_UNAVAILABLE' || rc.status === 'OVERLAY_INTEGRITY_FAILED';
+    if (!data.available || (!ev.races && !rc.packet_rows && !rcFailure)) { panel.style.display = 'none'; return; }
     const pc = (v) => v === null || v === undefined ? '—' : `${v}%`;
-    document.getElementById('rc-count').textContent = `(${ev.races} races · ${ev.runners} runners · ${data.date})`;
+    const rcProb = (v) => v === null || v === undefined ? '—' : `${(Number(v) * 100).toFixed(1)}%`;
+    const rcStatusLabel = rc.status === 'SHADOW_FITTED' ? 'SHADOW FITTED'
+      : rc.status === 'OVERLAY_UNAVAILABLE' ? 'OVERLAY UNAVAILABLE'
+      : rc.status === 'OVERLAY_INTEGRITY_FAILED' ? 'INTEGRITY FAILED'
+      : 'NO SCORES FOR DATE';
+    document.getElementById('rc-count').textContent = `(${ev.races || 0} races · ${ev.runners || 0} runners · ${data.date})`;
     document.getElementById('rc-evidence').innerHTML = [
       _wdChip('HISTORY', `${pc(ev.history_before_pct)} → ${pc(ev.history_now_pct)}`, ev.history_now_pct > ev.history_before_pct ? '#66bb6a' : '#ddd'),
       _wdChip('RP SPOTLIGHT', `${pc(ev.spotlight_before_pct)} → ${pc(ev.spotlight_now_pct)}`, ev.spotlight_now_pct > ev.spotlight_before_pct ? '#66bb6a' : '#ddd'),
       _wdChip('FORMFAV FACTS', pc(ev.formfav_now_pct)),
       _wdChip('PACKET BATCHES', ev.packet_batches || 0),
-      _wdChip('RICH CONTEXT MODEL', data.rich_context_ranks_anything ? 'RANKING' : 'NOT FITTED', data.rich_context_ranks_anything ? '#ffa726' : '#888'),
+      _wdChip('RICH CONTEXT MODEL', rcStatusLabel, data.rich_context_ranks_anything ? '#ab47bc' : '#888'),
     ].join('');
+    const ratio = (a, b) => a === null || a === undefined || b === null || b === undefined ? 'UNAVAILABLE' : `${a}/${b}`;
+    document.getElementById('rc-challenger-summary').innerHTML = [
+      _wdChip('STATUS', rcStatusLabel, rc.status === 'SHADOW_FITTED' ? '#ab47bc' : '#ef5350'),
+      _wdChip('MODEL VERSION', rc.model_version || '—'),
+      _wdChip('IMMUTABLE PACKETS', rc.immutable_packet_rows === null || rc.immutable_packet_rows === undefined ? 'UNAVAILABLE' : rc.immutable_packet_rows),
+      _wdChip('VERSION SCORE ROWS', rc.version_score_rows === null || rc.version_score_rows === undefined ? 'UNAVAILABLE' : rc.version_score_rows),
+      _wdChip('CURRENT BATCH LINKED', ratio(rc.linked_current_rows, rc.current_score_rows), rc.linked_current_rows === rc.current_score_rows && rc.current_score_rows ? '#66bb6a' : '#ffb74d'),
+      _wdChip('RACES RANKED', rc.races || 0),
+      _wdChip('RANK-1 PICKS', rc.rank_one_rows || 0),
+      _wdChip('SUPERSEDED ROWS', rc.superseded_rows || 0, rc.superseded_rows ? '#999' : '#66bb6a'),
+      _wdChip('ORPHAN / UNSAFE', `${rc.orphan_scores || 0} / ${rc.unsafe_rows || 0}`, (rc.orphan_scores || rc.unsafe_rows) ? '#ef5350' : '#66bb6a'),
+    ].join('');
+    const readState = rc.read_availability || {};
+    const readFailures = Object.entries(readState).filter(([, state]) => state !== 'OK' && state !== 'NOT_REQUESTED');
+    document.getElementById('rc-challenger-read-status').textContent = readFailures.length
+      ? 'READ AVAILABILITY: ' + readFailures.map(([name, state]) => `${name}=${state}`).join(' · ')
+        + (rc.status === 'OVERLAY_UNAVAILABLE' ? ' · no partial selection or coverage is displayed' : ' · runner labels may be unavailable')
+      : '';
+    const rcTop = rc.selections || [];
+    document.getElementById('rc-challenger').innerHTML = rcTop.length
+      ? '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap;">'
+        + '<tr style="color:#777;text-align:left"><th>RACE</th><th>RICH CONTEXT TOP</th><th>HORSE ID</th><th>PROBABILITY</th><th>RANK</th><th>BOUNDARY</th></tr>'
+        + rcTop.map(r => `<tr style="border-top:1px solid #222">`
+          + `<td style="padding:2px 10px 2px 0">${esc(String(r.race_id || ''))}</td>`
+          + `<td style="padding-right:10px;color:#ab47bc;font-weight:600">${esc(String(r.horse_name || 'identity label unavailable'))}</td>`
+          + `<td style="padding-right:10px;color:#777">${esc(String(r.horse_id || ''))}</td>`
+          + `<td style="padding-right:10px">${rcProb(r.challenger_probability)}</td>`
+          + `<td style="padding-right:10px">${esc(String(r.challenger_rank || '—'))}</td>`
+          + '<td style="color:#66bb6a">SHADOW · NO PRIME INFLUENCE</td></tr>').join('')
+        + '</table>'
+      : `<div style="font-size:11px;color:${rc.status === 'OVERLAY_UNAVAILABLE' || rc.status === 'OVERLAY_INTEGRITY_FAILED' ? '#ef5350' : '#777'};">${rc.status === 'OVERLAY_UNAVAILABLE'
+          ? 'Rich Context overlay unavailable: a mandatory Supabase read failed or exceeded its safe pagination bound. No partial selection is shown.'
+          : rc.status === 'OVERLAY_INTEGRITY_FAILED'
+            ? 'Rich Context overlay failed batch integrity. No partial selection is shown.'
+            : 'No fitted challenger scores are linked to frozen packets for this date.'}</div>`;
     const runs = data.scoring_runs || [];
     document.getElementById('rc-runs').innerHTML = runs.length
       ? 'Scoring runs today: ' + runs.map(r => `${esc(r.run_type || '')} ${esc(r.status || '')} ${esc(String(r.started_at || '').slice(11, 16))}Z (${esc(String(r.runners_processed ?? ''))} runners)`).join(' &middot; ')
@@ -4717,7 +4763,7 @@ async function loadRichContext() {
             + `<td style="padding-right:10px;color:${gradeColour[r.evidence_grade] || '#777'}">${esc(r.evidence_grade || '')}</td>`
             + `<td>${field}</td></tr>`;
         }).join('')
-        + '</table><div style="font-size:10px;color:#666;margin-top:4px;">The pick is Prime\'s own: Rich Context has no fitted model, so this evidence does not re-rank anyone. EVIDENCE = what Velo holds on the pick beyond the FormFav baseline (FULL = history + Spotlight). (−n) = withdrawn since the first run.</div>'
+        + '</table><div style="font-size:10px;color:#666;margin-top:4px;">The pick in this table is Prime\'s own. Any fitted Rich Context challenger selection is shown separately above and never replaces Prime. EVIDENCE = what Velo holds on the pick beyond the FormFav baseline (FULL = history + Spotlight). (−n) = withdrawn since the first run.</div>'
       : '<div style="font-size:11px;color:#777;">No run recorded for this date yet.</div>';
     const models = data.models || [];
     const boardRow = (m) => {
