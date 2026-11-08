@@ -1,13 +1,15 @@
 """Load the frozen, fitted Rich Context artifact and score a shadow packet. Fails closed.
 
-Production Prime never imports this. Scoring a packet only sets ``challenger_probability`` /
-``challenger_rank`` fields on the packet's own row; it never reads or writes a Prime field, and a scoring
-failure (no artifact, corrupt artifact, incomplete packet) is reported, never guessed.
+Production Prime never imports this. A score is written to the separate, append-only
+``rich_context_challenger_scores`` table (see ``score_row``/``persist_scores``), never onto the packet
+itself: ``rich_context_shadow_packets`` has no UPDATE grant, by design, so the packet stays untouched
+evidence. A scoring failure (no artifact, corrupt artifact, incomplete packet) is reported, never guessed.
 """
 
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -63,14 +65,44 @@ def score_packet(packet: dict[str, Any], *, artifact: dict[str, Any] | None = No
     }
 
 
-def rank_scored_packets(scored: list[tuple[dict[str, Any], dict[str, Any] | None]]) -> None:
-    """Set ``challenger_rank`` in place on every packet in ``scored`` that has a probability.
+def score_row(packet: Mapping[str, Any], result: Mapping[str, Any], *, code_sha: str) -> dict[str, Any]:
+    """Build one row for ``rich_context_challenger_scores`` from a packet and its ``score_packet`` result."""
+    return {
+        "race_date": packet["race_date"],
+        "race_id": packet["race_id"],
+        "horse_id": packet["horse_id"],
+        "packet_input_sha256": packet.get("input_hash") or packet.get("input_sha256"),
+        "model_version": result["model_version"],
+        "challenger_probability": result["challenger_probability"],
+        "challenger_rank": result.get("challenger_rank"),
+        "production_influence": False,
+        "paper_sim_only": True,
+        "code_sha": code_sha or "unknown",
+    }
 
-    ``scored`` is a list of (packet, score_result) pairs for ONE race. Rank 1 = highest probability.
-    Packets with no score keep ``challenger_rank = None``: a partial field is an honest result, not a
-    guess at the runners the model could not see.
+
+def persist_scores(rows: list[dict[str, Any]], *, client: Any, code_sha: str) -> dict[str, int]:
+    """Insert-only (unique on packet_input_sha256+model_version): no table write ever rewrites a prior score."""
+    if not rows:
+        return {"attempted": 0, "inserted": 0, "existing": 0}
+    response = (
+        client.table("rich_context_challenger_scores")
+        .upsert(rows, on_conflict="packet_input_sha256,model_version", ignore_duplicates=True)
+        .execute()
+    )
+    inserted = len(getattr(response, "data", None) or [])
+    return {"attempted": len(rows), "inserted": inserted, "existing": len(rows) - inserted}
+
+
+def rank_scored_packets(scored: list[tuple[Any, dict[str, Any] | None]]) -> None:
+    """Set ``challenger_rank`` in place on every *result* dict in ``scored`` that exists.
+
+    ``scored`` is a list of (packet, score_result) pairs for ONE race; only ``score_result`` (never the
+    packet, which stays an untouched evidence row) is mutated. Rank 1 = highest probability. A pair with
+    no score is left alone: a partial field is an honest result, not a guess at the runners the model
+    could not see.
     """
-    rankable = [(packet, result["challenger_probability"]) for packet, result in scored if result]
-    rankable.sort(key=lambda pair: pair[1], reverse=True)
-    for rank, (packet, _prob) in enumerate(rankable, start=1):
-        packet["challenger_rank"] = rank
+    rankable = [result for _packet, result in scored if result]
+    rankable.sort(key=lambda result: result["challenger_probability"], reverse=True)
+    for rank, result in enumerate(rankable, start=1):
+        result["challenger_rank"] = rank

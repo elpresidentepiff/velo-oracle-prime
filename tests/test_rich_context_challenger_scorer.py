@@ -7,7 +7,12 @@ from src.velo.rich_context_challenger_features import (
     extract_feature_vector,
     vector_from_packet_families,
 )
-from src.velo.rich_context_challenger_scorer import load_artifact, rank_scored_packets, score_packet
+from src.velo.rich_context_challenger_scorer import (
+    load_artifact,
+    rank_scored_packets,
+    score_packet,
+    score_row,
+)
 
 
 class _FakeModel:
@@ -117,11 +122,30 @@ def test_score_packet_scores_an_eligible_packet_and_never_mutates_it() -> None:
 def test_rank_scored_packets_ranks_only_what_was_scored() -> None:
     scored_high = {"challenger_probability": 0.8}
     scored_low = {"challenger_probability": 0.2}
-    p1, p2, p3 = {"challenger_rank": None}, {"challenger_rank": None}, {"challenger_rank": None}
+    p1, p2, p3 = object(), object(), object()
     rank_scored_packets([(p1, scored_low), (p2, scored_high), (p3, None)])
-    assert p2["challenger_rank"] == 1
-    assert p1["challenger_rank"] == 2
-    assert p3["challenger_rank"] is None  # not scored, not guessed into a rank
+    assert scored_high["challenger_rank"] == 1
+    assert scored_low["challenger_rank"] == 2  # the packets themselves (p1/p2/p3) are never mutated
+
+
+def test_score_row_never_touches_the_packet_only_reads_its_identity() -> None:
+    packet = {"race_date": "2026-11-07", "race_id": "930514", "horse_id": "5601165", "input_hash": "abc123"}
+    before = dict(packet)
+    result = {"model_version": "test_v0", "challenger_probability": 0.4, "challenger_rank": 2}
+    row = score_row(packet, result, code_sha="deadbeef")
+    assert packet == before  # evidence row never mutated
+    assert row == {
+        "race_date": "2026-11-07",
+        "race_id": "930514",
+        "horse_id": "5601165",
+        "packet_input_sha256": "abc123",
+        "model_version": "test_v0",
+        "challenger_probability": 0.4,
+        "challenger_rank": 2,
+        "production_influence": False,
+        "paper_sim_only": True,
+        "code_sha": "deadbeef",
+    }
 
 
 def test_the_real_fitted_artifact_loads_and_scores_a_real_shaped_packet() -> None:
@@ -142,9 +166,9 @@ def test_the_real_fitted_artifact_loads_and_scores_a_real_shaped_packet() -> Non
 
 def test_rank_scored_packets_is_per_race_not_global() -> None:
     # Caller passes only one race's packets at a time; a second race starts its own rank 1.
-    race_a = [({"challenger_rank": None}, {"challenger_probability": 0.9})]
-    race_b = [({"challenger_rank": None}, {"challenger_probability": 0.1})]
+    race_a = [(object(), {"challenger_probability": 0.9})]
+    race_b = [(object(), {"challenger_probability": 0.1})]
     rank_scored_packets(race_a)
     rank_scored_packets(race_b)
-    assert race_a[0][0]["challenger_rank"] == 1
-    assert race_b[0][0]["challenger_rank"] == 1
+    assert race_a[0][1]["challenger_rank"] == 1
+    assert race_b[0][1]["challenger_rank"] == 1

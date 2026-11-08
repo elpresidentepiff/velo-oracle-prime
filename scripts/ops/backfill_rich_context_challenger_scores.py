@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 """One-time: score the shadow packets written before a fitted model existed.
 
-``rich_context_shadow_packets`` is otherwise append-only (``build_runner_shadow_packet`` sets
-``challenger_probability``/``challenger_rank`` to ``null`` and the writer upserts with
-``ignore_duplicates=True``, so a normal run never overwrites a packet once stored). Those two fields
-were always meant to be filled in once a model existed; this script is the one-time catch-up for the
-races scored before 2026-11-08, when ``scripts/research/fit_rich_context_challenger_v1.py`` first
-produced an artifact. It reads each packet's already-stored ``feature_families`` (never re-derives
-them) and writes back only ``challenger_probability``, ``challenger_rank``, ``challenger_version`` and
-``model_status`` for that same row (matched by its own primary key). Every future packet is scored
-inline by ``run_prime_today.py`` and needs no backfill.
+``rich_context_shadow_packets`` has no UPDATE grant for ``service_role`` (append-only by design: the
+packet is immutable evidence). Scores for packets written before 2026-11-08, when
+``scripts/research/fit_rich_context_challenger_v1.py`` first produced an artifact, go into the
+separate append-only ``rich_context_challenger_scores`` table instead, exactly like every packet
+scored by the live pipeline from now on (``run_prime_today.py``). This script reads each packet's
+already-stored ``feature_families`` (never re-derives them) and only ever inserts a score row.
 """
 
 from __future__ import annotations
@@ -25,8 +22,10 @@ if str(ROOT) not in sys.path:
 
 from src.velo.rich_context_challenger_scorer import (  # noqa: E402
     load_artifact,
+    persist_scores,
     rank_scored_packets,
     score_packet,
+    score_row,
 )
 
 
@@ -52,64 +51,56 @@ def main() -> int:
     artifact = load_artifact()
     if artifact is None:
         raise SystemExit("No fitted artifact found (models/rich_context_challenger_v1/); nothing to backfill.")
-    print(f"[BACKFILL] artifact: {artifact['metadata'].get('model_version')}")
+    model_version = artifact["metadata"].get("model_version")
+    print(f"[BACKFILL] artifact: {model_version}")
 
     client = _client()
     rows = (
         client.table("rich_context_shadow_packets")
-        .select("id,race_id,horse_id,feature_families,challenger_probability")
+        .select("race_date,race_id,horse_id,input_sha256,feature_families")
         .eq("race_date", args.date)
         .execute()
         .data
         or []
     )
-    print(
-        f"[BACKFILL] {args.date}: {len(rows)} packets stored, "
-        f"{sum(1 for r in rows if r.get('challenger_probability') is not None)} already scored"
-    )
+    print(f"[BACKFILL] {args.date}: {len(rows)} packets stored")
 
     by_race: dict[str, list[dict]] = {}
     for row in rows:
         by_race.setdefault(str(row["race_id"]), []).append(row)
 
-    updates: list[dict] = []
+    score_rows: list[dict] = []
     scored_n = unscored_n = 0
     for race_rows in by_race.values():
-        scored_this_race = [
-            (row, score_packet({"families": row.get("feature_families") or {}}, artifact=artifact)) for row in race_rows
+        packets = [
+            {
+                "race_date": row["race_date"],
+                "race_id": row["race_id"],
+                "horse_id": row["horse_id"],
+                "input_hash": row["input_sha256"],
+                "families": row.get("feature_families") or {},
+            }
+            for row in race_rows
         ]
-        rank_scored_packets(scored_this_race)  # sets row["challenger_rank"] in place, per race
-        for row, result in scored_this_race:
+        scored_this_race = [(packet, score_packet(packet, artifact=artifact)) for packet in packets]
+        rank_scored_packets(scored_this_race)  # writes challenger_rank onto each result dict, per race
+        for packet, result in scored_this_race:
             if result is None:
                 unscored_n += 1
                 continue
             scored_n += 1
-            updates.append(
-                {
-                    "id": row["id"],
-                    "challenger_probability": result["challenger_probability"],
-                    "challenger_rank": row.get("challenger_rank"),
-                    "challenger_version": result["model_version"],
-                    "model_status": "SHADOW_SCORED_V1",
-                }
+            score_rows.append(
+                score_row(packet, result, code_sha=os.environ.get("RAILWAY_GIT_COMMIT_SHA", "")[:12] or "backfill")
             )
 
     print(f"[BACKFILL] races={len(by_race)}: scored={scored_n} ineligible={unscored_n}")
     if not args.execute:
-        print("[BACKFILL] dry-run (pass --execute to write). Sample:", updates[:2])
+        print("[BACKFILL] dry-run (pass --execute to write). Sample:", score_rows[:2])
         return 0
-    written = 0
-    for update in updates:
-        client.table("rich_context_shadow_packets").update(
-            {
-                "challenger_probability": update["challenger_probability"],
-                "challenger_rank": update["challenger_rank"],
-                "challenger_version": update["challenger_version"],
-                "model_status": update["model_status"],
-            }
-        ).eq("id", update["id"]).execute()
-        written += 1
-    print(f"[BACKFILL] wrote {written} rows for {args.date}")
+    result = persist_scores(
+        score_rows, client=client, code_sha=os.environ.get("RAILWAY_GIT_COMMIT_SHA", "")[:12] or "backfill"
+    )
+    print(f"[BACKFILL] wrote: {result}")
     return 0
 
 

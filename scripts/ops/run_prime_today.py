@@ -2051,6 +2051,7 @@ def main():
     _pdf_intel_attached_total = 0
     _flatlines: list[dict] = []
     _rich_context_packets: list[dict] = []
+    _rich_context_scores: list[tuple[dict, dict]] = []
     for race in normalized:
         cid = f"{race.get('course')} {race.get('off_time', '?')}"
 
@@ -2178,10 +2179,11 @@ def main():
                     _pred["rich_context_shadow"] = _packet
                     _rich_context_packets.append(_packet)
                     _race_rich_context_packets.append(_packet)
-                # Shadow scoring only: writes challenger_probability/challenger_rank onto this race's
-                # OWN packets, never onto _pred (the Prime-facing dict), so the invariant check right
-                # below still proves Prime's own output is untouched. A scoring failure here is caught
-                # and skipped per runner; it can never block or alter Prime.
+                # Shadow scoring only, into the separate append-only rich_context_challenger_scores
+                # table (the packet itself has no UPDATE grant and stays untouched evidence). Nothing
+                # here writes onto _pred (the Prime-facing dict), so the invariant check right below
+                # still proves Prime's own output is untouched. A scoring failure is caught per runner
+                # and skipped; it can never block or alter Prime.
                 if _rich_context_artifact is not None:
                     _scored_this_race = []
                     for _rc_packet in _race_rich_context_packets:
@@ -2193,12 +2195,11 @@ def main():
                                 "Rich Context scoring failed for race=%s horse=%s (non-fatal): %s",
                                 _rc_packet.get("race_id"), _rc_packet.get("horse_id"), _rc_score_err,
                             )
-                        if _rc_result is not None:
-                            _rc_packet["challenger_probability"] = _rc_result["challenger_probability"]
-                            _rc_packet["challenger_version"] = _rc_result["model_version"]
-                            _rc_packet["model_status"] = "SHADOW_SCORED_V1"
                         _scored_this_race.append((_rc_packet, _rc_result))
                     _rank_rich_context_packets(_scored_this_race)
+                    for _rc_packet, _rc_result in _scored_this_race:
+                        if _rc_result is not None:
+                            _rich_context_scores.append((_rc_packet, _rc_result))
                 _assert_rich_context_prime_invariant(_prime_before_rich_context, preds)
                 # Load RPDC data for this race to inform RPD-C tags
                 race_rpdc = _fetch_race_rpdc(race.get("race_id", ""))
@@ -2559,6 +2560,25 @@ def main():
     except Exception as _rich_context_store_err:
         log.warning("Rich Context shadow persistence failed without affecting Prime: %s", _rich_context_store_err)
         print(f"  Rich Context shadow persistence: FAIL_CLOSED ({_rich_context_store_err})")
+
+    # ── Rich Context challenger scores (separate append-only overlay; own try/except) ─────────────
+    if _rich_context_scores:
+        try:
+            from src.velo.rich_context_challenger_scorer import persist_scores as _persist_rich_context_scores
+            from src.velo.rich_context_challenger_scorer import score_row as _rich_context_score_row
+
+            _score_rows = [
+                _rich_context_score_row(_pkt, _res, code_sha=commit_sha) for _pkt, _res in _rich_context_scores
+            ]
+            _scores_store_result = (
+                _persist_rich_context_scores(_score_rows, client=db, code_sha=commit_sha)
+                if persistence_enabled and db
+                else {"attempted": len(_score_rows), "inserted": 0, "existing": 0}
+            )
+            print(f"  Rich Context challenger scores: {_scores_store_result} version={_rich_context_artifact['metadata'].get('model_version')}")
+        except Exception as _scores_store_err:
+            log.warning("Rich Context challenger score persistence failed without affecting Prime: %s", _scores_store_err)
+            print(f"  Rich Context challenger score persistence: FAIL_CLOSED ({_scores_store_err})")
 
     # ── Flatline summary (Issue #85) ──────────────────────────────────────────
     _flatline_summary = _flatline_summary_for_run(_flatlines, total_races=len(scored))
