@@ -82,8 +82,7 @@ class PostgresHistoricalRunRepository:
             raise ValueError("horse_id must be an exact numeric Racing Post identity")
         with self._connection.cursor() as cursor:
             cursor.execute(
-                "SELECT count(*) FROM public.racing_horse_runs "
-                "WHERE horse_id = %s AND run_date < %s",
+                "SELECT count(*) FROM public.racing_horse_runs WHERE horse_id = %s AND run_date < %s",
                 (canonical_horse_id, before_date),
             )
             total_count = int(cursor.fetchone()[0])
@@ -471,8 +470,6 @@ class CanonicalHistoryProvider:
                 "trainer_continuity": {"available": current_trainer_id is not None, "matching_rows": len(trainer_rows)},
             },
         }
-        missingness = {
-            f"context_{key}": value is None for key, value in contexts.items()
-        }
+        missingness = {f"context_{key}": value is None for key, value in contexts.items()}
         missingness.update({key: value is None for key, value in features.items()})
         return features, coverage, missingness
