@@ -4726,14 +4726,16 @@ async function loadRichContext() {
       return `<tr style="border-top:1px solid #222"><td style="padding:3px 12px 3px 0;color:${isPrime ? '#ffa726' : '#ccc'}">${esc(m.label)}</td>`
         + `<td>${m.races}</td><td>${m.clean}${m.unclean ? ` <span style="color:#ffb74d">(${m.unclean} not clean)</span>` : ''}</td>`
         + `<td>${isPrime ? '—' : `${m.agree_with_prime}/${m.comparable_with_prime}${pct(m.agree_with_prime, m.comparable_with_prime)}`}</td>`
-        + `<td>${m.settled}</td><td>${m.settled ? `${m.won}/${m.settled}${pct(m.won, m.settled)}` : '—'}</td>`
+        + `<td>${m.settled}${m.settled_from_ingested ? '<span style="color:#ffb74d" title="result read from the ingested Racing Post results, not yet on the scorecard row">*</span>' : ''}</td><td>${m.settled ? `${m.won}/${m.settled}${pct(m.won, m.settled)}` : '—'}</td>`
         + `<td>${m.settled ? `${m.top3}/${m.settled}${pct(m.top3, m.settled)}` : '—'}</td>`
         + `<td style="color:#666;white-space:normal">${esc(m.note || '')}</td></tr>`;
     };
     document.getElementById('rc-models').innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:11px;white-space:nowrap;">'
       + '<tr style="color:#777;text-align:left"><th>MODEL</th><th>RACES</th><th>CLEAN</th><th>SAME PICK AS PRIME</th><th>SETTLED</th><th>WON</th><th>TOP 3</th><th>NOTE</th></tr>'
       + models.map(boardRow).join('') + '</table>'
-      + '<div style="font-size:10px;color:#666;margin-top:4px;">Outcomes appear after tonight\'s sigma. A single day says nothing about skill: this is judged over weeks of settled races.</div>';
+      + '<div style="font-size:10px;color:#666;margin-top:4px;">Outcomes appear after tonight\'s sigma. A single day says nothing about skill: this is judged over weeks of settled races.'
+      + (models.some(m => m.settled_from_ingested) ? ' <span style="color:#ffb74d">*</span> read from the ingested Racing Post results (exact horse id) because the scorecard row has no result yet.' : '')
+      + '</div>';
     const others = models.filter(m => m.model !== 'MAIN_VELO_PRIME');
     const cell = (c) => {
       if (!c) return '<td style="color:#444">·</td>';

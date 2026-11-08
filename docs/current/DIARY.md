@@ -56,6 +56,15 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-08 (early) — Claude Code (Sonnet 5.5) — Panel: four lanes now show today's results (read-only fallback)
+Changed:          view `wake_velo_model_picks` (migration `wake_velo_model_picks_ingested_results`): where a lane's scorecard row has no result, read it from
+                  `racing_horse_runs` by EXACT race_id + horse_id (never by name); the scorecard's own result still wins; new column `result_source`
+                  (`scorecard` | `ingested_results`). The panel marks those settled counts with `*` and a footnote. Contract WAKE-VELO-DASH-03; 169 ms.
+Effect on 2026-11-07: Champion Intent, New Build A/B and Passport now show settled results (44 / 45 / 45 / 43 of their listed races, all read from the ingested
+                  results); every other lane is unchanged (Prime 44 settled, 12 won; all from the scorecard). The scoreboard still counts only clean picks.
+Why a fallback:   tomorrow's EOD will write these lanes' results onto the scorecard once the morning inputs are persisted (WAKE-VELO-SETTLE-01); today's inputs were
+                  never saved, so the scorecard rows cannot be rebuilt. Nothing is written to `canonical_model_scorecards`.
+
 ### 2026-11-08 (early) — Claude Code (Sonnet 5.5) — Why the learning gate has read BLOCKED every night in the cloud, and the two missing inputs
 Read:             the 2026-11-07 EOD log: `GATE BLOCKED - learning cannot proceed: COUNCIL_INTEGRITY:WATCH_ONLY: DATA AUDITOR: MISSING_SNAPSHOTS; DATA AUDITOR:
                   SOURCE_UNKNOWN; LEARNING_GATE:BLOCKED`, and Step 12C dying in `run_place_stack_shadow.load_snapshot` (FileNotFoundError).

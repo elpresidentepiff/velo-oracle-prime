@@ -11,12 +11,30 @@ def test_valid_date_blocks_query_injection() -> None:
 
 def test_summary_counts_only_decided_races_for_wins() -> None:
     rows = [
-        {"agree_on_top_pick": True, "winner_name": "A", "result_is_final": True,
-         "velo_pick_won": True, "formfav_pick_won": True, "formfav_rank_of_velo_pick": 1},
-        {"agree_on_top_pick": False, "winner_name": "B", "result_is_final": False,
-         "velo_pick_won": False, "formfav_pick_won": True, "formfav_rank_of_velo_pick": 4},
-        {"agree_on_top_pick": False, "winner_name": None, "result_is_final": None,
-         "velo_pick_won": None, "formfav_pick_won": None, "formfav_rank_of_velo_pick": 2},
+        {
+            "agree_on_top_pick": True,
+            "winner_name": "A",
+            "result_is_final": True,
+            "velo_pick_won": True,
+            "formfav_pick_won": True,
+            "formfav_rank_of_velo_pick": 1,
+        },
+        {
+            "agree_on_top_pick": False,
+            "winner_name": "B",
+            "result_is_final": False,
+            "velo_pick_won": False,
+            "formfav_pick_won": True,
+            "formfav_rank_of_velo_pick": 4,
+        },
+        {
+            "agree_on_top_pick": False,
+            "winner_name": None,
+            "result_is_final": None,
+            "velo_pick_won": None,
+            "formfav_pick_won": None,
+            "formfav_rank_of_velo_pick": 2,
+        },
     ]
     s = summarise_velo_vs_formfav(rows)
     assert (s["races"], s["agree"], s["agree_pct"]) == (3, 1, 33.3)
@@ -44,9 +62,19 @@ from app.world_dashboard import (  # noqa: E402
 
 def _pick(model, race, horse, *, tie="CLEAN", rows=1, agrees=False, pos=None, win=None, off=900, prime="A"):
     return {
-        "model_name": model, "race_id": race, "top_horse": horse, "tie_status": tie, "rank1_rows": rows,
-        "agrees_with_prime": agrees, "result_position": pos, "win": win, "off_minutes": off,
-        "off_time": "3.00", "course": "Ascot", "prime_horse": prime, "lane_name": "x",
+        "model_name": model,
+        "race_id": race,
+        "top_horse": horse,
+        "tie_status": tie,
+        "rank1_rows": rows,
+        "agrees_with_prime": agrees,
+        "result_position": pos,
+        "win": win,
+        "off_minutes": off,
+        "off_time": "3.00",
+        "course": "Ascot",
+        "prime_horse": prime,
+        "lane_name": "x",
     }
 
 
@@ -100,10 +128,26 @@ def test_race_grid_is_in_card_order_with_a_cell_per_model() -> None:
 
 def test_evidence_summary_shows_the_first_batch_against_the_latest() -> None:
     rows = [
-        {"runners": 10, "history_before": 0, "history_now": 10, "spotlight_before": 0, "spotlight_now": 4,
-         "formfav_now": 10, "packet_batches": 2, "latest_packet_at": "2026-11-07T11:30:00Z"},
-        {"runners": 10, "history_before": 5, "history_now": 5, "spotlight_before": 0, "spotlight_now": 0,
-         "formfav_now": 10, "packet_batches": 2, "latest_packet_at": "2026-11-07T11:31:00Z"},
+        {
+            "runners": 10,
+            "history_before": 0,
+            "history_now": 10,
+            "spotlight_before": 0,
+            "spotlight_now": 4,
+            "formfav_now": 10,
+            "packet_batches": 2,
+            "latest_packet_at": "2026-11-07T11:30:00Z",
+        },
+        {
+            "runners": 10,
+            "history_before": 5,
+            "history_now": 5,
+            "spotlight_before": 0,
+            "spotlight_now": 0,
+            "formfav_now": 10,
+            "packet_batches": 2,
+            "latest_packet_at": "2026-11-07T11:31:00Z",
+        },
     ]
     s = summarise_rich_context(rows)
     assert (s["races"], s["runners"]) == (2, 20)
@@ -120,9 +164,9 @@ def test_panel_is_wired_read_only_and_never_claims_rich_context_ranks() -> None:
     main = (root / "app" / "main.py").read_text(encoding="utf-8")
     assert 'id="rc-panel"' in html and "loadRichContext();" in html
     assert "NOT FITTED" in html and "PICKS NOTHING" in html
-    route = main[main.index('@app.get("/api/rich-context")'):main.index('@app.get("/api/llm-brief")')]
+    route = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/llm-brief")')]
     assert "wake_velo_model_picks" in route and "rich_context_vs_prime" in route
-    for write in ("method=\"POST\"", ".insert(", ".upsert(", ".delete(", "supabase_write"):
+    for write in ('method="POST"', ".insert(", ".upsert(", ".delete(", "supabase_write"):
         assert write not in route
 
 
@@ -131,10 +175,23 @@ from app.world_dashboard import enriched_suggestions, evidence_grade  # noqa: E4
 
 
 def _sug(race, pick="A", **kw):
-    row = {"race_id": race, "pick": pick, "morning_pick": pick, "pick_changed": False, "morning_prob": 0.40,
-           "now_prob": 0.40, "prob_delta": 0.0, "field_morning": 8, "field_now": 8, "withdrawn": 0,
-           "history": {"runs": 3}, "pace": {"runningStyle": "L"}, "class_fit": {"assessment": "comfort_zone"},
-           "spotlight_families": None, "run_at": "2026-11-07T11:14:13Z"}
+    row = {
+        "race_id": race,
+        "pick": pick,
+        "morning_pick": pick,
+        "pick_changed": False,
+        "morning_prob": 0.40,
+        "now_prob": 0.40,
+        "prob_delta": 0.0,
+        "field_morning": 8,
+        "field_now": 8,
+        "withdrawn": 0,
+        "history": {"runs": 3},
+        "pace": {"runningStyle": "L"},
+        "class_fit": {"assessment": "comfort_zone"},
+        "spotlight_families": None,
+        "run_at": "2026-11-07T11:14:13Z",
+    }
     row.update(kw)
     return row
 
@@ -151,8 +208,16 @@ def test_evidence_grade_describes_coverage_not_quality() -> None:
 def test_enriched_suggestions_counts_changes_and_tolerates_json_null() -> None:
     rows = [
         _sug("1"),
-        _sug("2", pick="B", morning_pick="A", pick_changed=True, prob_delta=0.08, now_prob=0.48, withdrawn=2,
-             spotlight_families=["pace_position"]),
+        _sug(
+            "2",
+            pick="B",
+            morning_pick="A",
+            pick_changed=True,
+            prob_delta=0.08,
+            now_prob=0.48,
+            withdrawn=2,
+            spotlight_families=["pace_position"],
+        ),
         _sug("3", history=None, pace=None, class_fit=None),
     ]
     out = enriched_suggestions(rows)
@@ -170,7 +235,7 @@ def test_suggestions_are_wired_read_only_and_say_the_pick_is_primes() -> None:
     main = (root / "app" / "main.py").read_text(encoding="utf-8")
     assert 'id="rc-suggest"' in html and "TODAY'S SUGGESTIONS" in html
     assert "does not re-rank anyone" in html
-    route = main[main.index('@app.get("/api/rich-context")'):main.index('@app.get("/api/llm-brief")')]
+    route = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/llm-brief")')]
     assert "wake_velo_enriched_picks" in route and "enriched_suggestions" in route
 
 
@@ -183,21 +248,39 @@ _NOW = datetime(2026, 11, 7, 18, 12, tzinfo=UTC)
 
 
 def _wp(track="Rosehill", n=1, country="au", start="2026-11-07T01:25:00+00:00", pick="Horse A", **kw):
-    row = {"country": country, "track": track, "race_number": n, "start_time": start, "pick_name": pick,
-           "tied_top": False, "rank1_rows": 1, "price_state": "REAL", "pick_price": 2.5,
-           "pick_is_shortest_price": True, "result_basis": None, "won": None, "framed": None,
-           "finish_position": None, "winner_names": None}
+    row = {
+        "country": country,
+        "track": track,
+        "race_number": n,
+        "start_time": start,
+        "pick_name": pick,
+        "tied_top": False,
+        "rank1_rows": 1,
+        "price_state": "REAL",
+        "pick_price": 2.5,
+        "pick_is_shortest_price": True,
+        "result_basis": None,
+        "won": None,
+        "framed": None,
+        "finish_position": None,
+        "winner_names": None,
+    }
     row.update(kw)
     return row
 
 
 def test_world_picks_flag_ties_duplicate_rank_and_missing_market_as_not_a_clean_read() -> None:
-    out = world_picks([
-        _wp("A", 1, pick="Clean"),
-        _wp("B", 2, pick="Tied", tied_top=True, price_state="MISSING", pick_price=None,
-            pick_is_shortest_price=False),
-        _wp("C", 3, pick="Dup", rank1_rows=2),
-    ], [], now=_NOW)
+    out = world_picks(
+        [
+            _wp("A", 1, pick="Clean"),
+            _wp(
+                "B", 2, pick="Tied", tied_top=True, price_state="MISSING", pick_price=None, pick_is_shortest_price=False
+            ),
+            _wp("C", 3, pick="Dup", rank1_rows=2),
+        ],
+        [],
+        now=_NOW,
+    )
     by = {r["pick_name"]: r for r in out["races"]}
     assert by["Clean"]["clean"] and by["Clean"]["flags"] == []
     assert not by["Tied"]["clean"] and by["Tied"]["flags"] == ["TIED", "NO_MARKET"]
@@ -207,14 +290,18 @@ def test_world_picks_flag_ties_duplicate_rank_and_missing_market_as_not_a_clean_
 
 
 def test_world_picks_settle_only_final_results_into_the_win_count() -> None:
-    out = world_picks([
-        _wp("A", 1, result_basis="final", won=True, framed=True, finish_position=1),
-        _wp("B", 2, result_basis="final", won=False, framed=True, finish_position=3, winner_names=["X"]),
-        _wp("C", 3, result_basis="final", won=False, framed=False, finish_position=9, tied_top=True),
-        _wp("D", 4, result_basis="provisional", won=True, framed=True, finish_position=1),
-        _wp("E", 5, result_basis="no_result"),
-        _wp("F", 6),
-    ], [], now=_NOW)
+    out = world_picks(
+        [
+            _wp("A", 1, result_basis="final", won=True, framed=True, finish_position=1),
+            _wp("B", 2, result_basis="final", won=False, framed=True, finish_position=3, winner_names=["X"]),
+            _wp("C", 3, result_basis="final", won=False, framed=False, finish_position=9, tied_top=True),
+            _wp("D", 4, result_basis="provisional", won=True, framed=True, finish_position=1),
+            _wp("E", 5, result_basis="no_result"),
+            _wp("F", 6),
+        ],
+        [],
+        now=_NOW,
+    )
     outcomes = {r["track"]: r["outcome"] for r in out["races"]}
     assert outcomes == {"A": "WON", "B": "PLACED", "C": "LOST", "D": "WON", "E": "NO_RESULT", "F": "PENDING"}
     s = out["summary"]
@@ -225,14 +312,18 @@ def test_world_picks_settle_only_final_results_into_the_win_count() -> None:
 
 
 def test_world_picks_put_races_still_to_run_first_and_match_formfav_by_race_not_position() -> None:
-    out = world_picks([
-        _wp("Old", 1, start="2026-11-07T01:25:00+00:00", pick="Early"),
-        _wp("Soon", 2, country="us", start="2026-11-07T18:19:00+00:00", pick="O'Hearn"),
-        _wp("Later", 3, country="us", start="2026-11-07T21:14:00+00:00", pick="Drayden"),
-    ], [
-        {"country": "us", "track": "later", "race_number": 3, "off_uk": "21:14", "pick1_name": "Crazy Busted (Ny)"},
-        {"country": "us", "track": "soon", "race_number": 2, "off_uk": "18:19", "pick1_name": "O'Hearn (Ire)"},
-    ], now=_NOW)
+    out = world_picks(
+        [
+            _wp("Old", 1, start="2026-11-07T01:25:00+00:00", pick="Early"),
+            _wp("Soon", 2, country="us", start="2026-11-07T18:19:00+00:00", pick="O'Hearn"),
+            _wp("Later", 3, country="us", start="2026-11-07T21:14:00+00:00", pick="Drayden"),
+        ],
+        [
+            {"country": "us", "track": "later", "race_number": 3, "off_uk": "21:14", "pick1_name": "Crazy Busted (Ny)"},
+            {"country": "us", "track": "soon", "race_number": 2, "off_uk": "18:19", "pick1_name": "O'Hearn (Ire)"},
+        ],
+        now=_NOW,
+    )
     assert [r["track"] for r in out["races"]] == ["Soon", "Later", "Old"]
     by = {r["track"]: r for r in out["races"]}
     assert by["Soon"]["upcoming"] and by["Later"]["upcoming"] and not by["Old"]["upcoming"]
@@ -243,10 +334,16 @@ def test_world_picks_put_races_still_to_run_first_and_match_formfav_by_race_not_
 
 
 def test_world_picks_say_how_often_a_priced_pick_is_just_the_shortest_price() -> None:
-    out = world_picks([
-        _wp("A", 1), _wp("B", 2), _wp("C", 3, pick_is_shortest_price=False, pick_price=4.0),
-        _wp("D", 4, price_state="MISSING", pick_price=None, pick_is_shortest_price=False),
-    ], [], now=_NOW)
+    out = world_picks(
+        [
+            _wp("A", 1),
+            _wp("B", 2),
+            _wp("C", 3, pick_is_shortest_price=False, pick_price=4.0),
+            _wp("D", 4, price_state="MISSING", pick_price=None, pick_is_shortest_price=False),
+        ],
+        [],
+        now=_NOW,
+    )
     s = out["summary"]
     assert (s["priced"], s["priced_pick_is_shortest"], s["no_market"]) == (3, 2, 1)
     assert "favourite" in s["note"] and "not evidence of skill" in s["note"]
@@ -264,9 +361,9 @@ def test_world_picks_panel_is_wired_read_only_and_never_calls_itself_a_tip() -> 
     sql = (root / "supabase" / "migrations" / "20261107190000_world_velo_picks.sql").read_text(encoding="utf-8")
     assert 'id="wp-panel"' in html and "loadWorldPicks();" in html
     assert "NOT A TIP" in html and "NO STAKING" in html and "NO MARKET (PRICE-BLIND)" in html
-    route = main[main.index('@app.get("/api/world-picks")'):main.index('@app.get("/api/rich-context")')]
+    route = main[main.index('@app.get("/api/world-picks")') : main.index('@app.get("/api/rich-context")')]
     assert "world_velo_picks" in route and "world_picks(" in route
-    for write in ("method=\"POST\"", ".insert(", ".upsert(", ".delete(", "supabase_write"):
+    for write in ('method="POST"', ".insert(", ".upsert(", ".delete(", "supabase_write"):
         assert write not in route
     assert "security_invoker = true" in sql and "grant select on public.world_velo_picks to service_role" in sql
     assert "FIRST_COMPLETE" in sql  # reads the frozen first-complete pick, never a later rewrite
@@ -281,3 +378,57 @@ def test_world_picks_view_only_counts_a_verified_price_as_the_shortest() -> None
     sql = (root / "supabase" / "migrations" / "20261107190000_world_velo_picks.sql").read_text(encoding="utf-8")
     assert "min(case when b.ps = 'REAL' then b.captured_price end)" in sql
     assert "(t1.ps = 'REAL' and t1.captured_price = t1.shortest_price) as pick_is_shortest_price" in sql
+
+
+# --- WAKE-VELO-SETTLE-01 follow-up: results read from the ingested Racing Post results ------------
+def test_scoreboard_counts_results_read_from_ingested_results_and_says_so() -> None:
+    from app.world_dashboard import model_scoreboard
+
+    def row(race, model, pos, win, source, **kw):
+        base = {
+            "race_id": race,
+            "model_name": model,
+            "top_horse": f"H{race}",
+            "tie_status": "N/A",
+            "rank1_rows": 1,
+            "result_position": pos,
+            "win": win,
+            "result_source": source,
+            "agrees_with_prime": False,
+            "lane_name": "x",
+        }
+        base.update(kw)
+        return base
+
+    board = {
+        b["model"]: b
+        for b in model_scoreboard(
+            [
+                row("1", "MAIN_VELO_PRIME", 1, True, "scorecard"),
+                row("2", "MAIN_VELO_PRIME", 5, False, "scorecard"),
+                row("1", "CHAMPION_INTENT_SHADOW", 2, False, "ingested_results"),
+                row("2", "CHAMPION_INTENT_SHADOW", 1, True, "ingested_results"),
+                row("3", "CHAMPION_INTENT_SHADOW", None, None, None),
+                row("4", "CHAMPION_INTENT_SHADOW", 1, True, "ingested_results", rank1_rows=2),  # multi-pick: not clean
+            ]
+        )
+    }
+    assert board["MAIN_VELO_PRIME"]["settled"] == 2 and board["MAIN_VELO_PRIME"]["settled_from_ingested"] == 0
+    champ = board["CHAMPION_INTENT_SHADOW"]
+    assert (champ["settled"], champ["settled_from_ingested"], champ["won"], champ["top3"]) == (2, 2, 1, 2)
+    assert champ["unclean"] == 1  # the multi-pick race is still excluded from the read
+
+
+def test_ingested_results_fallback_is_exact_id_only_and_the_scorecard_wins() -> None:
+    root = Path(__file__).parents[1]
+    sql = (root / "supabase" / "migrations" / "20261108020000_wake_velo_model_picks_ingested_results.sql").read_text(
+        encoding="utf-8"
+    )
+    assert "i.race_id = t.race_id and i.horse_id = t.horse_id" in sql  # never a name join
+    assert "coalesce(t.result_position, i.position_int)" in sql  # the scorecard's own result takes precedence
+    assert "when t.result_position is not null then t.win" in sql
+    assert "result_source" in sql and "security_invoker = true" in sql
+    for verb in ("insert into", "update public", "delete from"):
+        assert verb not in sql.lower()
+    html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+    assert "settled_from_ingested" in html and "read from the ingested Racing Post results" in html

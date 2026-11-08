@@ -145,6 +145,7 @@ def model_scoreboard(picks: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "comparable_with_prime": len(comparable),
                 "agree_with_prime": sum(1 for r in comparable if r.get("agrees_with_prime")),
                 "settled": len(settled),
+                "settled_from_ingested": sum(1 for r in settled if r.get("result_source") == "ingested_results"),
                 "won": sum(1 for r in settled if r.get("win")),
                 "top3": sum(1 for r in settled if (_int(r.get("result_position")) or 99) <= 3),
             }
