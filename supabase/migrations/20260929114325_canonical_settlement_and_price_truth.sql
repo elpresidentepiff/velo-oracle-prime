@@ -96,9 +96,21 @@ BEGIN
 END $$;
 
 -- Legacy rows deliberately keep NULL identity keys: no historical evidence is
--- deleted, merged, or assigned a fabricated identity. New governed events use
--- one deterministic key per source scorecard row. PostgreSQL UNIQUE indexes
--- allow multiple NULLs and PostgREST can infer this non-partial index for
--- ON CONFLICT(event_identity_key).
+-- deleted or merged. Rows already linked to an immutable scorecard receive
+-- the same deterministic identity used by the governed writer. Rows without
+-- a source_scorecard_id retain NULL: no identity is fabricated.
+UPDATE public.canonical_learning_events
+SET event_identity_key = run_date::text || ':' || source_scorecard_id::text
+WHERE event_identity_key IS NULL
+  AND source_scorecard_id IS NOT NULL;
+
+-- The legacy key includes mutable classifications. Keeping it while the
+-- writer switches to event_identity_key can reject an entire corrected EOD
+-- batch before ON CONFLICT(event_identity_key) is reached.
+ALTER TABLE public.canonical_learning_events
+    DROP CONSTRAINT IF EXISTS canonical_learning_events_unique_row;
+
+-- PostgreSQL UNIQUE indexes allow multiple NULLs and PostgREST can infer this
+-- non-partial index for ON CONFLICT(event_identity_key).
 CREATE UNIQUE INDEX IF NOT EXISTS uq_canonical_learning_events_identity_v1
     ON public.canonical_learning_events (event_identity_key);
