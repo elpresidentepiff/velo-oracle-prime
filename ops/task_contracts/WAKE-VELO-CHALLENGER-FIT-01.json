@@ -13,7 +13,8 @@
     "models/rich_context_challenger_v1/metadata.json",
     "tests/test_rich_context_challenger_scorer.py",
     "ops/task_contracts/WAKE-VELO-CHALLENGER-FIT-01.json",
-    "docs/current/DIARY.md"
+    "docs/current/DIARY.md",
+    "supabase/migrations/20261108030000_rich_context_challenger_scores.sql"
   ],
   "forbidden_paths": [
     "app/services/velo_prime_service.py",
@@ -25,15 +26,42 @@
     "app/agents/",
     "src/velo/execution_bridge.py"
   ],
-  "allowed_actions": ["read_repo", "fit_shadow_model_on_frozen_split", "persist_model_artifact", "score_shadow_packets_only", "backfill_shadow_packet_scores", "run_focused_tests"],
-  "forbidden_actions": ["live_scoring_change", "model_promotion", "credential_exposure", "racing_api_call", "write_to_prime_prediction_fields", "stake_authorisation", "refit_on_untouched_holdout"],
-  "forbidden_keywords": ["RACING_API_", "bot.send_message", "promote_model"],
+  "allowed_actions": [
+    "read_repo",
+    "fit_shadow_model_on_frozen_split",
+    "persist_model_artifact",
+    "score_shadow_packets_only",
+    "backfill_shadow_packet_scores",
+    "run_focused_tests"
+  ],
+  "forbidden_actions": [
+    "live_scoring_change",
+    "model_promotion",
+    "credential_exposure",
+    "racing_api_call",
+    "write_to_prime_prediction_fields",
+    "stake_authorisation",
+    "refit_on_untouched_holdout"
+  ],
+  "forbidden_keywords": [
+    "RACING_API_",
+    "bot.send_message",
+    "promote_model"
+  ],
   "required_outputs": [
     "src/velo/rich_context_challenger_scorer.py",
     "scripts/research/fit_rich_context_challenger_v1.py",
     "tests/test_rich_context_challenger_scorer.py",
     "ops/task_contracts/WAKE-VELO-CHALLENGER-FIT-01.json"
   ],
-  "classification_required": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"],
-  "final_classifications": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"]
+  "classification_required": [
+    "SHADOW_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "SHADOW_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_PROMOTION"
+  ]
 }
