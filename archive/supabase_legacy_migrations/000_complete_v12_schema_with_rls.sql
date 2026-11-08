@@ -1,3 +1,4 @@
+-- ARCHIVED LEGACY BOOTSTRAP — DO NOT APPLY TO THE ACTIVE DATABASE
 -- VELO v12 Complete Schema with RLS
 -- Migration: 000_complete_v12_schema_with_rls
 -- Created: 2025-01-21

@@ -1,3 +1,4 @@
+-- ARCHIVED LEGACY V12 POLICY PATCH — DO NOT APPLY TO THE ACTIVE DATABASE
 -- VELO v12 Row Level Security (RLS) and Policies
 -- This migration enables RLS on all tables and creates appropriate policies
 

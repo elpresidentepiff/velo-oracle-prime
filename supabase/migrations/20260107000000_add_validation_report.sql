@@ -1,5 +1,5 @@
 -- VÉLØ Phase 1: Add Validation Support
--- Migration: Add validation_report column and update batch statuses
+-- Migration: 20260107000000_add_validation_report
 -- Date: 2026-01-07
 
 -- ============================================================================

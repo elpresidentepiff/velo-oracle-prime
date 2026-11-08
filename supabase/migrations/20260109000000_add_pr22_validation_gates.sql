@@ -1,4 +1,4 @@
--- PR #22: Add Hard Validation Gates
+-- Migration: 20260109000000_add_pr22_validation_gates
 -- Add rejected_bad_output status and validation fields
 -- Date: 2026-01-09
 

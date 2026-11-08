@@ -532,7 +532,10 @@ def test_governed_rows_emit_version_marker_that_excludes_legacy_backfill(tmp_pat
 
 
 def test_legacy_rls_migration_is_idempotent_for_existing_policies():
-    sql = (ROOT / "supabase" / "migrations" / "001_enable_rls_and_policies.sql").read_text(encoding="utf-8")
+    active = ROOT / "supabase" / "migrations" / "001_enable_rls_and_policies.sql"
+    archived = ROOT / "archive" / "supabase_legacy_migrations" / "001_enable_rls_and_policies.sql"
+    assert not active.exists()
+    sql = archived.read_text(encoding="utf-8")
     policy_names = [
         "service_role_all_races",
         "service_role_all_runners",
