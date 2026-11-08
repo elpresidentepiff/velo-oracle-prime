@@ -1,0 +1,37 @@
+{
+  "task_id": "WAKE-VELO-GATE-INPUTS-01",
+  "title": "Give the EOD container the two morning-only inputs the learning gate and place stack read (runner snapshots, run observability packet)",
+  "classification": "SHADOW_RESEARCH_INFRASTRUCTURE",
+  "allowed_paths": [
+    "scripts/ops/persist_daily_artifacts.py",
+    "scripts/ops/rp_cloud_eod.py",
+    "tests/test_eod_gate_inputs.py",
+    "ops/task_contracts/WAKE-VELO-GATE-INPUTS-01.json",
+    "docs/current/DIARY.md"
+  ],
+  "forbidden_paths": [
+    "app/services/velo_prime_service.py",
+    "app/services/sqpe_v17_service.py",
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "scripts/ops/run_prime_today.py",
+    "scripts/ops/run_full_raceday.py",
+    "scripts/ops/run_full_raceday_eod.py",
+    "scripts/ops/update_mission_control.py",
+    "scripts/ops/nightly_eod_learning_runner.py",
+    "src/velo/council/",
+    "app/agents/",
+    "src/velo/execution_bridge.py"
+  ],
+  "allowed_actions": ["read_repo", "persist_additional_report_artifacts", "hydrate_runner_snapshots_read_only", "run_focused_tests"],
+  "forbidden_actions": ["live_scoring_change", "model_promotion", "credential_exposure", "racing_api_call", "stake_authorisation", "weaken_learning_gate", "edit_council_or_gate_logic", "touch_live_sentient_state"],
+  "forbidden_keywords": ["RACING_API_", "bot.send_message", "promote_model"],
+  "required_outputs": [
+    "scripts/ops/persist_daily_artifacts.py",
+    "scripts/ops/rp_cloud_eod.py",
+    "tests/test_eod_gate_inputs.py",
+    "ops/task_contracts/WAKE-VELO-GATE-INPUTS-01.json"
+  ],
+  "classification_required": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"],
+  "final_classifications": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_MODEL_PROMOTION"]
+}

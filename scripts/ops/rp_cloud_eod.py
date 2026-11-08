@@ -114,6 +114,22 @@ def _safe_artifact_path(source_path: str) -> Path | None:
     return target
 
 
+def _hydrate_runner_snapshots(date_str: str) -> dict[str, Any]:
+    """Restore the morning's runner snapshots from Supabase (read-only, no rescoring).
+
+    Step 12C (place stack) and the Council's data auditor read ``data/runner_snapshots_<date>_*.jsonl``, which the
+    morning container wrote and this clean container does not have. Without it the day is labelled MISSING_SNAPSHOTS
+    (a learning-gate blocker) although ``runner_prediction_snapshots`` holds the rows. Never fatal: when the table has
+    nothing for the date the Council must still be able to say so.
+    """
+    try:
+        from scripts.ops.sync_runner_snapshots_from_supabase import hydrate_runner_snapshots
+
+        return hydrate_runner_snapshots(date_str, ROOT / "data")
+    except Exception as exc:  # noqa: BLE001 - the hydrate must never take the EOD down
+        return {"status": "HYDRATION_ERROR", "date": date_str, "error": f"{type(exc).__name__}: {exc}"}
+
+
 def _hydrate_report_artifacts(date_str: str) -> int:
     rows = _get(
         "velo_report_artifacts",
@@ -318,6 +334,7 @@ def main() -> int:
     print(f"VELO CLOUD RP EOD — {date_str}", flush=True)
     print("executor=Railway source=RacingPost-HTML durable_truth=Supabase", flush=True)
     preparation = prepare_cloud_eod_inputs(date_str)
+    preparation["runner_snapshots"] = _hydrate_runner_snapshots(date_str)
     print(json.dumps({"preparation": preparation}, indent=2), flush=True)
     if not args.execute:
         print("[CLOUD-EOD] PLAN_ONLY — capture and EOD were not executed", flush=True)

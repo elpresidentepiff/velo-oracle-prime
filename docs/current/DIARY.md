@@ -56,6 +56,27 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-08 (early) — Claude Code (Sonnet 5.5) — Why the learning gate has read BLOCKED every night in the cloud, and the two missing inputs
+Read:             the 2026-11-07 EOD log: `GATE BLOCKED - learning cannot proceed: COUNCIL_INTEGRITY:WATCH_ONLY: DATA AUDITOR: MISSING_SNAPSHOTS; DATA AUDITOR:
+                  SOURCE_UNKNOWN; LEARNING_GATE:BLOCKED`, and Step 12C dying in `run_place_stack_shadow.load_snapshot` (FileNotFoundError).
+Cause:            all three read the EOD container's DISK, and the EOD container starts clean.
+                  (1) runner snapshots: `data/runner_snapshots_<tag>_*.jsonl` is written by the morning container; the rows are in `runner_prediction_snapshots`
+                      (472 for 2026-11-07). The morning orchestrator already restores them (`sync_runner_snapshots_from_supabase.py`) when scoring is skipped;
+                      the EOD wrapper never did. Result: Step 12C fails and the Data Auditor labels the day MISSING_SNAPSHOTS.
+                  (2) source truth: `update_mission_control` reads it ONLY from `data/velo_run_observability_<tag>_<run>.json`, which `run_prime_today.py` writes
+                      to local disk (and by its own contract nowhere else). Never persisted, so every cloud night read UNKNOWN: `GATE_SOURCE_UNKNOWN`.
+Fix:              `rp_cloud_eod.py` restores the snapshots (read-only, never fatal, before any capture or scoring); `persist_daily_artifacts.py` also persists the
+                  NEWEST observability packet per date (the final run wins, same rule as mission control) under its own filename, and the existing EOD hydrate puts
+                  it back. Council, mission control, the gate and the learner are NOT edited. Contract WAKE-VELO-GATE-INPUTS-01; 9 new tests, 5 fail on the old code.
+Not made easier: a DEGRADED packet restores as RP_MERGED_DEGRADED and the gate still blocks it (tested); no packet means no row (nothing invented); when the
+                  snapshot table has nothing the Auditor still says MISSING_SNAPSHOTS. The nightly learner works on `sentient_state_shadow.json` and guards the live
+                  state (`LIVE_STATE_TOUCHED`), so opening the gate cannot change Prime.
+Effect:           from tomorrow: the 07:00Z run persists the packet, the 21:00Z EOD restores it and the snapshots. The gate may now OPEN or may stay blocked for a real
+                  reason (the packet's label, flatline, missing sigma `uk_sigma_missing`, identity). Whichever it is, it will be the real one. Not run for 2026-11-07
+                  (no packet was ever saved for it).
+Next safe action: 2026-11-08 after the 21:00Z EOD read `world_day_status` / mission control: `source_truth`, `learning_gate_status`, `council_verdict`, and the
+                  EOD log line for Step 12C and Step 20.
+
 ### 2026-11-07 (night) — Claude Code (Sonnet 5.5) — Why four shadow lanes never get results, and the fix
 Cause:            Champion Intent, New Build A/B and the Passport proxy are rebuilt at EOD (Step 20C) from three files the MORNING container writes
                   (`data/new_build/reports/two_lane_readiness_<tag>.json`, `data/new_build/current_cards/current_card_passport_feed_<tag>.jsonl`,

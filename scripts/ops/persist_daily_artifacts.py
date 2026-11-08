@@ -79,6 +79,15 @@ TEXT_REPORTS = {
 }
 TEXT_REPORT_MAX_BYTES = 8_000_000  # a larger file is skipped with a warning rather than failing the whole persist
 
+# Run packets written under a name that carries a run id: one row per date, the NEWEST packet wins (the same rule
+# update_mission_control uses: "multiple packets exist when the day had retries; the final run wins"). The learning
+# gate takes the day's source truth from this packet; the EOD container never had it, so every night read UNKNOWN and
+# the gate stayed BLOCKED whatever the data quality. The row keeps the packet's own filename so the EOD hydrate puts it
+# back where update_mission_control looks.
+NEWEST_REPORTS = {
+    "velo_run_observability": "data/velo_run_observability_{tag}_*.json",
+}
+
 LEDGER_NUMERIC = {"norpr_prob", "nb_prob", "champion_prob", "mp_prob", "nbc_prob", "winner_sp"}
 
 
@@ -248,6 +257,29 @@ def build_reports(dates: list[str] | None) -> list[dict]:
             rows.append({
                 "artifact_type": atype, "run_date": d, "payload": payload, "source_path": _rel(path),
                 "source_mtime": datetime.fromtimestamp(path.stat().st_mtime, tz=UTC).isoformat(),
+                "source_sha256": _sha(path),
+            })
+    for atype, pattern in NEWEST_REPORTS.items():
+        ds = dates if dates is not None else _dates_from(pattern.replace("{tag}", "*"))
+        for d in ds:
+            newest: tuple[str, float, Path, dict] | None = None
+            for path in sorted(glob.glob(str(ROOT / pattern.format(tag=d.replace("-", "_"))))):
+                try:
+                    packet = json.loads(Path(path).read_text(encoding="utf-8"))
+                except (json.JSONDecodeError, OSError):
+                    print(f"  [WARN] unreadable packet skipped: {path}")
+                    continue
+                if not isinstance(packet, dict):
+                    continue
+                key = (str(packet.get("timestamp") or ""), Path(path).stat().st_mtime)
+                if newest is None or key > newest[:2]:
+                    newest = (key[0], key[1], Path(path), packet)
+            if newest is None:
+                continue
+            _, mtime, path, packet = newest
+            rows.append({
+                "artifact_type": atype, "run_date": d, "payload": packet, "source_path": _rel(path),
+                "source_mtime": datetime.fromtimestamp(mtime, tz=UTC).isoformat(),
                 "source_sha256": _sha(path),
             })
     for atype, pattern in TEXT_REPORTS.items():
