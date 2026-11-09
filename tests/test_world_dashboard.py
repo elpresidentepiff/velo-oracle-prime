@@ -432,3 +432,110 @@ def test_ingested_results_fallback_is_exact_id_only_and_the_scorecard_wins() -> 
         assert verb not in sql.lower()
     html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
     assert "settled_from_ingested" in html and "read from the ingested Racing Post results" in html
+
+
+# --- PVC-DASH-01: Prime beside the Rich Context challenger -----------------------------------------
+
+
+def _pvc_row(**over):
+    row = {
+        "race_id": "1",
+        "course": "Carlisle",
+        "off_time": "1.20",
+        "off_minutes": 800,
+        "agree": False,
+        "settled": True,
+        "prime_horse": "A",
+        "prime_prob": 0.3,
+        "prime_price": 6.0,
+        "prime_result": "L",
+        "prime_sp": 7.0,
+        "challenger_horse": "B",
+        "challenger_prob": 0.4,
+        "challenger_price": 3.0,
+        "challenger_result": "W",
+        "challenger_sp": 3.0,
+        "favourite_horse": "B",
+        "favourite_price": 3.0,
+        "favourite_tied": False,
+        "favourite_result": "W",
+        "favourite_sp": 3.0,
+    }
+    row.update(over)
+    return row
+
+
+def test_prime_vs_challenger_counts_agreement_favourite_overlap_and_the_record() -> None:
+    from app.world_dashboard import prime_vs_challenger
+
+    rows = [
+        _pvc_row(),
+        _pvc_row(
+            race_id="2",
+            agree=True,
+            prime_horse="C",
+            challenger_horse="C",
+            favourite_horse="D",
+            prime_result="P",
+            challenger_result="P",
+            favourite_result="L",
+            prime_sp=5.0,
+            challenger_sp=5.0,
+            favourite_sp=2.0,
+        ),
+        _pvc_row(race_id="3", settled=False, prime_result=None, challenger_result=None, favourite_result=None),
+    ]
+    s = prime_vs_challenger(rows)
+    assert (s["races"], s["agree"], s["disagree"], s["settled"]) == (3, 1, 2, 2)
+    assert s["challenger_is_favourite"] == 2 and s["prime_is_favourite"] == 0
+    assert s["challenger"]["won"] == 1 and s["challenger"]["placed"] == 2
+    assert s["prime"]["won"] == 0 and s["prime"]["placed"] == 1
+    # flat one unit at the returned price: challenger +2.0 (won at 3.0) and -1 (placed only) = +1.0
+    assert s["challenger"]["units"] == 1.0
+    assert s["prime"]["units"] == -2.0
+    assert s["when_they_differ"] == {"settled": 1, "prime_won": 0, "challenger_won": 1}
+    assert [r["race_id"] for r in s["races_detail"]] == ["1", "2", "3"]
+    assert s["sample_note"]  # fewer than 100 settled races
+
+
+def test_prime_vs_challenger_ignores_unsettled_races_and_unreal_prices() -> None:
+    from app.world_dashboard import prime_vs_challenger
+
+    rows = [
+        _pvc_row(settled=False, prime_result=None, challenger_result=None, favourite_result=None),
+        _pvc_row(race_id="2", challenger_sp=None, prime_sp=1.0),
+    ]
+    s = prime_vs_challenger(rows)
+    assert s["settled"] == 1
+    assert s["challenger"]["priced"] == 0 and s["challenger"]["units"] == 0.0
+    assert s["prime"]["priced"] == 0  # a returned price of 1.0 is not a price
+
+
+def test_prime_vs_challenger_empty_day_is_empty_not_an_error() -> None:
+    from app.world_dashboard import prime_vs_challenger
+
+    s = prime_vs_challenger([])
+    assert s["races"] == 0 and s["agree_pct"] is None and s["settled"] == 0 and s["races_detail"] == []
+
+
+def test_prime_vs_challenger_is_wired_read_only_and_phone_friendly() -> None:
+    root = Path(__file__).parents[1]
+    html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+    main = (root / "app" / "main.py").read_text(encoding="utf-8")
+    sql = (root / "supabase" / "migrations" / "20261109120000_prime_vs_challenger.sql").read_text(encoding="utf-8")
+    assert 'id="pvc-panel"' in html and "loadPrimeVsChallenger();" in html
+    assert "NOT A TIP" in html and "NO STAKING" in html and "CHANGES NOTHING PRIME READS" in html
+    assert "@media (max-width:600px)" in html and ".pvc-cols{grid-template-columns:1fr}" in html
+    route = main[main.index('@app.get("/api/prime-vs-challenger")') : main.index('@app.get("/api/llm-brief")')]
+    assert "prime_vs_challenger?race_date=eq." in route and "valid_date(d)" in route
+    for write in ('method="POST"', ".insert(", ".upsert(", ".delete(", "supabase_write"):
+        assert write not in route
+    assert "security_invoker = true" in sql and "grant select on public.prime_vs_challenger to service_role" in sql
+    for verb in ("insert into", "update public", "delete from"):
+        assert verb not in sql.lower()
+    assert "rank is 0-BASED" in sql
+    # the "Rich Context model" chip must read where the scores really live (a separate append-only table)
+    rich = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/prime-vs-challenger")')]
+    assert (
+        "rich_context_challenger_scores?race_date=eq." in rich and "challenger_probability=not.is.null" not in rich
+    )  # Prime's snapshot rank is 0-based; the challenger's is 1-based

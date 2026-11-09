@@ -2174,7 +2174,7 @@ async def rich_context(date: str = Query(default=None)):
         "&select=run_type,status,started_at,finished_at,races_processed,runners_processed,commit_sha"
     )
     scored = _sb_rest_rows(
-        f"rich_context_shadow_packets?race_date=eq.{d}&challenger_probability=not.is.null&select=id&limit=1"
+        f"rich_context_challenger_scores?race_date=eq.{d}&select=id&limit=1"
     )
     return {
         "date": d,
@@ -2186,6 +2186,34 @@ async def rich_context(date: str = Query(default=None)):
         "models": model_scoreboard(picks or []),
         "races": race_grid(picks or []),
         "scoring_runs": runs or [],
+        **SHADOW_BOUNDARY,
+    }
+
+
+@app.get("/api/prime-vs-challenger")
+async def prime_vs_challenger_route(date: str = Query(default=None)):
+    """Prime's top pick beside the Rich Context challenger's top pick, race by race, with results.
+
+    Read-only. The challenger is a shadow model: it picks nothing Prime reads, and nothing here is a tip.
+    """
+    import datetime as _dt
+
+    from app.world_dashboard import SHADOW_BOUNDARY, prime_vs_challenger, valid_date
+
+    d = date or _dt.date.today().isoformat()
+    if not valid_date(d):
+        return JSONResponse({"error": "date must be YYYY-MM-DD"}, status_code=400)
+    rows = _sb_rest_rows(f"prime_vs_challenger?race_date=eq.{d}&order=off_minutes.asc.nullslast,race_id.asc&limit=300")
+    shaped = prime_vs_challenger(rows or [])
+    return {
+        "date": d,
+        "available": rows is not None,
+        "has_scores": bool(rows),
+        "challenger_model": (rows or [{}])[0].get("challenger_model") if rows else None,
+        "label": "Shadow only. The challenger changes nothing Prime reads. Not a tip, nothing staked.",
+        "as_of": _dt.datetime.now(_dt.UTC).isoformat(timespec="seconds"),
+        "summary": {k: v for k, v in shaped.items() if k != "races_detail"},
+        "races": shaped["races_detail"],
         **SHADOW_BOUNDARY,
     }
 

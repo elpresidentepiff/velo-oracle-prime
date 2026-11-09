@@ -7,6 +7,55 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* PRIME vs CHALLENGER panel (PVC-DASH-01) and a phone layer for the dashboard's panels. */
+#pvc-panel{background:#111;border:1px solid #4fc3f7;border-radius:6px;margin:8px 12px;padding:10px 14px;}
+.pvc-head{margin-bottom:8px}
+.pvc-title{font-weight:600;color:#4fc3f7;letter-spacing:.05em}
+.pvc-title span{color:#888;font-weight:400}
+.pvc-tag{font-size:10px;color:#666;margin-top:3px;line-height:1.4}
+.pvc-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.pvc-btn{cursor:pointer;font-size:11px;letter-spacing:.06em;padding:9px 12px;min-height:40px;border-radius:4px;border:1px solid #333;background:#1a1a1a;color:#999}
+.pvc-btn.on{border-color:#4fc3f7;background:#0d2f3d;color:#4fc3f7}
+.pvc-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.pvc-chip{background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:6px 10px;min-width:100px;flex:1 1 100px}
+.pvc-chip b{display:block;font-size:9px;color:#777;letter-spacing:.08em;font-weight:400}
+.pvc-chip span{font-size:14px;color:#ddd}
+.pvc-tbl{overflow-x:auto;margin-bottom:8px}
+.pvc-tbl table{border-collapse:collapse;width:100%;min-width:360px;font-size:11px}
+.pvc-tbl th{color:#777;font-weight:400;text-align:right;padding:4px 8px;letter-spacing:.05em}
+.pvc-tbl td{text-align:right;padding:5px 8px;border-top:1px solid #222;color:#ccc}
+.pvc-tbl th:first-child,.pvc-tbl td:first-child{text-align:left}
+.pvc-note{font-size:10px;color:#777;line-height:1.5;margin:6px 0}
+.pvc-races{display:flex;flex-direction:column;gap:8px;max-height:640px;overflow:auto}
+.pvc-race{border:1px solid #222;border-radius:6px;padding:8px 10px;background:#0c0c0c}
+.pvc-rh{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:12px;margin-bottom:6px}
+.pvc-rh .t{color:#aaa}.pvc-rh .c{color:#ddd;font-weight:600}
+.pvc-rh .s{margin-left:auto;font-size:10px;padding:2px 8px;border-radius:10px}
+.pvc-rh .s.diff{background:#3b2a0f;color:#f0b35a}.pvc-rh .s.same{background:#222;color:#888}
+.pvc-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pvc-col{border-radius:5px;padding:7px 9px;min-width:0}
+.pvc-col.p{background:#10263a}.pvc-col.c{background:#33240c}
+.pvc-lab{font-size:9px;letter-spacing:.08em}
+.pvc-col.p .pvc-lab{color:#7db4ee}.pvc-col.c .pvc-lab{color:#f0b35a}
+.pvc-hn{font-size:13px;font-weight:600;color:#eee;overflow-wrap:anywhere;margin:2px 0}
+.pvc-meta{font-size:11px;color:#999}
+.pvc-res{display:inline-block;font-size:10px;padding:1px 7px;border-radius:5px;margin-top:3px}
+.pvc-res.W{background:#12301f;color:#66bb6a}.pvc-res.P{background:#2a2a2a;color:#ccc}.pvc-res.L{background:#3a1a14;color:#ef7a68}
+.pvc-fav{font-size:11px;color:#888;margin-top:6px}
+@media (max-width:600px){
+  #pvc-panel,[id$="-panel"]{margin-left:6px;margin-right:6px;padding-left:10px;padding-right:10px}
+  [id$="-panel"] span[style*="float:right"]{float:none !important;display:block;margin-top:4px}
+  [id$="-panel"] table{display:block;overflow-x:auto;max-width:100%}
+  .pvc-cols{grid-template-columns:1fr}
+  .pvc-chip{flex-basis:calc(50% - 8px)}
+  /* The status and date bar was one row that never wrapped: on a phone the date picker and badges sat off-screen. */
+  #source-header{flex-wrap:wrap;gap:6px 14px;padding:6px 10px}
+  #source-header .source-field[style*="margin-left:auto"]{margin-left:0 !important;flex-wrap:wrap}
+  .date-nav-btn{min-width:36px;min-height:36px}
+  .ssc-table{display:block;overflow-x:auto;max-width:100%}
+}
+</style>
+<style>
 /* ── Design Tokens ─────────────────────────────────────────────── */
 :root {
   --bg-void:    #010810;
@@ -772,10 +821,19 @@ td:last-child  { padding-right: 20px; }
   <div id="wp-note" style="font-size:10px;color:#777;margin:6px 0;"></div>
   <div id="wp-races" style="max-height:520px;overflow:auto;"></div>
 </div>
+<div id="pvc-panel" style="display:none;">
+  <div class="pvc-head">
+    <div class="pvc-title">PRIME vs CHALLENGER <span id="pvc-count"></span></div>
+    <div class="pvc-tag">GB/IE &middot; SHADOW ONLY &middot; THE CHALLENGER CHANGES NOTHING PRIME READS &middot; NOT A TIP &middot; NO STAKING</div>
+  </div>
+  <div id="pvc-days" class="pvc-row"></div>
+  <div id="pvc-model" class="pvc-note"></div>
+  <div id="pvc-body"></div>
+</div>
 <div id="rc-panel" style="display:none;background:#111;border:1px solid #ab47bc;border-radius:6px;margin:8px 12px;padding:10px 14px;">
   <div style="font-weight:600;color:#ab47bc;letter-spacing:0.05em;margin-bottom:6px;">
     WAKE VELO &middot; ALL MODELS <span id="rc-count" style="color:#888;font-weight:400"></span>
-    <span style="float:right;font-size:10px;color:#666;font-weight:400">GB/IE &middot; SHADOW ONLY &middot; RICH CONTEXT HAS NO MODEL YET AND PICKS NOTHING &middot; PRIME IS UNCHANGED</span>
+    <span style="float:right;font-size:10px;color:#666;font-weight:400">GB/IE &middot; SHADOW ONLY &middot; THE RICH CONTEXT CHALLENGER IS SHADOW ONLY AND PICKS NOTHING PRIME READS (SEE PRIME vs CHALLENGER) &middot; PRIME IS UNCHANGED</span>
   </div>
   <div style="font-size:10px;color:#777;margin-bottom:4px;">TODAY'S SUGGESTIONS &middot; PRIME'S PICK FROM THE NEWEST RUN, WITH EVERYTHING VELO NOW HOLDS ON THAT HORSE <span id="rc-suggest-run" style="color:#999"></span></div>
   <div id="rc-suggest-summary" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;"></div>
@@ -4661,7 +4719,7 @@ async function loadRichContext() {
       _wdChip('RP SPOTLIGHT', `${pc(ev.spotlight_before_pct)} → ${pc(ev.spotlight_now_pct)}`, ev.spotlight_now_pct > ev.spotlight_before_pct ? '#66bb6a' : '#ddd'),
       _wdChip('FORMFAV FACTS', pc(ev.formfav_now_pct)),
       _wdChip('PACKET BATCHES', ev.packet_batches || 0),
-      _wdChip('RICH CONTEXT MODEL', data.rich_context_ranks_anything ? 'RANKING' : 'NOT FITTED', data.rich_context_ranks_anything ? '#ffa726' : '#888'),
+      _wdChip('RICH CONTEXT MODEL', data.rich_context_ranks_anything ? 'SHADOW CHALLENGER SCORING' : 'NOT FITTED', data.rich_context_ranks_anything ? '#ffa726' : '#888'),
     ].join('');
     const runs = data.scoring_runs || [];
     document.getElementById('rc-runs').innerHTML = runs.length
@@ -4780,6 +4838,119 @@ async function loadLlmBrief() {
   } catch (_llmErr) { panel.style.display = 'none'; }
 }
 
+
+const _pvc = { day: 0, filter: 'diff', data: null };
+
+function _pvcDate(offset) {
+  const params = new URLSearchParams(window.location.search);
+  const base = params.get('date') || new Date().toISOString().slice(0, 10);
+  if (!offset) return base;
+  const d = new Date(base + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + offset);
+  return d.toISOString().slice(0, 10);
+}
+
+function _pvcClock(r) {
+  // Racing Post prints afternoon times without am/pm; the view already resolved them to minutes past midnight.
+  if (typeof r.off_minutes === 'number') {
+    return String(Math.floor(r.off_minutes / 60)).padStart(2, '0') + ':' + String(r.off_minutes % 60).padStart(2, '0');
+  }
+  return String(r.off_time || '');
+}
+
+function _pvcSet(kind, value) {
+  if (kind === 'day') { _pvc.day = Number(value); loadPrimeVsChallenger(); return; }
+  _pvc.filter = value;
+  _pvcRender();
+}
+
+function _pvcHorse(side, cls, label) {
+  const pct = side.prob === null || side.prob === undefined ? '' : `${Math.round(Number(side.prob) * 100)}% chance &middot; `;
+  const price = side.price === null || side.price === undefined ? '' : Number(side.price).toFixed(2).replace(/\.?0+$/, '');
+  const res = side.result ? `<span class="pvc-res ${esc(side.result)}">${({ W: 'Won', P: 'Placed', L: 'Unplaced' })[side.result] || ''}</span>` : '';
+  return `<div class="pvc-col ${cls}"><div class="pvc-lab">${label}</div><div class="pvc-hn">${esc(side.horse || '')}</div>`
+    + `<div class="pvc-meta">${pct}${esc(price)}</div>${res}</div>`;
+}
+
+function _pvcRender() {
+  const data = _pvc.data;
+  const body = document.getElementById('pvc-body');
+  if (!data) return;
+  const s = data.summary || {};
+  const rec = (r) => `${r.won}/${r.settled} won &middot; ${r.placed} placed &middot; ${r.units >= 0 ? '+' : ''}${Number(r.units).toFixed(2)}u`;
+  let html = '<div class="pvc-chips">'
+    + _pvcChip('RACES', s.races)
+    + _pvcChip('DISAGREE', `${s.disagree} (${s.races ? Math.round(100 * s.disagree / s.races) : 0}%)`)
+    + _pvcChip('CHALLENGER = FAVOURITE', `${s.challenger_is_favourite}/${s.races}`)
+    + _pvcChip('PRIME = FAVOURITE', `${s.prime_is_favourite}/${s.races}`)
+    + '</div>';
+  if (s.settled) {
+    const w = s.when_they_differ || {};
+    html += '<div class="pvc-tbl"><table><tr><th></th><th>RESULT, ' + s.settled + ' SETTLED RACES, FLAT 1 UNIT AT RETURNED PRICE</th></tr>'
+      + `<tr><td style="color:#7db4ee">Prime</td><td>${rec(s.prime)}</td></tr>`
+      + `<tr><td style="color:#f0b35a">Challenger</td><td>${rec(s.challenger)}</td></tr>`
+      + `<tr><td>Market favourite</td><td>${rec(s.favourite)}</td></tr></table></div>`
+      + `<div class="pvc-note">Where they disagreed (${w.settled} settled races): Prime's pick won ${w.prime_won}, the Challenger's pick won ${w.challenger_won}.</div>`;
+  } else {
+    html += '<div class="pvc-note">No results in yet for this day, so there is no record to compare. Picks are shown so you can check them as races finish.</div>';
+  }
+  if (s.sample_note) html += `<div class="pvc-note">${esc(s.sample_note)}</div>`;
+  html += '<div class="pvc-row">'
+    + `<button type="button" class="pvc-btn${_pvc.filter === 'diff' ? ' on' : ''}" onclick="_pvcSet('filter','diff')">WHERE THEY DISAGREE</button>`
+    + `<button type="button" class="pvc-btn${_pvc.filter === 'all' ? ' on' : ''}" onclick="_pvcSet('filter','all')">ALL RACES</button></div>`;
+  const list = (data.races || []).filter((r) => _pvc.filter === 'all' || !r.agree)
+    .sort((a, b) => (a.off_minutes ?? 9999) - (b.off_minutes ?? 9999) || String(a.course).localeCompare(String(b.course)));
+  html += '<div class="pvc-races">' + (list.length ? list.map((r) => {
+    const fav = r.favourite || {};
+    const sameAsPick = fav.horse && (fav.horse === (r.prime || {}).horse || fav.horse === (r.challenger || {}).horse);
+    const favLine = fav.horse && !sameAsPick
+      ? `<div class="pvc-fav">Market favourite: ${esc(fav.horse)} ${esc(String(fav.price || ''))}${fav.result ? ` (${({ W: 'won', P: 'placed', L: 'unplaced' })[fav.result]})` : ''}${fav.tied ? ' (joint favourite)' : ''}</div>`
+      : (fav.horse && fav.horse === (r.challenger || {}).horse && !r.agree ? '<div class="pvc-fav">The Challenger\'s pick is the market favourite.</div>' : '');
+    return `<div class="pvc-race"><div class="pvc-rh"><span class="t">${esc(_pvcClock(r))}</span><span class="c">${esc(r.course || '')}</span>`
+      + `<span class="s ${r.agree ? 'same' : 'diff'}">${r.agree ? 'SAME PICK' : 'DIFFERENT PICKS'}</span></div>`
+      + `<div class="pvc-cols">${_pvcHorse(r.prime || {}, 'p', 'PRIME')}${_pvcHorse(r.challenger || {}, 'c', 'CHALLENGER')}</div>${favLine}</div>`;
+  }).join('') : '<div class="pvc-note">No races match.</div>') + '</div>';
+  body.innerHTML = html;
+}
+
+function _pvcChip(label, value) {
+  return `<div class="pvc-chip"><b>${esc(label)}</b><span>${esc(String(value))}</span></div>`;
+}
+
+async function loadPrimeVsChallenger() {
+  const panel = document.getElementById('pvc-panel');
+  if (!panel) return;
+  const date = _pvcDate(_pvc.day);
+  const days = [[0, 'THIS DAY'], [-1, 'DAY BEFORE'], [-2, '2 DAYS BEFORE']];
+  document.getElementById('pvc-days').innerHTML = days.map(([o, l]) =>
+    `<button type="button" class="pvc-btn${_pvc.day === o ? ' on' : ''}" onclick="_pvcSet('day','${o}')">${l} &middot; ${_pvcDate(o).slice(5)}</button>`).join('');
+  try {
+    const res = await fetch(`/api/prime-vs-challenger?date=${encodeURIComponent(date)}`);
+    if (!res.ok) throw new Error(`prime-vs-challenger ${res.status}`);
+    const data = await res.json();
+    panel.style.display = 'block';
+    if (!data.available) {
+      _pvc.data = null;
+      document.getElementById('pvc-body').innerHTML = '<div class="pvc-note">The comparison could not be read from the database just now.</div>';
+      return;
+    }
+    if (!data.has_scores) {
+      _pvc.data = null;
+      document.getElementById('pvc-count').textContent = `(${date})`;
+      document.getElementById('pvc-model').textContent = '';
+      document.getElementById('pvc-body').innerHTML = `<div class="pvc-note">There are no Challenger scores for ${esc(date)}, so there is nothing to compare for that day.</div>`;
+      return;
+    }
+    _pvc.data = data;
+    document.getElementById('pvc-count').textContent = `(${data.summary.races} races \u00b7 ${date})`;
+    document.getElementById('pvc-model').textContent = `Challenger model: ${data.challenger_model || 'unknown'}. Prime picks are the latest run of the day.`;
+    _pvcRender();
+  } catch (_pvcErr) {
+    panel.style.display = 'block';
+    document.getElementById('pvc-body').innerHTML = '<div class="pvc-note">The comparison could not be loaded just now.</div>';
+  }
+}
+
 loadCard();
 loadPlotConviction();
 loadMidpriceShadow();
@@ -4789,6 +4960,7 @@ loadWorldPicks();
 if (typeof setInterval === 'function') setInterval(loadWorldPicks, 300000);
 loadVeloVsFormfav();
 loadRichContext();
+loadPrimeVsChallenger();
 loadLlmBrief();
 </script>
 </body>

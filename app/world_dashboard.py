@@ -348,3 +348,107 @@ def world_picks(
             ),
         },
     }
+
+
+# --- PVC-DASH-01: Prime beside the Rich Context challenger -------------------------------------------
+_RESULTS = ("W", "P", "L")
+
+
+def _price(value: Any) -> float | None:
+    """A returned decimal price counts only when it is a real price (> 1.0)."""
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if number > 1.0 else None
+
+
+def _record(rows: list[dict[str, Any]], result_key: str, sp_key: str) -> dict[str, Any]:
+    """Won / placed and flat one-unit return at the price each horse returned, settled races only."""
+    settled = [r for r in rows if r.get(result_key) in _RESULTS]
+    units = 0.0
+    priced = 0
+    for r in settled:
+        sp = _price(r.get(sp_key))
+        if sp is None:
+            continue
+        priced += 1
+        units += (sp - 1.0) if r[result_key] == "W" else -1.0
+    return {
+        "settled": len(settled),
+        "won": sum(1 for r in settled if r[result_key] == "W"),
+        "placed": sum(1 for r in settled if r[result_key] in ("W", "P")),
+        "units": round(units, 2),
+        "priced": priced,
+    }
+
+
+def prime_vs_challenger(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Race-by-race and summary view of Prime's pick against the Rich Context challenger's pick.
+
+    Read-only presentation of shadow data. The challenger picks nothing Prime reads. Results are counted only
+    for races with a recorded winner, and returns only for horses with a real returned price.
+    """
+    n = len(rows)
+    agree = sum(1 for r in rows if r.get("agree"))
+    differ = [r for r in rows if not r.get("agree")]
+    differ_settled = [r for r in differ if r.get("prime_result") in _RESULTS and r.get("challenger_result") in _RESULTS]
+    settled = sum(1 for r in rows if r.get("settled"))
+    races = [
+        {
+            "race_id": r.get("race_id"),
+            "course": r.get("course"),
+            "off_time": r.get("off_time"),
+            "off_minutes": r.get("off_minutes"),
+            "agree": bool(r.get("agree")),
+            "settled": bool(r.get("settled")),
+            "prime": {
+                "horse": r.get("prime_horse"),
+                "prob": r.get("prime_prob"),
+                "price": r.get("prime_price"),
+                "result": r.get("prime_result"),
+            },
+            "challenger": {
+                "horse": r.get("challenger_horse"),
+                "prob": r.get("challenger_prob"),
+                "price": r.get("challenger_price"),
+                "result": r.get("challenger_result"),
+            },
+            "favourite": {
+                "horse": r.get("favourite_horse"),
+                "price": r.get("favourite_price"),
+                "tied": bool(r.get("favourite_tied")),
+                "result": r.get("favourite_result"),
+            },
+        }
+        for r in rows
+    ]
+    note = None
+    if settled < 100:
+        note = (
+            "Small sample: treat this as a lead, not an edge. A challenger that mostly picks the favourite "
+            "will track the market, which is a different thing from adding information to Prime."
+        )
+    return {
+        "races": n,
+        "agree": agree,
+        "disagree": n - agree,
+        "agree_pct": round(100.0 * agree / n, 1) if n else None,
+        "challenger_is_favourite": sum(
+            1 for r in rows if r.get("favourite_horse") and r.get("challenger_horse") == r.get("favourite_horse")
+        ),
+        "prime_is_favourite": sum(
+            1 for r in rows if r.get("favourite_horse") and r.get("prime_horse") == r.get("favourite_horse")
+        ),
+        "settled": settled,
+        "prime": _record(rows, "prime_result", "prime_sp"),
+        "challenger": _record(rows, "challenger_result", "challenger_sp"),
+        "favourite": _record(rows, "favourite_result", "favourite_sp"),
+        "when_they_differ": {
+            "settled": len(differ_settled),
+            "prime_won": sum(1 for r in differ_settled if r["prime_result"] == "W"),
+            "challenger_won": sum(1 for r in differ_settled if r["challenger_result"] == "W"),
+        },
+        "sample_note": note,
+        "races_detail": races,
+    }

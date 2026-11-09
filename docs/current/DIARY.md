@@ -56,6 +56,24 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-09 (midday) — Claude Code (Sonnet 5.5) — Dashboard: Prime vs Challenger panel, and the page now fits a phone
+Why:              Carlos asked to see the Rich Context challenger beside Prime ("what is the difference") and for the dashboard to work on a phone.
+Changed:          view `public.prime_vs_challenger` (migrations `20261109120000_prime_vs_challenger.sql`, applied as `prime_vs_challenger` then
+                  `prime_vs_challenger_not_materialized`; read-only, service_role select only, last 45 days, ~0.5 s for a day); route `GET /api/prime-vs-challenger?date=`
+                  in `app/main.py`; pure helper `prime_vs_challenger()` in `app/world_dashboard.py`; panel `pvc-panel` in `app/static/dashboard/index.html`; 4 tests in
+                  `tests/test_world_dashboard.py` (all 25 pass). Contract PVC-DASH-01.
+Also fixed:       (1) the "Rich Context model" chip read `rich_context_shadow_packets.challenger_probability`, a column that does not exist (scores are in
+                  `rich_context_challenger_scores`), so it said NOT FITTED while a model was scoring; it now reads the scores table. (2) The Wake Velo header said
+                  "has no model yet and picks nothing"; reworded to say the challenger is shadow only and picks nothing Prime reads. (3) The page had no responsive CSS:
+                  the status/date bar was one non-wrapping row 1,123 px wide, so on a phone the date picker sat off-screen. A max-width:600px layer now wraps it.
+Evidence:         view vs the hand-computed numbers for 2026-11-07 (46 races): 26 agree, Prime 12 won / 27 placed, challenger 12 / 26, favourite 11 / 26, challenger = favourite
+                  in 40. Headless Chromium at 390 px: page scrollWidth 390, no JS errors; screenshots read by eye.
+What it shows:    challenger picks the market favourite in 40 of 46 (07 Nov) and 21 of 22 (09 Nov). Where they disagree on 07 Nov (20 settled): Prime's pick won 3, the challenger's 3.
+                  One settled day with scores; not evidence of skill. 08 Nov has no packets or scores (scored by hand from local commit `c13dd3a`, not on GitHub).
+Open / broken:    08 Nov Rich Context gap (above); the 08 Nov EOD sigma failed twice and no PASS row exists after the 00:17 fix; `app/main.py` has pre-existing
+                  `ruff format` differences unrelated to this change.
+Next safe action: after the 21:00Z EOD, reload the panel for 09 Nov and read the settled record.
+
 ### 2026-11-08 (early) — Claude Code (Sonnet 5.5) — Rich Context challenger v1: fitted, not just evidence-collecting
 Why:              Carlos: "rich context has to work... this needs to be wired in." The earlier audit found packets had no model because nobody had fitted one on the
                   two families with real pre-November history (prime_baseline_snapshot, canonical_history) plus market_facts. Spotlight/FormFav have no history before
