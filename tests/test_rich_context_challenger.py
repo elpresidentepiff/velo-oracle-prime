@@ -36,6 +36,10 @@ def _inputs():
             "raw_text_sha256": "a" * 64,
             "normalized_text_sha256": "b" * 64,
         },
+        "connections_passport": {
+            "current_jockey_pair_runs": 3,
+            "current_jockey_pair_win_rate": 0.33,
+        },
     }
 
 
@@ -49,6 +53,9 @@ def test_packet_combines_only_separate_eligible_families_without_scoring():
     assert packet["provider_predictions_consumed"] is False
     assert packet["family_coverage"]["canonical_history"] is True
     assert packet["families"]["formfav_pace_context"] == {"speedMap": {"style": "leader"}}
+    assert packet["families"]["connections_passports"]["current_jockey_pair_runs"] == 3
+    assert packet["enriched_feature_contract"]["feature_schema_hash"]
+    assert packet["enriched_feature_contract"]["scoring_status"] == "AWAITING_CHRONOLOGICAL_V2_FIT"
 
 
 def test_provider_prediction_leakage_fails_closed():

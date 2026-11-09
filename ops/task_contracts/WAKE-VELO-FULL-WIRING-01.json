@@ -1,0 +1,73 @@
+{
+  "task_id": "WAKE-VELO-FULL-WIRING-01",
+  "title": "Wire all approved pre-off factual context into a governed enriched challenger",
+  "classification": "AUTHORIZED_SHADOW_FEATURE_WIRING",
+  "allowed_paths": [
+    "ops/task_contracts/WAKE-VELO-FULL-WIRING-01.json",
+    "src/velo/rich_context_challenger.py",
+    "src/velo/rich_context_challenger_features_v2.py",
+    "scripts/ops/run_prime_today.py",
+    "scripts/ops/audit_rich_context_wiring.py",
+    "tests/test_rich_context_challenger.py",
+    "tests/test_rich_context_challenger_features_v2.py",
+    "tests/test_rich_context_wiring_audit.py",
+    "docs/current/DIARY.md"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "src/velo/execution_bridge.py",
+    "app/agents/betfair_execution_agent.py",
+    "app/agents/betfair_trading_agents.py",
+    ".env"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "add_shadow_feature_contract",
+    "wire_existing_time_safe_facts",
+    "add_read_only_audit",
+    "create_tests",
+    "run_tests"
+  ],
+  "forbidden_actions": [
+    "model_weight_change",
+    "prime_probability_change",
+    "model_promotion",
+    "production_deploy",
+    "supabase_schema_change",
+    "gate_bypass",
+    "live_betting",
+    "telegram_send",
+    "credential_change",
+    "credential_exposure"
+  ],
+  "forbidden_keywords": [
+    "bot.send_message",
+    "promote_model",
+    "production_influence\": true",
+    "provider_predictions_consumed\": true"
+  ],
+  "required_outputs": [
+    "src/velo/rich_context_challenger_features_v2.py",
+    "scripts/ops/audit_rich_context_wiring.py",
+    "tests/test_rich_context_challenger_features_v2.py"
+  ],
+  "classification_required": [
+    "ALL_APPROVED_FACTUAL_FAMILIES_MODEL_READY",
+    "PROVIDER_PREDICTIONS_EXCLUDED",
+    "EXPLICIT_MISSINGNESS",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_GATE_BYPASS",
+    "PAPER_SIM_ONLY"
+  ],
+  "final_classifications": [
+    "ALL_APPROVED_FACTUAL_FAMILIES_MODEL_READY",
+    "PROVIDER_PREDICTIONS_EXCLUDED",
+    "EXPLICIT_MISSINGNESS",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_GATE_BYPASS",
+    "PAPER_SIM_ONLY"
+  ]
+}
