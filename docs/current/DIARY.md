@@ -308,3 +308,12 @@ Evidence:         `select * from world_status_summary` returns 120 frozen / 120 
 Open / broken:    W-1…W-5, U-1…U-5, O-1 above. The views read "deployed commit: null" until the new code runs.
 Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `main`), then confirm with
                   `select * from world_status_summary` that `last_deployed_commit` and `last_settlement_run_at` fill in.
+### 2026-11-09 — Codex — Wake Velo full factual wiring (shadow contract)
+
+- Isolated branch: `feat/full-rich-context-wiring` from deployed `main` at `504be87f`; dirty operator checkout untouched.
+- Root cause proved: the fitted v1 challenger consumes only Prime/market/canonical-history features even though packets preserve FormFav Premium, RP Spotlight and other context.
+- Added `rich_context_feature_vector_v2`: fixed schema, explicit missingness and coverage for Prime/market, canonical form, FormFav factual form/stats, pace, class, track bias, RP Spotlight and time-safe connections.
+- Wired jockey/trainer connections from canonical pre-off history rows. Deliberately rejected the latest-state local passport JSON for chronological scoring because it cannot prove the historical cutoff.
+- Provider predictions remain recursively forbidden. Prime probabilities/ranks, model weights, execution mode and gates remain unchanged; the v2 vector is marked `AWAITING_CHRONOLOGICAL_V2_FIT`.
+- Added read-only packet wiring audit and tests. Evidence: task contract PASS; 98 affected tests PASS; all new/changed focused files Ruff-clean; GitNexus change risk MEDIUM after prior HIGH-risk impact review.
+- Open gate: premium evidence began only on 2026-11-06. A v2 model must not be fitted or promoted until chronological labelled evidence and forward review thresholds are satisfied.

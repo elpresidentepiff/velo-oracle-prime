@@ -2161,6 +2161,23 @@ def main():
                             "features": {},
                             "ineligibility_reasons": ["HISTORY_PROVIDER_UNAVAILABLE"],
                         }
+                    # Time-safe connections/passport bridge: derive it only from the same
+                    # canonical pre-cutoff rows used above. The legacy local passport bank is
+                    # intentionally not consulted here because its latest-state JSON cannot
+                    # prove what was known at this race's off time.
+                    _history_features = _history.get("features") or {}
+                    _connections_passport = {
+                        key: _history_features.get(key)
+                        for key in (
+                            "current_jockey_pair_runs",
+                            "current_jockey_pair_win_rate",
+                            "current_trainer_runs",
+                            "current_trainer_win_rate",
+                            "jockey_changed_from_last_run",
+                            "trainer_changed_from_last_run",
+                        )
+                        if _history_features.get(key) is not None
+                    }
                     _packet = _build_rich_context_packet(
                         race_id=str(race.get("race_id") or ""),
                         horse_id=_horse_id,
@@ -2171,6 +2188,7 @@ def main():
                         ),
                         history_packet=_history,
                         comment_packet=_pred.get("rich_context_comment_shadow"),
+                        connections_passport=_connections_passport,
                         market_facts={
                             "sp_dec": _pred.get("sp_dec"),
                             "is_fav": _pred.get("is_fav"),

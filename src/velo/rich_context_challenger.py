@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from src.velo.formfav_feature_contract import scan_banned_fields
+from src.velo.rich_context_challenger_features_v2 import build_enriched_vector
 
 PACKET_SCHEMA_VERSION = "rich_context_shadow_packet_v1"
 CHALLENGER_VERSION = "rich_context_challenger_v1_unfitted"
@@ -108,6 +109,7 @@ def build_runner_shadow_packet(
         "comment_raw_text_sha256": comment_packet.get("raw_text_sha256") if comment_packet else None,
     }
     input_hash = _hash({"identity": [race_id, horse_id, race_date], "families": families, "provenance": provenance})
+    enriched = build_enriched_vector(families)
     return {
         "packet_schema_version": PACKET_SCHEMA_VERSION,
         "challenger_version": CHALLENGER_VERSION,
@@ -120,6 +122,18 @@ def build_runner_shadow_packet(
         "provenance": provenance,
         "input_hash": input_hash,
         "feature_vector_hash": _hash(families),
+        "enriched_feature_contract": {
+            "schema_version": enriched["schema_version"],
+            "feature_schema_hash": enriched["feature_schema_hash"],
+            "feature_names": list(enriched["feature_names"]),
+            "vector": enriched["vector"],
+            "family_coverage": enriched["family_coverage"],
+            "covered_family_count": enriched["covered_family_count"],
+            "expected_family_count": enriched["expected_family_count"],
+            "fully_enriched": enriched["fully_enriched"],
+            "missing_families": enriched["missing_families"],
+            "scoring_status": "AWAITING_CHRONOLOGICAL_V2_FIT",
+        },
         "eligible_for_future_fit": identity_ok and not missing_required,
         "ineligibility_reasons": reasons,
         "challenger_probability": None,

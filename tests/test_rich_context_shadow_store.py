@@ -41,6 +41,8 @@ def test_row_enforces_shadow_safety_invariants():
     assert row["production_influence"] is False
     assert row["provider_predictions_consumed"] is False
     assert row["challenger_probability"] is None
+    assert row["enriched_feature_contract"]["feature_schema_hash"]
+    assert row["enriched_feature_contract"]["vector"]
 
 
 def test_local_jsonl_is_deterministic_and_complete(tmp_path):
@@ -48,6 +50,7 @@ def test_local_jsonl_is_deterministic_and_complete(tmp_path):
     assert write_local_jsonl([_packet()], output_path=path, code_sha="abc") == 1
     row = json.loads(path.read_text().strip())
     assert row["race_id"] == "r1"
+    assert row["enriched_feature_contract"]["scoring_status"] == "AWAITING_CHRONOLOGICAL_V2_FIT"
 
 
 def test_supabase_persistence_is_idempotent_by_identity_and_input_hash():
