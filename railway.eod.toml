@@ -8,7 +8,6 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile.rpcapture"
 
 [deploy]
-startCommand = "python scripts/ops/rp_cloud_eod.py --date 2026-11-08 --execute --no-notify"
-# cronSchedule temporarily disabled to force an immediate out-of-band run that re-settles
-# 2026-11-08 after last night's two failures; restored verbatim right after this run completes.
+startCommand = "python scripts/ops/rp_cloud_eod.py --execute --no-notify"
+cronSchedule = "0 21 * * *"
 restartPolicyType = "NEVER"
