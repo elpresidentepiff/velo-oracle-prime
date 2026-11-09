@@ -253,8 +253,17 @@ def _open_sigma_run(source_date: str) -> str | None:
     return run_id
 
 
+_SIGMA_RUN_CLOSED = False
+
+
 def _close_sigma_run(run_id: str | None, *, status: str, error: str | None = None) -> None:
+    global _SIGMA_RUN_CLOSED
     if not run_id or not SB_URL or not SB_KEY:
+        return
+    if _SIGMA_RUN_CLOSED:
+        # A specific reason was already recorded (e.g. SIGMA_RESULTS_INCOMPLETE_BLOCKED just
+        # before its sys.exit); the __main__ SystemExit handler's generic retry must never
+        # patch over it with "script exited before successful completion".
         return
     patch = {
         "run_state": "completed",
@@ -264,6 +273,7 @@ def _close_sigma_run(run_id: str | None, *, status: str, error: str | None = Non
     if error:
         patch["error_message"] = error[:500]
     _pipeline_request("PATCH", f"/pipeline_runs?id=eq.{run_id}", patch)
+    _SIGMA_RUN_CLOSED = True
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -648,6 +658,7 @@ def main():
     if not verdicts_raw:
         print("  ABORT: no predictions found for this date")
         tg(f"VELO SIGMA ABORT — {race_date}\nNo predictions found in velo_verdicts.")
+        _close_sigma_run(run_id, status="FAIL", error="NO_PREDICTIONS_FOUND_FOR_DATE")
         sys.exit(1)
 
     # Filter: only keep verdicts whose race_id contains today's date (YYYYMMDD).
@@ -786,6 +797,7 @@ def main():
         print(f"  Loading from cache: {results_path}")
         if not results_path.exists():
              print(f"  FAILED: local results not found at {results_path}")
+             _close_sigma_run(run_id, status="FAIL", error=f"LOCAL_RESULTS_NOT_FOUND:{results_path.name}")
              sys.exit(1)
         import json as _json
         _raw = _json.loads(results_path.read_text())
@@ -1518,6 +1530,7 @@ def main():
             f"Post-race truth not persisted. Investigate immediately."
         )
         print("\nFAIL — sigma_ok=0: no reconciliation truth persisted")
+        _close_sigma_run(run_id, status="FAIL", error="ALL_SIGMA_WRITES_FAILED")
         sys.exit(1)
 
     # ── STEP 9: Write local sigma artifact for Council / Mission Control ─────

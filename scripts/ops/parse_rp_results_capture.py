@@ -978,7 +978,13 @@ def main() -> None:
         capture_date=args.capture_date,
         execute=args.execute,
     )
-    print(json.dumps(result, indent=2, ensure_ascii=False))
+    # The full per-race "results" list is already durably written to the output
+    # file above; dumping it again here as well floods Railway's 500 logs/sec
+    # limit on a normal day's race count and drops the lines that would show
+    # why a downstream caller (e.g. run_results_sigma.py) actually failed.
+    summary = {k: v for k, v in result.items() if k != "results"}
+    summary["results_count"] = len(result.get("results") or [])
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
     if str(result.get("status", "")).startswith("FAIL"):
         sys.exit(1)
 
