@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+
 from app.world_dashboard import SHADOW_BOUNDARY, summarise_velo_vs_formfav, valid_date
 
 
@@ -56,6 +58,7 @@ from app.world_dashboard import (  # noqa: E402
     is_clean_pick,
     model_scoreboard,
     race_grid,
+    rich_context_challenger_overlay,
     summarise_rich_context,
 )
 
@@ -158,16 +161,377 @@ def test_evidence_summary_shows_the_first_batch_against_the_latest() -> None:
     assert summarise_rich_context([])["history_now_pct"] is None
 
 
-def test_panel_is_wired_read_only_and_never_claims_rich_context_ranks() -> None:
+def test_fitted_overlay_joins_all_859_rows_by_packet_hash_without_mutating_packets() -> None:
+    packets = []
+    scores = []
+    runners = []
+    for i in range(859):
+        race = str(930000 + (i % 46))
+        horse = str(5_000_000 + i)
+        digest = f"{i:064x}"
+        packets.append({"race_id": race, "horse_id": horse, "input_sha256": digest})
+        scores.append(
+            {
+                "race_id": race,
+                "horse_id": horse,
+                "packet_input_sha256": digest,
+                "model_version": "rich_context_challenger_v1_fit_20261108",
+                "challenger_probability": 0.51 if i < 46 else 0.1,
+                "challenger_rank": 1 + i // 46,
+                "production_influence": False,
+                "paper_sim_only": True,
+                "scored_at": "2026-11-08T10:31:05Z",
+            }
+        )
+        runners.append(
+            {
+                "race_id": race,
+                "horse_id": horse,
+                "horse_name": f"Horse {i}",
+                "created_at": "2026-11-07T08:00:00Z",
+            }
+        )
+    frozen_packets = [dict(row) for row in packets]
+    out = rich_context_challenger_overlay(packets, scores, runners)
+    assert out["status"] == "SHADOW_FITTED"
+    assert out["model_version"] == "rich_context_challenger_v1_fit_20261108"
+    assert (out["packet_rows"], out["score_rows"], out["linked_rows"]) == (859, 859, 859)
+    assert (out["immutable_packet_rows"], out["version_score_rows"], out["current_score_rows"]) == (
+        859,
+        859,
+        859,
+    )
+    assert out["linked_current_rows"] == 859 and out["current_coverage_pct"] == 100.0
+    assert (out["races"], out["rank_one_rows"], out["ranked_rows"]) == (46, 46, 859)
+    assert out["coverage_pct"] == 100.0
+    assert out["orphan_scores"] == 0 and out["unsafe_rows"] == 0
+    assert all(row["production_influence"] is False for row in out["runners"])
+    assert all(row["paper_sim_only"] is True for row in out["runners"])
+    assert packets == frozen_packets
+
+
+def test_overlay_never_blends_versions_or_displays_unsafe_or_identity_mismatched_rows() -> None:
+    packet = {"race_id": "1", "horse_id": "10", "input_sha256": "a" * 64}
+    base = {
+        "race_id": "1",
+        "horse_id": "10",
+        "packet_input_sha256": "a" * 64,
+        "challenger_probability": 0.4,
+        "challenger_rank": 1,
+        "production_influence": False,
+        "paper_sim_only": True,
+    }
+    scores = [
+        {**base, "model_version": "v1", "scored_at": "2026-11-08T10:00:00Z"},
+        {**base, "model_version": "v2", "scored_at": "2026-11-08T11:00:00Z"},
+        {
+            **base,
+            "model_version": "v2",
+            "race_id": "2",
+            "horse_id": "WRONG",
+            "packet_input_sha256": "b" * 64,
+            "scored_at": "2026-11-08T11:00:00Z",
+        },
+        {
+            **base,
+            "model_version": "v2",
+            "production_influence": True,
+            "scored_at": "2026-11-08T11:00:00Z",
+        },
+    ]
+    out = rich_context_challenger_overlay([packet], scores)
+    assert out["model_version"] == "v2" and out["score_rows"] == 2
+    assert out["linked_rows"] == 1 and out["orphan_scores"] == 1
+    assert out["unsafe_rows"] == 1
+    assert len(out["selections"]) == 1
+
+
+def test_same_version_repeated_race_batches_use_only_latest_timestamp() -> None:
+    packets = [
+        {"race_id": "1", "horse_id": "10", "input_sha256": "a" * 64},
+        {"race_id": "1", "horse_id": "11", "input_sha256": "b" * 64},
+        {"race_id": "1", "horse_id": "10", "input_sha256": "c" * 64},
+        {"race_id": "1", "horse_id": "11", "input_sha256": "d" * 64},
+    ]
+
+    def score(packet: int, horse: str, rank: int, at: str, probability: float):
+        return {
+            "race_id": "1",
+            "horse_id": horse,
+            "packet_input_sha256": packets[packet]["input_sha256"],
+            "model_version": "same-model-version",
+            "challenger_probability": probability,
+            "challenger_rank": rank,
+            "production_influence": False,
+            "paper_sim_only": True,
+            "scored_at": at,
+        }
+
+    scores = [
+        score(0, "10", 1, "2026-11-08T09:00:00Z", 0.7),
+        score(1, "11", 2, "2026-11-08T09:00:00Z", 0.3),
+        score(2, "10", 2, "2026-11-08T10:00:00Z", 0.4),
+        score(3, "11", 1, "2026-11-08T10:00:00Z", 0.6),
+    ]
+    out = rich_context_challenger_overlay(packets, scores)
+    assert out["status"] == "SHADOW_FITTED"
+    assert out["immutable_packet_rows"] == 4
+    assert out["version_score_rows"] == 4
+    assert out["current_score_rows"] == 2
+    assert out["linked_current_rows"] == 2
+    assert out["superseded_rows"] == 2
+    assert out["current_coverage_pct"] == 100.0
+    assert out["rank_one_rows"] == 1
+    assert out["selections"][0]["horse_id"] == "11"
+    assert out["selections"][0]["scored_at"] == "2026-11-08T10:00:00Z"
+
+
+def test_indistinguishable_or_incoherent_latest_batch_fails_without_a_partial_pick() -> None:
+    packets = [
+        {"race_id": "1", "horse_id": "10", "input_sha256": "a" * 64},
+        {"race_id": "1", "horse_id": "11", "input_sha256": "b" * 64},
+    ]
+    scores = [
+        {
+            "race_id": "1",
+            "horse_id": packet["horse_id"],
+            "packet_input_sha256": packet["input_sha256"],
+            "model_version": "v1",
+            "challenger_probability": 0.5,
+            "challenger_rank": 1,
+            "production_influence": False,
+            "paper_sim_only": True,
+            "scored_at": "2026-11-08T10:00:00Z",
+        }
+        for packet in packets
+    ]
+    out = rich_context_challenger_overlay(packets, scores)
+    assert out["status"] == "OVERLAY_INTEGRITY_FAILED"
+    assert out["ambiguous_batch_races"] == 1
+    assert out["runners"] == [] and out["selections"] == []
+    assert out["coverage_pct"] is None
+
+
+def test_all_invalid_score_metadata_is_integrity_failure_not_no_scores() -> None:
+    packet = {"race_id": "1", "horse_id": "10", "input_sha256": "a" * 64}
+    base = {
+        "race_id": "1",
+        "horse_id": "10",
+        "packet_input_sha256": "a" * 64,
+        "challenger_probability": 0.6,
+        "challenger_rank": 1,
+        "production_influence": False,
+        "paper_sim_only": True,
+    }
+    invalid_timestamp = rich_context_challenger_overlay(
+        [packet],
+        [{**base, "model_version": "v1", "scored_at": None}],
+    )
+    missing_version = rich_context_challenger_overlay(
+        [packet],
+        [{**base, "model_version": None, "scored_at": "2026-11-08T10:00:00Z"}],
+    )
+    for out in (invalid_timestamp, missing_version):
+        assert out["status"] == "OVERLAY_INTEGRITY_FAILED"
+        assert out["invalid_batch_rows"] == 1
+        assert out["status"] != "NO_SCORES_FOR_DATE"
+        assert out["observed_score_rows"] == 1
+        assert out["selections"] == [] and out["current_coverage_pct"] is None
+
+
+def test_no_score_date_is_honest_and_does_not_invent_a_fitted_pick() -> None:
+    packet = {"race_id": "1", "horse_id": "10", "input_sha256": "a" * 64}
+    out = rich_context_challenger_overlay([packet], [], [])
+    assert out["status"] == "NO_SCORES_FOR_DATE"
+    assert out["model_version"] is None
+    assert out["packet_rows"] == 1 and out["score_rows"] == 0
+    assert out["runners"] == [] and out["selections"] == []
+
+
+def test_packet_or_score_read_failure_never_becomes_empty_or_partial_truth() -> None:
+    packet = {"race_id": "1", "horse_id": "10", "input_sha256": "a" * 64}
+    score = {
+        "race_id": "1",
+        "horse_id": "10",
+        "packet_input_sha256": "a" * 64,
+        "model_version": "v1",
+        "challenger_probability": 0.6,
+        "challenger_rank": 1,
+        "production_influence": False,
+        "paper_sim_only": True,
+        "scored_at": "2026-11-08T10:00:00Z",
+    }
+    packet_failed = rich_context_challenger_overlay(None, [score], packet_read_status="READ_FAILED")
+    score_failed = rich_context_challenger_overlay([packet], None, score_read_status="READ_FAILED")
+    for out, expected in ((packet_failed, "packets"), (score_failed, "scores")):
+        assert out["status"] == "OVERLAY_UNAVAILABLE"
+        assert expected in out["read_failures"]
+        assert out["packet_rows"] is None and out["score_rows"] is None
+        assert out["selections"] == [] and out["coverage_pct"] is None
+
+
+def test_runner_label_read_failure_degrades_only_the_label() -> None:
+    packet = {"race_id": "1", "horse_id": "10", "input_sha256": "a" * 64}
+    score = {
+        "race_id": "1",
+        "horse_id": "10",
+        "packet_input_sha256": "a" * 64,
+        "model_version": "v1",
+        "challenger_probability": 0.6,
+        "challenger_rank": 1,
+        "production_influence": False,
+        "paper_sim_only": True,
+        "scored_at": "2026-11-08T10:00:00Z",
+    }
+    out = rich_context_challenger_overlay([packet], [score], None, runner_read_status="READ_FAILED")
+    assert out["status"] == "SHADOW_FITTED"
+    assert out["read_availability"]["runner_labels"] == "READ_FAILED"
+    assert out["selections"][0]["horse_name"] is None
+
+
+def test_panel_reads_the_score_overlay_and_remains_read_only_shadow_only() -> None:
     root = Path(__file__).parents[1]
     html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
     main = (root / "app" / "main.py").read_text(encoding="utf-8")
     assert 'id="rc-panel"' in html and "loadRichContext();" in html
-    assert "NOT FITTED" in html and "PICKS NOTHING" in html
+    assert "SHADOW FITTED" in html and "NEVER REPLACES PRIME" in html
+    assert "CURRENT BATCH LINKED" in html and "VERSION SCORE ROWS" in html
+    assert "OVERLAY UNAVAILABLE" in html and "no partial selection or coverage is displayed" in html
+    assert "ev.races || 0" in html and "ev.runners || 0" in html
+    assert "!rc.packet_rows && !rcFailure" in html
+    assert "RICH CONTEXT HAS NO MODEL YET" not in html and "PICKS NOTHING" not in html
     route = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/llm-brief")')]
-    assert "wake_velo_model_picks" in route and "rich_context_vs_prime" in route
+    assert "rich_context_challenger_scores" in route and "rich_context_shadow_packets" in route
+    assert "packet_input_sha256" in route and "rich_context_challenger_overlay" in route
     for write in ('method="POST"', ".insert(", ".upsert(", ".delete(", "supabase_write"):
         assert write not in route
+
+
+def test_rich_context_api_returns_exact_fitted_version_and_shadow_pick(monkeypatch) -> None:
+    import app.main as main
+
+    packet_hash = "a" * 64
+
+    def rest(path: str):
+        if path.startswith("rich_context_shadow_packets?"):
+            return [{"race_id": "1", "horse_id": "10", "input_sha256": packet_hash}]
+        if path.startswith("rich_context_challenger_scores?"):
+            return [
+                {
+                    "race_id": "1",
+                    "horse_id": "10",
+                    "packet_input_sha256": packet_hash,
+                    "model_version": "rich_context_challenger_v1_fit_20261108",
+                    "challenger_probability": 0.6,
+                    "challenger_rank": 1,
+                    "production_influence": False,
+                    "paper_sim_only": True,
+                    "scored_at": "2026-11-08T10:31:05Z",
+                }
+            ]
+        if path.startswith("runners?"):
+            return [
+                {
+                    "race_id": "1",
+                    "horse_id": "10",
+                    "horse_name": "Exact Identity",
+                    "created_at": "2026-11-07T08:00:00Z",
+                }
+            ]
+        return []
+
+    monkeypatch.setattr(main, "_sb_rest_rows", rest)
+    out = asyncio.run(main.rich_context("2026-11-07"))
+    assert out["rich_context_status"] == "SHADOW_FITTED"
+    assert out["rich_context_ranks_anything"] is True
+    challenger = out["rich_context_challenger"]
+    assert challenger["model_version"] == "rich_context_challenger_v1_fit_20261108"
+    assert challenger["selections"][0]["horse_name"] == "Exact Identity"
+    assert challenger["selections"][0]["challenger_probability"] == 0.6
+    assert out["production_influence"] is False and out["stake_authorised"] is False
+
+
+def test_rich_context_api_preserves_packet_and_score_read_failures(monkeypatch) -> None:
+    import app.main as main
+
+    packet = {"race_id": "1", "horse_id": "10", "input_sha256": "a" * 64}
+    score = {
+        "race_id": "1",
+        "horse_id": "10",
+        "packet_input_sha256": "a" * 64,
+        "model_version": "v1",
+        "challenger_probability": 0.6,
+        "challenger_rank": 1,
+        "production_influence": False,
+        "paper_sim_only": True,
+        "scored_at": "2026-11-08T10:00:00Z",
+    }
+
+    def run_with_failure(failed_table: str):
+        def rest(path: str):
+            if path.startswith("rich_context_shadow_packets?"):
+                return None if failed_table == "packets" else [packet]
+            if path.startswith("rich_context_challenger_scores?"):
+                return None if failed_table == "scores" else [score]
+            return []
+
+        monkeypatch.setattr(main, "_sb_rest_rows", rest)
+        return asyncio.run(main.rich_context("2026-11-07"))
+
+    for failed_table in ("packets", "scores"):
+        out = run_with_failure(failed_table)
+        challenger = out["rich_context_challenger"]
+        assert challenger["status"] == "OVERLAY_UNAVAILABLE"
+        assert failed_table in challenger["read_failures"]
+        assert challenger["selections"] == [] and challenger["coverage_pct"] is None
+        assert out["available"] is True
+
+
+def test_bounded_supabase_pagination_is_complete_or_fails_explicitly(monkeypatch) -> None:
+    import app.main as main
+
+    def complete(path: str):
+        if "offset=0" in path:
+            return [{"id": 1}, {"id": 2}]
+        if "offset=2" in path:
+            return [{"id": 3}]
+        raise AssertionError(path)
+
+    monkeypatch.setattr(main, "_sb_rest_rows", complete)
+    rows, meta = main._sb_rest_rows_paged("scores?order=id.asc", page_size=2, max_pages=3)
+    assert [row["id"] for row in rows] == [1, 2, 3]
+    assert meta == {"status": "OK", "pages_read": 2, "rows_read": 3, "truncated": False}
+
+    monkeypatch.setattr(main, "_sb_rest_rows", lambda _path: [{"id": 1}, {"id": 2}])
+    rows, meta = main._sb_rest_rows_paged("scores?order=id.asc", page_size=2, max_pages=2)
+    assert rows is None
+    assert meta["status"] == "MAX_PAGES_EXCEEDED" and meta["truncated"] is True
+
+
+def test_bounded_supabase_pagination_discards_partial_rows_on_page_failure(monkeypatch) -> None:
+    import app.main as main
+
+    def rest(path: str):
+        return [{"id": 1}, {"id": 2}] if "offset=0" in path else None
+
+    monkeypatch.setattr(main, "_sb_rest_rows", rest)
+    rows, meta = main._sb_rest_rows_paged("scores?order=id.asc", page_size=2, max_pages=3)
+    assert rows is None
+    assert meta == {"status": "READ_FAILED", "pages_read": 1, "rows_read": 2, "truncated": False}
+
+
+def test_score_overlay_migration_enforces_paper_only_append_only_rows() -> None:
+    root = Path(__file__).parents[1]
+    sql = (root / "supabase" / "migrations" / "20261108105325_harden_rich_context_challenger_scores.sql").read_text(
+        encoding="utf-8"
+    ).lower()
+    assert "check (production_influence = false)" in sql
+    assert "check (paper_sim_only = true)" in sql
+    assert "check (challenger_probability between 0.0 and 1.0)" in sql
+    assert "foreign key (race_id, horse_id, packet_input_sha256)" in sql
+    assert "references public.rich_context_shadow_packets (race_id, horse_id, input_sha256)" in sql
+    assert "before update or delete on public.rich_context_challenger_scores" in sql
+    assert "rich_context_challenger_scores is append-only" in sql
 
 
 # --- WAKE-VELO-DASH-02: today's enriched suggestions ----------------------------------------------
@@ -234,7 +598,8 @@ def test_suggestions_are_wired_read_only_and_say_the_pick_is_primes() -> None:
     html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
     main = (root / "app" / "main.py").read_text(encoding="utf-8")
     assert 'id="rc-suggest"' in html and "TODAY'S SUGGESTIONS" in html
-    assert "does not re-rank anyone" in html
+    assert "The pick in this table is Prime" in html
+    assert "never replaces Prime" in html
     route = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/llm-brief")')]
     assert "wake_velo_enriched_picks" in route and "enriched_suggestions" in route
 

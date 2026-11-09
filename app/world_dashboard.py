@@ -47,7 +47,8 @@ def summarise_velo_vs_formfav(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-RICH_CONTEXT_STATUS = "AWAITING_FROZEN_MODEL_FIT"
+RICH_CONTEXT_FITTED_STATUS = "SHADOW_FITTED"
+RICH_CONTEXT_UNSCORED_STATUS = "NO_SCORES_FOR_DATE"
 
 PRIME = "MAIN_VELO_PRIME"
 
@@ -71,6 +72,16 @@ def _int(value: Any) -> int | None:
         return None if value is None else int(value)
     except (TypeError, ValueError):
         return None
+
+
+def _utc_datetime(value: Any) -> datetime | None:
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return None
+    if parsed.tzinfo is None:
+        return None
+    return parsed.astimezone(UTC)
 
 
 def is_clean_pick(row: dict[str, Any]) -> bool:
@@ -109,6 +120,246 @@ def summarise_rich_context(rows: list[dict[str, Any]]) -> dict[str, Any]:
     out["packet_batches"] = max((_int(r.get("packet_batches")) or 0 for r in rows), default=0)
     out["latest_packet_at"] = max((r["latest_packet_at"] for r in rows if r.get("latest_packet_at")), default=None)
     return out
+
+
+def rich_context_challenger_overlay(
+    packets: list[dict[str, Any]] | None,
+    scores: list[dict[str, Any]] | None,
+    runner_rows: list[dict[str, Any]] | None = None,
+    *,
+    packet_read_status: str | None = None,
+    score_read_status: str | None = None,
+    runner_read_status: str | None = None,
+) -> dict[str, Any]:
+    """Join fitted challenger scores to immutable packets by the packet hash.
+
+    This is deliberately a presentation-only exact-identity join.  A score is
+    displayable only when it points at a packet from the requested date and
+    retains the hard shadow boundary.  Horse names are attached only through
+    the canonical ``(race_id, horse_id)`` pair; names are never identity keys.
+
+    If several fitted versions exist for a date, only the version with the
+    newest score timestamp is shown. Within that version, each race uses only
+    its newest exact ``scored_at`` batch. Versions and repeated batches are
+    never blended. A failed mandatory read returns no partial selection.
+    """
+    reads = {
+        "packets": packet_read_status or ("OK" if packets is not None else "READ_FAILED"),
+        "scores": score_read_status or ("OK" if scores is not None else "READ_FAILED"),
+        "runner_labels": runner_read_status or ("OK" if runner_rows is not None else "READ_FAILED"),
+    }
+    mandatory_failures = [name for name in ("packets", "scores") if reads[name] != "OK"]
+    if mandatory_failures:
+        return {
+            "status": "OVERLAY_UNAVAILABLE",
+            "model_version": None,
+            "read_availability": reads,
+            "read_failures": mandatory_failures,
+            "packet_rows": None,
+            "immutable_packet_rows": None,
+            "observed_score_rows": None,
+            "score_rows": None,
+            "version_score_rows": None,
+            "current_score_rows": None,
+            "linked_rows": 0,
+            "linked_current_rows": 0,
+            "orphan_scores": 0,
+            "unsafe_rows": 0,
+            "invalid_batch_rows": 0,
+            "superseded_rows": 0,
+            "other_model_version_rows": 0,
+            "ambiguous_batch_races": 0,
+            "ranked_rows": 0,
+            "races": 0,
+            "rank_one_rows": 0,
+            "coverage_pct": None,
+            "current_coverage_pct": None,
+            "latest_scored_at": None,
+            "runners": [],
+            "selections": [],
+        }
+
+    packet_by_hash = {
+        str(row.get("input_sha256")): row
+        for row in (packets or [])
+        if row.get("input_sha256")
+    }
+    safe_scores = [
+        row
+        for row in (scores or [])
+        if row.get("production_influence") is False and row.get("paper_sim_only") is True
+    ]
+    unsafe_rows = len(scores or []) - len(safe_scores)
+    timestamped_scores = [
+        row for row in safe_scores if _utc_datetime(row.get("scored_at")) is not None and row.get("model_version")
+    ]
+    invalid_batch_rows = len(safe_scores) - len(timestamped_scores)
+
+    versions: dict[str, list[dict[str, Any]]] = {}
+    for row in timestamped_scores:
+        version = str(row.get("model_version") or "")
+        if version:
+            versions.setdefault(version, []).append(row)
+
+    if not versions:
+        status = "OVERLAY_INTEGRITY_FAILED" if invalid_batch_rows or unsafe_rows else RICH_CONTEXT_UNSCORED_STATUS
+        return {
+            "status": status,
+            "model_version": None,
+            "read_availability": reads,
+            "read_failures": [],
+            "packet_rows": len(packet_by_hash),
+            "immutable_packet_rows": len(packet_by_hash),
+            "observed_score_rows": len(scores or []),
+            "score_rows": 0,
+            "version_score_rows": 0,
+            "current_score_rows": 0,
+            "linked_rows": 0,
+            "linked_current_rows": 0,
+            "orphan_scores": 0,
+            "unsafe_rows": unsafe_rows,
+            "invalid_batch_rows": invalid_batch_rows,
+            "superseded_rows": 0,
+            "other_model_version_rows": 0,
+            "ambiguous_batch_races": 0,
+            "ranked_rows": 0,
+            "races": 0,
+            "rank_one_rows": 0,
+            "coverage_pct": None,
+            "current_coverage_pct": None,
+            "latest_scored_at": None,
+            "runners": [],
+            "selections": [],
+        }
+
+    def version_order(item: tuple[str, list[dict[str, Any]]]) -> tuple[datetime, str]:
+        version, rows = item
+        latest = max(_utc_datetime(row["scored_at"]) for row in rows)
+        return latest, version
+
+    model_version, selected_scores = max(versions.items(), key=version_order)
+    other_model_version_rows = len(timestamped_scores) - len(selected_scores)
+
+    # A model version may score several immutable packet batches on the same
+    # date. Select exactly one latest timestamp batch per race and report every
+    # older row as superseded. ``scored_at`` is the persisted batch discriminator
+    # available in v1; missing timestamps were excluded above rather than guessed.
+    by_race: dict[str, dict[str, list[dict[str, Any]]]] = {}
+    for row in selected_scores:
+        batch_timestamp = _utc_datetime(row["scored_at"])
+        assert batch_timestamp is not None  # filtered above
+        by_race.setdefault(str(row.get("race_id") or ""), {}).setdefault(
+            batch_timestamp.isoformat(), []
+        ).append(row)
+    current_scores: list[dict[str, Any]] = []
+    superseded_rows = 0
+    ambiguous_batch_races = 0
+    for batches in by_race.values():
+        latest_timestamp = max(batches)
+        current_batch = batches[latest_timestamp]
+        superseded_rows += sum(len(batch) for timestamp, batch in batches.items() if timestamp != latest_timestamp)
+        horse_ids = [str(row.get("horse_id") or "") for row in current_batch]
+        ranks = [_int(row.get("challenger_rank")) for row in current_batch]
+        coherent_ranks = all(rank is not None for rank in ranks) and sorted(ranks) == list(
+            range(1, len(current_batch) + 1)
+        )
+        if len(set(horse_ids)) != len(horse_ids) or not all(horse_ids) or not coherent_ranks:
+            ambiguous_batch_races += 1
+            continue
+        current_scores.extend(current_batch)
+    overlay_status = RICH_CONTEXT_FITTED_STATUS
+    if invalid_batch_rows or ambiguous_batch_races:
+        # Without a timestamp/version or a coherent 1..N ranking, v1 cannot
+        # identify one complete batch safely. Fail the whole overlay rather
+        # than publish a plausible-looking partial ranking.
+        overlay_status = "OVERLAY_INTEGRITY_FAILED"
+        current_scores = []
+
+    # Latest exact-id runner label wins only for presentation.  It never changes
+    # packet/score identity and cannot rescue a missing packet hash.
+    runner_names: dict[tuple[str, str], tuple[str, str]] = {}
+    for row in runner_rows or []:
+        key = (str(row.get("race_id") or ""), str(row.get("horse_id") or ""))
+        name = str(row.get("horse_name") or "")
+        created = str(row.get("created_at") or "")
+        if all(key) and name and created >= runner_names.get(key, ("", ""))[0]:
+            runner_names[key] = (created, name)
+
+    linked: list[dict[str, Any]] = []
+    orphan_scores = 0
+    for score in current_scores:
+        packet = packet_by_hash.get(str(score.get("packet_input_sha256") or ""))
+        if packet is None:
+            orphan_scores += 1
+            continue
+        # The packet hash is authoritative, but mismatched duplicated identity
+        # columns are a corrupt overlay row and must never be displayed.
+        if str(score.get("race_id")) != str(packet.get("race_id")) or str(score.get("horse_id")) != str(
+            packet.get("horse_id")
+        ):
+            orphan_scores += 1
+            continue
+        race_id = str(packet.get("race_id"))
+        horse_id = str(packet.get("horse_id"))
+        linked.append(
+            {
+                "race_id": race_id,
+                "horse_id": horse_id,
+                "horse_name": runner_names.get((race_id, horse_id), ("", None))[1],
+                "packet_input_sha256": packet.get("input_sha256"),
+                "model_version": model_version,
+                "challenger_probability": score.get("challenger_probability"),
+                "challenger_rank": _int(score.get("challenger_rank")),
+                "scored_at": score.get("scored_at"),
+                "paper_sim_only": True,
+                "production_influence": False,
+            }
+        )
+
+    linked.sort(
+        key=lambda row: (
+            row["race_id"],
+            row["challenger_rank"] is None,
+            row["challenger_rank"] or 0,
+            row["horse_id"],
+        )
+    )
+    selections = [row for row in linked if row["challenger_rank"] == 1]
+    packet_rows = len(packet_by_hash)
+    current_score_rows = len(current_scores)
+    coverage = (
+        round(100.0 * len(linked) / current_score_rows, 1)
+        if current_score_rows and overlay_status == RICH_CONTEXT_FITTED_STATUS
+        else None
+    )
+    return {
+        "status": overlay_status,
+        "model_version": model_version,
+        "read_availability": reads,
+        "read_failures": [],
+        "packet_rows": packet_rows,
+        "immutable_packet_rows": packet_rows,
+        "observed_score_rows": len(scores or []),
+        "score_rows": current_score_rows,
+        "version_score_rows": len(selected_scores),
+        "current_score_rows": current_score_rows,
+        "linked_rows": len(linked),
+        "linked_current_rows": len(linked),
+        "orphan_scores": orphan_scores,
+        "unsafe_rows": unsafe_rows,
+        "invalid_batch_rows": invalid_batch_rows,
+        "superseded_rows": superseded_rows,
+        "other_model_version_rows": other_model_version_rows,
+        "ambiguous_batch_races": ambiguous_batch_races,
+        "ranked_rows": sum(1 for row in linked if row["challenger_rank"] is not None),
+        "races": len({row["race_id"] for row in linked}),
+        "rank_one_rows": len(selections),
+        "coverage_pct": coverage,
+        "current_coverage_pct": coverage,
+        "latest_scored_at": max((str(row.get("scored_at") or "") for row in linked), default=None),
+        "runners": linked,
+        "selections": selections,
+    }
 
 
 def _model_order(name: str) -> tuple[int, str]:
@@ -202,7 +453,8 @@ def evidence_grade(row: dict[str, Any]) -> str:
 def enriched_suggestions(rows: list[dict[str, Any]]) -> dict[str, Any]:
     """Prime's picks from the newest run with the evidence held on each pick.
 
-    The pick is Prime's own: Rich Context has no fitted model and re-ranks nothing here.
+    The pick remains Prime's own.  A fitted Rich Context challenger is displayed
+    separately and never substitutes for or mutates this production selection.
     """
     races = [
         {

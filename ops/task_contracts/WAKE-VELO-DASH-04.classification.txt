@@ -1,0 +1,12 @@
+WAKE-VELO-DASH-04 final classifications
+
+SHADOW_ONLY
+NO_LIVE_SCORING_CHANGE
+NO_MODEL_PROMOTION
+NO_SUPABASE_WRITES
+NO_TELEGRAM_SEND
+
+The dashboard performs read-only joins from the fitted score overlay to the
+immutable packet hash. The migration is authored and tested but is not applied
+to production in this phase. Prime, weights, gates, staking and execution are
+unchanged.

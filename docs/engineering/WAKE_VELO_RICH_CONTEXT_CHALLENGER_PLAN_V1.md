@@ -1,5 +1,28 @@
 # Wake Velo: Rich Context Challenger Plan V1
 
+## Implementation status — 2026-11-08
+
+The first fitted artifact is now a **shadow-only overlay**, not a production
+model. Immutable `rich_context_shadow_packets` remain evidence; fitted
+probabilities and ranks are written separately to
+`rich_context_challenger_scores`, keyed by packet input hash and model version.
+
+Dashboard contract `WAKE-VELO-DASH-04` reads that overlay only through an exact
+`packet_input_sha256 -> input_sha256` join, reports the exact model version and
+coverage, and refuses to display rows outside the PAPER/SIM boundary. It never
+substitutes the Rich Context rank for Prime. Repeated scores from the same model
+version are isolated to the newest coherent `scored_at` batch per race, with
+older rows counted as superseded. Immutable packet rows, all selected-version
+score rows, current-batch rows, linked current rows and superseded rows are
+reported separately; coverage is linked-current/current-batch and never uses
+the accumulated historical packet archive as its denominator. Mandatory
+packet/score reads are bounded and
+paginated; read failure, truncation or ambiguous batch identity suppresses the
+entire overlay instead of presenting partial truth. Runner-label reads may
+degrade labels only and are reported separately. Daily official-results settlement,
+same-race evaluation and the predeclared forward promotion sample remain Phase 6
+work; dashboard visibility is not evidence of promotion eligibility.
+
 **Status:** execution contract; production promotion is not authorised
 **Scope:** UK/IRE governed race-day path first; world jurisdictions remain separate
 **Authority:** `docs/current/ONE_TRUTH.md`, `docs/current/RACE_DAY_RUNBOOK.md`, and `docs/current/FORBIDDEN_ACTIONS.md`
