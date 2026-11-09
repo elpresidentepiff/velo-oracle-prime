@@ -6,11 +6,14 @@
     "ops/task_contracts/WAKE-VELO-FULL-WIRING-01.json",
     "src/velo/rich_context_challenger.py",
     "src/velo/rich_context_challenger_features_v2.py",
+    "src/velo/rich_context_shadow_store.py",
+    "supabase/migrations/20261109083801_persist_rich_context_v2_feature_contract.sql",
     "scripts/ops/run_prime_today.py",
     "scripts/ops/audit_rich_context_wiring.py",
     "tests/test_rich_context_challenger.py",
     "tests/test_rich_context_challenger_features_v2.py",
     "tests/test_rich_context_wiring_audit.py",
+    "tests/test_rich_context_shadow_store.py",
     "docs/current/DIARY.md"
   ],
   "forbidden_paths": [
@@ -25,6 +28,7 @@
     "read_repo",
     "add_shadow_feature_contract",
     "wire_existing_time_safe_facts",
+    "add_additive_shadow_contract_column",
     "add_read_only_audit",
     "create_tests",
     "run_tests"
@@ -34,7 +38,7 @@
     "prime_probability_change",
     "model_promotion",
     "production_deploy",
-    "supabase_schema_change",
+    "destructive_schema_change",
     "gate_bypass",
     "live_betting",
     "telegram_send",

@@ -20,6 +20,7 @@ def packet_row(packet: Mapping[str, Any], *, code_sha: str) -> dict[str, Any]:
         "family_coverage": packet["family_coverage"],
         "provenance": packet["provenance"],
         "feature_families": packet["families"],
+        "enriched_feature_contract": packet.get("enriched_feature_contract"),
         "eligible_for_future_fit": packet["eligible_for_future_fit"],
         "ineligibility_reasons": packet["ineligibility_reasons"],
         "challenger_probability": packet["challenger_probability"],
