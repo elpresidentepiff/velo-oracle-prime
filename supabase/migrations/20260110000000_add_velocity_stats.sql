@@ -1,5 +1,5 @@
 -- VÉLØ Velocity Stats Migration
--- Migration: 006_add_velocity_stats
+-- Migration: 20260110000000_add_velocity_stats
 -- Created: 2026-01-10
 -- Purpose: Add velocity statistics tables for trainer, jockey, and horse performance tracking
 

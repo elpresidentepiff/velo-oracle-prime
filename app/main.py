@@ -2674,9 +2674,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     tri_review_by_race: dict[str, dict] = {}
     tri_review_path = root / "data" / "reports" / f"tri_lane_agent_review_{date_tag}_v2.json"
-    tri_review_payload, _tri_review_source = _report_artifact(
-        "tri_lane_agent_review_v2", target_date, tri_review_path
-    )
+    tri_review_payload, _tri_review_source = _report_artifact("tri_lane_agent_review_v2", target_date, tri_review_path)
     if tri_review_payload is not None:
         try:
             tri_review_by_race = {
@@ -2689,9 +2687,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     deep_agent_by_race: dict[str, dict] = {}
     deep_agent_path = root / "data" / "reports" / f"deep_race_agent_v1_{date_tag}_v2.json"
-    deep_agent_payload, _deep_agent_source = _report_artifact(
-        "deep_race_agent_v1_v2", target_date, deep_agent_path
-    )
+    deep_agent_payload, _deep_agent_source = _report_artifact("deep_race_agent_v1_v2", target_date, deep_agent_path)
     if deep_agent_payload is not None:
         try:
             deep_agent_by_race = {
@@ -3123,9 +3119,12 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     # ── Commit SHA ───────────────────────────────────────────────────────────
     try:
         railway_sha = os.getenv("RAILWAY_GIT_COMMIT_SHA", "").strip()
-        commit = railway_sha[:7] if railway_sha else (
-            _sp.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=root, stderr=_sp.DEVNULL)
-            .decode().strip()
+        commit = (
+            railway_sha[:7]
+            if railway_sha
+            else (
+                _sp.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=root, stderr=_sp.DEVNULL).decode().strip()
+            )
         )
     except Exception:
         commit = "unknown"

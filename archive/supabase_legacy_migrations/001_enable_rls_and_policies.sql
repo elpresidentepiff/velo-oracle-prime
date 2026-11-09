@@ -1,3 +1,4 @@
+-- ARCHIVED LEGACY V12 POLICY PATCH — DO NOT APPLY TO THE ACTIVE DATABASE
 -- VELO v12 Row Level Security (RLS) and Policies
 -- This migration enables RLS on all tables and creates appropriate policies
 
@@ -17,6 +18,7 @@ ALTER TABLE learning_events ENABLE ROW LEVEL SECURITY;
 -- ============================================================================
 
 -- Races table policies
+DROP POLICY IF EXISTS "service_role_all_races" ON races;
 CREATE POLICY "service_role_all_races" ON races
     FOR ALL
     TO service_role
@@ -24,6 +26,7 @@ CREATE POLICY "service_role_all_races" ON races
     WITH CHECK (true);
 
 -- Runners table policies
+DROP POLICY IF EXISTS "service_role_all_runners" ON runners;
 CREATE POLICY "service_role_all_runners" ON runners
     FOR ALL
     TO service_role
@@ -31,6 +34,7 @@ CREATE POLICY "service_role_all_runners" ON runners
     WITH CHECK (true);
 
 -- Market snapshots table policies
+DROP POLICY IF EXISTS "service_role_all_market_snapshots" ON market_snapshots;
 CREATE POLICY "service_role_all_market_snapshots" ON market_snapshots
     FOR ALL
     TO service_role
@@ -38,6 +42,7 @@ CREATE POLICY "service_role_all_market_snapshots" ON market_snapshots
     WITH CHECK (true);
 
 -- Engine runs table policies
+DROP POLICY IF EXISTS "service_role_all_engine_runs" ON engine_runs;
 CREATE POLICY "service_role_all_engine_runs" ON engine_runs
     FOR ALL
     TO service_role
@@ -45,6 +50,7 @@ CREATE POLICY "service_role_all_engine_runs" ON engine_runs
     WITH CHECK (true);
 
 -- Verdicts table policies
+DROP POLICY IF EXISTS "service_role_all_verdicts" ON verdicts;
 CREATE POLICY "service_role_all_verdicts" ON verdicts
     FOR ALL
     TO service_role
@@ -52,6 +58,7 @@ CREATE POLICY "service_role_all_verdicts" ON verdicts
     WITH CHECK (true);
 
 -- Learning events table policies
+DROP POLICY IF EXISTS "service_role_all_learning_events" ON learning_events;
 CREATE POLICY "service_role_all_learning_events" ON learning_events
     FOR ALL
     TO service_role
@@ -63,12 +70,14 @@ CREATE POLICY "service_role_all_learning_events" ON learning_events
 -- ============================================================================
 
 -- Races: anon can read all races
+DROP POLICY IF EXISTS "anon_read_races" ON races;
 CREATE POLICY "anon_read_races" ON races
     FOR SELECT
     TO anon
     USING (true);
 
 -- Runners: anon can read all runners
+DROP POLICY IF EXISTS "anon_read_runners" ON runners;
 CREATE POLICY "anon_read_runners" ON runners
     FOR SELECT
     TO anon

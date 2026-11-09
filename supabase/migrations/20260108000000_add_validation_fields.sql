@@ -1,5 +1,5 @@
 -- VÉLØ Phase 1: Add Parse Quality Tracking and Validation Fields
--- Database Migration for Truth Layer MVP
+-- Migration: 20260108000000_add_validation_fields
 -- Date: 2026-01-08
 
 -- Add validation_report column to import_batches
