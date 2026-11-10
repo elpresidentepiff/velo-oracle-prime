@@ -1,17 +1,59 @@
 from __future__ import annotations
 
+import json
 from datetime import UTC, date, datetime, timezone
 
 import pytest
 
 from app.services.rich_context_history_provider import (
     CanonicalHistoryProvider,
+    FallbackHistoricalRunRepository,
     HistoryPage,
+    PassportArchiveHistoricalRunRepository,
     PostgresHistoricalRunRepository,
     ProvenIdentityBridge,
     SupabaseHistoricalRunRepository,
     resolve_rp_identity,
 )
+
+
+def test_passport_archive_fallback_uses_exact_rp_id_and_hash_provenance(tmp_path):
+    artifact = tmp_path / "form_history_passport-topup-2026-11-11.json"
+    artifact.write_text(json.dumps({"runs": [{
+        "horse_rp_uid": 7462393,
+        "horse_name": "Ballyfad",
+        "race_date": "2026-10-30",
+        "race_instance_uid": 932152,
+        "course_name": "DOWN ROYAL",
+        "distance_furlong": 19.5,
+        "position": 2,
+        "result_type": "PLACE",
+    }]}), encoding="utf-8")
+    empty = MemoryRepository([])
+    repo = FallbackHistoricalRunRepository(
+        empty, PassportArchiveHistoricalRunRepository([artifact])
+    )
+    packet = CanonicalHistoryProvider(repo).build(
+        horse_id="7462393",
+        as_of_cutoff=datetime(2026, 11, 11, 12, tzinfo=UTC),
+    )
+    assert packet["eligible"] is True
+    assert packet["history_depth"] == 1
+    assert packet["source_row_ids"][0].startswith("passport:")
+    assert packet["features"]["place_rate"] == 1.0
+
+
+def test_passport_archive_never_joins_by_name_or_reads_cutoff_day(tmp_path):
+    artifact = tmp_path / "form_history_passport-topup-2026-11-11.json"
+    artifact.write_text(json.dumps({"runs": [
+        {"horse_rp_uid": 999, "horse_name": "Seven Stars", "race_date": "2026-11-10"},
+        {"horse_rp_uid": 7263135, "horse_name": "Seven Stars", "race_date": "2026-11-11"},
+    ]}), encoding="utf-8")
+    repo = PassportArchiveHistoricalRunRepository([artifact])
+    page = repo.fetch_page(
+        horse_id="7263135", before_date=date(2026, 11, 11), offset=0, limit=250
+    )
+    assert page.total_count == 0
 
 
 class _SupabaseResponse:

@@ -11,10 +11,13 @@ isolated challenger only.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
+from pathlib import Path
 from typing import Any, Protocol
 
 SCHEMA_VERSION = "rich_context_history_v1"
@@ -142,6 +145,104 @@ class SupabaseHistoricalRunRepository:
             raise RuntimeError("Supabase history query did not return an exact count")
         rows = tuple(dict(row) for row in (getattr(response, "data", None) or []))
         return HistoryPage(rows=rows, offset=offset, limit=limit, total_count=int(total_count))
+
+
+class PassportArchiveHistoricalRunRepository:
+    """Read exact-RP-ID history from governed RP passport capture artifacts.
+
+    This is a forward shadow fallback for rows not yet represented in
+    ``racing_horse_runs``.  It never joins by name and never reads a run on or
+    after the requested cutoff date.  The source artifact hash is embedded in
+    every synthetic source-row identifier so packet provenance remains
+    independently auditable.
+    """
+
+    def __init__(self, paths: Sequence[Path]):
+        rows: dict[str, dict[tuple[str, str], dict[str, Any]]] = {}
+        for path in paths:
+            try:
+                raw = path.read_bytes()
+                payload = json.loads(raw)
+            except (OSError, ValueError, TypeError):
+                continue
+            source_hash = hashlib.sha256(raw).hexdigest()
+            for index, run in enumerate(payload.get("runs") or []):
+                horse_id = str(run.get("horse_rp_uid") or "").strip()
+                run_date = str(run.get("race_date") or "")[:10]
+                if not _NUMERIC_RP_ID.fullmatch(horse_id) or not run_date:
+                    continue
+                source_id = f"passport:{source_hash}:{index}"
+                position = run.get("position")
+                try:
+                    position_int = int(position) if position not in (None, "") else None
+                except (TypeError, ValueError):
+                    position_int = None
+                result_type = str(run.get("result_type") or "").upper()
+                race_identity = str(run.get("race_instance_uid") or "").strip()
+                dedupe_key = (race_identity or f"NO_RACE_ID:{index}", run_date)
+                rows.setdefault(horse_id, {})[dedupe_key] = {
+                        "id": source_id,
+                        "horse_id": horse_id,
+                        "race_id": str(run.get("race_instance_uid") or ""),
+                        "run_date": run_date,
+                        "course": run.get("course_name"),
+                        "course_id": str(run.get("course_rp_uid") or ""),
+                        "region": None,
+                        "race_type": run.get("race_type_code"),
+                        "distance_f": run.get("distance_furlong"),
+                        "going": run.get("going"),
+                        "race_class": run.get("race_class"),
+                        "position": position,
+                        "position_int": position_int,
+                        "is_win": result_type == "WIN" or position_int == 1,
+                        "is_place": result_type in {"WIN", "PLACE"}
+                        or (position_int is not None and position_int <= 3),
+                        "official_rating": run.get("or_rating"),
+                        "sp_dec": run.get("sp_dec"),
+                        "btn": run.get("beaten_margin"),
+                        "weight_lbs": run.get("weight_lbs"),
+                        "jockey_id": str(run.get("jockey_rp_uid") or ""),
+                        "jockey": run.get("jockey_name"),
+                        "trainer_id": None,
+                        "trainer": None,
+                    }
+        self._rows = {horse_id: list(by_race.values()) for horse_id, by_race in rows.items()}
+
+    def fetch_page(self, *, horse_id: str, before_date: date, offset: int, limit: int) -> HistoryPage:
+        if offset < 0 or limit <= 0:
+            raise ValueError("offset must be >= 0 and limit must be > 0")
+        canonical_horse_id = str(horse_id).strip()
+        if not _NUMERIC_RP_ID.fullmatch(canonical_horse_id):
+            raise ValueError("horse_id must be an exact numeric Racing Post identity")
+        eligible = [
+            row for row in self._rows.get(canonical_horse_id, [])
+            if date.fromisoformat(str(row["run_date"])[:10]) < before_date
+        ]
+        eligible.sort(key=lambda row: (str(row["run_date"]), str(row["id"])), reverse=True)
+        return HistoryPage(
+            rows=tuple(eligible[offset : offset + limit]),
+            offset=offset,
+            limit=limit,
+            total_count=len(eligible),
+        )
+
+
+class FallbackHistoricalRunRepository:
+    """Use canonical DB rows first, then exact-ID passport rows when DB is empty."""
+
+    def __init__(self, primary: HistoricalRunRepository, fallback: HistoricalRunRepository):
+        self._primary = primary
+        self._fallback = fallback
+
+    def fetch_page(self, *, horse_id: str, before_date: date, offset: int, limit: int) -> HistoryPage:
+        primary = self._primary.fetch_page(
+            horse_id=horse_id, before_date=before_date, offset=offset, limit=limit
+        )
+        if primary.total_count:
+            return primary
+        return self._fallback.fetch_page(
+            horse_id=horse_id, before_date=before_date, offset=offset, limit=limit
+        )
 
 
 @dataclass(frozen=True)
@@ -344,7 +445,7 @@ class CanonicalHistoryProvider:
             normalized["_run_date"] = run_date
             valid_rows.append(normalized)
 
-        valid_rows.sort(key=lambda row: (row["_run_date"], int(row["id"])), reverse=True)
+        valid_rows.sort(key=lambda row: (row["_run_date"], str(row["id"])), reverse=True)
         base["source_row_ids"] = [str(row["id"]) for row in valid_rows]
         base["history_depth"] = len(valid_rows)
         base["conflicts"] = conflicts

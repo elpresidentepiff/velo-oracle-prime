@@ -1919,6 +1919,8 @@ def main():
     from src.velo.product_router import ProductRouter
     from app.services.rich_context_history_provider import (
         CanonicalHistoryProvider,
+        FallbackHistoricalRunRepository,
+        PassportArchiveHistoricalRunRepository,
         SupabaseHistoricalRunRepository,
     )
     from src.velo.rich_context_challenger import (
@@ -1944,7 +1946,17 @@ def main():
     # already-eligible manifests and bind them by exact canonical IDs. Missing
     # evidence remains missing; there is no name or cross-date fallback.
     _formfav_manifest_by_key: dict[tuple[str, str], dict] = {}
-    _history_provider = CanonicalHistoryProvider(SupabaseHistoricalRunRepository(db)) if db else None
+    _history_provider = None
+    if db:
+        _passport_paths = sorted(
+            (ROOT / "data" / "race_shape").glob(f"form_history_*{date_str}*.json"),
+            key=lambda path: path.stat().st_mtime,
+        )
+        _history_repository = FallbackHistoricalRunRepository(
+            SupabaseHistoricalRunRepository(db),
+            PassportArchiveHistoricalRunRepository(_passport_paths),
+        )
+        _history_provider = CanonicalHistoryProvider(_history_repository)
     if db:
         try:
             _race_ids = [str(r.get("race_id") or "") for r in normalized if r.get("race_id")]
