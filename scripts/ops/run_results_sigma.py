@@ -29,6 +29,14 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
+# The Nov 9 run crashed with "'charmap' codec can't encode character '→'"
+# from a stray arrow in a print() statement — the container's stdout encoding
+# isn't guaranteed to be UTF-8. Force it so no later print() of a non-ASCII
+# character (there are many in this script's logging) can kill the run.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 
 def _norm_course(value: str) -> str:
     """Canonical normalized course name."""
@@ -955,7 +963,7 @@ def main():
                     "assigned_product": _ap_absent,
                     "ew_outcome": "EW_MISS" if _ap_absent == "EW_CANDIDATE" else None,
                 })
-                print(f"  MISS({mc})             {result.get('course',''):<22} {result.get('off','')}  pred={info.get('horse','?'):<30} [HORSE_ABSENT→MISS]")
+                print(f"  MISS({mc})             {result.get('course',''):<22} {result.get('off','')}  pred={info.get('horse','?'):<30} [HORSE_ABSENT->MISS]")
             else:
                 print(f"  [WARN] {race_id}: race matched ({provenance}) but horse {predicted_horse_id}/{info.get('horse')} not found")
                 no_result.append(race_id)

@@ -28,6 +28,10 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PROFILE_DIR = ROOT / "data" / "browser_profiles" / "racing_post_account"
 DEFAULT_RAW_DIR = ROOT / "data" / "racing_post_account_raw"
