@@ -56,6 +56,30 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-10 (early) — Claude Code (Sonnet 5.5) — EOD encoding crash fixed; Rich Context v2 feature-utilization ablation run, result: negative, not promoted
+Branch / commit:  `main` @ `5100dea` (dashboard panel rebase) then two more pushes: the UTF-8/arrow fix, and this entry + the v2 ablation artifact (pushed).
+Changed:          (1) `scripts/ops/run_results_sigma.py:958` printed a literal `->MISS` arrow in an f-string; the 2026-11-10 05:09Z run crashed on it
+                  (`'charmap' codec can't encode character '→'`) before a same-run retry succeeded. Fixed the literal and added `sys.stdout/stderr.reconfigure(encoding="utf-8",
+                  errors="replace")` to `run_results_sigma.py`, `parse_rp_results_capture.py`, `racing_post_account_collector.py`, `rp_cloud_eod.py` so no other non-ASCII
+                  character in this codebase's logging can kill a run again. (2) Plan 4 (`WAKE_VELO_RICH_CONTEXT_CHALLENGER_PLAN_V1.md` Phase 5/6): fitted
+                  `rich_context_challenger_v2` — identical frozen universe/dates/estimator/grid/calibration as v1, but
+                  `src/velo/rich_context_challenger_features_v2.py` reads the rest of `CanonicalHistoryProvider`'s already-computed `canonical_history` fields (distance/going/
+                  course-place win-place rates, jockey-pairing and trainer-continuity win rates, jockey/trainer-changed flags, best official rating, average beaten margin,
+                  runs_30d/365d) instead of v1's 7-field subset. `scripts/research/fit_rich_context_challenger_v2.py`; artifact at `models/rich_context_challenger_v2/`.
+Evidence:         Dry run confirmed identical row counts to v1 (train=2046/217 races, validation=2847/281, holdout=1220/128) — a clean same-universe ablation. Result:
+                  holdout log_loss_challenger 0.2831 and brier 0.0826, both *worse* than v1 (0.2713 / 0.0788) and worse than market-only (0.2719) — more features
+                  overfit train/validation given only ~2,000 training rows. Also confirmed directly in Supabase: `rich_context_shadow_packets.feature_families` already
+                  carries `rp_spotlight_facts`, `formfav_raw_facts`, `formfav_pace_context`, `formfav_class_context`, `formfav_track_bias_context` on every packet since
+                  2026-11-07 — those families are not missing capture, they are missing *days* (4 so far; the fit script's own `len(X) < 200` floor is nowhere close).
+What it shows:    the "feature-utilization gap" hypothesis from the pathfinder audit does not yet pay off when tested properly — v2 is **not promoted**, `promotion_eligible:
+                  false`, live scoring stays on v1 unchanged (`rich_context_challenger_scorer.py` still points at `models/rich_context_challenger_v1/`). Retained for
+                  provenance per Phase 6 ("invalid corpora are marked superseded with reason, not rewritten into passing evidence").
+Open / broken:    2026-11-08 still has zero settled rows anywhere (unchanged from the prior entry). `rp_spotlight_facts`/`formfav_*` ablations need several more weeks of
+                  forward daily accumulation before they clear the same `len(X) >= 200`-per-split floor. `hermes-agent` delete was proposed to the operator and declined/not
+                  yet approved in-session.
+Next safe action: once 2-3 more weeks of forward packets with settled results exist, rerun this same ablation style against `rp_spotlight_facts`/`formfav_raw_facts` as their
+                  own declared family (not blended into v2) before ever touching production.
+
 ### 2026-11-09 (midday) — Claude Code (Sonnet 5.5) — Dashboard: Prime vs Challenger panel, and the page now fits a phone
 Why:              Carlos asked to see the Rich Context challenger beside Prime ("what is the difference") and for the dashboard to work on a phone.
 Changed:          view `public.prime_vs_challenger` (migrations `20261109120000_prime_vs_challenger.sql`, applied as `prime_vs_challenger` then
