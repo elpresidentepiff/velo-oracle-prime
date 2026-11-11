@@ -326,15 +326,35 @@ def _verify_pipeline_run(date_str: str) -> dict[str, Any]:
     return rows[0]
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--date", default=None, help="Race date YYYY-MM-DD; defaults to London today")
-    parser.add_argument("--execute", action="store_true", help="Capture RP results and run canonical EOD")
-    parser.add_argument("--no-notify", action="store_true")
-    parser.add_argument("--include-passport-refresh", action="store_true")
-    args = parser.parse_args()
-    date_str = args.date or datetime.now(LONDON).date().isoformat()
+def select_catch_up_days(rows: list[dict], today: str, lookback_days: int) -> list[str]:
+    """Past race days that were scored for UK/IRE but never settled at all, oldest first.
 
+    A day counts only when it had scored races and has zero UK sigma rows: a whole-day miss
+    (a failed 21:00 run). Partial days (a void or abandoned race) are left alone. Today is
+    never a catch-up day; it is settled by the normal run.
+    """
+    from datetime import date, timedelta
+
+    first = (date.fromisoformat(today) - timedelta(days=lookback_days)).isoformat()
+    days = {
+        str(r.get("day"))
+        for r in rows
+        if first <= str(r.get("day")) < today
+        and int(r.get("uk_verdict_races") or 0) > 0
+        and int(r.get("uk_sigma_rows") or 0) == 0
+    }
+    return sorted(days)
+
+
+def _missing_settlement_days(today: str, lookback_days: int) -> list[str]:
+    rows = _get(
+        "world_day_status",
+        {"select": "day,uk_verdict_races,uk_sigma_rows", "order": "day.asc", "limit": "400"},
+    )
+    return select_catch_up_days(rows, today, lookback_days)
+
+
+def _settle_day(date_str: str, args: argparse.Namespace) -> dict[str, Any]:
     print(f"VELO CLOUD RP EOD — {date_str}", flush=True)
     print("executor=Railway source=RacingPost-HTML durable_truth=Supabase", flush=True)
     preparation = prepare_cloud_eod_inputs(date_str)
@@ -342,9 +362,8 @@ def main() -> int:
     print(json.dumps({"preparation": preparation}, indent=2), flush=True)
     if not args.execute:
         print("[CLOUD-EOD] PLAN_ONLY — capture and EOD were not executed", flush=True)
-        return 0
+        return {"date": date_str, "status": "PLAN_ONLY"}
 
-    _login()
     _run(
         "capture RP results pages",
         [
@@ -397,7 +416,52 @@ def main() -> int:
     pipeline = _verify_pipeline_run(date_str)
     print(json.dumps({"status": "PASS", "eod": report, "pipeline_run": pipeline}, indent=2), flush=True)
     print(f"[CLOUD-EOD] PASS — governed EOD completed for {date_str}", flush=True)
-    return 0
+    return {"date": date_str, "status": "PASS"}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--date", default=None, help="Race date YYYY-MM-DD; defaults to London today")
+    parser.add_argument("--execute", action="store_true", help="Capture RP results and run canonical EOD")
+    parser.add_argument("--no-notify", action="store_true")
+    parser.add_argument("--include-passport-refresh", action="store_true")
+    parser.add_argument(
+        "--catch-up-days",
+        type=int,
+        default=int(os.getenv("EOD_CATCH_UP_DAYS", "14")),
+        help="Also settle any of the last N days that were scored but never settled (0 turns it off)",
+    )
+    parser.add_argument(
+        "--backfill-only",
+        action="store_true",
+        help="Settle only the missed past days; leave today for the 21:00 run",
+    )
+    args = parser.parse_args()
+    today = args.date or datetime.now(LONDON).date().isoformat()
+
+    catch_up: list[str] = []
+    if args.catch_up_days > 0 and not args.date:
+        try:
+            catch_up = _missing_settlement_days(today, args.catch_up_days)
+        except Exception as exc:  # noqa: BLE001 - finding the backlog must never stop tonight's settlement
+            print(f"[CLOUD-EOD] catch-up lookup failed: {type(exc).__name__}: {exc}", flush=True)
+    days = catch_up + ([] if args.backfill_only else [today])
+    print(json.dumps({"settle": days, "catch_up": catch_up, "today": today}), flush=True)
+    if not days:
+        print("[CLOUD-EOD] nothing to settle", flush=True)
+        return 0
+
+    if args.execute:
+        _login()
+    outcomes: list[dict[str, Any]] = []
+    for day in days:
+        try:
+            outcomes.append(_settle_day(day, args))
+        except Exception as exc:  # noqa: BLE001 - one bad day must not stop the others
+            print(f"[CLOUD-EOD] FAIL {day}: {type(exc).__name__}: {exc}", flush=True)
+            outcomes.append({"date": day, "status": "FAIL", "error": f"{type(exc).__name__}: {exc}"[:300]})
+    print(json.dumps({"summary": outcomes}, indent=2), flush=True)
+    return 0 if all(o["status"] in ("PASS", "PLAN_ONLY") for o in outcomes) else 1
 
 
 if __name__ == "__main__":

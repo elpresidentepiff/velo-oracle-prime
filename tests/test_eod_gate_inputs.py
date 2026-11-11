@@ -134,6 +134,7 @@ def test_the_snapshot_restore_never_takes_the_eod_down(monkeypatch) -> None:
 
 def test_the_restore_runs_before_anything_captures_or_scores() -> None:
     src = (Path(__file__).parents[1] / "scripts" / "ops" / "rp_cloud_eod.py").read_text(encoding="utf-8")
-    main_src = src[src.index("def main()") :]
-    assert main_src.index("_hydrate_runner_snapshots(date_str)") < main_src.index("_login()")
-    assert main_src.index("_hydrate_runner_snapshots(date_str)") < main_src.index("canonical EOD sequence")
+    # Each settled day restores its snapshots before it captures results or runs the EOD (sign-in captures nothing).
+    day_src = src[src.index("def _settle_day(") : src.index("def main()")]
+    assert day_src.index("_hydrate_runner_snapshots(date_str)") < day_src.index("capture RP results pages")
+    assert day_src.index("_hydrate_runner_snapshots(date_str)") < day_src.index("canonical EOD sequence")

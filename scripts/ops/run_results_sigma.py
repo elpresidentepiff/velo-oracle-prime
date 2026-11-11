@@ -637,6 +637,7 @@ def main():
     preflight_or_die(
         tg_fn=tg,
         require_telegram=not NO_NOTIFY,
+        settlement=True,  # results are graded from RP; FormFav freshness gates scoring only
     )  # exits with sys.exit(1) on FAIL
     # ─────────────────────────────────────────────────────────────────────────
 

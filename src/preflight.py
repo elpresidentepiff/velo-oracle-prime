@@ -366,13 +366,30 @@ def _check_supabase_schema() -> PreflightCheck:
 # ── Main preflight function ───────────────────────────────────────────────────
 
 
-def preflight(*, require_telegram: bool = True) -> PreflightResult:
+def _formfav_not_required_for_settlement() -> PreflightCheck:
+    """Settlement grades races that have already run; it never reads FormFav.
+
+    FormFav stops refreshing form once the day's cards are set (early afternoon), so the
+    scoring-time freshness rule (newest form update < 3 h old) failed every 21:00 UTC EOD
+    and left the day with no UK sigma (2026-11-08, 11-09 and 11-10 cron runs).
+    """
+    return PreflightCheck(
+        name="formfav_factual",
+        severity=Severity.DEGRADED,
+        passed=True,
+        detail="not required for settlement (results are graded from Racing Post, not FormFav)",
+    )
+
+
+def preflight(*, require_telegram: bool = True, settlement: bool = False) -> PreflightResult:
     """
     Run all preflight checks. Returns a PreflightResult with overall status.
 
     FAIL   → caller must not proceed with scoring
     DEGRADED → caller may proceed but MUST send Telegram alert
     PASS   → proceed normally
+
+    settlement=True is for the results/sigma run: FormFav freshness gates scoring only.
     """
     result = PreflightResult()
 
@@ -380,7 +397,7 @@ def preflight(*, require_telegram: bool = True) -> PreflightResult:
     result.add(_check_canonical_constants())
     result.add(_check_supabase())
     result.add(_check_rp_capture_readiness())
-    result.add(_check_formfav_factual_readiness())
+    result.add(_formfav_not_required_for_settlement() if settlement else _check_formfav_factual_readiness())
     result.add(_check_sqpe_model())
     result.add(_check_specialist_models())
     result.add(_check_supabase_schema())
@@ -388,7 +405,7 @@ def preflight(*, require_telegram: bool = True) -> PreflightResult:
     return result
 
 
-def preflight_or_die(tg_fn=None, *, require_telegram: bool = True) -> PreflightResult:
+def preflight_or_die(tg_fn=None, *, require_telegram: bool = True, settlement: bool = False) -> PreflightResult:
     """
     Convenience wrapper: run preflight and sys.exit(1) on FAIL.
     Sends Telegram alert on DEGRADED or FAIL if tg_fn provided.
@@ -399,7 +416,7 @@ def preflight_or_die(tg_fn=None, *, require_telegram: bool = True) -> PreflightR
     """
     import sys
 
-    result = preflight(require_telegram=require_telegram)
+    result = preflight(require_telegram=require_telegram, settlement=settlement)
 
     # Always print to stdout
     for check in result.checks:

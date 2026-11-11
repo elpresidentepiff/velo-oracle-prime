@@ -191,3 +191,54 @@ def test_cloud_persistence_command_excludes_unrefreshed_passports():
         "2026-11-02", include_passports=True
     )
     assert "passports" in refreshed
+
+
+
+# --- EOD-CATCHUP-01: a missed night is settled by the next run, oldest first -------------------------
+
+
+def test_catch_up_picks_only_whole_day_misses_in_the_window_and_never_today():
+    rows = [
+        {"day": "2026-10-18", "uk_verdict_races": 21, "uk_sigma_rows": 0},  # outside a 14-day window
+        {"day": "2026-10-29", "uk_verdict_races": 38, "uk_sigma_rows": 0},
+        {"day": "2026-11-07", "uk_verdict_races": 46, "uk_sigma_rows": 45},  # partial: a void race, left alone
+        {"day": "2026-11-08", "uk_verdict_races": 22, "uk_sigma_rows": 0},
+        {"day": "2026-11-02", "uk_verdict_races": 0, "uk_sigma_rows": 0},  # nothing scored, nothing to settle
+        {"day": "2026-11-10", "uk_verdict_races": 20, "uk_sigma_rows": 0},
+        {"day": "2026-11-11", "uk_verdict_races": 27, "uk_sigma_rows": 0},  # today: the normal run settles it
+    ]
+    assert eod.select_catch_up_days(rows, "2026-11-11", 14) == ["2026-10-29", "2026-11-08", "2026-11-10"]
+    assert eod.select_catch_up_days(rows, "2026-11-11", 30)[0] == "2026-10-18"
+    assert eod.select_catch_up_days(rows, "2026-11-11", 0) == []
+
+
+def _main_with(monkeypatch, argv, missing):
+    settled: list[str] = []
+    monkeypatch.setattr(eod, "_missing_settlement_days", lambda today, n: missing)
+    monkeypatch.setattr(eod, "_login", lambda: None)
+
+    def settle(day, args):
+        settled.append(day)
+        if day == "2026-11-08":
+            raise RuntimeError("results page not ready")
+        return {"date": day, "status": "PASS"}
+
+    monkeypatch.setattr(eod, "_settle_day", settle)
+    monkeypatch.setattr("sys.argv", ["rp_cloud_eod.py", *argv])
+    return eod.main(), settled
+
+
+def test_nightly_run_settles_the_backlog_first_and_one_failure_does_not_stop_the_rest(monkeypatch):
+    code, settled = _main_with(monkeypatch, ["--execute"], ["2026-11-08", "2026-11-10"])
+    assert settled[:2] == ["2026-11-08", "2026-11-10"] and len(settled) == 3  # then today
+    assert code == 1  # a failed day is reported, not hidden
+
+
+def test_backfill_only_never_settles_today(monkeypatch):
+    code, settled = _main_with(monkeypatch, ["--execute", "--backfill-only"], ["2026-11-10"])
+    assert settled == ["2026-11-10"] and code == 0
+
+
+def test_an_explicit_date_settles_only_that_date(monkeypatch):
+    code, settled = _main_with(monkeypatch, ["--execute", "--date", "2026-11-10"], ["2026-11-08"])
+    assert settled == ["2026-11-10"] and code == 0
