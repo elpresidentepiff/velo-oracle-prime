@@ -56,6 +56,23 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-11 (late morning) — Claude Code (Opus 5.5) — Evening EOD failed every night; fixed, plus automatic catch-up of missed days
+Why:              Operator: "Velo works every day... backdate and fill and moving forward everything should be on railway and running auto."
+Cause:            run_results_sigma.py reused the morning scoring preflight. Its formfav_factual check is CRITICAL when the newest FormFav form update is
+                  over 3 h old; FormFav stops refreshing form once the day's cards are set (~12:46 UTC on 2026-11-10), so the 21:00 UTC EOD died at Step 12
+                  every night ("PREFLIGHT FAIL ... formfav_factual"; Railway log 2026-11-10 21:05). 11-08 and 11-10 have no UK sigma; 11-09 only via a
+                  manual 05:09 rerun next morning.
+Changed:          `2da0a225`: src/preflight.py settlement mode (FormFav not required to grade results; scoring unchanged); run_results_sigma asks for it.
+                  scripts/ops/rp_cloud_eod.py: each run first settles any of the last EOD_CATCH_UP_DAYS days (default 14) that had scored UK/IRE races
+                  and zero UK sigma rows, oldest first, then today; one failed day does not stop the others; --backfill-only, --date. Tests added (34 pass).
+Backfill:         whole-day misses in the last 30 days: 2026-10-18, 10-25, 10-26, 10-29, 11-08, 11-10. A one-off run (`3ba77aa8`, schedule removed from
+                  railway.eod.toml AND the service setting, redeployed) never started a container: deployment SUCCESS, zero deploy logs, no pipeline_runs
+                  row for an hour. So: schedule restored (service setting + this commit), Railway variable EOD_CATCH_UP_DAYS=30 on velo-results-sigma,
+                  and tonight's 21:00 UTC run settles the six days, then 11-11.
+Open:             partial days (1-8 races short, likely voids) are not retried; UK learning gate still BLOCKED (11-09: GATE_PIPELINE_TRUTH_MISSING).
+Next safe action: after 21:00 UTC tonight read the velo-results-sigma log '"summary"' line and world_day_status for 10-18..11-11; then set
+                  EOD_CATCH_UP_DAYS back to 14 (or leave 30: it only ever retries whole-day misses).
+
 ### 2026-11-10 (early) — Claude Code (Sonnet 5.5) — EOD encoding crash fixed; Rich Context v2 feature-utilization ablation run, result: negative, not promoted
 Branch / commit:  `main` @ `5100dea` (dashboard panel rebase) then two more pushes: the UTF-8/arrow fix, and this entry + the v2 ablation artifact (pushed).
 Changed:          (1) `scripts/ops/run_results_sigma.py:958` printed a literal `->MISS` arrow in an f-string; the 2026-11-10 05:09Z run crashed on it

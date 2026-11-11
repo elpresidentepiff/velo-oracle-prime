@@ -8,8 +8,8 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile.rpcapture"
 
 [deploy]
-# TEMPORARY 2026-11-11 (operator order: backfill the missed nights now). RESTORE both lines below straight after the run:
-# startCommand = "python scripts/ops/rp_cloud_eod.py --execute --no-notify"
-# cronSchedule = "0 21 * * *"
-startCommand = "python scripts/ops/rp_cloud_eod.py --execute --no-notify --backfill-only --catch-up-days 30"
+# Each 21:00 UTC run first settles any of the last 14 days that were scored but never settled
+# (EOD_CATCH_UP_DAYS), oldest first, then today. A missed night is healed by the next run.
+startCommand = "python scripts/ops/rp_cloud_eod.py --execute --no-notify"
+cronSchedule = "0 21 * * *"
 restartPolicyType = "NEVER"
