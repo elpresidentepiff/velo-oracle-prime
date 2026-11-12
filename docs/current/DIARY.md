@@ -56,6 +56,20 @@ Next safe action: <one concrete step that needs no re-investigation>
 
 ## Entries
 
+### 2026-11-12 23:00 UTC — Claude Code (Opus 5.5) — Why the UK learning gate is BLOCKED every night, and the fix
+Read:             `velo_mission_control` 2026-11-09, 11-11, 11-12: source RP_MERGED_CLEAN, flatline 0, identity 0, Council PASS_TO_LEARNING,
+                  and still `learning_gate_status = BLOCKED` with ONE reason: `GATE_PIPELINE_TRUTH_MISSING` (`DAILY_RUN_TRUTH_MISSING`).
+Cause:            `update_mission_control._run_truth_status` reads `data/velo_daily_run_truth_<date>.json`. Only the MORNING container writes it
+                  (`run_prime_today._emit_daily_truth_packet`); the EOD container starts clean, so it is always MISSING. Same class as
+                  WAKE-VELO-GATE-INPUTS-01 (snapshots, observability packet).
+Fix:              `rp_cloud_eod._rebuild_daily_run_truth` runs the same watchdog (`velo_daily_run_truth_watchdog.write_report`) before the EOD
+                  sequence. It classifies only from Supabase `pipeline_runs` + `velo_verdicts`, so a manual/failed/verdict-less day still blocks.
+                  Never fatal. 3 tests added (15 pass). Mission Control, Council, the gate and the learner are not edited.
+Expected:         2026-11-12 (railway_cron PASS, 21 verdicts) would read AUTOMATED_RUN_OK -> gate OPEN, learner runs on the shadow state.
+Also found:       Rich Context challenger v1 is the market price: `log_sp` coefficient -1.50, every other feature |coef| <= 0.12. It picked the
+                  favourite in 124 of 136 races 07-12 Nov. More features (v2) overfit; the fix is more days, not more columns.
+Next safe action: after merge + redeploy of `velo-results-sigma`, rerun EOD for 2026-11-12 and read `velo_mission_control.gate_reasons`.
+
 ### 2026-11-11 (late morning) — Claude Code (Opus 5.5) — Evening EOD failed every night; fixed, plus automatic catch-up of missed days
 Why:              Operator: "Velo works every day... backdate and fill and moving forward everything should be on railway and running auto."
 Cause:            run_results_sigma.py reused the morning scoring preflight. Its formfav_factual check is CRITICAL when the newest FormFav form update is

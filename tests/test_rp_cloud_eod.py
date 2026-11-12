@@ -242,3 +242,54 @@ def test_backfill_only_never_settles_today(monkeypatch):
 def test_an_explicit_date_settles_only_that_date(monkeypatch):
     code, settled = _main_with(monkeypatch, ["--execute", "--date", "2026-11-10"], ["2026-11-08"])
     assert settled == ["2026-11-10"] and code == 0
+
+
+def test_daily_run_truth_is_rebuilt_from_supabase_for_mission_control(monkeypatch):
+    """GATE_PIPELINE_TRUTH_MISSING: the EOD container must rebuild the morning's run-truth packet."""
+    import sys
+    import types
+
+    calls = []
+    fake = types.ModuleType("velo_daily_run_truth_watchdog")
+
+    def write_report(date_str):
+        calls.append(date_str)
+        return {"status": "AUTOMATED_RUN_OK", "issues": []}
+
+    fake.write_report = write_report
+    monkeypatch.setitem(sys.modules, "velo_daily_run_truth_watchdog", fake)
+    out = eod._rebuild_daily_run_truth("2026-11-12")
+    assert calls == ["2026-11-12"]
+    assert out["status"] == "AUTOMATED_RUN_OK"
+
+
+def test_daily_run_truth_rebuild_failure_is_not_fatal_and_invents_nothing(monkeypatch):
+    import sys
+    import types
+
+    fake = types.ModuleType("velo_daily_run_truth_watchdog")
+
+    def write_report(date_str):
+        raise RuntimeError("supabase down")
+
+    fake.write_report = write_report
+    monkeypatch.setitem(sys.modules, "velo_daily_run_truth_watchdog", fake)
+    out = eod._rebuild_daily_run_truth("2026-11-12")
+    assert out["status"] == "RUN_TRUTH_REBUILD_ERROR"
+    assert "supabase down" in out["error"]
+
+
+def test_settle_day_rebuilds_run_truth_before_the_eod_sequence(monkeypatch):
+    order = []
+    monkeypatch.setattr(eod, "prepare_cloud_eod_inputs", lambda d: order.append("prepare") or {})
+    monkeypatch.setattr(eod, "_hydrate_runner_snapshots", lambda d: order.append("snapshots") or {})
+    monkeypatch.setattr(
+        eod, "_rebuild_daily_run_truth", lambda d: order.append("run_truth") or {"status": "AUTOMATED_RUN_OK"}
+    )
+
+    class Args:
+        execute = False
+
+    out = eod._settle_day("2026-11-12", Args())
+    assert out["status"] == "PLAN_ONLY"
+    assert order == ["prepare", "snapshots", "run_truth"]
