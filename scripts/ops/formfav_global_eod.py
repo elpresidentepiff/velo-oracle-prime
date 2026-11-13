@@ -31,6 +31,11 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.velo.race_identity import VERIFIED, verify_race_identity, verify_selection  # noqa: E402
+
 SETTLE_PACE_SECONDS = 0.7
 SETTLE_MAX_CALLS_PER_PASS = 150
 IN_CHUNK = 40
@@ -54,8 +59,14 @@ def reconcile_race(
     race: dict[str, Any],
     prediction: dict[str, Any] | None,
     result: dict[str, Any] | None,
+    identity: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
-    """Return one ``formfav_sigma_audits`` row, or None when nothing was predicted."""
+    """Return one ``formfav_sigma_audits`` row, or None when nothing was predicted.
+
+    ``identity`` is the race's :func:`verify_race_identity` verdict. A race whose clock, racecard
+    or field cannot be proved, or whose top pick is not in the verified field, is quarantined as
+    ``identity_blocked`` (#189): stored and visible, never counted in a strike rate.
+    """
     if not prediction:
         return None
     preds = (prediction.get("predictions_payload") or {}).get("predictions") or []
@@ -109,8 +120,21 @@ def reconcile_race(
         "details": {},
         "computed_at": datetime.now(UTC).isoformat(),
     }
+    if identity is not None:
+        pick = verify_selection(identity, top1.get("name"), top1.get("number"))
+        row["details"] = {"race_identity": {
+            "status": identity.get("status"), "reasons": identity.get("reasons"),
+            "local_race_date": identity.get("local_race_date"),
+            "start_time_utc": identity.get("start_time_utc"), "pick_status": pick["status"],
+        }}
+        # A non-runner pick is a real outcome (void), settled below; anything else unproved is quarantined.
+        if identity.get("status") != VERIFIED or pick["status"] in ("NOT_IN_FIELD", "RACECARD_MISMATCH"):
+            row["basis"] = "identity_blocked"
+            row["details"]["placings"] = len(placings)
+            row["details"]["quarantined"] = True
+            return row
     if basis == "no_result":
-        row["details"] = {"placings": len(placings)}
+        row["details"] = {**row["details"], "placings": len(placings)}
         return row
 
     top1_number = _int(top1.get("number"))
@@ -133,6 +157,7 @@ def reconcile_race(
     best = by_number.get(winner_numbers[0]) if winner_numbers else None
     row["winner_win_prob"] = _num(best.get("winProb")) if best else None
     row["details"] = {
+        **row["details"],
         "placings": len(placings),
         "all_correct_weight": bool(placings) and all(
             p.get("resultStage") == "correct_weight" for p in live
@@ -164,10 +189,24 @@ def _get_json(sb_request: Callable[..., bytes], path: str) -> list[dict[str, Any
     return json.loads(raw.decode("utf-8")) if raw else []
 
 
+def load_runners(sb_request: Callable[..., bytes], keys: list[str]) -> dict[str, list[dict[str, Any]]]:
+    out: dict[str, list[dict[str, Any]]] = {}
+    for chunk in _chunks(keys, IN_CHUNK):
+        in_list = "in.(" + ",".join(f'"{k}"' for k in chunk) + ")"
+        qs = urllib.parse.urlencode({
+            "provider_race_key": in_list,
+            "select": "provider_race_key,runner_number,horse_name,scratched,updated_at",
+        })
+        for row in _get_json(sb_request, f"formfav_runner_form?{qs}"):
+            out.setdefault(row["provider_race_key"], []).append(row)
+    return out
+
+
 def load_day(sb_request: Callable[..., bytes], race_date: str) -> tuple[list, dict, dict]:
     qs = urllib.parse.urlencode({
         "race_date": f"eq.{race_date}",
-        "select": "provider_race_key,race_date,country,track,race_number,start_time,timezone,meeting_slug",
+        "select": "provider_race_key,race_date,country,track,race_number,start_time,timezone,meeting_slug,"
+                  "metadata,form_meta",
         "order": "start_time.asc",
         "limit": "5000",
     })
@@ -259,9 +298,15 @@ def run_day(
         settle_report = settle_day(race_date, races=races, results=results, preds=preds, **settle)
         if settle_report["fetched"]:
             _, _, results = load_day(sb_request, race_date)
+    runners = load_runners(sb_request, [r["provider_race_key"] for r in races if r["provider_race_key"] in preds])
     rows = [
         row for r in races
-        if (row := reconcile_race(r, preds.get(r["provider_race_key"]), results.get(r["provider_race_key"])))
+        if (row := reconcile_race(
+            r, preds.get(r["provider_race_key"]), results.get(r["provider_race_key"]),
+            # Settlement judges the clock, card and field; a card last checked hours before the
+            # off still identifies the race, and a late scratching shows in the result itself.
+            verify_race_identity(r, runners.get(r["provider_race_key"]), require_fresh_racecard=False),
+        ))
     ]
     if rows and not dry_run:
         for chunk in _chunks_rows(rows, 200):

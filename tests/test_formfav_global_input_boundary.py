@@ -7,7 +7,7 @@ class DataOnlyClient:
     def meetings(self, date, timezone="UTC"):
         return {"meetings": [{
             "country": "us", "track": "Test Park", "slug": "test-park",
-            "races": [{"raceNumber": 1, "startTime": f"{date}T18:00:00Z"}],
+            "races": [{"raceNumber": 1, "startTime": f"{date}T18:00:00Z", "timezone": "America/New_York"}],
         }]}
 
     def race_form(self, **kwargs):

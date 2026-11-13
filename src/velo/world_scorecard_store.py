@@ -113,6 +113,9 @@ def build_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         if race.get("freeze_state") == "AWAITING_PRICES":
             continue
+        identity = race.get("race_identity")
+        if identity is not None and identity.get("status") != "VERIFIED":
+            continue  # never freeze a pick for a race that is not proved to be one race
         off_dt = datetime.fromisoformat(str(scheduled_off).replace("Z", "+00:00"))
         if generated_dt >= off_dt:
             continue
@@ -125,7 +128,9 @@ def build_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
             rows.append({
                 "scorecard_key": _key(provider_key, model_name, "FIRST_COMPLETE", horse_key),
                 "provider_race_key": provider_key,
-                "race_date": payload["date"],
+                # The race's own LOCAL racing date, the one in its key (#189); the run date only
+                # for payloads written before races carried one.
+                "race_date": race.get("race_date") or payload["date"],
                 "country": country,
                 "track": race.get("course") or "",
                 "race_number": race.get("race_number"),
@@ -155,6 +160,10 @@ def build_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
                     "field_size": race.get("field_size"),
                     "top_tie_size": race.get("top_tie_size"),
                     "code_commit": payload.get("code_commit"),
+                    "runner_number": pred.get("runner_number"),
+                    "race_identity": (identity or {}).get("status") or "UNCHECKED_LEGACY",
+                    "local_race_date": (identity or {}).get("local_race_date"),
+                    "off_utc": (identity or {}).get("start_time_utc") or scheduled_off,
                 },
             })
     return rows
@@ -181,7 +190,7 @@ def build_run_rows(
             "race_date": payload["date"],
             "country": cc,
             "model_name": model,
-            "status": "PASS" if not errs and not st.get("deferred") else "PARTIAL",
+            "status": "PASS" if not errs and not st.get("deferred") and not st.get("identity_blocked") else "PARTIAL",
             "races_seen": st.get("seen", 0),
             "races_scored": st.get("scored", 0),
             "races_skipped_post_off": st.get("skipped_post_off", 0),
@@ -192,6 +201,8 @@ def build_run_rows(
                 "code_commit": payload.get("code_commit"),
                 "freeze_states": st.get("freeze_states", {}),
                 "deferred": st.get("deferred", 0),
+                # Races refused because their clock, card and field are not one race (#189).
+                "identity_blocked": st.get("identity_blocked", 0),
                 "deferred_keys": (st.get("deferred_keys") or [])[:50],
                 "unscorable": st.get("unscorable", 0),
                 "tied_top_races": st.get("tied_top_races", 0),

@@ -4496,6 +4496,14 @@ function _wdChip(label, value, color) {
     + `<div style="font-size:14px;color:${color || '#ddd'}">${esc(String(value))}</div></div>`;
 }
 
+// #189: racecard verification, scratchings and the time the racecard was last checked.
+function _cardCell(r) {
+  const nr = (r.non_runners || []).length ? ` <span style="color:#ffa726">NR: ${esc((r.non_runners || []).join(', '))}</span>` : '';
+  const at = r.racecard_checked_at ? ` <span style="color:#666">${esc(String(r.racecard_checked_at).slice(11, 16))}Z</span>` : '';
+  if (r.identity_status === 'VERIFIED') return `<span style="color:#66bb6a">✓ VERIFIED</span>${at}${nr}`;
+  return `<span style="color:#e05050" title="${esc((r.identity_reasons || []).join(', '))}">✗ ${esc((r.identity_reasons || ['UNVERIFIED'])[0])}</span>${at}${nr}`;
+}
+
 async function loadWorldDay() {
   const params = new URLSearchParams(window.location.search);
   const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
@@ -4539,14 +4547,17 @@ async function loadWorldDay() {
     document.getElementById('wd-picks').innerHTML = Object.keys(groups).sort().map(c =>
       `<div style="color:#66bb6a;font-weight:600;margin:6px 0 2px">${esc(c.toUpperCase())} · ${groups[c].length} races</div>`
       + '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap;">'
-      + '<tr style="color:#777;text-align:left"><th>UK TIME</th><th>RACE</th><th>1ST</th><th>2ND</th><th>3RD</th><th>CONF</th><th>FIELD</th></tr>'
+      + '<tr style="color:#777;text-align:left"><th>UK TIME</th><th>RACE</th><th>1ST</th><th>2ND</th><th>3RD</th><th>CONF</th><th>FIELD</th><th>RACECARD</th></tr>'
       + groups[c].map(p => `<tr style="border-top:1px solid #222"><td style="padding:2px 10px 2px 0">${esc(p.off_uk || '')}</td>`
         + `<td style="padding-right:10px;color:#ccc">${esc(p.track || '')} R${esc(String(p.race_number || ''))}</td>`
-        + `<td style="padding-right:10px;color:#eee">${esc(p.pick1_name || '')}${pct(p.pick1_win)}</td>`
-        + `<td style="padding-right:10px">${esc(p.pick2_name || '')}${pct(p.pick2_win)}</td>`
-        + `<td style="padding-right:10px">${esc(p.pick3_name || '')}${pct(p.pick3_win)}</td>`
+        + (p.selection_label
+          ? `<td colspan="3" style="padding-right:10px;color:#e05050;font-weight:600" title="${esc((p.identity_reasons || []).join(', '))}">${esc(p.selection_label)}</td>`
+          : `<td style="padding-right:10px;color:#eee">${esc(p.pick1_name || '')}${pct(p.pick1_win)}</td>`
+            + `<td style="padding-right:10px">${esc(p.pick2_name || '')}${pct(p.pick2_win)}</td>`
+            + `<td style="padding-right:10px">${esc(p.pick3_name || '')}${pct(p.pick3_win)}</td>`)
         + `<td style="padding-right:10px;color:${p.confidence === 'high' ? '#66bb6a' : '#999'}">${esc(p.confidence || '')}</td>`
-        + `<td>${esc(String(p.field_size || ''))}${p.scratched ? ` (-${p.scratched})` : ''}</td></tr>`).join('')
+        + `<td style="padding-right:10px">${esc(String(p.field_size || ''))}${p.scratched ? ` (-${p.scratched})` : ''}</td>`
+        + `<td>${_cardCell(p)}</td></tr>`).join('')
       + '</table>').join('') || '<div style="font-size:11px;color:#777;">No FormFav predictions stored for this date.</div>';
     panel.style.display = 'block';
   } catch (_wdErr) { panel.style.display = 'none'; }
@@ -4643,6 +4654,8 @@ function _wpRender() {
   const frac = (a, b) => `${a}/${b}`;
   document.getElementById('wp-summary').innerHTML = [
     _wdChip('RACES FROZEN', s.races || 0),
+    _wdChip('RACECARD VERIFIED', s.verified === null || s.verified === undefined ? '—' : frac(s.verified, s.races || 0), '#66bb6a'),
+    _wdChip('RACECARD MISMATCH', (s.racecard_mismatch || 0) + (s.pick_non_runner || 0) + (s.pick_not_in_field || 0), (s.racecard_mismatch || s.pick_non_runner || s.pick_not_in_field) ? '#e05050' : '#ddd'),
     _wdChip('STILL TO RUN', s.upcoming || 0, '#26c6da'),
     _wdChip('WITH A MARKET', frac(s.priced || 0, s.races || 0)),
     _wdChip('NO MARKET (PRICE-BLIND)', s.no_market || 0, '#999'),
@@ -4662,23 +4675,27 @@ function _wpRender() {
   const price = (r) => r.price_state !== 'REAL'
     ? '<span style="color:#666">NO MARKET</span>'
     : `${Number(r.pick_price).toFixed(2)}${r.pick_is_shortest_price ? ' <span style="color:#ffa726">FAV</span>' : ''}`;
+  const flagLabel = { TIED: 'TIED TOP', DUP_RANK: 'DUP RANK-1', RACECARD_MISMATCH: 'RACECARD MISMATCH', NON_RUNNER: 'PICK NON-RUNNER', NOT_IN_FIELD: 'PICK NOT IN FIELD' };
   const flags = (r) => (r.flags || []).filter(f => f !== 'NO_MARKET').map(f =>
-    `<span style="color:#ffa726">${f === 'TIED' ? 'TIED TOP' : 'DUP RANK-1'}</span>`).join(' ');
+    `<span style="color:${flagLabel[f] && f !== 'TIED' && f !== 'DUP_RANK' ? '#e05050' : '#ffa726'}">${esc(flagLabel[f] || f)}</span>`).join(' ');
   const sc = (v) => v === null || v === undefined ? '' : ` <span style="color:#666">${Number(v).toFixed(3)}</span>`;
   const head = '<tr style="color:#777;text-align:left;position:sticky;top:0;background:#111"><th>OFF</th><th>COURSE</th><th>R</th><th>VELO PICK</th>'
-    + '<th>2ND</th><th>3RD</th><th>PRICE</th><th>FLAGS</th><th>FORMFAV PICK</th><th>RESULT</th></tr>';
+    + '<th>2ND</th><th>3RD</th><th>PRICE</th><th>FLAGS</th><th>FORMFAV PICK</th><th>RACECARD</th><th>RESULT</th></tr>';
   document.getElementById('wp-races').innerHTML = rows.length
     ? '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap;">' + head
       + rows.map(r => `<tr style="border-top:1px solid #222">`
         + `<td style="padding:2px 10px 2px 0">${esc(String(r.off_label || ''))}</td>`
         + `<td style="padding-right:10px;color:#ccc">${esc(String(r.country || '').toUpperCase())} ${esc(String(r.track || ''))}</td>`
         + `<td style="padding-right:10px">${esc(String(r.race_number || ''))}</td>`
-        + `<td style="padding-right:10px;color:${r.clean ? '#26c6da' : '#7a9ba0'}">${esc(String(r.pick_name || ''))}${sc(r.pick_score)}</td>`
-        + `<td style="padding-right:10px;color:#999">${esc(String(r.second_name || ''))}</td>`
-        + `<td style="padding-right:10px;color:#999">${esc(String(r.third_name || ''))}</td>`
+        + (r.selection_label
+          ? `<td colspan="3" style="padding-right:10px;color:#e05050;font-weight:600">${esc(r.selection_label)}</td>`
+          : `<td style="padding-right:10px;color:${r.clean ? '#26c6da' : '#7a9ba0'}">${esc(String(r.pick_name || ''))}${sc(r.pick_score)}</td>`
+            + `<td style="padding-right:10px;color:#999">${esc(String(r.second_name || ''))}</td>`
+            + `<td style="padding-right:10px;color:#999">${esc(String(r.third_name || ''))}</td>`)
         + `<td style="padding-right:10px">${price(r)}</td><td style="padding-right:10px">${flags(r)}</td>`
         + `<td style="padding-right:10px;color:#42a5f5">${r.agrees_with_formfav ? '= same' : esc(String(r.formfav_pick || ''))}</td>`
-        + `<td>${_wpResult(r)}</td></tr>`).join('')
+        + `<td style="padding-right:10px">${_cardCell(r)}</td>`
+        + `<td>${r.selection_label ? '<span style="color:#777">quarantined</span>' : _wpResult(r)}</td></tr>`).join('')
       + '</table>'
     : `<div style="color:#777;font-size:11px;padding:6px 0">${all.length ? 'No races match this filter.'
       : `Nothing is frozen for ${esc(String(data.date))} yet. The World job freezes each race before the off, from 00:00 UTC.`}</div>`;

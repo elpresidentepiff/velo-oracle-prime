@@ -32,6 +32,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from src.velo.race_identity import verify_race_identity  # noqa: E402
 from src.velo.world_sigma import SIGMA_VERSION, build_event, merge_audit, settle_pick
 
 GetJson = Callable[[str], list[dict[str, Any]]]
@@ -110,6 +111,29 @@ def _fetch_results(get_json: GetJson, keys: list[str]) -> dict[str, dict[str, An
     return results
 
 
+def _fetch_identity_evidence(
+    get_json: GetJson, keys: list[str]
+) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, Any]]]]:
+    """The stored race clock, racecard header and field for each race key (#189)."""
+    races: dict[str, dict[str, Any]] = {}
+    runners: dict[str, list[dict[str, Any]]] = {}
+    for chunk in _chunks(keys, IN_CHUNK):
+        in_list = "in.(" + ",".join(f'"{k}"' for k in chunk) + ")"
+        qs = urllib.parse.urlencode({
+            "provider_race_key": in_list,
+            "select": "provider_race_key,race_date,race_number,start_time,timezone,metadata,form_meta",
+        })
+        for row in get_json(f"formfav_races?{qs}"):
+            races[row["provider_race_key"]] = row
+        qs = urllib.parse.urlencode({
+            "provider_race_key": in_list,
+            "select": "provider_race_key,runner_number,horse_name,scratched,updated_at",
+        })
+        for row in get_json(f"formfav_runner_form?{qs}"):
+            runners.setdefault(row["provider_race_key"], []).append(row)
+    return races, runners
+
+
 def _fetch_existing(get_json: GetJson, race_date: str) -> dict[str, dict[str, Any]]:
     qs = urllib.parse.urlencode({"race_date": f"eq.{race_date}", "select": "*", "limit": 5000})
     return {r["sigma_key"]: r for r in get_json(f"world_sigma_audits?{qs}")}
@@ -137,11 +161,16 @@ def settle_dates(
             for row in scorecards:
                 groups.setdefault((row["provider_race_key"], row["model_name"]), []).append(row)
             results = _fetch_results(get_json, sorted({k for k, _ in groups}))
+            race_rows, runner_rows = _fetch_identity_evidence(get_json, sorted({k for k, _ in groups}))
             existing = _fetch_existing(get_json, race_date)
             for (race_key, _model), rows in groups.items():
                 result = results.get(race_key)
                 off = datetime.fromisoformat(str(rows[0]["scheduled_off"]).replace("Z", "+00:00"))
-                audit = settle_pick(rows, result, computed_at=now)
+                race_row = race_rows.get(race_key) or {"provider_race_key": race_key}
+                identity = verify_race_identity(
+                    race_row, runner_rows.get(race_key) or [], now=now, require_fresh_racecard=False,
+                )
+                audit = settle_pick(rows, result, computed_at=now, identity=identity)
                 if audit is None:
                     continue
                 if audit["basis"] == "no_result" and now < off + NO_RESULT_AFTER:

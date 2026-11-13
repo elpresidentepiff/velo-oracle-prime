@@ -143,8 +143,18 @@ def test_settle_skips_races_not_yet_off() -> None:
 def test_run_day_dry_run_writes_nothing() -> None:
     import json
 
+    verified = {
+        **RACE,
+        "timezone": "America/New_York",
+        "metadata": {"raceNumber": 1, "startTime": "2026-10-13T18:00:00Z"},
+        "form_meta": {"raceNumber": 1, "startTime": "2026-10-13T18:00:00Z", "date": "2026-10-13"},
+    }
     store = {
-        "formfav_races": [RACE],
+        "formfav_races": [verified],
+        "formfav_runner_form": [
+            {"provider_race_key": RACE["provider_race_key"], "runner_number": n, "horse_name": f"H{n}",
+             "scratched": False, "updated_at": "2026-10-13T17:30:00+00:00"} for n in (1, 2)
+        ],
         "formfav_predictions": [dict(_pred([1, 2]), provider_race_key=RACE["provider_race_key"])],
         "formfav_results": [dict(_res({1: 1, 2: 2}, False), provider_race_key=RACE["provider_race_key"])],
     }

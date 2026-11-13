@@ -41,6 +41,7 @@ Next safe action: <one concrete step that needs no re-investigation>
 | H-1 | Railway service `hermes-agent` (`71327cad`) fails to build on every push to `main` (checked back to 09:08 UTC today, before any of this work) | `list-deployments status=FAILED`; the 2 Nov audit already listed it failed/stopped, "retired-path residue" | Open, not caused by recent work. Disconnect it from `main` or delete it, so a red service stops hiding real failures |
 | L-1 | World run ledger showed `rows_inserted = null` instead of 0 when every row was a first-wins duplicate | `world_pipeline_runs` 16:04 UTC run | Fixed with a test (this commit); rows written before the fix keep `null` |
 | O-1 | Branch law breached: many long-lived branches, several 20–42 commits ahead of `main` | `git rev-list --count origin/main..<branch>` | **Backed up, nothing deleted.** Laptop-only work is now on origin as tags (secret-pattern scan: 0 hits): `archive/ops-monday-repair-20261012` (20 commits), `archive/ops-formfav-raceday-20261012` (17), `archive/fix-rp-session-alerting-and-venue-allowlist`, `archive/fix-railway-cloud-eod`, `archive/local-main-2026-11-05`. Next: decide per branch, then delete. Inventory: `PLATFORM_CONTROL_REGISTER.md` |
+| W-6 | US overnight race-date collision (#189): races keyed by the UTC meetings date while every racecard/prediction/result call is answered by the race's LOCAL date, so for each race off after 00:00 UTC (and early AU) the stored clock belonged to one race and the field to the next racing day's race with the same number. Remington R4 "13 Nov 01:54" showed the 14 Nov field (Stone Cold Lover / Woman's Intuition) | `formfav_races` 2026-11-05..14: 186 races with card vs meeting off 23-24 h apart (US 133, AU 4 at -20 h); 12/13 Nov: 24 + 16 US races, 32 published World picks | **Fixed on branch `fix/us-racecard-integrity-189`, not deployed.** `src/velo/race_identity.py` + local-date keying in worker/adapter, dashboard block, Sigma/EOD quarantine. Needs migration `20261113020000` before the FormFav worker deploy |
 
 ## Runtime facts that live nowhere else
 
@@ -55,6 +56,24 @@ Next safe action: <one concrete step that needs no re-investigation>
 - Project Python with pytest: `/mnt/c/Users/puror/velo-oracle-prime/venv/bin/python`.
 
 ## Entries
+
+### 2026-11-13 (early) — Claude Code — #189 US racecard integrity: one canonical race identity, wrong-race picks blocked
+Why:              Operator: Remington Park R4 (01:54 GMT, US racing date 12 Nov) showed FormFav Stone Cold Lover and World VÉLØ Woman's Intuition; neither ran.
+Cause:            `formfav_live_worker` queries meetings by UTC date and keyed each race with that date, but called /form, /predictions, /prices and
+                  /results with `date=<that UTC date>` + the race's own timezone, which FormFav answers by LOCAL racing date. Key
+                  `formfav:us:2026-11-13:remington_park:r4`: metadata = 12 Nov card (off 13 Nov 01:54Z), form_meta + runners = 13 Nov card (off 14 Nov 01:54Z).
+                  The wrong off also moved the price and result polling windows by a day (results for 12 Nov R4 were polled 23 h before the race: `pending`).
+Changed:          branch `fix/us-racecard-integrity-189`. New `src/velo/race_identity.py` (local racing date, canonical key, verify_race_identity,
+                  verify_selection). Worker keys + queries by local date and refuses to store a card that contradicts the race clock. World adapter does
+                  the same and the hourly shadow scans racing dates D-1..D+1 filtered to UTC date D (same race universe as before). Freeze skips
+                  unverified races and writes the local race_date + runner number. /api/world-picks and /api/world-day show
+                  "RACECARD MISMATCH — NO VERIFIED SELECTION" (fail closed if evidence cannot be read), plus racecard status, non-runners and card
+                  timestamp; originals kept under audit_original_picks. World Sigma and FormFav EOD quarantine as `identity_blocked`.
+                  Prediction models untouched.
+Evidence:         tests/test_race_identity.py (Remington regression, midnight crossing, 13/14 collision, AU, duplicates, scratchings),
+                  tests/test_racecard_integrity_pipeline.py; full suite failure set identical before/after (pre-existing env failures only).
+Open / broken:    W-6 not deployed. Legacy rows stay contradictory and are blocked by the verifier until the fixed worker rewrites in-window races.
+Next safe action: apply migration 20261113020000, deploy dashboard + `velo-formfav-us-shadow` + FormFav worker, then check /api/world-picks for 2026-11-12.
 
 ### 2026-11-12 23:00 UTC — Claude Code (Opus 5.5) — Why the UK learning gate is BLOCKED every night, and the fix
 Read:             `velo_mission_control` 2026-11-09, 11-11, 11-12: source RP_MERGED_CLEAN, flatline 0, identity 0, Council PASS_TO_LEARNING,
