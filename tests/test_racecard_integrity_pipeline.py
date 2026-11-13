@@ -262,3 +262,25 @@ def test_formfav_worker_image_ships_the_identity_module_and_zone_data() -> None:
     docker = (Path(__file__).resolve().parents[1] / "Dockerfile.formfav").read_text(encoding="utf-8")
     assert "COPY src/velo/race_identity.py src/velo/race_identity.py" in docker
     assert "tzdata" in docker
+
+
+def test_worker_rereads_the_racecard_close_to_the_off(monkeypatch) -> None:
+    monkeypatch.setattr(worker, "FORM_REFRESH_SECONDS", 21600)
+    assert worker._form_refresh_seconds(600) == 21600
+    # inside the pre-off window the card is re-read well within RACECARD_MAX_AGE (3h)
+    assert worker._form_refresh_seconds(worker.PREOFF_FORM_WINDOW_MIN) <= 1800
+    assert worker._form_refresh_seconds(10) <= 1800
+
+
+def test_worker_restart_does_not_leave_every_racecard_due_at_once(monkeypatch) -> None:
+    monkeypatch.setattr(worker, "FORM_REFRESH_SECONDS", 21600)
+    worker._last_form.clear()
+    keys = [f"formfav:gb:2026-11-13:southwell:r{n}" for n in range(1, 8)]
+    for k in keys:
+        worker._mark_form_fetched(k)
+    marks = [worker._last_form[k] for k in keys]
+    assert max(marks) - min(marks) > 1800  # next refreshes spread over hours, not one moment
+    assert all(worker.time.time() - m <= 21600 / 2 + 1 for m in marks)
+    # after the first read a race keeps the plain interval
+    worker._mark_form_fetched(keys[0])
+    assert worker.time.time() - worker._last_form[keys[0]] < 1

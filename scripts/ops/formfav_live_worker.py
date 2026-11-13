@@ -21,6 +21,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import zlib
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -31,6 +32,11 @@ from src.velo.race_identity import VERIFIED, canonical_race_key, local_race_date
 POLL_SECONDS = max(20, int(os.getenv("FORMFAV_WORKER_TICK_SECONDS", "30")))
 MEETINGS_REFRESH_SECONDS = max(120, int(os.getenv("FORMFAV_MEETINGS_REFRESH_SECONDS", "600")))
 FORM_REFRESH_SECONDS = max(300, int(os.getenv("FORMFAV_FORM_REFRESH_SECONDS", "1800")))
+# Close to the off the racecard is re-read more often, whatever FORM_REFRESH_SECONDS is, so
+# scratchings are current and the card is never older than race_identity.RACECARD_MAX_AGE (3h)
+# when the race is shown, frozen or settled.
+PREOFF_FORM_WINDOW_MIN = max(30, int(os.getenv("FORMFAV_PREOFF_FORM_WINDOW_MIN", "150")))
+PREOFF_FORM_REFRESH_SECONDS = max(300, int(os.getenv("FORMFAV_PREOFF_FORM_REFRESH_SECONDS", "1800")))
 RESULT_REFRESH_SECONDS = max(30, int(os.getenv("FORMFAV_RESULT_REFRESH_SECONDS", "60")))
 # Results stuck at "pending"/"interim" used to be re-fetched every 60s for the
 # whole lookback window, which was most of the call volume. Poll them slower;
@@ -189,6 +195,24 @@ def _refresh_meetings(client: FormFavClient, now: datetime) -> None:
                 break
     _meeting_cache = fresh
     _last_meetings_fetch = time.time()
+
+
+def _form_refresh_seconds(minutes_to_off: float) -> int:
+    if minutes_to_off <= PREOFF_FORM_WINDOW_MIN:
+        return min(FORM_REFRESH_SECONDS, PREOFF_FORM_REFRESH_SECONDS)
+    return FORM_REFRESH_SECONDS
+
+
+def _mark_form_fetched(race_key: str) -> None:
+    """Record a racecard read. The first read of a race after a (re)start is back-dated by a
+    per-race fraction of the refresh interval, so a restart does not leave every card due at the
+    same moment and the newest stored card stale for hours (readiness gate, 13 Nov 2026)."""
+    now = time.time()
+    if race_key in _last_form:
+        _last_form[race_key] = now
+        return
+    spread = (zlib.crc32(race_key.encode()) % 1000) / 1000.0
+    _last_form[race_key] = now - spread * FORM_REFRESH_SECONDS / 2
 
 
 def _price_interval_seconds(minutes_to_off: float) -> int | None:
@@ -366,7 +390,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
     # Form is comparatively static; refresh periodically for scratchings,
     # track-condition changes and richer Pro analytics.
     last_form = _last_form.get(race_key, 0.0)
-    if time.time() - last_form >= FORM_REFRESH_SECONDS and mins_to_off > -30:
+    if time.time() - last_form >= _form_refresh_seconds(mins_to_off) and mins_to_off > -30:
         try:
             form = client.race_form(
                 date=racing_date,
@@ -382,7 +406,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
             identity = verify_race_identity(race_row, form.get("runners"), now=now, require_fresh_racecard=False)
             if identity["status"] != VERIFIED:
                 # Never store a racecard under a key whose clock it contradicts.
-                _last_form[race_key] = time.time()
+                _mark_form_fetched(race_key)
                 print(
                     f"[FORMFAV-LIVE] RACECARD_MISMATCH {race_key}: {','.join(identity['reasons'])} "
                     f"meeting_off={start.isoformat()} card_off={form.get('startTime')}; form not stored",
@@ -397,7 +421,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                 off_time_utc=start,
             )
             frozen = persist_capture_rows(capture_rows, request=_sb_request)
-            _last_form[race_key] = time.time()
+            _mark_form_fetched(race_key)
             print(
                 f"[FORMFAV-LIVE] form OK {country}:{track} R{race_no} "
                 f"immutable_factual={len(frozen)}",
