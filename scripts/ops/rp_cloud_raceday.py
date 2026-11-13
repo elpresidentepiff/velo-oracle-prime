@@ -29,9 +29,27 @@ PROFILE = ROOT / "data" / "browser_profiles" / "racing_post_account"
 RAW = ROOT / "data" / "racing_post_account_raw"
 
 
-def _run(label: str, command: list[str], env: dict[str, str] | None = None) -> None:
+_DEFAULT_STEP_TIMEOUT_SECONDS = 900  # 15 min: generous for a full RP capture pass, finite so a stale
+# session or network stall fails loud instead of hanging a cron container forever (incident 2026-11-13:
+# two manual runs sat at run_state='running' for 20+ min each with ~0% CPU, no error, no verdicts).
+
+
+def _run(label: str, command: list[str], env: dict[str, str] | None = None, timeout: float | None = None) -> None:
     print(f"\n[CLOUD-RP] {label}: {' '.join(command)}", flush=True)
-    result = subprocess.run(command, cwd=ROOT, check=False, env={**os.environ, **env} if env else None)
+    try:
+        result = subprocess.run(
+            command,
+            cwd=ROOT,
+            check=False,
+            env={**os.environ, **env} if env else None,
+            timeout=timeout or _DEFAULT_STEP_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(
+            f"{label} exceeded {exc.timeout:.0f}s and was killed — likely a stale RP session or "
+            f"network stall inside the step; re-authenticate the Railway browser profile if this "
+            f"recurs"
+        ) from exc
     if result.returncode:
         raise RuntimeError(f"{label} failed with exit code {result.returncode}")
 
