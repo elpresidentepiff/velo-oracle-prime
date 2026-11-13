@@ -57,10 +57,15 @@ def _recent_dates(date_str: str, days: int) -> list[str]:
     return [(day - timedelta(days=i)).isoformat() for i in range(days)]
 
 
+def _racing_dates(date_str: str) -> list[str]:
+    day = datetime.fromisoformat(date_str).date()
+    return [(day + timedelta(days=d)).isoformat() for d in (-1, 0, 1)]
+
+
 def _new_stat() -> dict:
     return {
         "seen": 0, "scored": 0, "deferred": 0, "skipped_post_off": 0, "runners_scored": 0,
-        "unscorable": 0, "tied_top_races": 0, "freeze_states": Counter(), "deferred_keys": [],
+        "unscorable": 0, "tied_top_races": 0, "identity_blocked": 0, "freeze_states": Counter(), "deferred_keys": [],
     }
 
 
@@ -81,17 +86,39 @@ def main() -> int:
     countries = {c.strip().lower() for c in args.countries.split(",") if c.strip()}
     tracks = {t.strip() for t in args.tracks.split(",") if t.strip()}
 
-    raw_races, fetch_report = fetch_formfav_racecards(
-        date_str=date_str,
-        countries=countries,
-        timezone=args.timezone,
-        include_prices=not args.no_prices,
-        tracks=tracks or None,
-        client=CachedFormFavClient(live=None, max_age_hours=36),
-    )
+    # Races are stored under their LOCAL racing date (#189). The races that go off on this UTC
+    # date carry the racing dates either side of it (an evening US card is the previous racing
+    # day; an early Australian card the next one), so scan all three and keep only races whose
+    # off falls on this UTC date: the same universe as before, now correctly identified.
+    client = CachedFormFavClient(live=None, max_age_hours=36)
+    raw_races: list[dict] = []
+    fetch_report: dict = {"date": date_str, "racing_dates": {}, "errors": [], "error_detail": [],
+                          "identity_blocked": []}
+    for racing_date in _racing_dates(date_str):
+        try:
+            races_d, report_d = fetch_formfav_racecards(
+                date_str=racing_date,
+                countries=countries,
+                timezone=args.timezone,
+                include_prices=not args.no_prices,
+                tracks=tracks or None,
+                client=client,
+                utc_date=date_str,
+            )
+        except Exception as exc:  # noqa: BLE001 - a missing neighbouring date must not stop the run
+            fetch_report["errors"].append(f"meetings {racing_date}: {type(exc).__name__}: {exc}")
+            continue
+        raw_races += races_d
+        fetch_report["racing_dates"][racing_date] = {
+            k: report_d.get(k) for k in ("meetings_seen", "meetings_in_scope", "races_loaded", "runners_loaded")
+        }
+        for k in ("errors", "error_detail", "identity_blocked"):
+            fetch_report[k] += report_d.get(k) or []
 
     generated_at = datetime.now(UTC)
     by_country: dict[str, dict] = {}
+    for blocked in fetch_report["identity_blocked"]:
+        by_country.setdefault(str(blocked.get("country") or "").lower(), _new_stat())["identity_blocked"] += 1
 
     # Pass 1: which cards are still pre-off, and how many runners already have a dated price.
     candidates = []
@@ -100,6 +127,9 @@ def main() -> int:
         cc = str(raw.get("country") or "").lower()
         stat = by_country.setdefault(cc, _new_stat())
         stat["seen"] += 1
+        if ((raw.get("_formfav") or {}).get("race_identity") or {}).get("status") != "VERIFIED":
+            stat["identity_blocked"] += 1
+            continue
         scheduled_off = (raw.get("_formfav") or {}).get("startTime")
         try:
             off_dt = datetime.fromisoformat(str(scheduled_off).replace("Z", "+00:00"))
@@ -145,6 +175,9 @@ def main() -> int:
         # Keep this report compact but preserve the signals we need to study.
         scorecard = []
         real_price: dict[str, float] = {}
+        numbers = {
+            _name_key(r.get("horse")): (r.get("_formfav") or {}).get("number") for r in raw.get("runners") or []
+        }
         for rank, p in enumerate(preds, start=1):
             name = p.get("horse") or p.get("horse_name")
             price, price_at = usable_price(markets.get(_name_key(name)), off_dt, generated_at)
@@ -154,6 +187,7 @@ def main() -> int:
                 "rank": rank,
                 "horse": name,
                 "horse_id": p.get("horse_id"),
+                "runner_number": numbers.get(_name_key(name)),
                 "velo_prime_prob": p.get("velo_prime_prob"),
                 "place_prob": p.get("place_prob"),
                 "longshot_prob": p.get("longshot_prob"),
@@ -174,6 +208,8 @@ def main() -> int:
         races_out.append({
             "race_id": race.get("race_id"),
             "provider_race_key": meta.get("provider_race_key"),
+            "race_date": meta.get("race_date"),
+            "race_identity": meta.get("race_identity"),
             "race_number": meta.get("raceNumber"),
             "scheduled_off": scheduled_off,
             "course": race.get("course"),
@@ -220,6 +256,7 @@ def main() -> int:
         "fetch_report": fetch_report,
         "race_count": len(races_out),
         "races_skipped_post_off": sum(s["skipped_post_off"] for s in by_country.values()),
+        "races_identity_blocked": fetch_report.get("identity_blocked") or [],
         "races_deferred": deferred,
         "by_country": by_country,
         "races": races_out,
@@ -234,6 +271,7 @@ def main() -> int:
         "countries": sorted(countries),
         "races": len(races_out),
         "deferred": len(deferred),
+        "identity_blocked": len(fetch_report.get("identity_blocked") or []),
         "output": str(out.relative_to(ROOT)),
         "fetch_errors": len(fetch_report.get("errors") or []),
     }, indent=2))

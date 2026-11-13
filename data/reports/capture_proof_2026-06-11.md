@@ -1,7 +1,7 @@
 # VÉLØ Capture Proof Report — 2026-06-11
 - **Source:** rp
 - **Status:** PASS
-- **Time:** 2026-06-13T04:24:31.348791Z to 2026-06-13T04:24:31.348848Z
+- **Time:** 2026-11-13T01:59:43.494263Z to 2026-11-13T01:59:43.494327Z
 - **Redaction Applied:** False
 
 ## Summary

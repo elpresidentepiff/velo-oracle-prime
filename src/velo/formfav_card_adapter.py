@@ -13,6 +13,13 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from src.velo.formfav_client import FormFavClient, FormFavError, best_live_prices
+from src.velo.race_identity import (
+    VERIFIED,
+    canonical_race_key,
+    local_race_date,
+    parse_utc,
+    verify_race_identity,
+)
 
 PROVIDER_OPINION_FIELDS = frozenset({
     "modelRank", "winProb", "placeProb", "fairOdds", "edge", "confidence",
@@ -30,8 +37,8 @@ def _stable_horse_id(country: str, name: str) -> str:
 
 
 def _provider_race_key(date_str: str, country: str, slug: str, race_no: int) -> str:
-    safe_slug = re.sub(r"[^a-z0-9]+", "_", str(slug).lower()).strip("_")
-    return f"formfav:{country}:{date_str}:{safe_slug}:r{race_no}"
+    """``date_str`` is the race's LOCAL racing date (src/velo/race_identity.py)."""
+    return canonical_race_key(country, date_str, slug, race_no)
 
 
 def _kg_to_lbs(v: Any) -> int | None:
@@ -60,7 +67,15 @@ def fetch_formfav_racecards(
     include_prices: bool = True,
     tracks: set[str] | None = None,
     client: Any | None = None,
+    utc_date: str | None = None,
 ) -> tuple[list[dict[str,Any]], dict[str,Any]]:
+    """Load one meetings date's cards. Every race is identified by its LOCAL racing date and
+    must pass ``verify_race_identity`` (meeting clock == racecard clock == key date) or it is
+    reported under ``identity_blocked`` and never returned (#189).
+
+    ``utc_date`` keeps only races whose scheduled off falls on that UTC calendar date, so a
+    caller can scan neighbouring racing dates without picking up the same race twice.
+    """
     client=client or FormFavClient()
     countries={c.lower() for c in countries}
     track_filter={_norm(t) for t in (tracks or set())}
@@ -77,6 +92,7 @@ def fetch_formfav_racecards(
         "price_calls_forbidden":0,
         "errors":[],
         "error_detail":[],
+        "identity_blocked":[],
     }
 
     def _fail(kind: str, track: str, race_no: Any, country: str, message: str) -> None:
@@ -104,21 +120,49 @@ def fetch_formfav_racecards(
             race_no=mrace.get("raceNumber")
             if race_no is None:
                 continue
+            meeting_off=parse_utc(mrace.get("startTime"))
+            if utc_date and (meeting_off is None or meeting_off.date().isoformat()!=utc_date):
+                continue
+            race_tz=mrace.get("timezone") or meeting.get("timezone")
+            racing_date=local_race_date(meeting_off, race_tz)
+            if racing_date is None:
+                _fail("identity", track, race_no, country, "RACECARD_MISMATCH: MISSING_START_TIME/TIMEZONE")
+                report["identity_blocked"].append({
+                    "country":country,"track":track,"race":race_no,"reasons":["MISSING_START_TIME_OR_TIMEZONE"],
+                })
+                continue
             try:
                 form=client.race_form(
-                    date=date_str,track=slug,race=int(race_no),country=country,
-                    timezone=mrace.get("timezone") or timezone,
+                    date=racing_date,track=slug,race=int(race_no),country=country,
+                    timezone=race_tz,
                 )
             except Exception as exc:
                 _fail("form", track, race_no, country, f"{type(exc).__name__}: {exc}")
+                continue
+            race_key=_provider_race_key(racing_date,country,slug,int(race_no))
+            identity=verify_race_identity(
+                {
+                    "provider_race_key":race_key,"race_date":racing_date,"race_number":int(race_no),
+                    "start_time":mrace.get("startTime"),"timezone":race_tz,"metadata":mrace,
+                    "form_meta":{k:v for k,v in form.items() if k not in ("runners","_provenance","_source")},
+                },
+                form.get("runners"),
+                require_fresh_racecard=False,
+            )
+            if identity["status"]!=VERIFIED:
+                _fail("identity", track, race_no, country, "RACECARD_MISMATCH: "+",".join(identity["reasons"]))
+                report["identity_blocked"].append({
+                    "provider_race_key":race_key,"country":country,"track":track,"race":race_no,
+                    "reasons":identity["reasons"],"meeting_off":mrace.get("startTime"),"card_off":form.get("startTime"),
+                })
                 continue
 
             prices={}
             if include_prices:
                 try:
                     prices=client.prices(
-                        date=date_str,track=slug,race=int(race_no),country=country,
-                        timezone=mrace.get("timezone") or timezone,
+                        date=racing_date,track=slug,race=int(race_no),country=country,
+                        timezone=race_tz,
                     )
                     report["price_calls_ok"]+=1
                 except FormFavError as exc:
@@ -180,12 +224,12 @@ def fetch_formfav_racecards(
 
             start=form.get("startTime") or mrace.get("startTime")
             tz=form.get("timezone") or mrace.get("timezone") or timezone
-            race_id=f"ff_{country}_{_norm(slug)}_{date_str.replace('-','')}_r{int(race_no)}"
+            race_id=f"ff_{country}_{_norm(slug)}_{racing_date.replace('-','')}_r{int(race_no)}"
             races.append({
                 "race_id":race_id,
                 "course":form.get("track") or track,
                 "course_id":f"ff_{country}_{_norm(slug)}",
-                "date":date_str,
+                "date":racing_date,
                 "off_time":_local_off(start,tz),
                 "race_name":form.get("raceName") or mrace.get("raceName") or f"Race {race_no}",
                 "distance":form.get("distance") or mrace.get("distance"),
@@ -201,7 +245,17 @@ def fetch_formfav_racecards(
                     "source":"formfav",
                     "data_only":True,
                     "provider_predictions_consumed":False,
-                    "provider_race_key":_provider_race_key(date_str,country,slug,int(race_no)),
+                    "provider_race_key":race_key,
+                    "race_date":racing_date,
+                    "race_identity":{
+                        "status":identity["status"],
+                        "warnings":identity["warnings"],
+                        "local_race_date":identity["local_race_date"],
+                        "start_time_utc":identity["start_time_utc"],
+                        "timezone":identity["timezone"],
+                        "runner_numbers":[r["number"] for r in identity["active_runners"]],
+                        "non_runners":identity["non_runners"],
+                    },
                     "country":country,
                     "slug":slug,
                     "raceNumber":race_no,

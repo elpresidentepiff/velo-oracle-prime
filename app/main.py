@@ -2054,6 +2054,37 @@ def _sb_rest_rows(path: str, timeout: int = 8) -> list[dict] | None:
         return None
 
 
+def _sb_rest_all(path: str, page: int = 1000, max_pages: int = 20) -> list[dict] | None:
+    """Paged read: PostgREST caps a response at 1000 rows, and a truncated runner list would
+    look like a missing field. None if any page fails, so callers fail closed."""
+    out: list[dict] = []
+    for i in range(max_pages):
+        rows = _sb_rest_rows(f"{path}&limit={page}&offset={i * page}")
+        if rows is None:
+            return None
+        out += rows
+        if len(rows) < page:
+            return out
+    return None  # more than max_pages: do not pretend the list is complete
+
+
+def _race_identities(d: str):
+    """#189: verify every stored FormFav race of racing date ``d`` (clock, card, field, scratchings)."""
+    from app.world_dashboard import build_identities
+
+    races = _sb_rest_all(
+        f"formfav_races?race_date=eq.{d}"
+        "&select=provider_race_key,race_date,country,track,race_number,start_time,timezone,metadata,form_meta"
+        "&order=provider_race_key.asc"
+    )
+    runners = _sb_rest_all(
+        f"formfav_runner_form?provider_race_key=like.*%3A{d}%3A*"
+        "&select=provider_race_key,runner_number,horse_name,scratched,updated_at"
+        "&order=provider_race_key.asc,runner_number.asc"
+    )
+    return build_identities(races, runners)
+
+
 @app.get("/api/world-day")
 async def world_day(date: str = Query(default=None)):
     """End-of-day checklist and FormFav's own picks for the whole world.
@@ -2063,7 +2094,7 @@ async def world_day(date: str = Query(default=None)):
     """
     import datetime as _dt
 
-    from app.world_dashboard import SHADOW_BOUNDARY, valid_date
+    from app.world_dashboard import SHADOW_BOUNDARY, certify_formfav_picks, valid_date
 
     d = date or _dt.date.today().isoformat()
     if not valid_date(d):
@@ -2071,12 +2102,15 @@ async def world_day(date: str = Query(default=None)):
     status = _sb_rest_rows(f"world_day_status?day=eq.{d}&limit=1")
     daily = _sb_rest_rows(f"formfav_sigma_daily?race_date=eq.{d}&order=country.asc,basis.asc")
     picks = _sb_rest_rows(f"formfav_race_picks?race_date=eq.{d}&order=start_time.asc&limit=1000")
+    certified = certify_formfav_picks(picks or [], _race_identities(d))
     return {
         "date": d,
+        "date_basis": "LOCAL_RACING_DATE",
         "available": status is not None,
         "status": (status or [None])[0],
         "by_country": daily or [],
-        "formfav_picks": picks or [],
+        "formfav_picks": certified,
+        "formfav_picks_blocked": sum(1 for p in certified if p.get("selection_label")),
         "picks_label": "FormFav's own model. Not a VELO selection.",
         **SHADOW_BOUNDARY,
     }
@@ -2121,11 +2155,12 @@ async def world_velo_picks(date: str = Query(default=None)):
     )
     formfav = _sb_rest_rows(
         f"formfav_race_picks?race_date=eq.{d}"
-        "&select=country,track,race_number,off_uk,pick1_name,pick1_win,confidence&limit=1000"
+        "&select=country,track,race_number,off_uk,pick1_name,pick1_number,pick1_win,confidence,captured_at&limit=1000"
     )
-    shaped = world_picks(rows or [], formfav or [])
+    shaped = world_picks(rows or [], formfav or [], identities=_race_identities(d))
     return {
         "date": d,
+        "date_basis": "LOCAL_RACING_DATE",
         "available": rows is not None,
         "model": "existing_velo_prime_stack",
         "picks_label": "VELO's frozen pre-off World pick. Shadow only, not a tip, nothing staked.",
