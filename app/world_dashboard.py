@@ -9,6 +9,16 @@ from __future__ import annotations
 import re
 from datetime import UTC, datetime
 from typing import Any
+from zoneinfo import ZoneInfo
+
+from src.velo.race_identity import (
+    BLOCKED_LABEL,
+    VERIFIED,
+    parse_race_key,
+    slugify,
+    verify_race_identity,
+    verify_selection,
+)
 
 SHADOW_BOUNDARY = {
     "shadow_only": True,
@@ -257,10 +267,113 @@ def _outcome(row: dict[str, Any]) -> str:
     return "PLACED" if row.get("framed") else "LOST"
 
 
+# --- #189: no selection is shown for a race that is not proved to be one race -----------------
+EVIDENCE_UNAVAILABLE = {"status": "RACECARD_MISMATCH", "reasons": ["IDENTITY_EVIDENCE_UNAVAILABLE"],
+                        "warnings": [], "active_runners": [], "non_runners": [], "label": BLOCKED_LABEL}
+
+
+def build_identities(
+    race_rows: list[dict[str, Any]] | None,
+    runner_rows: list[dict[str, Any]] | None,
+    now: datetime | None = None,
+) -> dict[str, dict[str, Any]] | None:
+    """``verify_race_identity`` for every stored race of a day. None when the evidence could not be
+    read at all, which callers must treat as blocked, never as verified."""
+    if race_rows is None or runner_rows is None:
+        return None
+    now = now or datetime.now(UTC)
+    by_key: dict[str, list[dict[str, Any]]] = {}
+    for row in runner_rows:
+        by_key.setdefault(str(row.get("provider_race_key")), []).append(row)
+    out: dict[str, dict[str, Any]] = {}
+    for race in race_rows:
+        key = str(race.get("provider_race_key"))
+        ident = verify_race_identity(race, by_key.get(key, []), now=now)
+        parsed = parse_race_key(key) or {}
+        ident["country"] = str(race.get("country") or parsed.get("country") or "").lower()
+        # formfav_race_picks has no race key: it is matched on (country, track, race number), and the
+        # key slug is the stable spelling of the track when the display name is absent.
+        ident["track_slug"] = slugify(race.get("track")) if race.get("track") else parsed.get("slug")
+        out[key] = ident
+    return out
+
+
+def identity_for(identities: dict[str, dict[str, Any]] | None, key: Any) -> dict[str, Any]:
+    if identities is None:
+        return EVIDENCE_UNAVAILABLE
+    return identities.get(str(key)) or {**EVIDENCE_UNAVAILABLE, "reasons": ["RACE_NOT_IN_RACECARD_STORE"]}
+
+
+def _off_uk(value: Any) -> str:
+    off = _when(value)
+    return off.astimezone(ZoneInfo("Europe/London")).strftime("%H:%M") if off else ""
+
+
+def _identity_view(ident: dict[str, Any]) -> dict[str, Any]:
+    """What the dashboard shows about a race's verification, scratchings and source timestamps."""
+    return {
+        "identity_status": ident.get("status"),
+        "identity_reasons": ident.get("reasons") or [],
+        "identity_warnings": ident.get("warnings") or [],
+        "local_race_date": ident.get("local_race_date"),
+        "off_utc": ident.get("start_time_utc"),
+        "racecard_checked_at": ident.get("racecard_checked_at"),
+        "verified_field_size": len(ident.get("active_runners") or []) if ident.get("status") == VERIFIED else None,
+        "non_runners": [r.get("name") for r in ident.get("non_runners") or []],
+    }
+
+
+def certify_formfav_picks(
+    picks: list[dict[str, Any]],
+    identities: dict[str, dict[str, Any]] | None,
+) -> list[dict[str, Any]]:
+    """FormFav's own picks with every one that is not in a verified field replaced by the block label.
+
+    ``formfav_race_picks`` has no race key, so the race is found by (country, track, race number)
+    inside the same racing date. The original names stay under ``audit_original_picks``.
+    """
+    by_race: dict[tuple, dict[str, Any]] = {}
+    for i in (identities or {}).values():
+        race_key = (i.get("country"), i.get("track_slug"), i.get("race_number"))
+        # Two stored races answering to one (country, track, number) on one date is itself a collision.
+        by_race[race_key] = EVIDENCE_UNAVAILABLE | {"reasons": ["DUPLICATE_RACE_FOR_TRACK_AND_NUMBER"]} \
+            if race_key in by_race else i
+    out = []
+    for p in picks:
+        if identities is None:
+            ident = EVIDENCE_UNAVAILABLE
+        else:
+            ident = by_race.get(
+                (str(p.get("country") or "").lower(), slugify(p.get("track")), _int(p.get("race_number")))
+            ) or {**EVIDENCE_UNAVAILABLE, "reasons": ["RACE_NOT_IN_RACECARD_STORE"]}
+        shown = dict(p)
+        audit = {}
+        status = None
+        for slot in ("pick1", "pick2", "pick3"):
+            check = verify_selection(ident, p.get(f"{slot}_name"), p.get(f"{slot}_number"))
+            audit[slot] = p.get(f"{slot}_name")
+            if check["status"] not in (VERIFIED, "NO_PICK"):
+                shown[f"{slot}_name"] = None
+                shown[f"{slot}_win"] = None
+            if slot == "pick1":
+                status = check["status"]
+        if ident.get("status") != VERIFIED:
+            status = "RACECARD_MISMATCH"
+        shown.update(_identity_view(ident))
+        shown["selection_status"] = status
+        shown["selection_label"] = BLOCKED_LABEL if status not in (VERIFIED, "NO_PICK") else None
+        shown["audit_original_picks"] = audit
+        if ident.get("start_time_utc"):
+            shown["off_uk"] = _off_uk(ident.get("start_time_utc"))
+        out.append(shown)
+    return out
+
+
 def world_picks(
     rows: list[dict[str, Any]],
     formfav: list[dict[str, Any]],
     now: datetime | None = None,
+    identities: dict[str, dict[str, Any]] | None | bool = False,
 ) -> dict[str, Any]:
     """VELO's frozen World pick per race, with how much of a read each one is.
 
@@ -270,13 +383,19 @@ def world_picks(
     favourite's. Nothing here feeds Prime and nothing is staked.
     """
     now = now or datetime.now(UTC)
+    # identities=False keeps the pre-#189 behaviour for callers that have not been moved yet;
+    # None means the evidence could not be read, so every pick is blocked.
+    certify = identities is not False
     ff_by_race = {
         (str(f.get("country") or "").lower(), str(f.get("track") or "").lower(), _int(f.get("race_number"))): f
         for f in formfav
     }
     races: list[dict[str, Any]] = []
     for r in rows:
-        off = _when(r.get("start_time"))
+        ident = identity_for(identities, r.get("provider_race_key")) if certify else None
+        if ident is not None:
+            velo_check = verify_selection(ident, r.get("pick_name"))
+        off = _when((ident or {}).get("start_time_utc") or r.get("start_time"))
         ff = (
             ff_by_race.get(
                 (str(r.get("country") or "").lower(), str(r.get("track") or "").lower(), _int(r.get("race_number")))
@@ -291,10 +410,31 @@ def world_picks(
         if r.get("price_state") != "REAL":
             flags.append("NO_MARKET")
         ff_pick = ff.get("pick1_name")
+        extra: dict[str, Any] = {}
+        if ident is not None:
+            ff_check = verify_selection(ident, ff_pick, ff.get("pick1_number"))
+            extra = {
+                **_identity_view(ident),
+                "selection_status": velo_check["status"],
+                "selection_label": velo_check["label"],
+                "formfav_selection_status": ff_check["status"],
+                "audit_original_picks": {
+                    "velo": r.get("pick_name"), "velo_second": r.get("second_name"),
+                    "velo_third": r.get("third_name"), "formfav": ff_pick,
+                },
+            }
+            if velo_check["status"] != VERIFIED:
+                flags.append("RACECARD_MISMATCH" if velo_check["status"] == "RACECARD_MISMATCH" else velo_check["status"])
+            if ident.get("status") != VERIFIED:
+                ff_pick = None
+            elif ff_check["status"] not in (VERIFIED, "NO_PICK"):
+                ff_pick = None
         races.append(
             {
                 **r,
-                "off_label": ff.get("off_uk") or (off.strftime("%H:%M") if off else ""),
+                **extra,
+                "off_label": (_off_uk(ident.get("start_time_utc")) if ident and ident.get("start_time_utc") else "")
+                or ff.get("off_uk") or (off.strftime("%H:%M") if off else ""),
                 "upcoming": bool(off and off > now),
                 "outcome": _outcome(r),
                 "result_is_final": r.get("result_basis") == "final",
@@ -305,6 +445,14 @@ def world_picks(
                 "agrees_with_formfav": (_name_key(ff_pick) == _name_key(r.get("pick_name"))) if ff_pick else None,
             }
         )
+        if ident is not None and velo_check["status"] != VERIFIED:
+            # Shown as RACECARD MISMATCH — NO VERIFIED SELECTION; the frozen pick itself is untouched
+            # in world_model_scorecards and kept above under audit_original_picks.
+            races[-1].update({
+                "pick_name": None, "second_name": None, "third_name": None, "pick_price": None,
+                "pick_score": None, "clean": False, "agrees_with_formfav": None,
+                "selection_label": BLOCKED_LABEL,
+            })
     races.sort(
         key=lambda x: (
             x["upcoming"] is False,
@@ -314,8 +462,11 @@ def world_picks(
             _int(x.get("race_number")) or 0,
         )
     )
-    priced = [x for x in races if x.get("price_state") == "REAL"]
-    final = [x for x in races if x["outcome"] != "PENDING" and x["result_is_final"] and x["outcome"] != "NO_RESULT"]
+    blocked = [x for x in races if certify and x.get("selection_status") != VERIFIED]
+    # A blocked race is never counted as a result: its result belongs to an unproved race.
+    countable = [x for x in races if x not in blocked]
+    priced = [x for x in countable if x.get("price_state") == "REAL"]
+    final = [x for x in countable if x["outcome"] != "PENDING" and x["result_is_final"] and x["outcome"] != "NO_RESULT"]
     final_clean = [x for x in final if x["clean"]]
     with_ff = [x for x in races if x["agrees_with_formfav"] is not None]
     by_country: dict[str, int] = {}
@@ -328,15 +479,19 @@ def world_picks(
             "by_country": by_country,
             "upcoming": sum(1 for x in races if x["upcoming"]),
             "priced": len(priced),
-            "no_market": len(races) - len(priced),
+            "no_market": len(countable) - len(priced),
             "tied": sum(1 for x in races if "TIED" in x["flags"]),
             "dup_rank": sum(1 for x in races if "DUP_RANK" in x["flags"]),
             "priced_pick_is_shortest": sum(1 for x in priced if x.get("pick_is_shortest_price")),
             "agree_with_formfav": sum(1 for x in with_ff if x["agrees_with_formfav"]),
             "with_formfav": len(with_ff),
             "settled_final": len(final),
-            "settled_provisional": sum(1 for x in races if x.get("result_basis") == "provisional"),
-            "no_result": sum(1 for x in races if x["outcome"] == "NO_RESULT"),
+            "settled_provisional": sum(1 for x in countable if x.get("result_basis") == "provisional"),
+            "no_result": sum(1 for x in countable if x["outcome"] == "NO_RESULT"),
+            "verified": len(races) - len(blocked) if certify else None,
+            "racecard_mismatch": sum(1 for x in blocked if x.get("selection_status") == "RACECARD_MISMATCH"),
+            "pick_non_runner": sum(1 for x in blocked if x.get("selection_status") == "NON_RUNNER"),
+            "pick_not_in_field": sum(1 for x in blocked if x.get("selection_status") == "NOT_IN_FIELD"),
             "won_final": sum(1 for x in final if x["outcome"] == "WON"),
             "placed_final": sum(1 for x in final if x["outcome"] in ("WON", "PLACED")),
             "clean_settled_final": len(final_clean),

@@ -161,9 +161,24 @@ def test_provisional_and_final_get_distinct_retained_events() -> None:
 
 # ---- I/O wrapper with an in-memory Supabase -------------------------------------------------
 
+# The stored race clock, racecard and field the settlement now checks first (#189).
+RACE_ROW = {
+    "provider_race_key": RACE, "race_date": "2026-11-05", "race_number": 10,
+    "start_time": "2026-11-05T05:00:00+00:00", "timezone": "Asia/Tokyo",
+    "metadata": {"raceNumber": 10, "startTime": "2026-11-05T05:00:00Z", "timezone": "Asia/Tokyo"},
+    "form_meta": {"raceNumber": 10, "startTime": "2026-11-05T05:00:00Z", "timezone": "Asia/Tokyo", "date": "2026-11-05"},
+}
+RUNNER_ROWS = [
+    {"provider_race_key": RACE, "runner_number": n, "horse_name": name, "scratched": False,
+     "updated_at": "2026-11-05T04:30:00+00:00"}
+    for n, name in enumerate(("Sun Lycoris", "Presto Mulan", "Blue Passion"), start=1)
+]
+
+
 class FakeDb:
-    def __init__(self, scorecards, results, existing=()):
+    def __init__(self, scorecards, results, existing=(), race_rows=(RACE_ROW,), runner_rows=RUNNER_ROWS):
         self.scorecards, self.results, self.existing = scorecards, results, list(existing)
+        self.race_rows, self.runner_rows = list(race_rows), list(runner_rows)
         self.writes: list[tuple[str, int]] = []
         self.rows: dict[str, list] = {}
 
@@ -175,6 +190,10 @@ class FakeDb:
             return self.results
         if table == "world_sigma_audits":
             return self.existing
+        if table == "formfav_races":
+            return self.race_rows
+        if table == "formfav_runner_form":
+            return self.runner_rows
         raise AssertionError(path)
 
     def post_json(self, table, rows, on_conflict, prefer):

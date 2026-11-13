@@ -16,6 +16,8 @@ import re
 from datetime import UTC, datetime
 from typing import Any
 
+from src.velo.race_identity import VERIFIED, verify_selection
+
 SIGMA_VERSION = "WORLD_SIGMA_V1"
 PRICE_PLACEHOLDER = 10.0
 # The only blocks that may later clear: the result simply had not arrived or been confirmed.
@@ -68,8 +70,14 @@ def settle_pick(
     result: dict[str, Any] | None,
     *,
     computed_at: datetime | None = None,
+    identity: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
-    """Return one ``world_sigma_audits`` row for a race's frozen rank-1 pick, or None."""
+    """Return one ``world_sigma_audits`` row for a race's frozen rank-1 pick, or None.
+
+    ``identity`` is the race's ``verify_race_identity`` verdict. When the race cannot be proved
+    to be one race, or the frozen pick is not in its verified field, the row is quarantined as
+    ``identity_blocked`` with ``RACECARD_MISMATCH`` first among its block reasons (#189).
+    """
     rows = sorted(score_rows, key=lambda r: _int(r.get("runner_rank")) or 10**6)
     if not rows:
         return None
@@ -94,6 +102,16 @@ def settle_pick(
     matches = [p for p in placings if norm_name(p.get("name")) == wanted]
     if basis != "no_result" and len(matches) != 1:
         basis = "identity_blocked"
+    pick_check = (
+        verify_selection(identity, top.get("horse_name")) if identity is not None else None
+    )
+    race_quarantined = bool(
+        identity is not None
+        and (identity.get("status") != VERIFIED or pick_check["status"] in ("NOT_IN_FIELD", "RACECARD_MISMATCH"))
+    )
+    if race_quarantined:
+        basis = "identity_blocked"
+        matches = []
     placing = matches[0] if len(matches) == 1 else None
 
     settled = basis in ("final", "provisional") and placing is not None
@@ -113,7 +131,12 @@ def settle_pick(
 
     tie = _tie_size(rows)
     reasons: list[str] = []
-    if basis == "no_result":
+    if race_quarantined:
+        reasons.append("RACECARD_MISMATCH")
+        reasons += [f"RACE_IDENTITY_{r}" for r in identity.get("reasons") or []]
+        if pick_check["status"] != "RACECARD_MISMATCH":
+            reasons.append("TOP_PICK_NOT_IN_VERIFIED_FIELD")
+    elif basis == "no_result":
         reasons.append("NO_RESULT")
     elif basis == "provisional":
         reasons.append("RESULT_NOT_FINAL")
@@ -165,6 +188,14 @@ def settle_pick(
             "interim": (result or {}).get("interim"),
             "placings": len(placings),
             "field_size": len(rows),
+            "race_identity": None if identity is None else {
+                "status": identity.get("status"),
+                "reasons": identity.get("reasons"),
+                "local_race_date": identity.get("local_race_date"),
+                "start_time_utc": identity.get("start_time_utc"),
+                "pick_status": pick_check["status"] if pick_check else None,
+                "quarantined": race_quarantined,
+            },
         },
     }
 
@@ -216,6 +247,10 @@ def build_event(audit: dict[str, Any]) -> dict[str, Any]:
 def merge_audit(new: dict[str, Any], existing: dict[str, Any] | None) -> dict[str, Any]:
     """Apply the no-downgrade and no-relabel laws when a sigma row is recomputed."""
     if not existing:
+        return new
+    # A race-identity quarantine is not a result downgrade: the "final" result belonged to a race
+    # that cannot be proved to be the one the pick was made for, so it must stop counting.
+    if ((new.get("details") or {}).get("race_identity") or {}).get("quarantined"):
         return new
     if existing.get("basis") == "final" and new.get("basis") != "final":
         return existing

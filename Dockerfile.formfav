@@ -6,9 +6,13 @@ ENV PYTHONPATH=/app
 
 WORKDIR /app
 
+# Race identity (#189) needs the IANA zone database for each race's local racing date.
+RUN pip install --no-cache-dir tzdata
+
 COPY src/velo/formfav_client.py src/velo/formfav_client.py
 COPY src/velo/formfav_feature_contract.py src/velo/formfav_feature_contract.py
 COPY src/velo/formfav_evidence_store.py src/velo/formfav_evidence_store.py
+COPY src/velo/race_identity.py src/velo/race_identity.py
 COPY scripts/ops/formfav_live_worker.py scripts/ops/formfav_live_worker.py
 COPY scripts/ops/formfav_global_eod.py scripts/ops/formfav_global_eod.py
 

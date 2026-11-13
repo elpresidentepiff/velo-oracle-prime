@@ -1,56 +1,60 @@
 {
-  "date_str": "2026-07-29",
-  "racecard_source": "cache",
+  "date_str": "2026-05-26",
+  "racecard_source": "unknown",
   "gate_passed": true,
-  "run_at": "2026-07-29T12:30:19.625843Z",
-  "races_uk_ire": 32,
+  "run_at": "2026-11-13T02:00:01.561591Z",
+  "races_uk_ire": 48,
   "courses": [
-    "Galway",
-    "Goodwood",
+    "Ballinrobe",
+    "Bath",
+    "Dundalk (AW)",
     "Leicester",
-    "Redcar",
-    "Sandown"
+    "Lingfield",
+    "Plumpton",
+    "Redcar"
   ],
-  "total_runners": 341,
+  "total_runners": 384,
   "checks": [
     {
       "name": "date_match",
       "passed": true,
       "value": [
-        "2026-07-29"
+        "2026-05-26"
       ],
-      "threshold": "2026-07-29",
-      "message": "date confirmed: 2026-07-29",
+      "threshold": "2026-05-26",
+      "message": "date confirmed: 2026-05-26",
       "blocking": true
     },
     {
       "name": "race_count",
       "passed": true,
-      "value": 32,
+      "value": 48,
       "threshold": 15,
-      "message": "32 UK/IRE races with runners (min 15)",
+      "message": "48 UK/IRE races with runners (min 15)",
       "blocking": true
     },
     {
       "name": "course_coverage",
       "passed": true,
       "value": [
-        "Galway",
-        "Goodwood",
+        "Ballinrobe",
+        "Bath",
+        "Dundalk (AW)",
         "Leicester",
-        "Redcar",
-        "Sandown"
+        "Lingfield",
+        "Plumpton",
+        "Redcar"
       ],
       "threshold": 3,
-      "message": "5 unique courses: ['Galway', 'Goodwood', 'Leicester', 'Redcar', 'Sandown'] (min 3)",
+      "message": "7 unique courses: ['Ballinrobe', 'Bath', 'Dundalk (AW)', 'Leicester', 'Lingfield', 'Plumpton', 'Redcar'] (min 3)",
       "blocking": true
     },
     {
       "name": "runner_count",
       "passed": true,
-      "value": 341,
+      "value": 384,
       "threshold": 80,
-      "message": "341 total runners (min 80)",
+      "message": "384 total runners (min 80)",
       "blocking": true
     },
     {
@@ -58,7 +62,7 @@
       "passed": true,
       "value": 1.0,
       "threshold": 0.9,
-      "message": "341/341 runners have required fields (100.0%)",
+      "message": "384/384 runners have required fields (100.0%)",
       "blocking": true
     },
     {
@@ -72,14 +76,9 @@
     {
       "name": "sidecar_date_match",
       "passed": true,
-      "value": {
-        "sidecar_races": 32,
-        "racecard_races": 32,
-        "overlap": 32,
-        "coverage": 1.0
-      },
-      "threshold": "2026-07-29",
-      "message": "RPDC covers 32/32 racecard races (100%)",
+      "value": "skipped",
+      "threshold": "2026-05-26",
+      "message": "Supabase unavailable — sidecar check skipped",
       "blocking": false
     }
   ]

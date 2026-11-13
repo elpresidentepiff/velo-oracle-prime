@@ -26,6 +26,7 @@ from typing import Any
 
 from src.velo.formfav_client import FormFavClient, FormFavError, best_live_prices
 from src.velo.formfav_evidence_store import build_capture_rows, persist_capture_rows
+from src.velo.race_identity import VERIFIED, canonical_race_key, local_race_date, verify_race_identity
 
 POLL_SECONDS = max(20, int(os.getenv("FORMFAV_WORKER_TICK_SECONDS", "30")))
 MEETINGS_REFRESH_SECONDS = max(120, int(os.getenv("FORMFAV_MEETINGS_REFRESH_SECONDS", "600")))
@@ -151,8 +152,8 @@ def _parse_dt(value: Any) -> datetime | None:
 
 
 def _race_key(date_str: str, country: str, slug: str, race_no: int) -> str:
-    safe_slug = "".join(ch.lower() if ch.isalnum() else "_" for ch in slug).strip("_")
-    return f"formfav:{country}:{date_str}:{safe_slug}:r{race_no}"
+    """``date_str`` must be the LOCAL racing date (see src/velo/race_identity.py), never a UTC date."""
+    return canonical_race_key(country, date_str, slug, race_no)
 
 
 def _meeting_dates(now: datetime) -> list[str]:
@@ -328,7 +329,19 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
     if start is None:
         return
     mins_to_off = (start - now).total_seconds() / 60.0
-    race_key = _race_key(date_str, country, slug, race_no)
+    # #189: the meetings list is queried by UTC date, but every per-race call is answered by the
+    # race's own local racing date. Key and query by the local date, or an evening US race (off
+    # after 00:00 UTC) is stored under one race's clock with the next racing day's field.
+    race_tz = mrace.get("timezone") or meeting.get("timezone")
+    racing_date = local_race_date(start, race_tz)
+    if racing_date is None:
+        print(
+            f"[FORMFAV-LIVE] RACECARD_MISMATCH {country}:{track} R{race_no}: no usable timezone "
+            f"({race_tz!r}); race not identified, nothing stored",
+            file=sys.stderr, flush=True,
+        )
+        return
+    race_key = _race_key(racing_date, country, slug, race_no)
 
     # Ignore races long outside the live window.
     if mins_to_off > 24 * 60 or mins_to_off < -RESULT_LOOKBACK_MIN:
@@ -336,13 +349,13 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
 
     base_race = {
         "provider_race_key": race_key,
-        "race_date": date_str,
+        "race_date": racing_date,
         "country": country,
         "track": track,
         "race_number": race_no,
         "race_code": str(mrace.get("raceCode") or "gallops"),
         "start_time": start.isoformat(),
-        "timezone": mrace.get("timezone"),
+        "timezone": race_tz,
         "status": "abandoned" if mrace.get("abandoned") else "scheduled",
         "meeting_slug": slug,
         "metadata": mrace,
@@ -356,16 +369,26 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
     if time.time() - last_form >= FORM_REFRESH_SECONDS and mins_to_off > -30:
         try:
             form = client.race_form(
-                date=date_str,
+                date=racing_date,
                 track=slug,
                 race=race_no,
                 country=country,
-                timezone=mrace.get("timezone") or QUERY_TIMEZONE,
+                timezone=race_tz,
             )
             race_row = dict(base_race)
             # form_meta has its own column: metadata is rewritten every tick with the
             # bare meeting-race dict and would erase it within a minute.
             race_row["form_meta"] = {k: v for k, v in form.items() if k != "runners"}
+            identity = verify_race_identity(race_row, form.get("runners"), now=now, require_fresh_racecard=False)
+            if identity["status"] != VERIFIED:
+                # Never store a racecard under a key whose clock it contradicts.
+                _last_form[race_key] = time.time()
+                print(
+                    f"[FORMFAV-LIVE] RACECARD_MISMATCH {race_key}: {','.join(identity['reasons'])} "
+                    f"meeting_off={start.isoformat()} card_off={form.get('startTime')}; form not stored",
+                    file=sys.stderr, flush=True,
+                )
+                return
             _persist_form(race_key, race_row, form)
             capture_rows = build_capture_rows(
                 provider_race_key=race_key,
@@ -386,11 +409,11 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
             if time.time() - _last_prediction.get(race_key, 0.0) >= 21600:
                 try:
                     pred = client.predictions(
-                        date=date_str,
+                        date=racing_date,
                         track=slug,
                         race=race_no,
                         country=country,
-                        timezone=mrace.get("timezone") or QUERY_TIMEZONE,
+                        timezone=race_tz,
                     )
                     _persist_predictions(race_key, pred)
                     _last_prediction[race_key] = time.time()
@@ -414,11 +437,11 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
         if time.time() - last >= interval:
             try:
                 prices = client.prices(
-                    date=date_str,
+                    date=racing_date,
                     track=slug,
                     race=race_no,
                     country=country,
-                    timezone=mrace.get("timezone") or QUERY_TIMEZONE,
+                    timezone=race_tz,
                 )
                 n = _persist_prices(race_key, prices)
                 _last_price[race_key] = time.time()
@@ -444,11 +467,11 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
         if time.time() - last >= _result_refresh_interval(_last_result_stage.get(race_key)):
             try:
                 result = client.results(
-                    date=date_str,
+                    date=racing_date,
                     track=slug,
                     race=race_no,
                     country=country,
-                    timezone=mrace.get("timezone") or QUERY_TIMEZONE,
+                    timezone=race_tz,
                 )
                 _persist_result(race_key, result)
                 _last_result[race_key] = time.time()
@@ -541,6 +564,9 @@ def _run_live_cycle(client: FormFavClient, now: datetime) -> int:
 def main() -> int:
     client = FormFavClient()
     _sb_env()  # fail fast on durable-storage misconfiguration
+    # Fail fast without a zone database: every race would be unidentifiable (#189).
+    if local_race_date("2026-11-13T01:54:00Z", "America/Chicago") != "2026-11-12":
+        raise SystemExit("[FORMFAV-LIVE] timezone database unavailable; cannot identify races")
     print(
         "[FORMFAV-LIVE] online "
         f"countries={','.join(sorted(COUNTRIES))} tick={POLL_SECONDS}s "
