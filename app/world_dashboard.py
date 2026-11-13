@@ -268,8 +268,14 @@ def _outcome(row: dict[str, Any]) -> str:
 
 
 # --- #189: no selection is shown for a race that is not proved to be one race -----------------
-EVIDENCE_UNAVAILABLE = {"status": "RACECARD_MISMATCH", "reasons": ["IDENTITY_EVIDENCE_UNAVAILABLE"],
-                        "warnings": [], "active_runners": [], "non_runners": [], "label": BLOCKED_LABEL}
+EVIDENCE_UNAVAILABLE = {
+    "status": "RACECARD_MISMATCH",
+    "reasons": ["IDENTITY_EVIDENCE_UNAVAILABLE"],
+    "warnings": [],
+    "active_runners": [],
+    "non_runners": [],
+    "label": BLOCKED_LABEL,
+}
 
 
 def build_identities(
@@ -336,8 +342,9 @@ def certify_formfav_picks(
     for i in (identities or {}).values():
         race_key = (i.get("country"), i.get("track_slug"), i.get("race_number"))
         # Two stored races answering to one (country, track, number) on one date is itself a collision.
-        by_race[race_key] = EVIDENCE_UNAVAILABLE | {"reasons": ["DUPLICATE_RACE_FOR_TRACK_AND_NUMBER"]} \
-            if race_key in by_race else i
+        by_race[race_key] = (
+            EVIDENCE_UNAVAILABLE | {"reasons": ["DUPLICATE_RACE_FOR_TRACK_AND_NUMBER"]} if race_key in by_race else i
+        )
     out = []
     for p in picks:
         if identities is None:
@@ -419,12 +426,16 @@ def world_picks(
                 "selection_label": velo_check["label"],
                 "formfav_selection_status": ff_check["status"],
                 "audit_original_picks": {
-                    "velo": r.get("pick_name"), "velo_second": r.get("second_name"),
-                    "velo_third": r.get("third_name"), "formfav": ff_pick,
+                    "velo": r.get("pick_name"),
+                    "velo_second": r.get("second_name"),
+                    "velo_third": r.get("third_name"),
+                    "formfav": ff_pick,
                 },
             }
             if velo_check["status"] != VERIFIED:
-                flags.append("RACECARD_MISMATCH" if velo_check["status"] == "RACECARD_MISMATCH" else velo_check["status"])
+                flags.append(
+                    "RACECARD_MISMATCH" if velo_check["status"] == "RACECARD_MISMATCH" else velo_check["status"]
+                )
             if ident.get("status") != VERIFIED:
                 ff_pick = None
             elif ff_check["status"] not in (VERIFIED, "NO_PICK"):
@@ -434,7 +445,8 @@ def world_picks(
                 **r,
                 **extra,
                 "off_label": (_off_uk(ident.get("start_time_utc")) if ident and ident.get("start_time_utc") else "")
-                or ff.get("off_uk") or (off.strftime("%H:%M") if off else ""),
+                or ff.get("off_uk")
+                or (off.strftime("%H:%M") if off else ""),
                 "upcoming": bool(off and off > now),
                 "outcome": _outcome(r),
                 "result_is_final": r.get("result_basis") == "final",
@@ -448,11 +460,18 @@ def world_picks(
         if ident is not None and velo_check["status"] != VERIFIED:
             # Shown as RACECARD MISMATCH — NO VERIFIED SELECTION; the frozen pick itself is untouched
             # in world_model_scorecards and kept above under audit_original_picks.
-            races[-1].update({
-                "pick_name": None, "second_name": None, "third_name": None, "pick_price": None,
-                "pick_score": None, "clean": False, "agrees_with_formfav": None,
-                "selection_label": BLOCKED_LABEL,
-            })
+            races[-1].update(
+                {
+                    "pick_name": None,
+                    "second_name": None,
+                    "third_name": None,
+                    "pick_price": None,
+                    "pick_score": None,
+                    "clean": False,
+                    "agrees_with_formfav": None,
+                    "selection_label": BLOCKED_LABEL,
+                }
+            )
     races.sort(
         key=lambda x: (
             x["upcoming"] is False,
