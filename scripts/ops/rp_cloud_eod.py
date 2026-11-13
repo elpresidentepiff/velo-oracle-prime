@@ -134,6 +134,28 @@ def _hydrate_runner_snapshots(date_str: str) -> dict[str, Any]:
         return {"status": "HYDRATION_ERROR", "date": date_str, "error": f"{type(exc).__name__}: {exc}"}
 
 
+def _rebuild_daily_run_truth(date_str: str) -> dict[str, Any]:
+    """Rebuild the morning's daily run-truth packet from Supabase (read-only, never fatal).
+
+    Mission Control reads ``data/velo_daily_run_truth_<date>.json`` and blocks learning with
+    GATE_PIPELINE_TRUTH_MISSING when it is absent. The morning scoring container writes that file to its own disk
+    and this clean container never sees it, so every cloud night read MISSING although ``pipeline_runs`` and
+    ``velo_verdicts`` hold the truth. The watchdog that writes the packet classifies only from those Supabase rows,
+    so rebuilding it here gives the same verdict the morning would have: a manual, failed or verdict-less day still
+    blocks; nothing is made easier. When it cannot be built the file stays absent and the gate stays BLOCKED.
+    """
+    try:
+        ops_dir = str(Path(__file__).resolve().parent)
+        if ops_dir not in sys.path:
+            sys.path.insert(0, ops_dir)
+        from velo_daily_run_truth_watchdog import write_report
+
+        report = write_report(date_str)
+        return {"status": report.get("status"), "issues": report.get("issues", []), "date": date_str}
+    except Exception as exc:  # noqa: BLE001 - the rebuild must never take the EOD down
+        return {"status": "RUN_TRUTH_REBUILD_ERROR", "date": date_str, "error": f"{type(exc).__name__}: {exc}"}
+
+
 def _hydrate_report_artifacts(date_str: str) -> int:
     rows = _get(
         "velo_report_artifacts",
@@ -359,6 +381,7 @@ def _settle_day(date_str: str, args: argparse.Namespace) -> dict[str, Any]:
     print("executor=Railway source=RacingPost-HTML durable_truth=Supabase", flush=True)
     preparation = prepare_cloud_eod_inputs(date_str)
     preparation["runner_snapshots"] = _hydrate_runner_snapshots(date_str)
+    preparation["daily_run_truth"] = _rebuild_daily_run_truth(date_str)
     print(json.dumps({"preparation": preparation}, indent=2), flush=True)
     if not args.execute:
         print("[CLOUD-EOD] PLAN_ONLY — capture and EOD were not executed", flush=True)
