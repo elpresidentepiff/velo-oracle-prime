@@ -70,12 +70,14 @@ def build_frame(raw: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> int:
     raw = pd.read_parquet(SRC)
+    jt = pd.read_parquet(ROOT / "data" / "raceform_jt.parquet")[["race_id", "horse", "jockey", "trainer"]]
+    raw = raw.merge(jt, on=["race_id", "horse"], how="left")
     raw = raw[raw["pos"].str.fullmatch(r"\d+", na=False)]
     df = build_frame(raw)
     types = sorted(df["type"].dropna().unique().tolist())
     df["type_code"] = df["type"].map({t: i for i, t in enumerate(types)}).astype(float)
     df = compute_history_features(df)
-    df = df[df["sp"].notna() & df["dist_f"].notna()]
+    df = df[df["sp"].notna() & df["dist_f"].notna()]  # training filter; sp_dec not used as a feature
     df["y"] = (df["pos_n"] == 1).astype(int)
     X = df[FEATURES].fillna(-1)
     model = HistGradientBoostingClassifier(max_iter=300, learning_rate=0.05, random_state=2607)
@@ -94,9 +96,9 @@ def main() -> int:
         "type_codes": types,
         "fill_value_for_missing": -1,
         "holdout_2025_result": {
-            "source": "scripts/research/horse_history_features_test_2025.py (trained 2017-2024)",
-            "auc": 0.698, "top_pick_hit": 0.2617, "roi_pct": -7.57,
-            "favourite_hit": 0.3486, "favourite_roi_pct": -5.16,
+            "source": "scripts/research/horse_history_blend_test_2025.py (trained 2017-2023 for this result set; 2017-2024 for the final model)",
+            "auc": 0.7146, "top_pick_hit": 0.2753, "roi_pct": -6.73,
+            "favourite_hit": 0.348, "favourite_roi_pct": -5.53,
         },
         "gate": "Beat the favourite on a 2025-style holdout before any live use. Operator sign-off required.",
     }

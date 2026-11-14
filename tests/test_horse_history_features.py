@@ -73,3 +73,18 @@ def test_parsers_and_names():
     assert parse_going_code("Good to Firm") == 1.5
     assert parse_going_code("Good to Soft") == 0.5
     assert normalise_name("Letterston Lady (GB)") == normalise_name("letterston lady")
+
+
+def test_trainer_rate_excludes_same_day_runs():
+    rows = pd.DataFrame([
+        ("A", "2024-01-01", "r1", "Ascot", 8.0, 1.0, 3.0, 1, 80.0, "J1", "T1"),
+        ("B", "2024-01-01", "r1", "Ascot", 8.0, 1.0, 3.0, 2, 70.0, "J2", "T1"),
+        ("C", "2024-01-02", "r2", "Ascot", 8.0, 1.0, 3.0, 3, 70.0, "J2", "T1"),
+    ], columns=["horse", "date", "race_id", "course", "dist_f", "going_code", "class_num",
+                "pos_n", "or_num", "jockey", "trainer"])
+    out = compute_history_features(rows).set_index("horse")
+    # Horse C on 2 Jan: trainer T1 had 2 runs on 1 Jan, 1 win (A). Same-day runs excluded for B's race.
+    assert out.loc["B", "trainer_runs"] == 0          # B's race on 1 Jan: no earlier-day runs
+    assert out.loc["C", "trainer_runs"] == 2
+    assert out.loc["C", "trainer_win_rate"] == (1 + 0.1) / (2 + 1.0)
+    assert out.loc["C", "jockey_changed"] == 0.0 and out.loc["A", "jockey_changed"] == 0.0

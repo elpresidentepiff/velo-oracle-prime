@@ -2,7 +2,7 @@
   "model": "horse_history_candidate_v1",
   "algorithm": "HistGradientBoostingClassifier (not the production GBM)",
   "promotion_status": "NOT_PROMOTED",
-  "trained_at": "2026-11-14T10:46:38.700180+00:00",
+  "trained_at": "2026-11-14T13:43:01.894976+00:00",
   "train_rows": 1317612,
   "train_years": [
     2017,
@@ -38,7 +38,17 @@
     "dist_runs",
     "dist_win_rate",
     "going_runs",
-    "going_win_rate"
+    "going_win_rate",
+    "jockey_changed",
+    "trainer_changed",
+    "trainer_runs",
+    "trainer_win_rate",
+    "jockey_runs",
+    "jockey_win_rate",
+    "trainer_course_runs",
+    "trainer_course_win_rate",
+    "jockey_course_runs",
+    "jockey_course_win_rate"
   ],
   "type_codes": [
     "Chase",
@@ -48,12 +58,12 @@
   ],
   "fill_value_for_missing": -1,
   "holdout_2025_result": {
-    "source": "scripts/research/horse_history_features_test_2025.py (trained 2017-2024)",
-    "auc": 0.698,
-    "top_pick_hit": 0.2617,
-    "roi_pct": -7.57,
-    "favourite_hit": 0.3486,
-    "favourite_roi_pct": -5.16
+    "source": "scripts/research/horse_history_blend_test_2025.py (trained 2017-2023 for this result set; 2017-2024 for the final model)",
+    "auc": 0.7146,
+    "top_pick_hit": 0.2753,
+    "roi_pct": -6.73,
+    "favourite_hit": 0.348,
+    "favourite_roi_pct": -5.53
   },
   "gate": "Beat the favourite on a 2025-style holdout before any live use. Operator sign-off required."
 }

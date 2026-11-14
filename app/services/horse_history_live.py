@@ -11,8 +11,8 @@ import pandas as pd
 from app.services.horse_history_features import normalise_name
 
 _BATCH = 40
-_RACEFORM_COLS = "horse,date,course,dist,going,class_raw,type,pos,or_rating,ran,draw,age,wgt,sp"
-_RHR_COLS = "horse,run_date,course,distance_f,going,race_class,position,sp,race_type"
+_RACEFORM_COLS = "horse,date,course,dist,going,class_raw,type,pos,or_rating,ran,draw,age,wgt,sp,jockey,trainer"
+_RHR_COLS = "horse,run_date,course,distance_f,going,race_class,position,sp,race_type,jockey,trainer"
 
 
 def _clean(name: str) -> str:
@@ -62,5 +62,6 @@ def fetch_history(names: list[str], since: str = "2017-01-01") -> pd.DataFrame:
                     "type": r.get("race_type"), "pos": r.get("position"),
                     "or_rating": None, "ran": None, "draw": None, "age": None, "wgt": None,
                     "sp": r.get("sp"), "dist_f": r.get("distance_f"), "source": "racing_horse_runs",
+                    "jockey": r.get("jockey"), "trainer": r.get("trainer"),
                 })
     return pd.DataFrame(rows)

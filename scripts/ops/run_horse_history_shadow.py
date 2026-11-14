@@ -88,6 +88,7 @@ def main() -> int:
                     "draw_pct": _num(r.get("draw")) / field if field else np.nan,
                     "age_num": _num(r.get("age")),
                     "type_code": float(type_codes.get(race.get("type"), -1)),
+                    "jockey": str(r.get("jockey") or ""), "trainer": str(r.get("trainer") or ""),
                     "pos": None, "sp": None, "_today": True,
                 })
         if not rows:
@@ -110,6 +111,7 @@ def main() -> int:
                     "wgt_lbs": np.nan, "or_vs_field": np.nan, "or_missing": 0.0,
                     "field_size": np.nan, "draw_num": np.nan, "draw_pct": np.nan,
                     "age_num": np.nan, "type_code": -1.0, "_today": False,
+                    "jockey": str(h.get("jockey") or ""), "trainer": str(h.get("trainer") or ""),
                 })
         today = []
         for r in rows:

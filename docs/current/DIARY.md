@@ -439,3 +439,12 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - Added end-to-end test for the history shadow on a current-format racecard with faked history: `tests/test_horse_history_shadow_e2e.py`.
 - Still unverified: the Supabase history fetch (no service key in the build container). The 07:00 run on the new code is the first real check.
 - Still open: Prime's live model (v17) still includes RPR and Topspeed. Removing them is a model change and needs your decision.
+
+## 2026-11-14 — HISTORY-JT-01: jockey and trainer history added
+
+- Pulled jockey and trainer for all 1,387,120 raceform runners (2017–2025). Counts match the table exactly.
+- Shared features now include as-of jockey and trainer rates, trainer-at-course and jockey-at-course rates, and jockey/trainer-change flags. Same-day runs never count. Tests: `tests/test_horse_history_features.py`.
+- Result (`scripts/research/horse_history_blend_test_2025.py`, trained 2017–2023, holdout 2025): model AUC 0.7146 (was 0.698); top pick 27.5% (favourite 34.8%); ROI −6.7% (favourite −5.5%). Still does not beat the favourite.
+- The blend in that script is not valid: it adds logits without calibration. A fitted blend (logistic on 2024) is the next experiment.
+- Candidate retrained with jockey and trainer: `models/horse_history_candidate/` (40 features, 1,317,612 runners, NOT_PROMOTED).
+- Live: jockey and trainer are fetched in `app/services/horse_history_live.py` and passed to the shadow. Live name match vs historical names not yet checked.

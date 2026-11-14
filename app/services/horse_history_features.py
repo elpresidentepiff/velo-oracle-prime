@@ -21,6 +21,10 @@ HISTORY_FEATURES = [
     "class_change", "avg_pos_last3",
     "course_runs", "course_win_rate", "dist_runs", "dist_win_rate",
     "going_runs", "going_win_rate",
+    "jockey_changed", "trainer_changed",
+    "trainer_runs", "trainer_win_rate", "jockey_runs", "jockey_win_rate",
+    "trainer_course_runs", "trainer_course_win_rate",
+    "jockey_course_runs", "jockey_course_win_rate",
 ]
 
 
@@ -35,6 +39,10 @@ def compute_history_features(df: pd.DataFrame) -> pd.DataFrame:
     (live). For a row, only earlier rows of the same horse contribute.
     """
     out = df.copy()
+    for col in ("jockey", "trainer"):
+        if col not in out.columns:
+            out[col] = ""
+        out[col] = out[col].fillna("").astype(str)
     out["date"] = pd.to_datetime(out["date"])
     out["_ord"] = np.arange(len(out))
     out = out.sort_values(["horse", "date", "race_id", "_ord"], kind="mergesort")
@@ -66,8 +74,39 @@ def compute_history_features(df: pd.DataFrame) -> pd.DataFrame:
     _group_rate(out, ["horse", "_dist_b"], "dist")
     _group_rate(out, ["horse", "going_code"], "going")
 
+    # Connections. Jockey/trainer change is versus the horse's previous run (known).
+    prev_jockey = g["jockey"].shift(1)
+    prev_trainer = g["trainer"].shift(1)
+    out["jockey_changed"] = ((out["jockey"] != prev_jockey) & prev_jockey.notna()).astype(float)
+    out["trainer_changed"] = ((out["trainer"] != prev_trainer) & prev_trainer.notna()).astype(float)
+    _entity_rate(out, ["trainer"], "trainer")
+    _entity_rate(out, ["jockey"], "jockey")
+    _entity_rate(out, ["trainer", "course"], "trainer_course")
+    _entity_rate(out, ["jockey", "course"], "jockey_course")
+
     out = out.sort_values("_ord").drop(columns=["_ord", "_win", "_place", "_dist_b"])
     return out
+
+
+def _entity_rate(out: pd.DataFrame, keys: list[str], name: str) -> None:
+    """As-of rate for a trainer / jockey / pair. Runs on the SAME day never count:
+    the morning score is made before any race of that day is run."""
+    tmp = out[keys + ["date", "_win"]].copy()
+    tmp["_ord"] = out["_ord"].values
+    for k in keys:
+        tmp[k] = tmp[k].fillna("")
+    daily = tmp.groupby(keys + ["date"], sort=False).agg(
+        _n=("_win", "size"), _w=("_win", "sum")).reset_index()
+    daily = daily.sort_values(keys + ["date"], kind="mergesort")
+    gk = daily.groupby(keys, sort=False)
+    daily[f"{name}_runs"] = gk["_n"].transform(lambda s: s.shift(1).fillna(0).cumsum())
+    wins_prior = gk["_w"].transform(lambda s: s.shift(1).fillna(0).cumsum())
+    daily[f"{name}_win_rate"] = (wins_prior + 0.1) / (daily[f"{name}_runs"] + 1.0)
+    merged = tmp.merge(daily[keys + ["date", f"{name}_runs", f"{name}_win_rate"]],
+                       on=keys + ["date"], how="left")
+    merged = merged.set_index("_ord").loc[out["_ord"].values]
+    out[f"{name}_runs"] = merged[f"{name}_runs"].to_numpy()
+    out[f"{name}_win_rate"] = merged[f"{name}_win_rate"].to_numpy()
 
 
 def _runs_since(out: pd.DataFrame, flag: str) -> np.ndarray:
@@ -119,3 +158,15 @@ def parse_going_code(s):
 def normalise_name(name) -> str:
     """Match key across raceform ('Name (IRE)') and racing_horse_runs ('Name')."""
     return re.sub(r"\s*\([A-Za-z]{2,4}\)\s*$", "", str(name or "")).strip().lower()
+
+
+def parse_sp_dec(s) -> float:
+    """Starting price text ('5/2', '4/6', 'EVS', '6/4F') to decimal odds. NaN if unparseable."""
+    t = str(s or "").strip().upper()
+    if t in ("EVS", "EVENS", "EVN"):
+        return 2.0
+    t = re.sub(r"[A-Z]+$", "", t).strip()
+    m = re.fullmatch(r"(\d+)/(\d+)", t)
+    if m and int(m.group(2)) > 0:
+        return int(m.group(1)) / int(m.group(2)) + 1.0
+    return np.nan
