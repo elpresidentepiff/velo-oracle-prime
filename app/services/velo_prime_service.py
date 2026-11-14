@@ -377,9 +377,18 @@ def score_race_velo_prime(
     # Pre-inject sp_rank and is_fav across the full field.
     # build_v17_feature_vector uses runner.get("sp_rank") — without pre-injection
     # all runners default to sp_rank=3.0 and is_fav=0.0.
-    from app.services.sqpe_v17_service import _resolve_decimal_odds
+    from app.services.sqpe_v17_service import _resolve_decimal_odds_or_none
+    import statistics
 
-    _runner_odds = [(r, _resolve_decimal_odds(r)) for r in runners]
+    # E4: a runner with no price must not be priced at 10/1. Impute the race median of
+    # the prices that do exist, and flag the runner so downstream can see it.
+    _known = [v for v in (_resolve_decimal_odds_or_none(r) for r in runners) if v]
+    _fill = statistics.median(_known) if _known else 10.0
+    _runner_odds = []
+    for r in runners:
+        v = _resolve_decimal_odds_or_none(r)
+        r["_price_imputed"] = v is None
+        _runner_odds.append((r, _fill if v is None else v))
     _sorted_odds = sorted(
         [sp for _, sp in _runner_odds if sp < 500.0],  # exclude clear defaults
     )

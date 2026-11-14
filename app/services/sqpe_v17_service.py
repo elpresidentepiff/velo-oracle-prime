@@ -241,6 +241,32 @@ def _parse_num(val) -> float:
         return 0.0
 
 
+def _resolve_decimal_odds_or_none(runner: dict):
+    """Decimal price from the runner, or None when no usable price exists."""
+    cached = runner.get("_resolved_sp_dec")
+    if cached is not None:
+        try:
+            return float(cached)
+        except (TypeError, ValueError):
+            pass
+    bd = runner.get("best_odds_decimal")
+    if bd is not None:
+        try:
+            bd_f = float(bd)
+            if bd_f > 1.0:
+                return round(bd_f, 2)
+            if 0.005 < bd_f < 1.0:
+                return round(1.0 / bd_f, 2)
+        except (TypeError, ValueError):
+            pass
+    sp_str = runner.get("sp")
+    if sp_str:
+        parsed = _parse_sp(sp_str)
+        if parsed > 1.0:
+            return parsed
+    return None
+
+
 def _resolve_decimal_odds(runner: dict) -> float:
     """
     Resolve morning price to European decimal odds from whichever field is populated.
@@ -281,6 +307,10 @@ def _resolve_decimal_odds(runner: dict) -> float:
     return 10.0
 
 
+# E3: value used for any history/doctrine input that is absent at scoring time.
+LIVE_MISSING_HISTORY_VALUE = 0.0
+
+
 def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
     """Build feature dictionary from raw runner+race dicts."""
     sp_dec = _resolve_decimal_odds(runner)
@@ -315,11 +345,12 @@ def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
     feats["rpr_missing"] = 1.0 if runner.get("rpr") is None else 0.0
     feats["ts_missing"] = 1.0 if runner.get("ts") is None else 0.0
 
-    from app.services.v17_feature_extractor import DEFAULTS
-
     for f in EXPECTED_FEATURES:
         if f not in feats:
-            feats[f] = float(runner.get(f, DEFAULTS.get(f, 0.0)))
+            # E3: a missing history feature means "no history", encoded as 0.0 in
+            # training (fillna(0)). Racing-API-era placeholders (5.0, 0.33, 0.12...)
+            # made every runner look like it had a specific history.
+            feats[f] = float(runner.get(f, LIVE_MISSING_HISTORY_VALUE))
 
     return feats
 
