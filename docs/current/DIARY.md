@@ -400,3 +400,16 @@ Evidence:         `select * from world_status_summary` returns 120 frozen / 120 
 Open / broken:    W-1…W-5, U-1…U-5, O-1 above. The views read "deployed commit: null" until the new code runs.
 Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `main`), then confirm with
                   `select * from world_status_summary` that `last_deployed_commit` and `last_settlement_run_at` fill in.
+
+## 2026-11-14 — LEAKFREE-BASELINE-01: leak-free test on raceform 2017–2025
+
+- Source: Supabase `raceform` (1,387,120 runners, 2017-01-01 to 2025-07-05). Parquet source is not committed (data file, regenerated from Supabase).
+- Script: `scripts/research/leakfree_baseline_raceform_2025.py`. Features: distance, going, class, weight, Official Rating (+ field-relative and missing flag), field size, draw, age, race type. EXCLUDED: RPR, Topspeed, SP/odds, result-derived values.
+- Train 2017–2024 (1,237,870 runners). Test 2025 (79,742 runners, 8,700 races with SP).
+- Result (HistGradientBoosting, not the production GBM):
+  - AUC 0.649 (runner win)
+  - Top pick hit rate 19.4%, level-stake ROI −17.5%
+  - Favourite (SP) hit rate 34.8%, level-stake ROI −5.5%
+- Reading: conditions plus OR alone do not beat the market. The 72% top-1 figure came from post-race RPR/TS (see `11f51e2e`). A model that is honest about pre-race information does not beat the favourite without history features. The history rebuild (Sight Plan, sections 5–6) is required before any live change.
+- Not done: the 18 history features were not built into this test, so this is the baseline with history absent, not the final candidate.
+- Live scoring unchanged by this entry.
