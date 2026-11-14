@@ -96,9 +96,12 @@ def main() -> int:
         "type_codes": types,
         "fill_value_for_missing": -1,
         "holdout_2025_result": {
-            "source": "scripts/research/horse_history_blend_test_2025.py (trained 2017-2023 for this result set; 2017-2024 for the final model)",
-            "auc": 0.7146, "top_pick_hit": 0.2753, "roi_pct": -6.73,
-            "favourite_hit": 0.348, "favourite_roi_pct": -5.53,
+            "source": "scripts/research/horse_history_stacked_blend_test_2025.py (model trained 2017-2023; stacker fitted on 2024)",
+            "model_only_auc": 0.7144, "model_only_top_pick": 0.2759, "model_only_roi_pct": -5.62,
+            "stacked_auc": 0.7925, "stacked_top_pick": 0.3485, "stacked_roi_pct": -5.43,
+            "market_logloss": 0.28589, "stacked_logloss": 0.28513,
+            "stacker_logit_model_coef": -0.0229, "stacker_logit_market_coef": 1.0905,
+            "conclusion": "The history model adds no information beyond the market price on 2025 holdout.",
         },
         "gate": "Beat the favourite on a 2025-style holdout before any live use. Operator sign-off required.",
     }

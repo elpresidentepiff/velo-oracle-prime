@@ -448,3 +448,16 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - The blend in that script is not valid: it adds logits without calibration. A fitted blend (logistic on 2024) is the next experiment.
 - Candidate retrained with jockey and trainer: `models/horse_history_candidate/` (40 features, 1,317,612 runners, NOT_PROMOTED).
 - Live: jockey and trainer are fetched in `app/services/horse_history_live.py` and passed to the shadow. Live name match vs historical names not yet checked.
+
+## 2026-11-14 — HISTORY-STACK-01: corrected blend result, name fix, durable shadow
+
+- Stacked blend (`scripts/research/horse_history_stacked_blend_test_2025.py`, model trained 2017–2023, logistic stacker fitted on 2024, tested on 2025):
+  - Stacker weights: logit(model) −0.023, logit(market) 1.091. The model carries no weight once the market is in.
+  - Log loss 2025: market alone 0.28589, stacked 0.28513. The gain is noise.
+  - Top pick: stacked 34.9% / ROI −5.43%; favourite 34.8% / −5.53%.
+  - Conclusion: the jockey, trainer and horse-history features add no information beyond the starting price. The earlier 0.698 and 0.715 AUC gains were real for ranking but are already in the price.
+- Name fix: `person_key` matches 'H Ryall' (historical) to 'Harry Ryall' (live). Live lookups before this would miss ~12–17% of trainer and jockey names.
+- Shadow store: `horse_history_shadow` table (migration `20261114130000`), one row per runner per race per day plus a run-status row. Fail-soft.
+- Dashboard: `/api/horse-history-shadow` and a shadow panel. Labelled shadow, NOT_PROMOTED, not a tip.
+- Known gap: no racing data between July 2025 and May 2026 in the history tables. Horses who raced only in that window show no history. The shadow reports the share with history on every day.
+- Live Prime is unchanged. It still uses RPR and Topspeed (decision pending, option C agreed: run the leak-free candidate beside Prime).
