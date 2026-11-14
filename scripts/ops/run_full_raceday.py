@@ -664,6 +664,11 @@ def main() -> int:
     # Must run before the canonical scorecard build below, which reads its packet.
     run("Step 9.1c: MDS-Heavy Blend Shadow",
         [PY, "scripts/ops/run_mds_heavy_shadow_today.py", "--date", date], critical=False, results=results)
+    # Horse-history candidate (2026-11-14): leak-free, NOT_PROMOTED, shadow only.
+    # Reads Supabase history and writes data/horse_history_shadow/<date>.json.
+    # Fail-soft by design: any error writes a FAILED status and the day continues.
+    run("Step 9.1d: Horse-History Candidate Shadow",
+        [PY, "scripts/ops/run_horse_history_shadow.py", "--date", date], critical=False, results=results)
     run("Step 9.2: Tri-Lane Stress Test",
         [PY, "scripts/ops/run_tri_lane_stress_test.py", "--date", date, "--ruleset", "v2"], critical=False, results=results)
     tri_lane_json = ROOT / "data" / "reports" / f"tri_lane_stress_test_{date.replace('-', '_')}_v2.json"

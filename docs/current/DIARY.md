@@ -424,3 +424,11 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 
 - Reading: horse history adds about 5 AUC points and roughly 7 hit-rate points. It still does not beat the favourite. Not yet tested: jockey and trainer features (not pulled from `raceform`), and the market-offset blend.
 - Not live. Live wiring needs name-keyed history for Jul 2025–now from `racing_horse_runs` and identity matching (about 59% of today's runners match `raceform` by name).
+
+## 2026-11-14 — HISTORY-SHADOW-01: horse-history candidate wired as shadow
+
+- Shared feature code: `app/services/horse_history_features.py` (as-of, prior runs only; used by the test and live). Tests: `tests/test_horse_history_features.py`.
+- Live history fetch: `app/services/horse_history_live.py` (read-only Supabase REST: raceform 2017–2025, racing_horse_runs 2026+). Not yet run against live Supabase: no service key in the build container.
+- Candidate: `models/horse_history_candidate/` (HistGradientBoosting, 1,317,612 runners 2017–2025, 30 features). `promotion_status: NOT_PROMOTED`. Holdout result (2025, trained 2017–2024): AUC 0.698, top pick 26.2%, ROI −7.6% vs favourite −5.2%. It does not beat the favourite, so it is not live.
+- Shadow: `scripts/ops/run_horse_history_shadow.py`, non-critical step 9.1d in `run_full_raceday.py`. Writes `data/horse_history_shadow/<date>.json`. Fail-soft: any error writes FAILED and the day continues. Prime's output is unchanged.
+- Open: trainer and jockey history not pulled; market-blend test not run; first live shadow run not yet observed.
