@@ -409,3 +409,18 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - Not in this entry: E5 draw-bias freeze (needs a stored timestamp, schema change). The FormFav price leak is not live for UK because `include_prices=False`.
 - Effect: horse-state and TIE tags read these inputs too, so their tags can shift. Re-check on the next scored day.
 - Live scoring changed on `main` at 255d5691. Next scheduled run (07:00 UTC) uses it.
+
+## 2026-11-14 — SIGHT-HISTORY-TEST-01: as-of horse-history features, leak-free
+
+- Script: `scripts/research/horse_history_features_test_2025.py`. Features built as-of race date from `raceform` only: prior runs, win and place rates, days since run, runs since last win and place, OR change and best-OR gap, class change, average last three finishes, course, distance and going records.
+- Train 2017–2024 (1,228,157 runners), test 2025 (79,054 runners, 8,700 races with SP).
+- Results (HistGradientBoosting, not the production GBM):
+
+| Model | AUC | Top pick hit | Level-stake ROI |
+|---|---|---|---|
+| Leak-free base | 0.648 | 19.3% | −16.0% |
+| Base + horse history | 0.698 | 26.2% | −7.6% |
+| Favourite (SP) | — | 34.9% | −5.2% |
+
+- Reading: horse history adds about 5 AUC points and roughly 7 hit-rate points. It still does not beat the favourite. Not yet tested: jockey and trainer features (not pulled from `raceform`), and the market-offset blend.
+- Not live. Live wiring needs name-keyed history for Jul 2025–now from `racing_horse_runs` and identity matching (about 59% of today's runners match `raceform` by name).
