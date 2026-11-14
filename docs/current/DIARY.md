@@ -479,3 +479,13 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - The real UK end-of-day is `scripts/ops/rp_cloud_eod.py`, which runs only in `velo-results-sigma` on its 21:00 UTC cron (`railway.eod.toml`). Its last nights: 12 Nov PASS with 0 races processed; 13 Nov never scored, so nothing to settle; 25/26 Oct blocked by SIGMA_RESULTS_INCOMPLETE_BLOCKED.
 - Result: 0 of 36 UK races settled for 14 Nov. `racing_horse_runs` has 0 rows for 13 and 14 Nov.
 - Open decisions: (1) make the manual trigger start `rp_cloud_eod.py` in `velo-results-sigma` (a Railway change); (2) remove the GitHub trigger that calls the light job; (3) merge `ops/recovery` (U-1).
+
+## 2026-11-14 — USA-MODEL-01: first US racing test (null result)
+
+- Data: raceform rows with course `(USA)`, 37,127 runners, 4,536 races, 2017–2025-07. Live FormFav US data is only from 6 Nov, too short to train on.
+- Script: `scripts/research/usa_racing_model_test.py` (history features + market stacker; reads Supabase with `course_ilike` or a local parquet).
+- Result: train 2017–2023 (31,400 runners), blend weight from 2024 (3,550), test 2025 (1,607 runners, 214 races with starting prices).
+  - Stacker weights: model 0.056, market 0.981.
+  - Log loss: stacked 0.31875, market alone 0.31894. Noise.
+  - Model top pick 28.97% hit, ROI −5.6%. Favourite 38.8% hit, ROI −15.1%. With 214 races the 95% interval on ROI is roughly ±45 points, so this is not evidence of an edge.
+- Conclusion: nothing beats the price on US data yet. Keep as research. Revisit when the US settled sample reaches about 2,000 races, and when US results from July 2025 onward are in Supabase.
