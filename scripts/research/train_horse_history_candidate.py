@@ -22,7 +22,6 @@ from app.services.horse_history_features import (  # noqa: E402
     HISTORY_FEATURES, compute_history_features, parse_dist_f, parse_going_code,
 )
 
-SRC = ROOT / "data" / "raceform_leakfree_src.parquet"
 OUT = ROOT / "models" / "horse_history_candidate"
 BASE = ["dist_f", "going_code", "class_num", "wgt_lbs", "or_num", "or_vs_field", "or_missing",
         "field_size", "draw_num", "draw_pct", "age_num", "type_code"]
@@ -69,10 +68,10 @@ def build_frame(raw: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> int:
-    raw = pd.read_parquet(SRC)
-    jt = pd.read_parquet(ROOT / "data" / "raceform_jt.parquet")[["race_id", "horse", "jockey", "trainer"]]
-    raw = raw.merge(jt, on=["race_id", "horse"], how="left")
-    raw = raw[raw["pos"].str.fullmatch(r"\d+", na=False)]
+    # Source of truth is Supabase (no local copy). See app/services/raceform_source.py.
+    from app.services.raceform_source import load_raceform
+    raw = load_raceform()
+    raw = raw[raw["pos"].astype(str).str.fullmatch(r"\d+", na=False)]
     df = build_frame(raw)
     types = sorted(df["type"].dropna().unique().tolist())
     df["type_code"] = df["type"].map({t: i for i, t in enumerate(types)}).astype(float)

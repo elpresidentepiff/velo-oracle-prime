@@ -461,3 +461,13 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - Dashboard: `/api/horse-history-shadow` and a shadow panel. Labelled shadow, NOT_PROMOTED, not a tip.
 - Known gap: no racing data between July 2025 and May 2026 in the history tables. Horses who raced only in that window show no history. The shadow reports the share with history on every day.
 - Live Prime is unchanged. It still uses RPR and Topspeed (decision pending, option C agreed: run the leak-free candidate beside Prime).
+
+## 2026-11-14 — FORMFAV-INGEST-01: everything on Supabase, track bias stored
+
+- Checked what FormFav returns against what Supabase holds (`formfav_factual_captures`, `formfav_runner_form`, `formfav_races`, `formfav_market_snapshots`, `formfav_predictions`, `formfav_results`):
+  - Stored: runner basics, form and last 20 starts, career stats (overall, track, distance, track-distance, conditions, first-up, second-up), speed map, class profile, class fit, jockey, trainer, claim, draw, weight; race metadata; live prices; predictions; results.
+  - Gap: track/barrier bias (`biasStrength`, `barrierStats`). Fetched live during enrichment and never stored. Now stored: `formfav_track_bias` (migration `20261114140000`), written by the live worker after each racecard refresh, fail-soft.
+  - Gap (not yet fixed): `careerPrizeMoney` is in the mutable runner table but not in the immutable factual capture. Pace scenario does not appear in any stored field. Decorators are stored only in the mutable table, on purpose.
+- Local dependency removed: `app/services/raceform_source.py` reads raceform from Supabase in pages. The candidate training script uses it, so training no longer needs a laptop parquet.
+- Tests: `tests/test_formfav_track_bias_ingest.py`, `tests/test_raceform_source.py`.
+- Open for operator decision: U-1 (UK settlement code is on `origin/ops/recovery`, four commits ahead of `main`); the RP backfill for July 2025–May 2026; decommissioning `hermes-agent` (H-1).

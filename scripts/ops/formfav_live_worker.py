@@ -314,6 +314,43 @@ def _persist_result(race_key: str, payload: dict[str, Any]) -> None:
     )
 
 
+def _persist_track_bias(
+    client: FormFavClient, race_key: str, race_row: dict[str, Any], form: dict[str, Any],
+    country: str, now: datetime,
+) -> None:
+    """Store FormFav's barrier/track bias for this race as an append-only snapshot.
+
+    FORMFAV-INGEST-01: the bias packet was only fetched live during enrichment and never stored.
+    Fail-soft: a bias error is logged and never stops the racecard capture.
+    """
+    try:
+        venue = str(race_row.get("track") or form.get("track") or "").strip()
+        if not venue:
+            return
+        distance = form.get("distance") or race_row.get("distance")
+        condition = form.get("condition") or race_row.get("condition")
+        packet = client.track_bias(
+            venue=venue, country=country, distance=distance, window=90, condition=condition,
+        )
+        if not isinstance(packet, dict):
+            return
+        _insert("formfav_track_bias", [{
+            "provider_race_key": race_key,
+            "captured_at": now.isoformat(),
+            "venue": venue,
+            "country": country,
+            "distance": None if distance is None else str(distance),
+            "condition": None if condition is None else str(condition),
+            "window_days": 90,
+            "bias_strength": packet.get("biasStrength"),
+            "barrier_stats": packet.get("barrierStats"),
+            "payload": packet,
+        }])
+    except Exception as exc:  # never stop the racecard capture
+        print(f"[FORMFAV-LIVE] TRACK_BIAS_FAILED {race_key}: {type(exc).__name__}",
+              file=sys.stderr, flush=True)
+
+
 def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any], mrace: dict[str, Any], now: datetime) -> None:
     global _price_forbidden_until
     if _provider_backoff_remaining() > 0:
@@ -390,6 +427,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                 )
                 return
             _persist_form(race_key, race_row, form)
+            _persist_track_bias(client, race_key, race_row, form, country, now)
             capture_rows = build_capture_rows(
                 provider_race_key=race_key,
                 form=form,
