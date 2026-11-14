@@ -471,3 +471,11 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - Local dependency removed: `app/services/raceform_source.py` reads raceform from Supabase in pages. The candidate training script uses it, so training no longer needs a laptop parquet.
 - Tests: `tests/test_formfav_track_bias_ingest.py`, `tests/test_raceform_source.py`.
 - Open for operator decision: U-1 (UK settlement code is on `origin/ops/recovery`, four commits ahead of `main`); the RP backfill for July 2025–May 2026; decommissioning `hermes-agent` (H-1).
+
+## 2026-11-14 — EOD-TRIGGER-01: manual UK end-of-day ran the wrong job
+
+- Manual trigger: GitHub `score-daily.yml` (job=sigma, target_date=2026-11-14), run 43633514695, succeeded at 19:42 UTC. Pipeline row: `velo-results-sigma`, `results_reconciliation_light`, FAIL, 0 races, "script exited before successful completion", 3 seconds.
+- Cause: `/api/trigger/sigma` in the dashboard service (`velo-oracle`) runs `app/pipelines/sigma_runner.py`, a light reconciliation, not the results-capture EOD. It cannot settle UK races. Its log lives inside that container and is not readable from outside.
+- The real UK end-of-day is `scripts/ops/rp_cloud_eod.py`, which runs only in `velo-results-sigma` on its 21:00 UTC cron (`railway.eod.toml`). Its last nights: 12 Nov PASS with 0 races processed; 13 Nov never scored, so nothing to settle; 25/26 Oct blocked by SIGMA_RESULTS_INCOMPLETE_BLOCKED.
+- Result: 0 of 36 UK races settled for 14 Nov. `racing_horse_runs` has 0 rows for 13 and 14 Nov.
+- Open decisions: (1) make the manual trigger start `rp_cloud_eod.py` in `velo-results-sigma` (a Railway change); (2) remove the GitHub trigger that calls the light job; (3) merge `ops/recovery` (U-1).
