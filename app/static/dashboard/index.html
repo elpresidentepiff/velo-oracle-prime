@@ -821,6 +821,11 @@ td:last-child  { padding-right: 20px; }
   <div id="wp-note" style="font-size:10px;color:#777;margin:6px 0;"></div>
   <div id="wp-races" style="max-height:520px;overflow:auto;"></div>
 </div>
+<div id="hhs-panel" style="display:none;background:#111;border:1px dashed #9e9e9e;border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:#e0e0e0">Horse-history candidate <span style="color:#9e9e9e;font-weight:400">(shadow, NOT_PROMOTED, not a tip)</span></div>
+  <div id="hhs-status" style="color:#9e9e9e;font-size:12px;margin:4px 0"></div>
+  <div id="hhs-body" style="font-size:13px;color:#e0e0e0"></div>
+</div>
 <div id="pvc-panel" style="display:none;">
   <div class="pvc-head">
     <div class="pvc-title">PRIME vs CHALLENGER <span id="pvc-count"></span></div>
@@ -4978,6 +4983,38 @@ if (typeof setInterval === 'function') setInterval(loadWorldPicks, 300000);
 loadVeloVsFormfav();
 loadRichContext();
 loadPrimeVsChallenger();
+
+async function loadHorseHistoryShadow() {
+  const panel = document.getElementById('hhs-panel');
+  if (!panel) return;
+  try {
+    const res = await fetch('/api/horse-history-shadow');
+    if (!res.ok) throw new Error('horse-history-shadow ' + res.status);
+    const data = await res.json();
+    panel.style.display = 'block';
+    if (!data.available) {
+      document.getElementById('hhs-body').innerHTML = '<div>Shadow results could not be read just now.</div>';
+      return;
+    }
+    const st = data.run_status || 'no run recorded';
+    document.getElementById('hhs-status').textContent =
+      `${data.date} \u00b7 status: ${st} \u00b7 runners ${data.summary.runners} \u00b7 with history ${data.summary.with_history}`;
+    if (!data.races.length) {
+      document.getElementById('hhs-body').innerHTML = '<div>No shadow picks for this day.</div>';
+      return;
+    }
+    const top = data.races.slice(0, 12).map(r => {
+      const picks = r.runners.filter(x => x.rank && x.rank <= 3).sort((a, b) => a.rank - b.rank);
+      const txt = picks.map(x => `${x.rank}. ${x.horse}${x.history_known ? '' : ' (no history)'} ${(x.prob * 100).toFixed(1)}%`).join(' \u00b7 ');
+      return `<div style="padding:3px 0;border-top:1px solid #222">${r.race_id}: ${txt}</div>`;
+    }).join('');
+    document.getElementById('hhs-body').innerHTML = top;
+  } catch (_hhsErr) {
+    panel.style.display = 'block';
+    document.getElementById('hhs-body').innerHTML = '<div>Shadow results could not be loaded just now.</div>';
+  }
+}
+loadHorseHistoryShadow();
 loadLlmBrief();
 </script>
 </body>

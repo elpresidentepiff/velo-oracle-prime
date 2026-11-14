@@ -2225,6 +2225,42 @@ async def rich_context(date: str = Query(default=None)):
     }
 
 
+@app.get("/api/horse-history-shadow")
+async def horse_history_shadow_route(date: str = Query(default=None)):
+    """Horse-history candidate SHADOW for one day. Read-only. Nothing here is a tip or a live pick.
+
+    Returns the candidate's probability per runner (ranked within each race) and the run status.
+    """
+    import datetime as _dt
+
+    d = date or _dt.date.today().isoformat()
+    try:
+        _dt.date.fromisoformat(d)
+    except ValueError:
+        return JSONResponse({"error": "date must be YYYY-MM-DD"}, status_code=400)
+    rows = _sb_rest_rows(
+        f"horse_history_shadow?run_date=eq.{d}&order=race_id.asc,rank_in_race.asc&limit=2000")
+    run = [r for r in (rows or []) if r.get("race_id") == "__run__"]
+    runners = [r for r in (rows or []) if r.get("race_id") != "__run__"]
+    races: dict[str, list] = {}
+    for r in runners:
+        races.setdefault(r["race_id"], []).append({
+            "horse": r.get("horse"), "prob": r.get("prob"), "rank": r.get("rank_in_race"),
+            "history_known": r.get("history_known"), "runs_prior": r.get("runs_prior"),
+        })
+    known = sum(1 for r in runners if r.get("history_known"))
+    return {
+        "date": d,
+        "available": rows is not None,
+        "run_status": run[0].get("status") if run else None,
+        "summary": {"runners": len(runners), "with_history": known,
+                    "races": len(races)},
+        "races": [{"race_id": k, "runners": v} for k, v in races.items()],
+        "label": "Shadow only. Horse-history candidate, NOT_PROMOTED. Changes nothing Prime reads. Not a tip.",
+        "as_of": _dt.datetime.now(_dt.UTC).isoformat(timespec="seconds"),
+    }
+
+
 @app.get("/api/prime-vs-challenger")
 async def prime_vs_challenger_route(date: str = Query(default=None)):
     """Prime's top pick beside the Rich Context challenger's top pick, race by race, with results.

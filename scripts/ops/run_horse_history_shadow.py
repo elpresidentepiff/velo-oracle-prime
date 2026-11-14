@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT))
 from app.services.horse_history_features import (  # noqa: E402
     compute_history_features, normalise_name, parse_dist_f, parse_going_code,
 )
-from app.services.horse_history_live import fetch_history  # noqa: E402
+from app.services.horse_history_live import fetch_history, write_shadow_rows  # noqa: E402
 
 MODEL_DIR = ROOT / "models" / "horse_history_candidate"
 OUT_DIR = ROOT / "data" / "horse_history_shadow"
@@ -47,7 +47,9 @@ def _cls(s):
 
 def _write(date: str, status: str, runners: list[dict], detail: str = "") -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    db = write_shadow_rows(date, status, runners, detail)
     payload = {
+        "supabase_write": db,
         "date": date, "status": status, "detail": detail, "model": "horse_history_candidate_v1",
         "promotion_status": "NOT_PROMOTED", "production_influence": False,
         "generated_at": datetime.now(UTC).isoformat(), "runners": runners,

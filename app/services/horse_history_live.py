@@ -65,3 +65,56 @@ def fetch_history(names: list[str], since: str = "2017-01-01") -> pd.DataFrame:
                     "jockey": r.get("jockey"), "trainer": r.get("trainer"),
                 })
     return pd.DataFrame(rows)
+
+
+MODEL_TAG = "horse_history_candidate_v1"
+
+
+def write_shadow_rows(date: str, status: str, runners: list[dict], detail: str = "") -> str:
+    """Upsert shadow rows into horse_history_shadow. Returns 'WRITTEN' or an error note.
+
+    Always writes one status row (horse='__run__') so a missing day is visible.
+    Never raises: the morning run must not stop for a shadow write.
+    """
+    import requests
+    from datetime import UTC, datetime
+
+    base = os.environ.get("SUPABASE_URL", "").rstrip("/")
+    key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
+    if not base or not key:
+        return "NO_CREDENTIALS"
+    now = datetime.now(UTC).isoformat()
+    rows = [{
+        "run_date": date, "race_id": str(r.get("race_id")), "horse": str(r.get("horse")),
+        "horse_key": str(r.get("horse")), "model": MODEL_TAG, "prob": r.get("prob"),
+        "rank_in_race": r.get("rank_in_race"), "runs_prior": r.get("runs_prior"),
+        "history_known": r.get("history_known"), "status": status,
+        "production_influence": False, "generated_at": now,
+    } for r in runners]
+    rows.append({
+        "run_date": date, "race_id": "__run__", "horse": "__run__", "horse_key": None,
+        "model": MODEL_TAG, "prob": None, "rank_in_race": None, "runs_prior": None,
+        "history_known": None, "status": status, "production_influence": False,
+        "generated_at": now, "detail": detail[:500],
+    })
+    seen, unique = set(), []
+    for row in rows:
+        row.pop("detail", None)
+        k = (row["race_id"], row["horse"])
+        if k not in seen:
+            seen.add(k)
+            unique.append(row)
+    rows = unique
+    try:
+        r = requests.post(
+            f"{base}/rest/v1/horse_history_shadow?on_conflict=run_date,race_id,horse",
+            json=rows,
+            headers={"apikey": key, "Authorization": f"Bearer {key}",
+                     "Content-Type": "application/json",
+                     "Prefer": "resolution=merge-duplicates,return=minimal"},
+            timeout=60,
+        )
+        r.raise_for_status()
+        return "WRITTEN"
+    except Exception as exc:  # shadow never blocks the run
+        return f"WRITE_FAILED {type(exc).__name__}"

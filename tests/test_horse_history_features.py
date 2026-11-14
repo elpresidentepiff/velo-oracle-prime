@@ -88,3 +88,12 @@ def test_trainer_rate_excludes_same_day_runs():
     assert out.loc["C", "trainer_runs"] == 2
     assert out.loc["C", "trainer_win_rate"] == (1 + 0.1) / (2 + 1.0)
     assert out.loc["C", "jockey_changed"] == 0.0 and out.loc["A", "jockey_changed"] == 0.0
+
+
+def test_person_key_matches_initials_and_full_names():
+    from app.services.horse_history_features import person_key
+    assert person_key("H Ryall") == person_key("Harry Ryall") == "ryall|h"
+    assert person_key("S O'Brien") == person_key("Sean O O'Brien") == "o'brien|s"
+    assert person_key("P C O'Connor") == person_key("Patrick O'Connor") == "o'connor|p"
+    assert person_key("") == ""
+    assert person_key("  ") == ""

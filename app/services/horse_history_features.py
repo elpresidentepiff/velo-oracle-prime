@@ -42,7 +42,7 @@ def compute_history_features(df: pd.DataFrame) -> pd.DataFrame:
     for col in ("jockey", "trainer"):
         if col not in out.columns:
             out[col] = ""
-        out[col] = out[col].fillna("").astype(str)
+        out[col] = out[col].fillna("").astype(str).map(person_key)
     out["date"] = pd.to_datetime(out["date"])
     out["_ord"] = np.arange(len(out))
     out = out.sort_values(["horse", "date", "race_id", "_ord"], kind="mergesort")
@@ -153,6 +153,20 @@ def parse_going_code(s):
         if k in g:
             return v
     return np.nan
+
+
+def person_key(name) -> str:
+    """Key for a jockey or trainer: surname plus first initial.
+
+    Historical raceform uses 'H Ryall'; live Racing Post uses 'Harry Ryall'. Both give 'ryall|h'.
+    Blank stays blank so missing connections never match each other.
+    """
+    tokens = re.sub(r"\s+", " ", str(name or "")).strip().split(" ")
+    if not tokens or not tokens[0]:
+        return ""
+    if len(tokens) == 1:
+        return tokens[0].lower()
+    return f"{tokens[-1].lower()}|{tokens[0][0].lower()}"
 
 
 def normalise_name(name) -> str:
