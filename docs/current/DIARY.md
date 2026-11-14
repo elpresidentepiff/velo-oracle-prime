@@ -400,3 +400,12 @@ Evidence:         `select * from world_status_summary` returns 120 frozen / 120 
 Open / broken:    W-1…W-5, U-1…U-5, O-1 above. The views read "deployed commit: null" until the new code runs.
 Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `main`), then confirm with
                   `select * from world_status_summary` that `last_deployed_commit` and `last_settlement_run_at` fill in.
+
+## 2026-11-14 — SIGHT-E3-E4-01: missing history = 0; no price is imputed
+
+- E3: the 18 history/doctrine inputs used Racing-API-era placeholders at scoring time (5.0, 0.33, 0.12 ...). Training used fillna(0) for "no history". Live now uses 0.0 for any absent history input (`LIVE_MISSING_HISTORY_VALUE`, `app/services/sqpe_v17_service.py`).
+- E4: a UK runner with no price was priced at 10/1. It now takes the race median of available prices and is flagged `_price_imputed` (`app/services/velo_prime_service.py`). A race with no prices keeps the 10.0 fallback.
+- Tests: `tests/test_sight_e3_e4_missing_inputs.py`. Full suite: no new failures versus main (the same pre-existing failures before and after).
+- Not in this entry: E5 draw-bias freeze (needs a stored timestamp, schema change). The FormFav price leak is not live for UK because `include_prices=False`.
+- Effect: horse-state and TIE tags read these inputs too, so their tags can shift. Re-check on the next scored day.
+- Live scoring changed on `main` at 255d5691. Next scheduled run (07:00 UTC) uses it.
