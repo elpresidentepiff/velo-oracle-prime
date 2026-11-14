@@ -112,6 +112,25 @@ def _fuzzy_odds_lookup(name: str, forecast_odds: dict[str, float]) -> float:
     return 0.0
 
 
+def _distance_furlongs(race_info, race_data):
+    """Race distance in furlongs. The builder writes it under race_info (current format);
+    older files carry a top-level 'distance' string. Returns None when absent."""
+    if isinstance(race_info, dict):
+        v = race_info.get("distance_furlongs")
+        try:
+            if v not in (None, "") and float(v) > 0:
+                return float(v)
+        except (TypeError, ValueError):
+            pass
+    d = race_data.get("distance")
+    try:
+        if d not in (None, "") and float(d) > 0:
+            return float(d)
+    except (TypeError, ValueError):
+        pass
+    return None
+
+
 def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str, Any]]:
     """
     Synthesise Racing API-compatible race dicts from RP merged JSON files.
@@ -254,7 +273,7 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                 "date": date_str,
                 "off_time": race_time,
                 "race_name": (race_info.get("race_title", "") if isinstance(race_info, dict) else str(race_info))[:80],
-                "distance_f": race_data.get("distance_furlongs") or None,
+                "distance_f": _distance_furlongs(race_info, race_data),
                 "going": going_str,
                 "race_class": race_class,
                 "type": race_type_str,

@@ -34,3 +34,12 @@ def test_going_longest_phrase_wins():
     assert _parse_going("Good to Soft")[0] == 0.5
     assert _parse_going("Good")[0] == 1.0
     assert _parse_going("Firm")[0] == 2.0
+
+
+def test_loader_reads_distance_from_race_info():
+    from src.velo.racecard_loader import _distance_furlongs
+    assert _distance_furlongs({"distance_furlongs": 16.0}, {}) == 16.0
+    assert _distance_furlongs({"distance_furlongs": 8.5}, {}) == 8.5
+    assert _distance_furlongs("legacy string", {"distance": "10.0"}) == 10.0
+    assert _distance_furlongs({}, {"distance_furlongs": 16.0}) is None  # top-level key was the bug
+    assert _distance_furlongs({}, {}) is None

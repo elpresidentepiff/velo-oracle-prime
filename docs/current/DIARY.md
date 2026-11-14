@@ -432,3 +432,10 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - Candidate: `models/horse_history_candidate/` (HistGradientBoosting, 1,317,612 runners 2017–2025, 30 features). `promotion_status: NOT_PROMOTED`. Holdout result (2025, trained 2017–2024): AUC 0.698, top pick 26.2%, ROI −7.6% vs favourite −5.2%. It does not beat the favourite, so it is not live.
 - Shadow: `scripts/ops/run_horse_history_shadow.py`, non-critical step 9.1d in `run_full_raceday.py`. Writes `data/horse_history_shadow/<date>.json`. Fail-soft: any error writes FAILED and the day continues. Prime's output is unchanged.
 - Open: trainer and jockey history not pulled; market-blend test not run; first live shadow run not yet observed.
+
+## 2026-11-14 — REVIEW-01: self-review of today's wiring
+
+- Found and fixed: the E1 distance fix read `distance_furlongs` from the top level of the race. The builder writes it under `race_info`, so the fix never reached Prime. `src/velo/racecard_loader.py` now reads `race_info` first, then the legacy `distance` string. Test: `tests/test_sqpe_stuck_inputs_fixes.py::test_loader_reads_distance_from_race_info`.
+- Added end-to-end test for the history shadow on a current-format racecard with faked history: `tests/test_horse_history_shadow_e2e.py`.
+- Still unverified: the Supabase history fetch (no service key in the build container). The 07:00 run on the new code is the first real check.
+- Still open: Prime's live model (v17) still includes RPR and Topspeed. Removing them is a model change and needs your decision.
