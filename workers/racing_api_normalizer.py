@@ -41,9 +41,11 @@ IMPORTANT — rating semantics:
   use neutral handling (or_vs_field = 0.0) for missing runners, not synthesise
   a worst-in-field value. 0.0 is NOT a valid rating; it is fabricated data.
 """
+
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any, Optional
 
 log = logging.getLogger("velo.normalizer")
@@ -87,6 +89,15 @@ def _parse_rating(val: Any) -> Optional[float]:
         return v if v > 0 else None
     except (ValueError, TypeError):
         return None
+
+
+def _st_lb_to_lbs(val: Any) -> int:
+    """'11-1' (11st 1lb) -> 155. Plain numbers pass through. Unknown -> 0."""
+    s = str(val or "").strip()
+    m = re.fullmatch(r"(\d{1,2})-(\d{1,2})", s)
+    if m:
+        return int(m.group(1)) * 14 + int(m.group(2))
+    return _safe_int(s)
 
 
 def _safe_int(val: Any, default: int = 0) -> int:
@@ -224,7 +235,7 @@ def normalize_runner(raw: dict) -> dict:
         # Physical / race entry
         "age":                 _safe_str(raw.get("age")),
         "sex":                 _safe_str(raw.get("sex")),
-        "weight_lbs":          _safe_int(raw.get("lbs")),
+        "weight_lbs":          _st_lb_to_lbs(raw.get("lbs")),
         "draw":                _safe_int(raw.get("draw")),
         "headgear":            _safe_str(raw.get("headgear")),
         "last_run":            _safe_str(raw.get("last_run")),

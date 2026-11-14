@@ -254,7 +254,7 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                 "date": date_str,
                 "off_time": race_time,
                 "race_name": (race_info.get("race_title", "") if isinstance(race_info, dict) else str(race_info))[:80],
-                "distance_f": None,
+                "distance_f": race_data.get("distance_furlongs") or None,
                 "going": going_str,
                 "race_class": race_class,
                 "type": race_type_str,

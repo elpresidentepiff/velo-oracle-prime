@@ -167,7 +167,12 @@ def _parse_sp(sp_str) -> float:
 def _parse_dist(dist_str) -> float:
     if not dist_str:
         return 16.0
+    if isinstance(dist_str, (int, float)) and not isinstance(dist_str, bool):
+        return float(dist_str) if dist_str > 0 else 16.0
     s = str(dist_str).strip().lower()
+    if re.fullmatch(r"\d+(\.\d+)?", s):
+        v = float(s)
+        return v if v > 0 else 16.0
     total = 0.0
     m_miles = re.search(r"(\d+(?:\.\d+)?)m", s)
     m_fur = re.search(r"(\d+(?:\.\d+)?)f", s)
@@ -194,7 +199,8 @@ def _parse_going(going_str):
         "YIELDING": 0.3,
         "STANDARD": 1.0,
     }
-    for key, val in codes.items():
+    for key in sorted(codes, key=len, reverse=True):
+        val = codes[key]
         if key in g:
             return val, aw
     return 0.5, aw
@@ -202,7 +208,7 @@ def _parse_going(going_str):
 
 def _parse_class(class_str) -> float:
     s = str(class_str or "").strip().upper()
-    m = re.search(r"CLASS\s*(\d)", s)
+    m = re.search(r"CLASS\s*(\d)", s) or re.fullmatch(r"(\d)", s)
     if m:
         return float(m.group(1))
     if "GROUP 1" in s or "GRADE 1" in s:
@@ -215,6 +221,8 @@ def _parse_class(class_str) -> float:
 
 
 def _parse_wgt(wgt_str) -> float:
+    if isinstance(wgt_str, (int, float)) and not isinstance(wgt_str, bool) and wgt_str > 0:
+        return float(wgt_str)
     s = str(wgt_str or "").strip()
     m = re.match(r"(\d+)-(\d+)", s)
     if m:
