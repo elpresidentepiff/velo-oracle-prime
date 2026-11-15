@@ -377,8 +377,9 @@ def score_race_velo_prime(
     # Pre-inject sp_rank and is_fav across the full field.
     # build_v17_feature_vector uses runner.get("sp_rank") — without pre-injection
     # all runners default to sp_rank=3.0 and is_fav=0.0.
-    from app.services.sqpe_v17_service import _resolve_decimal_odds_or_none
     import statistics
+
+    from app.services.sqpe_v17_service import _resolve_decimal_odds_or_none
 
     # E4: a runner with no price must not be priced at 10/1. Impute the race median of
     # the prices that do exist, and flag the runner so downstream can see it.
