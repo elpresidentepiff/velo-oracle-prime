@@ -521,3 +521,19 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
   - `runner_prediction_snapshots`, 4 to 14 Nov, every runner: `postdata_score`, `plot_conviction` and `mark_compression_score` are 0 on all 3,075 rows. These Prime inputs carry no information in the cloud run.
 - Changed: `config/model_lane_artifacts.json` (each lane, its files, SHIPPED or MISSING_FROM_IMAGE with impact and repair), `scripts/ops/check_model_lane_artifacts.py` (read-only report; exit 1 only when a SHIPPED lane has lost a file), `tests/test_model_lane_artifacts.py` (15 tests), `ci.yml` job `release-checks`.
 - Open for the operator: force-add the four files from the laptop (check they load under the production pins first), or retire those lanes. When a file arrives the test fails until its entry is set to SHIPPED.
+
+## 2026-11-15 — CI-GREEN-01: why every pull request showed two red checks
+
+- Branch `ci/restore-green-main`, PR #194 open against `main`, **not merged**. This entry travels with PR #193 so the three PRs do not collide in this file.
+- Found: `ci` has failed on every commit to `main` since 5 Nov. `lint`: import order and format in `app/` (14 Nov commits). `cloud-raceday-contract`: its last step asserted the Racing API source may execute, against Hard Law 1; it has failed since `fec7b7f` sealed the runtime.
+- Changed in #194: `ruff check --fix` and `ruff format` on `app/` (six files, no logic change; 41 covering tests pass before and after). The contract step now asserts the API source is blocked and `RP_MERGED_CLEAN` is allowed.
+- Open: CI installs ruff unpinned. `tests/` (220 files) is still not run by CI; 66 fail and 67 error locally under the production pins, so it cannot be switched on as a gate until those are triaged.
+
+## 2026-11-15 — Session summary and what is open (Claude Code)
+
+- Open PRs from this session: #192 (morning timeout, one owner, Sigma row), #193 (lane artifact check, stacked on #192), #194 (CI green). None merged. Nothing deployed. No Supabase write, no Railway change.
+- Not recoverable: the eight shadow lanes for 2026-11-14 have no pre-race record. Do not rebuild them from results.
+- 2026-11-14 `canonical_model_scorecards` (72 rows, Main and No-RPR) were created at 21:14 UTC, after the last off. The picks come from `runner_prediction_snapshots` written 07:25 UTC, so they are authentic, but the scorecard rows carry no pre-race timestamp of their own. All 72 are `official_evaluation_eligible = false`.
+- Stale rows: `pipeline_runs` has two `velo-prime-scoring` rows still `run_state = running` (started 2026-11-08 13:45 and 2026-11-13 17:17 UTC). They need closing by the operator; I did not write to production.
+- Nightly catch-up retries 2026-10-25 and 2026-10-26 every night and fails with `SIGMA_RESULTS_INCOMPLETE_BLOCKED`. `sigma_audits` has 0 rows for both days although `racing_horse_runs` has 43 and 51 races.
+- Next safe action: after #192 merges, run the two queries in the MORNING-TIMEOUT-OWNER-01 entry on the first race day.
