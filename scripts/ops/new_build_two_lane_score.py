@@ -38,6 +38,33 @@ LANE_A_PKL = ROOT / "data" / "new_build" / "models" / "core_v0_or_passport" / "c
 LANE_B_PKL = ROOT / "data" / "new_build" / "models" / "core_v0_or_passport_intent" / "model.pkl"
 LANE_C_PKL = ROOT / "data" / "new_build" / "models" / "soft_label_challenger" / "champion_model.pkl"
 REGISTRY_PATH = NEW_BUILD_ROOT / "models" / "champion" / "champion_registry.json"
+# The soft-label bundle as promoted to champion. Byte-identical to LANE_C_PKL: both are
+# 1,644,513 bytes with MD5 9fe8fe9cf22f54b5ca580bee11ad34e0 in the 2026-09-19 Supabase archive
+# of the laptop. LANE_C_PKL is git-ignored and exists only on the laptop; this copy is in git.
+LANE_C_CHAMPION_PKL = NEW_BUILD_ROOT / "models" / "champion" / "champion_model.pkl"
+
+
+def resolve_lane_c_pkl(
+    lane_c: Path | None = None, champion: Path | None = None, registry: Path | None = None
+) -> Path | None:
+    """The soft-label bundle to score Lane C with, or None when it is not available.
+
+    The champion copy is used only while the registry still names the soft-label model as
+    champion. If another model is promoted, that file is no longer Lane C and the lane is
+    skipped rather than scored with the wrong model.
+    """
+    lane_c = lane_c or LANE_C_PKL
+    champion = champion or LANE_C_CHAMPION_PKL
+    registry = registry or REGISTRY_PATH
+    if lane_c.exists():
+        return lane_c
+    if not champion.exists() or not registry.exists():
+        return None
+    try:
+        promoted_from = json.loads(registry.read_text(encoding="utf-8")).get("promoted_from")
+    except (OSError, ValueError):
+        return None
+    return champion if promoted_from == "soft_label_challenger" else None
 
 INTENT_COVERAGE_GATE = 80.0  # percent; below this → Lane A is operational
 BANNED_SUBSTRINGS = ("rpr", "sp_dec", "log_sp", "implied_prob", "sp_rank", "is_fav")
@@ -261,8 +288,9 @@ def score_date(target_date: str, execute: bool = False) -> dict:
     with LANE_B_PKL.open("rb") as f:
         bundle_b = pickle.load(f)
     bundle_c = None
-    if LANE_C_PKL.exists():
-        with LANE_C_PKL.open("rb") as f:
+    lane_c_pkl = resolve_lane_c_pkl()
+    if lane_c_pkl is not None:
+        with lane_c_pkl.open("rb") as f:
             bundle_c = pickle.load(f)
 
     # Score both lanes

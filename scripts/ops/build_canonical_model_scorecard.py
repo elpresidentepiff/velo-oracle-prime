@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.ops import new_build_input_health as _nb_health  # noqa: E402
 from src.velo.verdict_loader import load_verdicts  # noqa: E402
 
 
@@ -131,6 +132,10 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
         "ties_found": [],
     }
 
+    # Whether the passport-dependent lanes had their inputs today (new_build_input_health.py).
+    input_health = _nb_health.load(date)
+    audit["new_build_input_health"] = (input_health or {}).get("status", "UNVERIFIED")
+
     def _add_row(**kw) -> None:
         base = {
             "date": date, "race_id": None, "course": None, "off_time": None,
@@ -143,6 +148,9 @@ def build_scorecard(date: str) -> tuple[list[dict], dict]:
             "tie_status": "N/A", "notes": "",
         }
         base.update(kw)
+        health_note = _nb_health.row_note(base.get("model_name"), input_health)
+        if health_note:
+            base["notes"] = f"{health_note} {base.get('notes') or ''}".strip()
         rows.append(base)
 
     # ── Main VELO Prime + No-RPR shadow (Supabase, read-only) ──────────────

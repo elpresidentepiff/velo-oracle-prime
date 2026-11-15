@@ -4,25 +4,33 @@
     {
       "lane": "MAIN_VELO_PRIME",
       "loader": "app/services/sqpe_v17_service.py",
-      "artifacts": ["models/sqpe_v17/sqpe_v17.pkl"],
+      "artifacts": [
+        "models/sqpe_v17/sqpe_v17.pkl"
+      ],
       "status": "SHIPPED"
     },
     {
       "lane": "SQPE_NO_RPR_SHADOW",
       "loader": "app/services/sqpe_v17_service.py",
-      "artifacts": ["models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl"],
+      "artifacts": [
+        "models/sqpe_v17_no_rpr_staging/sqpe_v17_no_rpr.pkl"
+      ],
       "status": "SHIPPED"
     },
     {
       "lane": "NEW_BUILD_LANE_A_MODEL",
       "loader": "scripts/ops/new_build_two_lane_score.py",
-      "artifacts": ["data/new_build/models/core_v0_or_passport/core_v0_or_passport_model.pkl"],
+      "artifacts": [
+        "data/new_build/models/core_v0_or_passport/core_v0_or_passport_model.pkl"
+      ],
       "status": "SHIPPED"
     },
     {
       "lane": "NEW_BUILD_LANE_B_MODEL / CHAMPION_INTENT_SHADOW",
       "loader": "scripts/ops/new_build_two_lane_score.py",
-      "artifacts": ["data/new_build/models/core_v0_or_passport_intent/model.pkl"],
+      "artifacts": [
+        "data/new_build/models/core_v0_or_passport_intent/model.pkl"
+      ],
       "status": "SHIPPED"
     },
     {
@@ -37,22 +45,28 @@
     {
       "lane": "HORSE_HISTORY_CANDIDATE_SHADOW",
       "loader": "scripts/ops/run_horse_history_shadow.py",
-      "artifacts": ["models/horse_history_candidate/model.pkl", "models/horse_history_candidate/metadata.json"],
+      "artifacts": [
+        "models/horse_history_candidate/model.pkl",
+        "models/horse_history_candidate/metadata.json"
+      ],
       "status": "SHIPPED"
     },
     {
       "lane": "NEW_BUILD_LANE_C_SOFT_LABEL",
       "loader": "scripts/ops/new_build_two_lane_score.py",
-      "artifacts": ["data/new_build/models/soft_label_challenger/champion_model.pkl"],
-      "status": "MISSING_FROM_IMAGE",
-      "since": "2026-11-15",
-      "impact": "Lane C is skipped without an error when the file is absent. velo_model_comparison_ledger.nbc_top_pick is filled on 0 of 393 November races.",
-      "repair": "Operator: force-add the file from the laptop, or confirm it is the same bundle as data/new_build/models/champion/champion_model.pkl so the loader can use that path."
+      "artifacts": [
+        "data/new_build/models/champion/champion_model.pkl",
+        "data/new_build/models/champion/champion_registry.json"
+      ],
+      "status": "SHIPPED",
+      "note": "Loaded from the champion copy, byte-identical to soft_label_challenger/champion_model.pkl (MD5 9fe8fe9cf22f54b5ca580bee11ad34e0 in the 2026-09-19 Supabase archive)."
     },
     {
       "lane": "MIDPRICE_SPECIALIST_SHADOW",
       "loader": "scripts/ops/run_midprice_shadow_today.py",
-      "artifacts": ["models/sqpe_v17_midprice_specialist_staging/sqpe_v17_midprice_specialist.pkl"],
+      "artifacts": [
+        "models/sqpe_v17_midprice_specialist_staging/sqpe_v17_midprice_specialist.pkl"
+      ],
       "status": "MISSING_FROM_IMAGE",
       "since": "2026-11-15",
       "impact": "Step 9.1b exits 1 every morning (FileNotFoundError in the Railway log, 2026-11-12 and 2026-11-14). velo_model_comparison_ledger.mp_top_pick is filled on 22 of 393 November races.",

@@ -109,6 +109,11 @@ data/velo_unified_evidence_*.md
 
 # Model binaries — reproduce via training scripts
 models/**/*.pkl
+# Files a daily model lane loads must be in git or the lane cannot run on Railway
+# (config/model_lane_artifacts.json). These are still absent and exist only on the laptop:
+!models/sqpe_v17_midprice_specialist_staging/sqpe_v17_midprice_specialist.pkl
+!models/radical_sigma_gate_staging/sigma_win_gate.pkl
+!models/radical_sigma_gate_staging/sigma_frame_gate.pkl
 models/**/*.pkl.bak
 
 # Cache directories
@@ -146,3 +151,8 @@ data/current/
 
 # Place stack shadow ledger — regenerated nightly from results
 data/place_stack_shadow/
+
+# Working files of a cloud run (scripts/ops/cloud_state.py, fetch_rp_meeting_pdfs.py)
+data/pdf_inbox/
+data/race_shape/.supabase_files.json
+data/new_build/passports/.supabase_passport_hashes.json

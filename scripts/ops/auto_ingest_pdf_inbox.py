@@ -36,7 +36,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_INBOX = Path("/mnt/c/Users/puror/OneDrive/Documents/horses for courses")
+LAPTOP_INBOX = Path("/mnt/c/Users/puror/OneDrive/Documents/horses for courses")
+# Off the laptop the sheets are fetched from Racing Post by fetch_rp_meeting_pdfs.py into the
+# checkout. The laptop folder is used only where it already exists.
+DEFAULT_INBOX = LAPTOP_INBOX if LAPTOP_INBOX.is_dir() else ROOT / "data" / "pdf_inbox"
 FILENAME_RE = re.compile(r"^(?P<venue>[A-Z]{3})_(?P<ymd>\d{8})_.*\.pdf$", re.IGNORECASE)
 
 

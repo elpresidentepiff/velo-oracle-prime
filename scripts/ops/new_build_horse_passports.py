@@ -44,6 +44,11 @@ def _passport_key(row: dict) -> str:
     return f"name:{row.get('horse_name', '').strip().lower()}"
 
 
+def _freshness(row: dict) -> tuple[str, int]:
+    """Orders two passports of one horse: later last run first, then more career runs."""
+    return (str(row.get("last_run_date") or "")[:10], int(row.get("career_runs") or 0))
+
+
 def load_intent_notes_index(limit_per_horse: int = 6) -> dict[str, list[dict]]:
     """Index parse_runner_notes.py's daily trainer_intent output by
     horse_rp_uid, most recent first. Archive/context only -- never scoring.
@@ -294,14 +299,25 @@ def run(*, rebuild: bool = False) -> dict:
         carried_over_keys = [key for key in existing_by_key if key not in built_by_key]
 
         combined_by_key = dict(existing_by_key)
-        combined_by_key.update(built_by_key)  # rebuilt rows overwrite stale ones in place
+        # Rebuilt rows overwrite stale ones in place, but never the other way round. The bank is
+        # now merged with Supabase before a run (scripts/ops/cloud_state.py), so an existing row
+        # can be newer than anything the form history on this disk can rebuild.
+        kept_newer = 0
+        for key, built in built_by_key.items():
+            existing = existing_by_key.get(key)
+            if existing is not None and _freshness(existing) > _freshness(built):
+                kept_newer += 1
+                continue
+            combined_by_key[key] = built
+        if kept_newer:
+            print(f"  Existing passports newer than the rebuild, kept: {kept_newer}")
         combined_rows = list(combined_by_key.values())
         write_passport_rows(out_path, combined_rows, append=False)
 
         already_present = len(carried_over_keys)
         newly_appended = len(new_keys)
         print(f"  Existing passports carried over untouched: {already_present}")
-        print(f"  Updated in place: {len(updated_keys)}")
+        print(f"  Updated in place: {len(updated_keys) - kept_newer}")
         print(f"  Newly appended: {newly_appended}")
         print(f"  Written (merge-in-place): {out_path}")
 

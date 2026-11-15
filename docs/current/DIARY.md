@@ -537,3 +537,44 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - Stale rows: `pipeline_runs` has two `velo-prime-scoring` rows still `run_state = running` (started 2026-11-08 13:45 and 2026-11-13 17:17 UTC). They need closing by the operator; I did not write to production.
 - Nightly catch-up retries 2026-10-25 and 2026-10-26 every night and fails with `SIGMA_RESULTS_INCOMPLETE_BLOCKED`. `sigma_audits` has 0 rows for both days although `racing_horse_runs` has 43 and 51 races.
 - Next safe action: after #192 merges, run the two queries in the MORNING-TIMEOUT-OWNER-01 entry on the first race day.
+
+## 2026-11-15 — CLOUD-STATE-01: the race day no longer reads its working state from the laptop
+
+- Operator instruction: everything in Railway, GitHub or Supabase; no dependence on the laptop.
+- Branch `feat/cloud-durable-state` (stacked on `chore/model-lane-artifact-check`), PR open, **not merged, not deployed**. No Supabase write was made by this session.
+- Found (Railway logs, Supabase):
+  - The cloud run reads the passport bank from git (8,177 horses, 2026-08-04). Supabase `new_build_horse_passports` holds 16,192, last written 2026-10-17, and nothing read it. 12 Nov: `Passport cover: WARN 59/224 runners have a passport (26.3%)`.
+  - Each morning the top-up captures horses (150 on 12 Nov), writes `form_history_passport-topup-<date>.json`, rebuilds the bank, and the container exits. Nothing was stored. The feed for the day is built before the top-up, so the day did not benefit either.
+  - Champion Intent features read `data/race_shape/`: 59 of 564 runners had history on 14 Nov.
+  - `fetch_rp_meeting_pdfs.py` on Railway: `inbox: /mnt/c/Users/puror/OneDrive/Documents/horses for courses`, 0 sheets at every venue. This is why `postdata_score`, `plot_conviction` and `mark_compression_score` are 0 on every runner.
+  - The laptop was archived to Supabase Storage on 2026-09-19 (`rp_imports/velo-archive/v1/data/`, 35,125 files, 9.3 GB). It holds 102 form-history files and the Lane C bundle, whose MD5 equals the champion bundle in git. It does not hold `models/`.
+- Changed:
+  - `scripts/ops/cloud_state.py` (new): `--hydrate` downloads stored form history and merges the Supabase passport table into the bank (the fresher passport of a horse wins, nothing dropped). `--persist` uploads new form-history files and upserts only the passports that changed. Fail-soft.
+  - `run_full_raceday.py`: hydrate after Step 0; after a successful top-up rebuild, persist, then rebuild the feed (Step 6b) so the day's lanes use the horses just captured.
+  - `new_build_horse_passports.py`: the rebuild no longer replaces a passport with an older one.
+  - `new_build_two_lane_score.py`: Lane C loads the champion copy while the registry names the soft-label model as champion.
+  - `fetch_rp_meeting_pdfs.py`, `auto_ingest_pdf_inbox.py`: inbox inside the checkout off the laptop; the fetch signs in when `RP_EMAIL`/`RP_PASSWORD` are set.
+  - `.gitignore`: exceptions for the three lane model files still missing. Manifest: Lane C is SHIPPED.
+  - `PLATFORM_CONTROL_REGISTER.md`: "Laptop dependencies" table.
+- Tests: `tests/test_cloud_state.py` (15). Full suite: no new failure against `main`. Real run of the passport rebuild on the checkout: 8,177 rows in and out, two rows made newer than the form history were kept. Lane C scored three rows from the git bundle.
+- Not tested: the Supabase Storage and REST calls against the live project (no service key in the build container), and the PDF sign-in. First cloud run after merge is the check: look for `[CLOUD-STATE] hydrate form history: {"status": "OK", ...}` and `hydrate passport bank` in the `velo-rp-capture` log, a `Passport cover` line well above 26%, and `sheet(s)` counts above 0.
+- Still on the laptop only: the Mid-Price Specialist model, the two sigma-gate models, and form history captured there after 2026-09-19. Push the three model files (plain `git add` now works), or decide to retrain or retire those lanes.
+- Cloud EOD still skips the nightly passport refresh (Step 21), so the bank grows only from the morning top-up.
+
+## 2026-11-15 — CLOUD-STATE-02: #195 hardened; contracts checked against the live tables
+
+- Branch `feat/cloud-durable-state` (PR #195), **not merged**. No Supabase write by this session. GitNexus is not available in the cloud container (no `.gitnexus` index, no MCP tools), so impact was checked by reading callers and running the full suite.
+- Checked against production (read-only):
+  - `new_build_horse_passports`: 16,192 rows; every `passport` has `horse_rp_uid`, `last_run_date`, `career_runs`; the uid inside equals the primary key on all 16,192; primary key `horse_rp_uid` matches the upsert's conflict target.
+  - Coverage of the 198 runners scored on 2026-11-12: git bank 58 (29.3%), Supabase bank 138 (69.7%). 2026-11-14: Supabase 145 of 338 (42.9%).
+- Changed:
+  - `scripts/ops/new_build_input_health.py` (new): the day is DEGRADED when the hydrate did not complete or GB/IRE passport coverage is below the threshold. Written to `data/reports/new_build_input_health_<date>.json`, persisted with the report artifacts, and stamped onto the scorecard `notes` of New Build A/B/C, Champion Intent and the Passport proxy (`INPUT_DEGRADED: ...`). A day with no verdict is stamped `INPUT_HEALTH_UNVERIFIED`. Prime rows are never stamped. The day still scores: the 2026-08-02 operator ruling (a degraded day scores and learns) is unchanged; blocking learning for these lanes is one line once you rule on it.
+  - PDF sign-in is now off unless `VELO_PDF_FETCH_SIGN_IN=1` is set on the Railway service. Reason below.
+  - CI repair (#194) merged into #192, #193 and #195 so their checks mean something.
+- Live inputs that change when #195 is deployed:
+  - New Build A/B/C, Champion Intent, Passport proxy: more passports and form history. Their picks will change. They are shadow lanes.
+  - Lane C starts producing output again.
+  - Prime, No-RPR, Old Velo, MDS-heavy: **no change**, as long as `VELO_PDF_FETCH_SIGN_IN` is unset.
+  - With `VELO_PDF_FETCH_SIGN_IN=1` and a working sign-in: Prime's `postdata_score`, `plot_conviction`, `mark_compression_score` stop being 0. Not validated: it needs the Racing Post account, which exists only on Railway.
+- Tests: `tests/test_new_build_input_health.py` (10), one more in `tests/test_cloud_state.py`.
+
