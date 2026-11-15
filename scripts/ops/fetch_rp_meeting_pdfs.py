@@ -84,7 +84,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-DEFAULT_INBOX = Path("/mnt/c/Users/puror/OneDrive/Documents/horses for courses")
+LAPTOP_INBOX = Path("/mnt/c/Users/puror/OneDrive/Documents/horses for courses")
+# Off the laptop the sheets are fetched from Racing Post by fetch_rp_meeting_pdfs.py into the
+# checkout. The laptop folder is used only where it already exists.
+DEFAULT_INBOX = LAPTOP_INBOX if LAPTOP_INBOX.is_dir() else ROOT / "data" / "pdf_inbox"
 DEFAULT_PROFILE_DIR = ROOT / "data" / "browser_profiles" / "racing_post_account"
 URL_LIST_DIR = ROOT / "data" / "racing_post_url_lists"
 REPORT_DIR = ROOT / "data" / "reports"
@@ -117,6 +120,18 @@ def venue_urls(date: str) -> list[tuple[str, str]]:
     return sorted(first.items())
 
 
+def _sign_in_if_configured(context) -> str | None:
+    """Sign in with RP_EMAIL/RP_PASSWORD when both are set. Never fatal; None when not configured."""
+    if not ((os.getenv("RP_EMAIL") or "").strip() and os.getenv("RP_PASSWORD")):
+        return None
+    try:
+        from scripts.ops.rp_cloud_probe import cloud_login
+
+        return str(cloud_login(context).get("status"))
+    except Exception as exc:  # noqa: BLE001 - the sheets are optional context, the day must go on
+        return f"ERROR {type(exc).__name__}: {exc}"[:160]
+
+
 def harvest(date: str, profile_dir: Path, timeout_s: int, per_race: bool) -> dict[str, Any]:
     """{slug: [pdf urls]} scraped from each venue's Newspaper Form Plus tab."""
     from playwright.sync_api import sync_playwright
@@ -130,6 +145,12 @@ def harvest(date: str, profile_dir: Path, timeout_s: int, per_race: bool) -> dic
             viewport={"width": 1500, "height": 1100},
             firefox_user_prefs={"gfx.webrender.enabled": False, "gfx.webrender.all": False},
         )
+        # A fresh cloud container has no Racing Post session in this profile, and the sheets
+        # are listed only for a signed-in account: every venue returned 0 sheets on Railway
+        # (2026-11-12 log). Sign in within this same browser context when credentials are set.
+        login_status = _sign_in_if_configured(browser)
+        if login_status:
+            print(f"  Racing Post sign-in: {login_status}")
         page = browser.new_page()
         for slug, url in venue_urls(date):
             try:

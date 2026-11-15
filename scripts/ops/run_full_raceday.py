@@ -306,6 +306,14 @@ def main() -> int:
     ) and not args.allow_partial_formfav:
         return 1
 
+    # ── Durable state: Supabase -> disk (2026-11-15) ─────────────────────
+    # The passport bank and the per-run form history were kept on the laptop. A cloud container
+    # starts from the git copies (2026-08-04), so New Build scored with a quarter of its
+    # passports and Champion Intent with a tenth of its history. Supabase is the store now.
+    # Non-critical: if it cannot be reached the day runs on the git copies and says so.
+    run("Durable state: hydrate passport bank and form history from Supabase",
+        [PY, "scripts/ops/cloud_state.py", "--hydrate"], critical=False, results=results)
+
     # ── Pre-flight: RP session health ────────────────────────────────────
     if not args.skip_capture:
         print("\nPre-flight: RP session health check...")
@@ -537,9 +545,21 @@ def main() -> int:
                 run("Passport top-up: parse RP form history (API)",
                     [PY, "scripts/ops/parse_rp_form_history_api.py", "--date", _label],
                     critical=False, results=results)
-                run("Passport top-up: rebuild passport bank (merge-in-place)",
-                    [PY, "scripts/ops/new_build_horse_passports.py"],
-                    critical=False, results=results)
+                if run("Passport top-up: rebuild passport bank (merge-in-place)",
+                       [PY, "scripts/ops/new_build_horse_passports.py"],
+                       critical=False, results=results):
+                    # Keep what was just captured: without this the container exits and
+                    # tomorrow starts from the same stale bank.
+                    run("Durable state: persist new form history and passports to Supabase",
+                        [PY, "scripts/ops/cloud_state.py", "--persist"],
+                        critical=False, results=results)
+                    # Step 6 built the feed before the top-up, so today's lanes would not see
+                    # the horses just captured (2026-11-12: 59 of 224 runners had a passport
+                    # after a top-up that captured 150). Rebuild it from the refreshed bank.
+                    run("Step 6b: New Build current-card feed (after passport top-up)",
+                        [PY, "scripts/ops/new_build_current_card_feed.py",
+                         "--racecard-path", str(standard_cache), "--execute"],
+                        critical=False, results=results)
 
     # Fetch the sheets BEFORE ingesting them (wired 2026-09-04). The ingest
     # step below has always worked; nothing ever downloaded its input, so it

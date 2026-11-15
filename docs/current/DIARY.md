@@ -537,3 +537,27 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - Stale rows: `pipeline_runs` has two `velo-prime-scoring` rows still `run_state = running` (started 2026-11-08 13:45 and 2026-11-13 17:17 UTC). They need closing by the operator; I did not write to production.
 - Nightly catch-up retries 2026-10-25 and 2026-10-26 every night and fails with `SIGMA_RESULTS_INCOMPLETE_BLOCKED`. `sigma_audits` has 0 rows for both days although `racing_horse_runs` has 43 and 51 races.
 - Next safe action: after #192 merges, run the two queries in the MORNING-TIMEOUT-OWNER-01 entry on the first race day.
+
+## 2026-11-15 — CLOUD-STATE-01: the race day no longer reads its working state from the laptop
+
+- Operator instruction: everything in Railway, GitHub or Supabase; no dependence on the laptop.
+- Branch `feat/cloud-durable-state` (stacked on `chore/model-lane-artifact-check`), PR open, **not merged, not deployed**. No Supabase write was made by this session.
+- Found (Railway logs, Supabase):
+  - The cloud run reads the passport bank from git (8,177 horses, 2026-08-04). Supabase `new_build_horse_passports` holds 16,192, last written 2026-10-17, and nothing read it. 12 Nov: `Passport cover: WARN 59/224 runners have a passport (26.3%)`.
+  - Each morning the top-up captures horses (150 on 12 Nov), writes `form_history_passport-topup-<date>.json`, rebuilds the bank, and the container exits. Nothing was stored. The feed for the day is built before the top-up, so the day did not benefit either.
+  - Champion Intent features read `data/race_shape/`: 59 of 564 runners had history on 14 Nov.
+  - `fetch_rp_meeting_pdfs.py` on Railway: `inbox: /mnt/c/Users/puror/OneDrive/Documents/horses for courses`, 0 sheets at every venue. This is why `postdata_score`, `plot_conviction` and `mark_compression_score` are 0 on every runner.
+  - The laptop was archived to Supabase Storage on 2026-09-19 (`rp_imports/velo-archive/v1/data/`, 35,125 files, 9.3 GB). It holds 102 form-history files and the Lane C bundle, whose MD5 equals the champion bundle in git. It does not hold `models/`.
+- Changed:
+  - `scripts/ops/cloud_state.py` (new): `--hydrate` downloads stored form history and merges the Supabase passport table into the bank (the fresher passport of a horse wins, nothing dropped). `--persist` uploads new form-history files and upserts only the passports that changed. Fail-soft.
+  - `run_full_raceday.py`: hydrate after Step 0; after a successful top-up rebuild, persist, then rebuild the feed (Step 6b) so the day's lanes use the horses just captured.
+  - `new_build_horse_passports.py`: the rebuild no longer replaces a passport with an older one.
+  - `new_build_two_lane_score.py`: Lane C loads the champion copy while the registry names the soft-label model as champion.
+  - `fetch_rp_meeting_pdfs.py`, `auto_ingest_pdf_inbox.py`: inbox inside the checkout off the laptop; the fetch signs in when `RP_EMAIL`/`RP_PASSWORD` are set.
+  - `.gitignore`: exceptions for the three lane model files still missing. Manifest: Lane C is SHIPPED.
+  - `PLATFORM_CONTROL_REGISTER.md`: "Laptop dependencies" table.
+- Tests: `tests/test_cloud_state.py` (15). Full suite: no new failure against `main`. Real run of the passport rebuild on the checkout: 8,177 rows in and out, two rows made newer than the form history were kept. Lane C scored three rows from the git bundle.
+- Not tested: the Supabase Storage and REST calls against the live project (no service key in the build container), and the PDF sign-in. First cloud run after merge is the check: look for `[CLOUD-STATE] hydrate form history: {"status": "OK", ...}` and `hydrate passport bank` in the `velo-rp-capture` log, a `Passport cover` line well above 26%, and `sheet(s)` counts above 0.
+- Still on the laptop only: the Mid-Price Specialist model, the two sigma-gate models, and form history captured there after 2026-09-19. Push the three model files (plain `git add` now works), or decide to retrain or retire those lanes.
+- Cloud EOD still skips the nightly passport refresh (Step 21), so the bank grows only from the morning top-up.
+

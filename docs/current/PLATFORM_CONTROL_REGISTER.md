@@ -31,6 +31,23 @@ Railway, Supabase and GitHub do **not** gain access to the operator's laptop mer
 | UK Sigma/EOD | Not due at audit time; 0/45 settled |
 | Dashboard | Core cards/canonical rows load from Supabase; Truth Cockpit and several paper overlays still have local/deploy-time dependencies; repair in progress |
 
+## Laptop dependencies (audited 2026-11-15)
+
+Rule: a race day must run from GitHub, Railway and Supabase alone. This table lists everything the cloud run was found to need from the laptop.
+
+| What | Where it lived | State after `CLOUD-STATE-01` |
+|---|---|---|
+| Horse passport bank | `data/new_build/passports/horse_passports_v1.jsonl`; git copy from 2026-08-04, full copy on the laptop | **Supabase** `new_build_horse_passports`. Merged into the run at the start, changed rows written back after each capture (`scripts/ops/cloud_state.py`) |
+| Per-run form history (source of the bank and of Champion Intent features) | `data/race_shape/form_history_*.json`; 78 files in git, the rest on the laptop | **Supabase Storage** `rp_imports`: seed `velo-archive/v1/data/race_shape/` (102 files, archived 2026-09-19), new captures in `velo-state/race_shape/` |
+| New Build Lane C model | `data/new_build/models/soft_label_challenger/champion_model.pkl`, git-ignored | **GitHub**: loaded from `data/new_build/models/champion/champion_model.pkl`, byte-identical (same MD5 in the archive) |
+| Racing Post ratings sheets (PDF) | fetched into a OneDrive folder path hard-coded in two scripts | Checkout path `data/pdf_inbox` off the laptop; the fetch signs in within its own browser context. **Not yet confirmed on Railway** |
+| Mid-Price Specialist model | `models/sqpe_v17_midprice_specialist_staging/sqpe_v17_midprice_specialist.pkl` | **STILL LAPTOP ONLY.** Not in any branch or tag, not in the Supabase archive (it covers `data/` only) |
+| Radical Shadow sigma gates | `models/radical_sigma_gate_staging/sigma_win_gate.pkl`, `sigma_frame_gate.pkl` | **STILL LAPTOP ONLY.** Same search, same result |
+| Form history captured on the laptop between 2026-09-19 and now | laptop `data/race_shape/` | **STILL LAPTOP ONLY.** Each horse's full career returns the next time the cloud captures it |
+| Raw Racing Post HTML | Railway container disk, lost at exit | Unchanged. Parsed output is in Supabase |
+
+The three laptop-only model files can now be added with a plain `git add` (`.gitignore` exceptions added). Once they are pushed, nothing in the daily run depends on the laptop.
+
 ## Railway inventory
 
 | Service | Role | Verdict / action |
