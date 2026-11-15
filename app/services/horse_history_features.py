@@ -8,6 +8,7 @@ Inputs are plain DataFrames with these columns:
   horse, date (datetime), race_id, course, dist_f, going_code, class_num, pos_n (NaN if
   unknown or a non-finisher), or_num, sp_dec (history rows only use pos_n and or_num).
 """
+
 from __future__ import annotations
 
 import re
@@ -16,15 +17,34 @@ import numpy as np
 import pandas as pd
 
 HISTORY_FEATURES = [
-    "runs_prior", "win_rate_prior", "place_rate_prior", "days_since_run", "last_pos",
-    "runs_since_win", "runs_since_place", "or_last", "or_change", "or_vs_best",
-    "class_change", "avg_pos_last3",
-    "course_runs", "course_win_rate", "dist_runs", "dist_win_rate",
-    "going_runs", "going_win_rate",
-    "jockey_changed", "trainer_changed",
-    "trainer_runs", "trainer_win_rate", "jockey_runs", "jockey_win_rate",
-    "trainer_course_runs", "trainer_course_win_rate",
-    "jockey_course_runs", "jockey_course_win_rate",
+    "runs_prior",
+    "win_rate_prior",
+    "place_rate_prior",
+    "days_since_run",
+    "last_pos",
+    "runs_since_win",
+    "runs_since_place",
+    "or_last",
+    "or_change",
+    "or_vs_best",
+    "class_change",
+    "avg_pos_last3",
+    "course_runs",
+    "course_win_rate",
+    "dist_runs",
+    "dist_win_rate",
+    "going_runs",
+    "going_win_rate",
+    "jockey_changed",
+    "trainer_changed",
+    "trainer_runs",
+    "trainer_win_rate",
+    "jockey_runs",
+    "jockey_win_rate",
+    "trainer_course_runs",
+    "trainer_course_win_rate",
+    "jockey_course_runs",
+    "jockey_course_win_rate",
 ]
 
 
@@ -66,8 +86,7 @@ def compute_history_features(df: pd.DataFrame) -> pd.DataFrame:
     out["or_change"] = out["or_num"] - out["or_last"]
     out["or_vs_best"] = out["or_num"] - g["or_num"].transform(lambda s: s.shift(1).cummax())
     out["class_change"] = out["class_num"] - g["class_num"].shift(1)
-    out["avg_pos_last3"] = g["pos_n"].transform(
-        lambda s: s.shift(1).rolling(3, min_periods=1).mean()).fillna(10)
+    out["avg_pos_last3"] = g["pos_n"].transform(lambda s: s.shift(1).rolling(3, min_periods=1).mean()).fillna(10)
 
     out["_dist_b"] = _dist_bucket(out["dist_f"])
     _group_rate(out, ["horse", "course"], "course")
@@ -95,15 +114,13 @@ def _entity_rate(out: pd.DataFrame, keys: list[str], name: str) -> None:
     tmp["_ord"] = out["_ord"].values
     for k in keys:
         tmp[k] = tmp[k].fillna("")
-    daily = tmp.groupby(keys + ["date"], sort=False).agg(
-        _n=("_win", "size"), _w=("_win", "sum")).reset_index()
+    daily = tmp.groupby(keys + ["date"], sort=False).agg(_n=("_win", "size"), _w=("_win", "sum")).reset_index()
     daily = daily.sort_values(keys + ["date"], kind="mergesort")
     gk = daily.groupby(keys, sort=False)
     daily[f"{name}_runs"] = gk["_n"].transform(lambda s: s.shift(1).fillna(0).cumsum())
     wins_prior = gk["_w"].transform(lambda s: s.shift(1).fillna(0).cumsum())
     daily[f"{name}_win_rate"] = (wins_prior + 0.1) / (daily[f"{name}_runs"] + 1.0)
-    merged = tmp.merge(daily[keys + ["date", f"{name}_runs", f"{name}_win_rate"]],
-                       on=keys + ["date"], how="left")
+    merged = tmp.merge(daily[keys + ["date", f"{name}_runs", f"{name}_win_rate"]], on=keys + ["date"], how="left")
     merged = merged.set_index("_ord").loc[out["_ord"].values]
     out[f"{name}_runs"] = merged[f"{name}_runs"].to_numpy()
     out[f"{name}_win_rate"] = merged[f"{name}_win_rate"].to_numpy()
@@ -138,6 +155,7 @@ def _group_rate(out: pd.DataFrame, keys: list[str], name: str) -> None:
 
 # ── parsers shared with the historical test (raceform text formats) ──
 
+
 def parse_dist_f(s) -> float:
     s = str(s or "").replace("½", ".5")
     m = re.search(r"(\d+)m", s)
@@ -148,8 +166,18 @@ def parse_dist_f(s) -> float:
 
 def parse_going_code(s):
     g = str(s or "").lower()
-    for k, v in [("heavy", -1), ("good to soft", 0.5), ("soft", 0), ("good to firm", 1.5),
-                 ("firm", 2), ("good", 1), ("standard", 1), ("yielding", 0.3), ("slow", 0.5), ("fast", 2)]:
+    for k, v in [
+        ("heavy", -1),
+        ("good to soft", 0.5),
+        ("soft", 0),
+        ("good to firm", 1.5),
+        ("firm", 2),
+        ("good", 1),
+        ("standard", 1),
+        ("yielding", 0.3),
+        ("slow", 0.5),
+        ("fast", 2),
+    ]:
         if k in g:
             return v
     return np.nan
