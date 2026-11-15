@@ -3,16 +3,37 @@
 Used by the candidate training script so training never depends on a laptop copy.
 Read-only. Pages by id, so every row is read once and the order is stable.
 """
+
 from __future__ import annotations
 
 import os
 import urllib.parse
-from typing import Callable, Iterator
+from collections.abc import Callable, Iterator
 
 import pandas as pd
 
-COLUMNS = ["id", "race_id", "date", "course", "off", "dist", "going", "class_raw", "type",
-           "ran", "num", "pos", "draw", "horse", "age", "wgt", "or_rating", "sp", "jockey", "trainer"]
+COLUMNS = [
+    "id",
+    "race_id",
+    "date",
+    "course",
+    "off",
+    "dist",
+    "going",
+    "class_raw",
+    "type",
+    "ran",
+    "num",
+    "pos",
+    "draw",
+    "horse",
+    "age",
+    "wgt",
+    "or_rating",
+    "sp",
+    "jockey",
+    "trainer",
+]
 PAGE = 1000
 
 
@@ -23,14 +44,14 @@ def _default_get(path: str) -> list[dict]:
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
     if not base or not key:
         raise RuntimeError("SUPABASE_URL / service key not set")
-    r = requests.get(f"{base}/rest/v1/{path}",
-                     headers={"apikey": key, "Authorization": f"Bearer {key}"}, timeout=120)
+    r = requests.get(f"{base}/rest/v1/{path}", headers={"apikey": key, "Authorization": f"Bearer {key}"}, timeout=120)
     r.raise_for_status()
     return r.json()
 
 
-def iter_pages(get: Callable[[str], list[dict]] = _default_get,
-               date_from: str = "2017-01-01", course_ilike: str | None = None) -> Iterator[list[dict]]:
+def iter_pages(
+    get: Callable[[str], list[dict]] = _default_get, date_from: str = "2017-01-01", course_ilike: str | None = None
+) -> Iterator[list[dict]]:
     """Yield raceform rows in id order, PAGE rows at a time, until a short page."""
     last_id = 0
     while True:
@@ -53,8 +74,9 @@ def iter_pages(get: Callable[[str], list[dict]] = _default_get,
             return
 
 
-def load_raceform(get: Callable[[str], list[dict]] = _default_get,
-                  date_from: str = "2017-01-01", course_ilike: str | None = None) -> pd.DataFrame:
+def load_raceform(
+    get: Callable[[str], list[dict]] = _default_get, date_from: str = "2017-01-01", course_ilike: str | None = None
+) -> pd.DataFrame:
     """Raceform history from Supabase as one DataFrame with the COLUMNS above.
     course_ilike filters by course name (e.g. '*(USA)*' for US racing)."""
     frames = [pd.DataFrame(page) for page in iter_pages(get, date_from=date_from, course_ilike=course_ilike)]
