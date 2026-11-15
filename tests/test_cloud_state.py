@@ -241,3 +241,21 @@ def test_the_pdf_inbox_is_inside_the_checkout_when_the_laptop_folder_is_absent()
     for module in (auto_ingest_pdf_inbox, fetch_rp_meeting_pdfs):
         if not module.LAPTOP_INBOX.is_dir():
             assert module.DEFAULT_INBOX == ROOT / "data" / "pdf_inbox"
+
+
+def test_the_pdf_fetch_does_not_sign_in_unless_the_operator_switches_it_on(monkeypatch) -> None:
+    """Sheets arriving would change three of Prime's inputs. A deploy alone must not do that."""
+    from scripts.ops import fetch_rp_meeting_pdfs as fetch
+
+    class Context:
+        def new_page(self):
+            raise AssertionError("must not open Racing Post")
+
+    monkeypatch.setenv("RP_EMAIL", "someone@example.invalid")
+    monkeypatch.setenv("RP_PASSWORD", "x")
+    monkeypatch.delenv("VELO_PDF_FETCH_SIGN_IN", raising=False)
+    assert fetch._sign_in_if_configured(Context()) is None
+
+    monkeypatch.setenv("VELO_PDF_FETCH_SIGN_IN", "1")
+    monkeypatch.delenv("RP_EMAIL")
+    assert fetch._sign_in_if_configured(Context()) == "SKIPPED_NO_CREDENTIALS"

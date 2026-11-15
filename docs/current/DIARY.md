@@ -561,3 +561,20 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - Still on the laptop only: the Mid-Price Specialist model, the two sigma-gate models, and form history captured there after 2026-09-19. Push the three model files (plain `git add` now works), or decide to retrain or retire those lanes.
 - Cloud EOD still skips the nightly passport refresh (Step 21), so the bank grows only from the morning top-up.
 
+## 2026-11-15 — CLOUD-STATE-02: #195 hardened; contracts checked against the live tables
+
+- Branch `feat/cloud-durable-state` (PR #195), **not merged**. No Supabase write by this session. GitNexus is not available in the cloud container (no `.gitnexus` index, no MCP tools), so impact was checked by reading callers and running the full suite.
+- Checked against production (read-only):
+  - `new_build_horse_passports`: 16,192 rows; every `passport` has `horse_rp_uid`, `last_run_date`, `career_runs`; the uid inside equals the primary key on all 16,192; primary key `horse_rp_uid` matches the upsert's conflict target.
+  - Coverage of the 198 runners scored on 2026-11-12: git bank 58 (29.3%), Supabase bank 138 (69.7%). 2026-11-14: Supabase 145 of 338 (42.9%).
+- Changed:
+  - `scripts/ops/new_build_input_health.py` (new): the day is DEGRADED when the hydrate did not complete or GB/IRE passport coverage is below the threshold. Written to `data/reports/new_build_input_health_<date>.json`, persisted with the report artifacts, and stamped onto the scorecard `notes` of New Build A/B/C, Champion Intent and the Passport proxy (`INPUT_DEGRADED: ...`). A day with no verdict is stamped `INPUT_HEALTH_UNVERIFIED`. Prime rows are never stamped. The day still scores: the 2026-08-02 operator ruling (a degraded day scores and learns) is unchanged; blocking learning for these lanes is one line once you rule on it.
+  - PDF sign-in is now off unless `VELO_PDF_FETCH_SIGN_IN=1` is set on the Railway service. Reason below.
+  - CI repair (#194) merged into #192, #193 and #195 so their checks mean something.
+- Live inputs that change when #195 is deployed:
+  - New Build A/B/C, Champion Intent, Passport proxy: more passports and form history. Their picks will change. They are shadow lanes.
+  - Lane C starts producing output again.
+  - Prime, No-RPR, Old Velo, MDS-heavy: **no change**, as long as `VELO_PDF_FETCH_SIGN_IN` is unset.
+  - With `VELO_PDF_FETCH_SIGN_IN=1` and a working sign-in: Prime's `postdata_score`, `plot_conviction`, `mark_compression_score` stop being 0. Not validated: it needs the Racing Post account, which exists only on Railway.
+- Tests: `tests/test_new_build_input_health.py` (10), one more in `tests/test_cloud_state.py`.
+

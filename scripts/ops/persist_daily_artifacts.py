@@ -68,6 +68,9 @@ REPORTS = {
     # EOD container starts clean, so without these rows the rebuild skipped New Build A/B/C, the Passport proxy
     # and Champion Intent and none of those lanes ever received a result (2026-11-07: 0 settled of ~75 picks each).
     "new_build_two_lane_readiness": ("data/new_build/reports/two_lane_readiness_{tag}.json", None),
+    # The morning's verdict on the passport-dependent lanes' inputs. The evening scorecard rebuild runs in a
+    # clean container and must stamp the same verdict the morning recorded, not "unverified".
+    "new_build_input_health":       ("data/reports/new_build_input_health_{tag}.json", None),
 }
 
 # Same purpose, for the inputs that are not JSON. The file is stored whole inside the JSON payload and written back

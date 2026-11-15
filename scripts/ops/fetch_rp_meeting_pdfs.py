@@ -121,9 +121,17 @@ def venue_urls(date: str) -> list[tuple[str, str]]:
 
 
 def _sign_in_if_configured(context) -> str | None:
-    """Sign in with RP_EMAIL/RP_PASSWORD when both are set. Never fatal; None when not configured."""
-    if not ((os.getenv("RP_EMAIL") or "").strip() and os.getenv("RP_PASSWORD")):
+    """Sign in with RP_EMAIL/RP_PASSWORD when the operator has switched it on. Never fatal.
+
+    Off by default (VELO_PDF_FETCH_SIGN_IN=1 turns it on). If the sheets start arriving, Prime's
+    postdata_score, plot_conviction and mark_compression_score stop being 0 in the cloud run, so
+    Prime's picks can move. That is a change to live inputs and is the operator's decision, not a
+    side effect of a deploy.
+    """
+    if (os.getenv("VELO_PDF_FETCH_SIGN_IN") or "").strip() != "1":
         return None
+    if not ((os.getenv("RP_EMAIL") or "").strip() and os.getenv("RP_PASSWORD")):
+        return "SKIPPED_NO_CREDENTIALS"
     try:
         from scripts.ops.rp_cloud_probe import cloud_login
 

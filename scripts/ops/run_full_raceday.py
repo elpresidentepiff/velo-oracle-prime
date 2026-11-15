@@ -599,6 +599,14 @@ def main() -> int:
     _cov_ok, _cov_stats = check_passport_coverage(date)
     for _i, _line in enumerate(format_coverage_line(_cov_stats)):
         print(f"  Passport cover: {_line}" if _i == 0 else f"  {_line}")
+    # The coverage line above is a warning in a log. Record the verdict where it travels with
+    # the lanes it affects: a file the scorecard build stamps onto New Build / Champion Intent
+    # rows, persisted with the day's artifacts. Prime is unaffected and scores either way.
+    from scripts.ops import new_build_input_health as _nb_health
+
+    _nb_verdict = _nb_health.assess(date, hydrate=_nb_health.hydrate_outcome(results), coverage=_cov_stats)
+    _nb_health.write(_nb_verdict)
+    print(f"  New Build inputs: {_nb_verdict['status']}" + "".join(f"\n    - {r}" for r in _nb_verdict["reasons"]))
     # PDF ingestion is a WARNING, not a blocker (operator ruling 2026-08-02).
     #
     # It blocked whole days that were otherwise complete. On 2026-08-02 live
