@@ -119,13 +119,17 @@ jobs:
         run: |
           pytest tests/test_no_live_order_path.py tests/test_execution_risk.py -q -p no:warnings
 
-      - name: Verify Racing API source truth
+      # Hard law 1: the Racing API is permanently decommissioned for live use. This step asserted
+      # the opposite (execution allowed) until 2026-11-15 and so failed on every commit after the
+      # runtime was sealed in fec7b7f (2026-11-06), keeping main red and hiding real failures.
+      - name: Verify the retired Racing API source is blocked
         run: |
           python - <<'PY'
           from src.velo.source_truth_enforcer import SourceLabel, enforce_source_truth
           result = enforce_source_truth("api", raise_on_block=False)
           assert result.canonical_label == SourceLabel.RACING_API_STANDARD_CLEAN
-          assert result.execution_allowed is True
-          assert result.blocked is False
-          print("RACING_API_STANDARD_CLEAN OK")
+          assert result.execution_allowed is False
+          assert result.blocked is True
+          assert SourceLabel.RP_MERGED_CLEAN in SourceLabel.ALLOWED
+          print("RACING_API blocked, RP_MERGED_CLEAN allowed: OK")
           PY
