@@ -15,7 +15,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -32,6 +31,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.ops.bounded_subprocess import StepTimeout, run_bounded, timeout_from_env  # noqa: E402
 from scripts.ops.persist_daily_artifacts import TEXT_PAYLOAD_KEY  # noqa: E402
 
 LONDON = ZoneInfo("Europe/London")
@@ -291,13 +291,23 @@ def prepare_cloud_eod_inputs(date_str: str) -> dict[str, Any]:
     }
 
 
-def _run(label: str, command: list[str], *, env: dict[str, str] | None = None) -> None:
+# Railway skips a cron run while the previous one is still running, so one hung night would block
+# every night after it. Each step is bounded and stopped with everything it started.
+_CAPTURE_TIMEOUT_SECONDS = 1800
+_PARSE_TIMEOUT_SECONDS = 900
+_EOD_SEQUENCE_TIMEOUT_SECONDS = 5400
+
+
+def _run(label: str, command: list[str], *, timeout: float, env: dict[str, str] | None = None) -> None:
     print(f"\n[CLOUD-EOD] {label}: {' '.join(command)}", flush=True)
     child_env = os.environ.copy()
     child_env.update(env or {})
-    result = subprocess.run(command, cwd=ROOT, env=child_env, check=False)
-    if result.returncode:
-        raise RuntimeError(f"{label} failed with exit code {result.returncode}")
+    try:
+        returncode = run_bounded(label, command, cwd=ROOT, env=child_env, timeout=timeout)
+    except StepTimeout as exc:
+        raise RuntimeError(f"{exc} (with every process it started)") from exc
+    if returncode:
+        raise RuntimeError(f"{label} failed with exit code {returncode}")
 
 
 def _login() -> None:
@@ -405,6 +415,7 @@ def _settle_day(date_str: str, args: argparse.Namespace) -> dict[str, Any]:
             os.getenv("RP_CLOUD_CAPTURE_DELAY_SECONDS", "1.5"),
             "--execute",
         ],
+        timeout=timeout_from_env("EOD_CAPTURE_TIMEOUT_SECONDS", _CAPTURE_TIMEOUT_SECONDS),
     )
     _run(
         "parse RP results pages",
@@ -417,6 +428,7 @@ def _settle_day(date_str: str, args: argparse.Namespace) -> dict[str, Any]:
             f"rp-results-{date_str}",
             "--execute",
         ],
+        timeout=timeout_from_env("EOD_PARSE_TIMEOUT_SECONDS", _PARSE_TIMEOUT_SECONDS),
     )
     eod_command = [
         sys.executable,
@@ -434,6 +446,7 @@ def _settle_day(date_str: str, args: argparse.Namespace) -> dict[str, Any]:
         "canonical EOD sequence",
         eod_command,
         env={"TRIGGER_SOURCE": "railway_cron", "VELO_EXECUTION_MODE": "SIM"},
+        timeout=timeout_from_env("EOD_SEQUENCE_TIMEOUT_SECONDS", _EOD_SEQUENCE_TIMEOUT_SECONDS),
     )
     report = _verify_eod_report(date_str)
     pipeline = _verify_pipeline_run(date_str)

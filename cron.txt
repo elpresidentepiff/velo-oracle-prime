@@ -1,18 +1,23 @@
 # VELO Oracle - Production Schedule Reference
 # ============================================
-# AUTHORITATIVE MORNING SCORING:
-#   Railway service: velo-prime-scoring
-#   Schedule: 09:00 UTC every day
-#   Command: python scripts/ops/rp_cloud_raceday.py (Dockerfile.rpcapture)
-#   Config: railway.scoring.toml
+# This file documents the schedule. Railway holds the real cron settings server-side.
+# Verified against Railway service config on 2026-11-15.
 #
-# The Railway web service remains always-on and is NOT the scheduler.
-# GitHub Actions .github/workflows/score-daily.yml retains:
-#   - manual workflow_dispatch score fallback via /api/trigger/score-daily
-#   - 21:00 UTC daily sigma schedule
+# MORNING (UK/IRE capture + scoring + every model lane), 07:00 UTC daily
+#   Railway service: velo-rp-capture        (the owner)
+#   Command: python scripts/ops/rp_cloud_raceday.py   (Dockerfile.rpcapture)
 #
-# Morning scoring (Railway, daily)
-0 9 * * *  python scripts/ops/rp_cloud_raceday.py
-
-# Evening sigma (GitHub Actions, daily)
-0 21 * * *  PYTHONPATH=. python scripts/ops/run_results_sigma.py --notify-telegram
+#   velo-prime-scoring holds the same cron and command. Its scheduled run stands down in code
+#   (rp_cloud_raceday._not_the_morning_owner); it runs only for an authorised rescore.
+#   Operator action outstanding: remove that cron in Railway.
+#
+# EVENING (results capture + Sigma + learning), 21:00 UTC daily
+#   Railway service: velo-results-sigma     (railway.eod.toml)
+#   Command: python scripts/ops/rp_cloud_eod.py --execute --no-notify
+#
+#   .github/workflows/score-daily.yml also fires at 21:00 UTC and calls /api/trigger/sigma on the
+#   dashboard service. That starts the light reconciliation, which cannot settle UK races and has
+#   failed every night since 2026-11-13. It is not the EOD. See DIARY EOD-TRIGGER-01.
+#
+0 7 * * *   python scripts/ops/rp_cloud_raceday.py
+0 21 * * *  python scripts/ops/rp_cloud_eod.py --execute --no-notify

@@ -22,16 +22,12 @@ def test_an_explicit_trigger_source_wins() -> None:
 def test_run_forwards_env_on_top_of_the_process_environment(monkeypatch) -> None:
     seen = {}
 
-    def fake_run(command, cwd=None, check=None, env=None):
+    def fake_run_bounded(label, command, *, cwd, timeout, env=None):
         seen["env"] = env
-
-        class Done:
-            returncode = 0
-
-        return Done()
+        return 0
 
     monkeypatch.setenv("SUPABASE_URL", "https://example.invalid")
-    monkeypatch.setattr(raceday.subprocess, "run", fake_run)
+    monkeypatch.setattr(raceday, "run_bounded", fake_run_bounded)
     raceday._run("x", ["true"], env={"TRIGGER_SOURCE": "railway_cron"})
     assert seen["env"]["TRIGGER_SOURCE"] == "railway_cron"
     assert seen["env"]["SUPABASE_URL"] == "https://example.invalid"  # the child keeps its credentials

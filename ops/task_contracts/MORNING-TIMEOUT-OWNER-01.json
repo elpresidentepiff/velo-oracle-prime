@@ -1,0 +1,36 @@
+{
+  "task_id": "MORNING-TIMEOUT-OWNER-01",
+  "title": "Stop the morning run being killed before it persists its model lanes; one scheduled owner; truthful Sigma run row",
+  "classification": "AUTHORIZED_PIPELINE_RELIABILITY_REPAIR",
+  "allowed_paths": [
+    "ops/task_contracts/MORNING-TIMEOUT-OWNER-01.json",
+    "scripts/ops/bounded_subprocess.py",
+    "scripts/ops/rp_cloud_raceday.py",
+    "scripts/ops/rp_cloud_eod.py",
+    "scripts/ops/run_full_raceday.py",
+    "scripts/ops/run_results_sigma.py",
+    "tests/test_morning_run_timeouts_and_owner.py",
+    "tests/test_rp_cloud_raceday_trigger.py",
+    "tests/test_sigma_pipeline_run_contract.py",
+    "docs/current/DIARY.md",
+    "docs/current/ONE_TRUTH.md",
+    "docs/current/PLATFORM_CONTROL_REGISTER.md",
+    "cron.txt"
+  ],
+  "forbidden_paths": [
+    "models/",
+    ".env",
+    "src/intelligence/velo_prime_ensemble.py",
+    "app/services/velo_prime_service.py",
+    "app/services/sqpe_v17_service.py"
+  ],
+  "forbidden_keywords": [],
+  "classification_required": [
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "NO_TELEGRAM_FORMAT_CHANGE",
+    "NO_HISTORICAL_DATA_REWRITE",
+    "PAPER_SIM_ONLY"
+  ]
+}

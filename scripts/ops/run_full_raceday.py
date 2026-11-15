@@ -42,7 +42,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -62,20 +62,42 @@ PY = sys.executable
 # Importing the collector's default means there is no second copy to drift.
 from scripts.ops.racing_post_account_collector import DEFAULT_PROFILE_DIR as FIREFOX_PROFILE
 from app.core.runtime_env import load_optional_env_file
+from scripts.ops.bounded_subprocess import StepTimeout, run_bounded, timeout_from_env
 
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def run(label: str, cmd: list[str], *, critical: bool, results: list[dict]) -> bool:
+# Every step is bounded here, where it is known which steps the day depends on. A step that
+# stalls is stopped (with everything it started) and recorded as failed: a non-critical one costs
+# only itself and the day continues; a critical one stops the day with its name on it. Until
+# 2026-11-15 nothing here had a limit and the only bound was one 15-minute limit on this whole
+# script in rp_cloud_raceday.py, which killed the 2026-11-14 run just before the scorecard persist.
+DEFAULT_STEP_TIMEOUT_SECONDS = 900
+PASSPORT_CAPTURE_TIMEOUT_SECONDS = 1500  # 400 horses at 1.2s plus the request time: 12 min observed
+SCORING_TIMEOUT_SECONDS = 1800
+
+
+def run(label: str, cmd: list[str], *, critical: bool, results: list[dict], timeout: float | None = None) -> bool:
     print(f"\n{'='*70}\n{label}\n{'='*70}")
-    print("  $ " + " ".join(cmd))
-    proc = subprocess.run(cmd, cwd=str(ROOT), env={"PYTHONPATH": "."} | __import__("os").environ.copy())
-    ok = proc.returncode == 0
-    results.append({"step": label, "cmd": cmd, "returncode": proc.returncode, "ok": ok, "critical": critical})
+    print("  $ " + " ".join(cmd), flush=True)
+    limit = timeout or timeout_from_env("VELO_STEP_TIMEOUT_SECONDS", DEFAULT_STEP_TIMEOUT_SECONDS)
+    timed_out = False
+    try:
+        returncode: int | None = run_bounded(
+            label, cmd, cwd=ROOT, env={"PYTHONPATH": "."} | os.environ.copy(), timeout=limit
+        )
+    except StepTimeout as exc:
+        returncode, timed_out = None, True
+        print(f"  [TIMEOUT] {exc}")
+    ok = returncode == 0
+    results.append(
+        {"step": label, "cmd": cmd, "returncode": returncode, "ok": ok, "critical": critical, "timed_out": timed_out}
+    )
     if not ok:
-        print(f"  [{'CRITICAL FAIL' if critical else 'NON-CRITICAL FAIL'}] {label} exited {proc.returncode}")
+        outcome = "timed out" if timed_out else f"exited {returncode}"
+        print(f"  [{'CRITICAL FAIL' if critical else 'NON-CRITICAL FAIL'}] {label} {outcome}")
         if critical:
             print("\nSTOPPING — critical step failed. Fix and rerun (safe to resume with --skip-capture if capture already succeeded).")
     return ok
@@ -511,7 +533,7 @@ def main() -> int:
                     "--date", _label, "--url-list", str(_queue),
                     "--profile-dir", str(FIREFOX_PROFILE),
                     "--delay-seconds", "1.2", "--execute"],
-                   critical=False, results=results):
+                   critical=False, results=results, timeout=PASSPORT_CAPTURE_TIMEOUT_SECONDS):
                 run("Passport top-up: parse RP form history (API)",
                     [PY, "scripts/ops/parse_rp_form_history_api.py", "--date", _label],
                     critical=False, results=results)
@@ -633,7 +655,7 @@ def main() -> int:
             [PY, "scripts/ops/run_prime_today.py", "--date", date, "--source", "rp", "--no-notify"]
             + (["--allow-missing-pdfs"] if args.allow_missing_pdfs else [])
             + rescore_args,
-            critical=True, results=results,
+            critical=True, results=results, timeout=SCORING_TIMEOUT_SECONDS,
         ):
             return 1
 

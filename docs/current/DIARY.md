@@ -489,3 +489,22 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
   - Log loss: stacked 0.31875, market alone 0.31894. Noise.
   - Model top pick 28.97% hit, ROI −5.6%. Favourite 38.8% hit, ROI −15.1%. With 214 races the 95% interval on ROI is roughly ±45 points, so this is not evidence of an edge.
 - Conclusion: nothing beats the price on US data yet. Keep as research. Revisit when the US settled sample reaches about 2,000 races, and when US results from July 2025 onward are in Supabase.
+
+## 2026-11-15 — MORNING-TIMEOUT-OWNER-01: why 14 Nov lost eight model lanes; one morning owner; truthful Sigma row
+
+- Branch `fix/morning-timeout-and-duplicate-owner`, PR open, **not merged, not deployed**. No model, weight, gate or Telegram format changed.
+- Found (Supabase + Railway logs, 2026-11-14):
+  - `canonical_model_scorecards` for 14 Nov holds 2 lanes (Main, No-RPR), first written 21:14 UTC by the EOD. 12 Nov holds 10 lanes written 07:13 UTC. Old Velo WIN/PLACE/LONGSHOT, New Build A/B, Champion Intent, MDS-heavy and Passport have no rows for 14 Nov, and `velo_report_artifacts` has none of their morning packets. They cannot be rebuilt as pre-race records.
+  - Cause 1: `9a0d53a` (13 Nov) put a 900 s limit on every step of `rp_cloud_raceday.py`, including the last one, which is `run_full_raceday.py` (about 35 steps). `velo-prime-scoring` log 07:25:56: `run_full_raceday.py ... timed out after 900 seconds`, during "New Build: Paper Score Today", just before "Canonical Model Scorecard: Build/Persist". `velo-rp-capture` log 07:24:02: same timeout, at passport top-up 350/400, before scoring.
+  - Cause 2: `velo-rp-capture` and `velo-prime-scoring` both have `cronSchedule 0 7 * * *` and the same start command (Railway config read 15 Nov). Both ran. In `velo-prime-scoring` the passport top-up got `FORM_HTTP_406` on 256 of 400 horses while the other service was fetching the same pages.
+  - Also: the nightly `velo-results-sigma` row read PASS / 0 races / 0 results / no commit every night from 4 Nov, although 19 to 47 races were settled. `_close_sigma_run` never wrote counts.
+  - Also: `tests/` (220 test files) is not run by CI; `ci.yml` runs only `workers/ingestion_spine`. Local run on Python 3.12 with production pins: 67 failed and 67 errors on `main`; 66 and 67 on this branch (no new failure, one repaired). Running the suite also rewrites tracked files under `data/` and `logs/`.
+- Changed:
+  - `scripts/ops/bounded_subprocess.py` (new): a step runs in its own process group; a timeout stops the step and everything it started.
+  - `rp_cloud_raceday.py`: the runner step gets 5400 s (`RP_CLOUD_ORCHESTRATOR_TIMEOUT_SECONDS`); capture steps keep 900 s. A scheduled run on a Railway service other than the owner (`VELO_MORNING_OWNER_SERVICE`, default `velo-rp-capture`) exits 0 before touching Racing Post. An authorised rescore runs on any service.
+  - `run_full_raceday.py`: each step is bounded (900 s; passport capture 1500 s; scoring 1800 s; `VELO_STEP_TIMEOUT_SECONDS`). A stalled non-critical step is recorded `timed_out` and the day continues.
+  - `rp_cloud_eod.py`: capture, parse and the EOD sequence are bounded (1800 / 900 / 5400 s), so a hung night cannot block the next cron run.
+  - `run_results_sigma.py`: the run row records `races_processed`, `results_processed` and `commit_sha`. Telegram text untouched.
+- Tests: `tests/test_morning_run_timeouts_and_owner.py` (13), `tests/test_sigma_pipeline_run_contract.py` (+5), `tests/test_rp_cloud_raceday_trigger.py` (one test repaired; it had been failing since `9a0d53a`).
+- Open for the operator: (1) merge the PR; (2) remove the `0 7 * * *` cron from `velo-prime-scoring` in Railway; (3) the GitHub 21:00 schedule in `score-daily.yml` still starts the light job and fails nightly (EOD-TRIGGER-01).
+- Next safe check after merge, on the first morning: `select model_name, count(distinct race_id), min(created_at) from canonical_model_scorecards where run_date = current_date group by 1;` expect 10 lanes created before the first off. That evening: `select races_processed, results_processed, commit_sha from pipeline_runs where service_name='velo-results-sigma' and source_date=current_date order by started_at desc limit 1;` expect non-zero counts and a SHA.

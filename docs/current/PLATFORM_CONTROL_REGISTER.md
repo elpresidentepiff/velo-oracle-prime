@@ -41,7 +41,7 @@ Railway, Supabase and GitHub do **not** gain access to the operator's laptop mer
 | `velo-formfav-uk-shadow` | UK enrichment evidence | KEEP; remove obsolete Racing API secrets after dependency proof |
 | `velo-formfav-us-shadow` | hourly AU/CA/FR/HK/JP/US Velo shadow | KEEP; rename to `velo-world-shadow` in an approved cleanup |
 | `velo-oracle` | dashboard/API | KEEP; Supabase-only truth target |
-| `velo-prime-scoring` | unscheduled legacy scorer | DUPLICATE; retire after dependency proof |
+| `velo-prime-scoring` | duplicate scorer; **holds a live `0 7 * * *` cron and the same start command as `velo-rp-capture`** (verified 2026-11-15) | DUPLICATE. Both ran on 2026-11-14 and contended for Racing Post. From `MORNING-TIMEOUT-OWNER-01` its scheduled run stands down in code (`VELO_MORNING_OWNER_SERVICE`, default `velo-rp-capture`); an authorised rescore still runs here. Operator: remove its cron, then retire after dependency proof |
 | `velo-daily-ingestion` | unscheduled Racing API worker | LEGACY; retire after dependency proof |
 | `ingestion-spine` | deleted branch; build mutates source | NON-REPRODUCIBLE; quarantine then retire |
 | `velo-shadow-lab` | deleted branch | DEAD; retire after evidence export |
