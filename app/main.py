@@ -2208,9 +2208,7 @@ async def rich_context(date: str = Query(default=None)):
         f"&source_date=eq.{d}&order=started_at.asc&limit=20"
         "&select=run_type,status,started_at,finished_at,races_processed,runners_processed,commit_sha"
     )
-    scored = _sb_rest_rows(
-        f"rich_context_challenger_scores?race_date=eq.{d}&select=id&limit=1"
-    )
+    scored = _sb_rest_rows(f"rich_context_challenger_scores?race_date=eq.{d}&select=id&limit=1")
     return {
         "date": d,
         "available": picks is not None or coverage is not None or picks_now is not None,
@@ -2238,23 +2236,26 @@ async def horse_history_shadow_route(date: str = Query(default=None)):
         _dt.date.fromisoformat(d)
     except ValueError:
         return JSONResponse({"error": "date must be YYYY-MM-DD"}, status_code=400)
-    rows = _sb_rest_rows(
-        f"horse_history_shadow?run_date=eq.{d}&order=race_id.asc,rank_in_race.asc&limit=2000")
+    rows = _sb_rest_rows(f"horse_history_shadow?run_date=eq.{d}&order=race_id.asc,rank_in_race.asc&limit=2000")
     run = [r for r in (rows or []) if r.get("race_id") == "__run__"]
     runners = [r for r in (rows or []) if r.get("race_id") != "__run__"]
     races: dict[str, list] = {}
     for r in runners:
-        races.setdefault(r["race_id"], []).append({
-            "horse": r.get("horse"), "prob": r.get("prob"), "rank": r.get("rank_in_race"),
-            "history_known": r.get("history_known"), "runs_prior": r.get("runs_prior"),
-        })
+        races.setdefault(r["race_id"], []).append(
+            {
+                "horse": r.get("horse"),
+                "prob": r.get("prob"),
+                "rank": r.get("rank_in_race"),
+                "history_known": r.get("history_known"),
+                "runs_prior": r.get("runs_prior"),
+            }
+        )
     known = sum(1 for r in runners if r.get("history_known"))
     return {
         "date": d,
         "available": rows is not None,
         "run_status": run[0].get("status") if run else None,
-        "summary": {"runners": len(runners), "with_history": known,
-                    "races": len(races)},
+        "summary": {"runners": len(runners), "with_history": known, "races": len(races)},
         "races": [{"race_id": k, "runners": v} for k, v in races.items()],
         "label": "Shadow only. Horse-history candidate, NOT_PROMOTED. Changes nothing Prime reads. Not a tip.",
         "as_of": _dt.datetime.now(_dt.UTC).isoformat(timespec="seconds"),
@@ -2773,9 +2774,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     tri_review_by_race: dict[str, dict] = {}
     tri_review_path = root / "data" / "reports" / f"tri_lane_agent_review_{date_tag}_v2.json"
-    tri_review_payload, _tri_review_source = _report_artifact(
-        "tri_lane_agent_review_v2", target_date, tri_review_path
-    )
+    tri_review_payload, _tri_review_source = _report_artifact("tri_lane_agent_review_v2", target_date, tri_review_path)
     if tri_review_payload is not None:
         try:
             tri_review_by_race = {
@@ -2788,9 +2787,7 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
 
     deep_agent_by_race: dict[str, dict] = {}
     deep_agent_path = root / "data" / "reports" / f"deep_race_agent_v1_{date_tag}_v2.json"
-    deep_agent_payload, _deep_agent_source = _report_artifact(
-        "deep_race_agent_v1_v2", target_date, deep_agent_path
-    )
+    deep_agent_payload, _deep_agent_source = _report_artifact("deep_race_agent_v1_v2", target_date, deep_agent_path)
     if deep_agent_payload is not None:
         try:
             deep_agent_by_race = {
@@ -3222,9 +3219,12 @@ async def governed_card(date: str = Query(default=None), allow_fallback: bool = 
     # ── Commit SHA ───────────────────────────────────────────────────────────
     try:
         railway_sha = os.getenv("RAILWAY_GIT_COMMIT_SHA", "").strip()
-        commit = railway_sha[:7] if railway_sha else (
-            _sp.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=root, stderr=_sp.DEVNULL)
-            .decode().strip()
+        commit = (
+            railway_sha[:7]
+            if railway_sha
+            else (
+                _sp.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=root, stderr=_sp.DEVNULL).decode().strip()
+            )
         )
     except Exception:
         commit = "unknown"
