@@ -228,6 +228,17 @@ def _pipeline_request(method: str, path: str, data: dict | None = None) -> tuple
         return 0, str(exc).encode()
 
 
+def _sigma_commit_sha() -> str | None:
+    """The code that settled the night. Never fatal: an unknown SHA is recorded as NULL, not guessed."""
+    try:
+        from scripts.ops.runtime_truth_support import get_commit_sha
+
+        sha = (get_commit_sha() or "").strip()
+    except Exception:  # noqa: BLE001 - provenance must not stop a settlement
+        return None
+    return sha if sha and sha != "unknown" else None
+
+
 def _open_sigma_run(source_date: str) -> str | None:
     existing_run_id = (os.getenv("PIPELINE_RUN_ID") or "").strip()
     if existing_run_id:
@@ -251,6 +262,7 @@ def _open_sigma_run(source_date: str) -> str | None:
             "trigger_source": os.getenv("TRIGGER_SOURCE", "manual") or "manual",
             "started_at": utc_now_iso(),
             "environment": os.getenv("RAILWAY_ENVIRONMENT", "production"),
+            "commit_sha": _sigma_commit_sha(),
         },
     )
     if status not in (200, 201):
@@ -264,7 +276,21 @@ def _open_sigma_run(source_date: str) -> str | None:
 _SIGMA_RUN_CLOSED = False
 
 
-def _close_sigma_run(run_id: str | None, *, status: str, error: str | None = None) -> None:
+def _close_sigma_run(
+    run_id: str | None,
+    *,
+    status: str,
+    error: str | None = None,
+    races_processed: int | None = None,
+    results_processed: int | None = None,
+) -> None:
+    """Close the durable run row.
+
+    ``races_processed`` is the number of scored races matched to an official result and
+    ``results_processed`` the number of sigma_audits rows written. Until 2026-11-15 neither was
+    written, so every night read "PASS, 0 races, 0 results" whether it settled 36 races or none,
+    and a PASS could not be told from an empty run.
+    """
     global _SIGMA_RUN_CLOSED
     if not run_id or not SB_URL or not SB_KEY:
         return
@@ -280,6 +306,10 @@ def _close_sigma_run(run_id: str | None, *, status: str, error: str | None = Non
     }
     if error:
         patch["error_message"] = error[:500]
+    if races_processed is not None:
+        patch["races_processed"] = int(races_processed)
+    if results_processed is not None:
+        patch["results_processed"] = int(results_processed)
     _pipeline_request("PATCH", f"/pipeline_runs?id=eq.{run_id}", patch)
     _SIGMA_RUN_CLOSED = True
 
@@ -1539,7 +1569,9 @@ def main():
             f"Post-race truth not persisted. Investigate immediately."
         )
         print("\nFAIL — sigma_ok=0: no reconciliation truth persisted")
-        _close_sigma_run(run_id, status="FAIL", error="ALL_SIGMA_WRITES_FAILED")
+        _close_sigma_run(
+            run_id, status="FAIL", error="ALL_SIGMA_WRITES_FAILED", races_processed=total_matched, results_processed=0
+        )
         sys.exit(1)
 
     # ── STEP 9: Write local sigma artifact for Council / Mission Control ─────
@@ -1653,7 +1685,7 @@ def main():
     print(f"  Miss classes: {miss_classes}")
     print(f"  Sigma note:   {sigma_note}")
     print(f"  Supabase:     sigma_audits={sigma_ok} learned_patterns={patterns_saved}")
-    _close_sigma_run(run_id, status="PASS")
+    _close_sigma_run(run_id, status="PASS", races_processed=total_matched, results_processed=sigma_ok)
 
 
 if __name__ == "__main__":

@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import argparse
 import os
-import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -24,34 +23,69 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.ops.bounded_subprocess import StepTimeout, run_bounded, timeout_from_env  # noqa: E402
+
 LONDON = ZoneInfo("Europe/London")
 PROFILE = ROOT / "data" / "browser_profiles" / "racing_post_account"
 RAW = ROOT / "data" / "racing_post_account_raw"
 
 
-_DEFAULT_STEP_TIMEOUT_SECONDS = 900  # 15 min: generous for a full RP capture pass, finite so a stale
-# session or network stall fails loud instead of hanging a cron container forever (incident 2026-11-13:
-# two manual runs sat at run_state='running' for 20+ min each with ~0% CPU, no error, no verdicts).
+_DEFAULT_STEP_TIMEOUT_SECONDS = 900  # 15 min for one capture step: generous for a full RP capture
+# pass, finite so a stale session or network stall fails loud instead of hanging a cron container
+# forever (incident 2026-11-13: two manual runs sat at run_state='running' for 20+ min each).
+
+# The last step is not one step: run_full_raceday.py runs about 35 of its own (parse, FormFav,
+# passport top-up, scoring, every shadow lane, scorecard and artifact persist) and bounds each of
+# them itself. Giving it the 15-minute capture limit killed the 2026-11-14 run 20 seconds before
+# the canonical scorecards were persisted: scoring had finished, eight model lanes were lost. On a
+# 36-race Saturday the passport top-up alone takes 12 minutes. This limit only has to catch a
+# runner that stops making progress altogether.
+_ORCHESTRATOR_TIMEOUT_SECONDS = 5400
+
+# The service that owns the scheduled morning run (docs/current/PLATFORM_CONTROL_REGISTER.md).
+# Two Railway services held the same 07:00 cron and this same start command; on 2026-11-14 both
+# ran, competed for Racing Post (256 of 400 passport requests answered HTTP 406 in one of them)
+# and raced each other to score the day.
+_DEFAULT_MORNING_OWNER = "velo-rp-capture"
 
 
 def _run(label: str, command: list[str], env: dict[str, str] | None = None, timeout: float | None = None) -> None:
     print(f"\n[CLOUD-RP] {label}: {' '.join(command)}", flush=True)
     try:
-        result = subprocess.run(
+        returncode = run_bounded(
+            label,
             command,
             cwd=ROOT,
-            check=False,
             env={**os.environ, **env} if env else None,
             timeout=timeout or _DEFAULT_STEP_TIMEOUT_SECONDS,
         )
-    except subprocess.TimeoutExpired as exc:
+    except StepTimeout as exc:
         raise RuntimeError(
-            f"{label} exceeded {exc.timeout:.0f}s and was killed — likely a stale RP session or "
-            f"network stall inside the step; re-authenticate the Railway browser profile if this "
-            f"recurs"
+            f"{exc} (with every process it started). For a capture step this is usually a stale "
+            f"RP session or a network stall: re-authenticate the Railway browser profile if it recurs."
         ) from exc
-    if result.returncode:
-        raise RuntimeError(f"{label} failed with exit code {result.returncode}")
+    if returncode:
+        raise RuntimeError(f"{label} failed with exit code {returncode}")
+
+
+def _not_the_morning_owner(
+    rescore_reason: str | None, environ: dict[str, str] | os._Environ[str] = os.environ
+) -> str | None:
+    """Why this scheduled run must stand down, or None when it may proceed.
+
+    Only a scheduled run on a Railway service other than the owner stands down. A run outside
+    Railway (the laptop, CI) has no service name and proceeds. An authorised rescore proceeds on
+    any service: it is a person asking for a rerun, and the rescore variable lives on
+    velo-prime-scoring. VELO_MORNING_OWNER_SERVICE moves ownership without a code change.
+    """
+    service = (environ.get("RAILWAY_SERVICE_NAME") or "").strip()
+    owner = (environ.get("VELO_MORNING_OWNER_SERVICE") or "").strip() or _DEFAULT_MORNING_OWNER
+    if not service or service == owner or (rescore_reason or "").strip():
+        return None
+    return (
+        f"service '{service}' is not the scheduled morning owner ('{owner}'); standing down so "
+        f"the day is captured and scored once"
+    )
 
 
 def _trigger_source(rescore_reason: str | None, environ: dict[str, str] | os._Environ[str] = os.environ) -> str:
@@ -121,6 +155,10 @@ def main() -> int:
     args = parser.parse_args()
     date_str = args.date or datetime.now(LONDON).date().isoformat()
     print(f"VELO CLOUD RP RACEDAY — {date_str}", flush=True)
+    stand_down = _not_the_morning_owner(args.authorised_rescore_reason)
+    if stand_down:
+        print(f"[CLOUD-RP] SKIP — {stand_down}", flush=True)
+        return 0
     print("executor=Railway source=RacingPost-HTML durable_truth=Supabase", flush=True)
 
     # FormFav is a mandatory pre-race enrichment gate.  Run it before opening
@@ -220,6 +258,7 @@ def main() -> int:
         "canonical FormFav-first parse/score/persist",
         score,
         env={"TRIGGER_SOURCE": _trigger_source(args.authorised_rescore_reason)},
+        timeout=timeout_from_env("RP_CLOUD_ORCHESTRATOR_TIMEOUT_SECONDS", _ORCHESTRATOR_TIMEOUT_SECONDS),
     )
     print(f"\n[CLOUD-RP] PASS — canonical race-day pipeline completed for {date_str}", flush=True)
     return 0

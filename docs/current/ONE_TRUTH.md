@@ -49,7 +49,7 @@ Friday 2026-10-16 has **no races and no verdicts**: nothing captured, nothing sc
 | `velo-formfav-uk-shadow` | cron `30 8 * * *`, gb+ie | KEEP |
 | `velo-formfav-us-shadow` | one-shot, **`--date 2026-10-11` hard-coded**, no cron | DEAD — runs nothing useful today |
 | `velo-rp-capture` | cron/container → `rp_cloud_raceday.py` (`Dockerfile.rpcapture`) | KEEP — governed Racing Post HTML capture; login/index capture PASS on 2026-10-20 |
-| `velo-prime-scoring` | no cron; live service setting still points at legacy `run_cloud_raceday.py` | LEGACY DUPLICATE — not the daily scheduler; do not run until its Railway start command is updated or the service is retired with operator approval |
+| `velo-prime-scoring` | **cron `0 7 * * *`, start command `rp_cloud_raceday.py`** (Railway config read 2026-11-15; the cron was added 2026-11-07) | LEGACY DUPLICATE — not the daily scheduler. It ran the same chain as `velo-rp-capture` at the same minute until `MORNING-TIMEOUT-OWNER-01`, after which its scheduled run stands down in code and only an authorised rescore runs here. Removing the cron or retiring the service needs operator approval |
 | `velo-results-sigma` | required config `/railway.eod.toml`; cron `0 21 * * *` → `scripts/ops/rp_cloud_eod.py --execute --no-notify` | RECOVERY TARGET. The 2026-11-02 audit found it pinned to an Apr-26 deployment and the wrong non-ops script. Activation requires a current deployment plus the durable postconditions above. |
 | `velo-daily-ingestion` | `workers/daily_pipeline.py`, Racing API creds, no schedule | LEGACY |
 | `ingestion-spine` | branch `feature/v10-launch` (deleted), Racing API creds, build step rewrites source | LEGACY — cannot be rebuilt reproducibly |
