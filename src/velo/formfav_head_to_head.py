@@ -143,8 +143,14 @@ def formfav_probabilities(prediction: dict | None, off: datetime) -> dict[str, f
     return out
 
 
-def build_race(results: list[dict], prime: dict[str, float], formfav: dict[str, float]) -> list[dict] | None:
-    """Runners of one eligible race with each source's normalised probability, or None."""
+def build_race(
+    results: list[dict], prime: dict[str, float], formfav: dict[str, float], prices: dict[str, dict] | None = None
+) -> list[dict] | None:
+    """Runners of one eligible race with each source's normalised probability, or None.
+
+    ``prices`` is ``{horse_key: {open, t10, close}}`` from ``obtainable_prices.race_prices``.
+    Each runner gets its entry under ``prices`` when one exists.
+    """
     field = [r for r in results if r.get("sp_dec") is not None and float(r["sp_dec"]) > 1]
     if len(field) < MIN_RUNNERS or len(field) != len(results):
         return None
@@ -162,6 +168,8 @@ def build_race(results: list[dict], prime: dict[str, float], formfav: dict[str, 
         }
         for k, r in zip(keys, field, strict=True)
     ]
+    for runner in runners:
+        runner["prices"] = (prices or {}).get(runner["horse"])
     blend_total = sum(math.sqrt(r["PRIME"] * r["FORMFAV"]) for r in runners)
     for r in runners:
         r["PRIME_x_FORMFAV"] = math.sqrt(r["PRIME"] * r["FORMFAV"]) / blend_total
@@ -237,10 +245,51 @@ def agreement(races: list[list[dict]]) -> dict:
     }
 
 
+def score_at_obtainable_prices(races: list[list[dict]]) -> dict:
+    """Each source's top pick at the best price on offer ten minutes before the off.
+
+    Only races where every runner has an open, decision and closing price are used, so all
+    sources are judged on the same races and the bookmakers' margin can be stated.
+    """
+    from src.velo import obtainable_prices as op
+
+    priced = [r for r in races if all(runner.get("prices") for runner in r)]
+    out: dict[str, Any] = {
+        "races_with_full_prices": len(priced),
+        "avg_book_at_t10": round(sum(op.book({x["horse"]: x["prices"] for x in r}) for r in priced) / len(priced), 3)
+        if priced
+        else None,
+    }
+    for model in MODELS:
+        picks, at_sp = [], 0.0
+        for runners in priced:
+            top = _ranked(runners, model)[0]
+            picks.append(op.pick_outcome(top["won"], top["prices"]))
+            at_sp += (top["sp"] - 1) if top["won"] else -1.0
+        summary = op.summarise(picks)
+        summary["roi_at_sp_pct_same_races"] = round(100 * at_sp / len(priced), 1) if priced else None
+        out[model] = summary
+    return out
+
+
 def evaluate(
-    velo_races: list[dict], formfav_races: list[dict], verdicts: list[dict], predictions: list[dict], results: list[dict]
+    velo_races: list[dict],
+    formfav_races: list[dict],
+    verdicts: list[dict],
+    predictions: list[dict],
+    results: list[dict],
+    snapshots: list[dict] | None = None,
 ) -> dict:
-    """Run the whole comparison from raw rows. Returns coverage, metrics and exclusions."""
+    """Run the whole comparison from raw rows. Returns coverage, metrics and exclusions.
+
+    ``snapshots`` are market rows (``provider_race_key``, ``captured_at``, ``horse_name``,
+    ``best_win``). When given, each source is also measured at obtainable pre-off prices.
+    """
+    from src.velo import obtainable_prices as op
+
+    snapshots_by_key: dict[Any, list[dict]] = defaultdict(list)
+    for row in snapshots or []:
+        snapshots_by_key[row.get("provider_race_key")].append(row)
     paired, unmatched = pair_races(velo_races, formfav_races)
     verdicts_by_race: dict[str, list[dict]] = defaultdict(list)
     for verdict in verdicts:
@@ -266,7 +315,10 @@ def evaluate(
         elif not results_by_race.get(race_id):
             excluded["NO_RACING_POST_RESULT"] += 1
         else:
-            runners = build_race(results_by_race[race_id], prime, formfav)
+            prices = op.race_prices(
+                snapshots_by_key.get(ff_race.get("provider_race_key"), []), off, key=lambda r: horse_key(r.get("horse_name"))
+            )
+            runners = build_race(results_by_race[race_id], prime, formfav, prices)
             if runners is None:
                 excluded["FIELD_NOT_IDENTICAL_OR_NOT_SETTLED"] += 1
             else:
@@ -284,4 +336,5 @@ def evaluate(
         "prime_vs_blend": paired_top1(races, "PRIME", "PRIME_x_FORMFAV"),
         "prime_vs_formfav": paired_top1(races, "PRIME", "FORMFAV"),
         "agreement": agreement(races),
+        "obtainable_prices": score_at_obtainable_prices(races) if snapshots is not None else None,
     }

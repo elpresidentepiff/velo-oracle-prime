@@ -92,8 +92,19 @@ def fetch(date_from: str, date_to: str) -> dict[str, list[dict]]:
             "order": "id.asc",
         },
     )
+    # Market snapshots are facts (prices), not provider opinions. Only the columns needed are read.
+    snapshots: list[dict] = []
+    for chunk in _chunks(sorted(r["provider_race_key"] for r in formfav_races), 10):
+        quoted = ",".join(f'"{key}"' for key in chunk)
+        snapshots.extend(
+            _get(
+                "formfav_market_snapshots",
+                {"select": "provider_race_key,captured_at,horse_name,best_win", "provider_race_key": f"in.({quoted})",
+                 "order": "id.asc"},
+            )
+        )
     return {"velo_races": velo_races, "formfav_races": formfav_races, "verdicts": verdicts,
-            "predictions": predictions, "results": results}
+            "predictions": predictions, "results": results, "snapshots": snapshots}
 
 
 def render(report: dict) -> str:
@@ -105,6 +116,15 @@ def render(report: dict) -> str:
         )
     lines += ["", f"coverage: {json.dumps(report['coverage'])}", f"Prime vs blend: {json.dumps(report['prime_vs_blend'])}",
               f"agreement: {json.dumps(report['agreement'])}"]
+    priced = report.get("obtainable_prices")
+    if priced:
+        lines += ["", f"at the best price 10 minutes before the off: {priced['races_with_full_prices']} races, "
+                  f"average book {priced['avg_book_at_t10']}",
+                  f"{'model':<18}{'ROI at T-10 %':>14}{'ROI at SP %':>13}{'beat close %':>14}{'share beating':>15}"]
+        for model in h2h.MODELS:
+            row = priced[model]
+            lines.append(f"{model:<18}{row['roi_at_t10_pct']!s:>14}{row['roi_at_sp_pct_same_races']!s:>13}"
+                         f"{row['avg_beat_close_pct']!s:>14}{row['beat_close_share_pct']!s:>15}")
     return "\n".join(lines)
 
 
