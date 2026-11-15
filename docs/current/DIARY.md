@@ -609,3 +609,33 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
   - Newbury and Galway missing from VELO's card on three days.
   - Premium market snapshots are the only timestamped pre-off prices VELO holds for UK races. `canonical_model_scorecards.captured_odds_dec` could be filled from them; that is the next piece if you want returns measured at an obtainable price instead of SP.
 
+## 2026-11-15 — MERGE-AND-MORNING-01: five PRs merged; the 07:00 run failed; durable state confirmed live
+
+- On operator instruction #194, #192, #193, #195, #196 were merged to `main` in that order, 00:58 to 00:59 UTC. `main` = `ca52db7`.
+- 07:00 UTC: `velo-rp-capture` failed at the FormFav readiness gate in 8 seconds (`newest form update is 01:09 (older than 3:00:00)`). The worker was alive. It re-reads form every six hours; the gate allowed three. The merges restarted the worker at 01:05, which put its cycle at 01:05 / 07:09. Fix: PR #197.
+- 07:00:43 UTC: `velo-prime-scoring` logged `SKIP — service 'velo-prime-scoring' is not the scheduled morning owner`. The owner guard from #192 works.
+- 09:20 to 09:22 UTC: a scoring run passed, 20 races, 251 runners, `trigger_source = manual`, `commit_sha = unknown`. It did not run on `velo-rp-capture`, `velo-prime-scoring` or `velo-oracle` (their logs are empty for that window). I did not start it and do not know where it ran.
+- That run exercised #195 against production: `new_build_horse_passports` went from 16,192 to 16,376 rows (184 upserted 09:18:40) and `rp_imports/velo-state/race_shape/form_history_passport-topup-2026-11-15.json` (1.4 MB) was stored. The Supabase REST and Storage calls work.
+- I set `velo-rp-capture` `cronSchedule` to `5 9 * * *` and then `25 9 * * *` to re-run the morning on Railway. That run started 09:27 UTC and passed the gate. The schedule must go back to `0 7 * * *` when it finishes (see the next entry for whether it did).
+
+## 2026-11-15 — PRICES-01: picks measured at prices that existed before the off
+
+- Branch `feat/obtainable-prices`, PR open, not merged. Read-only measurement. Prices are facts; FormFav predictions are still not fed to any VELO model.
+- Source: `formfav_market_snapshots` (best price across bookmakers). For GB/IE it starts 2026-11-04, first poll about 114 minutes before the off, last about 1 minute before.
+- Per runner: `open` (first price at least 60 min out), `t10` (last price at least 10 min out, the decision price), `close` (last price before the off). Nothing at or after the off is used.
+- Result, 292 GB/IE races, 4 to 14 Nov, every runner priced, Racing Post results (same rules run as SQL on production):
+
+| Pick | Wins | Return at T-10 best price | Return at SP | Price shortened after T-10 | Price drifted after T-10 |
+|---|---|---|---|---|---|
+| Prime top pick (276 races) | 26.0% | −17.8% | −19.3% | 21.0% | 52.2% |
+| Favourite at T-10 | 39.4% | −8.6% | −6.6% | 21.2% | 56.2% |
+| Biggest shortener, open to T-10 | 17.8% | −26.9% | −26.6% | 26.0% | 47.3% |
+| Every runner | 11.9% | −18.5% | −23.3% | 27.6% | 46.9% |
+
+  - The bookmakers' book at T-10 averages 1.153: a 15.3% margin against the backer before any skill is counted.
+  - Prime's picks are not followed by the market. After T-10 the pick's best price shortens on 21% of races and drifts on 52%, the same as the favourite and slightly worse than a random runner (27.6% / 46.9%). There is no sign that Prime sees something the market then catches up with.
+  - Backing whatever shortened most before T-10 loses 27%. Following the money after it has moved is the worst line in the table.
+- Decision: Prime as it stands has **no measurable price edge**. This is 11 days and 292 races, so it rules out a large edge, not a small one.
+- Changed: `src/velo/obtainable_prices.py`, `src/velo/formfav_head_to_head.py` (optional snapshots, obtainable-price section), `scripts/research/formfav_head_to_head.py` (reads snapshots), `tests/test_obtainable_prices.py` (9).
+- Not run: the script against the live project. The weekly GitHub workflow will run it.
+
