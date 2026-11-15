@@ -1,0 +1,68 @@
+name: FormFav head-to-head
+
+# Prime vs FormFav vs their blend vs the starting price on identical UK/Irish races.
+# Read-only against Supabase. Runs online: nothing is read from anyone's machine.
+#
+# Required GitHub secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+
+on:
+  schedule:
+    - cron: '17 6 * * 1'  # Mondays 06:17 UTC, before the 07:00 race-day run
+  workflow_dispatch:
+    inputs:
+      date_from:
+        description: 'First race date (YYYY-MM-DD). Blank = 35 days ago.'
+        required: false
+        default: ''
+      date_to:
+        description: 'Last race date (YYYY-MM-DD). Blank = yesterday.'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  head-to-head:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pytest
+
+      - name: Tests for the comparison rules
+        run: pytest tests/test_formfav_head_to_head.py -q
+        env:
+          PYTHONPATH: .
+
+      - name: Run the comparison
+        env:
+          PYTHONPATH: .
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DATE_FROM: ${{ github.event.inputs.date_from }}
+          DATE_TO: ${{ github.event.inputs.date_to }}
+        run: |
+          FROM="${DATE_FROM:-$(date -u -d '35 days ago' +%F)}"
+          TO="${DATE_TO:-$(date -u -d 'yesterday' +%F)}"
+          python scripts/research/formfav_head_to_head.py --from "$FROM" --to "$TO" | tee head_to_head.txt
+          {
+            echo "### FormFav head-to-head, $FROM to $TO"
+            echo '```'
+            cat head_to_head.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: formfav-head-to-head
+          path: data/reports/formfav_head_to_head_*.json
+          if-no-files-found: error
