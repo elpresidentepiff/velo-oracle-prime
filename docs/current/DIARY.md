@@ -578,3 +578,34 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
   - With `VELO_PDF_FETCH_SIGN_IN=1` and a working sign-in: Prime's `postdata_score`, `plot_conviction`, `mark_compression_score` stop being 0. Not validated: it needs the Racing Post account, which exists only on Railway.
 - Tests: `tests/test_new_build_input_health.py` (10), one more in `tests/test_cloud_state.py`.
 
+## 2026-11-15 — FORMFAV-H2H-01: what FormFav Premium is worth to UK picks, measured
+
+- Branch `research/formfav-head-to-head` (stacked on #195 for this file only), PR open, **not merged**. Read-only work. No model, weight or feature packet changed. FormFav predictions stay banned from VELO feature packets (`formfav_feature_contract`).
+- Entitlement, without reading any credential: the Premium-only market endpoint is answering. `formfav_market_snapshots` has 879,831 rows, newest 2026-11-15 00:38 UTC; a lower tier gets HTTP 403 there (`formfav_live_worker.py`). GB/IE races with at least one market snapshot, 12 Oct to 14 Nov: 336 of 1,263.
+- Stored for GB/IE: race metadata, runner form, last 20 starts, career stats, speed map, class profile, class fit, predictions with reasons, results, track bias (from 14 Nov), market snapshots. 4,221 Rich Context manifests, all `ELIGIBLE` with a canonical runner id. `/form` captures: 141,617 since 7 Nov.
+- Pairing FormFav to Racing Post, 12 Oct to 14 Nov, 1,263 FormFav GB/IE races:
+  - 1,047 paired by the existing `velo_vs_formfav` view rule.
+  - 52 more pair once four course names are aliased (Catterick Bridge, Chelmsford City, Great Yarmouth, Stratford Avon): 1,099. The morning enrichment already matched these by containment; the view and the comparison did not.
+  - 143 unpaired: VELO scored nothing on those 4 days.
+  - 21 unpaired: Newbury (14 races, 2 days) and Galway (7): the course is missing from VELO's card for the day. That is a capture gap, not a naming one.
+  - 0 unpaired on off time.
+- Result on 629 eligible races (pre-off predictions only; every priced runner in both sources; one winner; Racing Post results and SP):
+
+| Source | Top pick wins | Level-stake return at SP |
+|---|---|---|
+| Prime | 27.2% | −12.4% |
+| FormFav | 28.8% | −19.9% |
+| Prime x FormFav (equal-weight geometric mean, nothing fitted) | 31.8% | −12.3% |
+| SP favourite | 38.8% | −4.8% |
+
+  - Blend right where Prime was wrong: 57 races. Prime right where the blend was wrong: 28. Sign test p about 0.002.
+  - On the 603 races paired without the aliases: Prime 26.5%, FormFav 28.7%, blend 31.3%, favourite 37.4%; winner in top three 60.0 / 63.5 / 63.0 / 73.0%; winner log loss 2.151 / 1.900 / 1.912 / 1.710.
+- Decision: **PROMISING CHALLENGER** for the blend as a ranking. It is more accurate than Prime on the same races. It does not beat the favourite and loses money at SP, so it is not evidence of an edge.
+- **REJECTED**: "bet when Prime and FormFav agree". 180 races, agreed pick 47.2% and +1.7% at SP, but the favourite in the same 180 races wins 50.6% and returns +3.5%. 75.6% of agreed picks are the favourite. When the agreed pick is not the favourite (44 races): 15.9%, −32.1%. First 34 races +27.3%, last 146 −4.3%. Agreement selects races with a strong favourite; it adds nothing to the price.
+- Changed: `src/velo/formfav_head_to_head.py` (pairing, pre-off filters, identical-field rule, metrics, sign test, agreement against the favourite), `scripts/research/formfav_head_to_head.py` (reads Supabase, writes a report), `tests/test_formfav_head_to_head.py` (12), `.github/workflows/formfav-head-to-head.yml` (weekly and on demand; runs online).
+- Not run: the script and workflow against the live project (no service key in the build container). The numbers above come from the same rules run as SQL against production on 15 Nov.
+- Open:
+  - A blend lane cannot be wired into the morning run without your ruling: it consumes a provider opinion, which the feature contract forbids for VELO models. It would have to be a separately named consensus lane.
+  - Newbury and Galway missing from VELO's card on three days.
+  - Premium market snapshots are the only timestamped pre-off prices VELO holds for UK races. `canonical_model_scorecards.captured_odds_dec` could be filled from them; that is the next piece if you want returns measured at an obtainable price instead of SP.
+
