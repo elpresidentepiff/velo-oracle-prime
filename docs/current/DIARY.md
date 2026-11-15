@@ -508,3 +508,16 @@ Next safe action: push `ops/recovery`, merge to `main` (Railway builds from `mai
 - Tests: `tests/test_morning_run_timeouts_and_owner.py` (13), `tests/test_sigma_pipeline_run_contract.py` (+5), `tests/test_rp_cloud_raceday_trigger.py` (one test repaired; it had been failing since `9a0d53a`).
 - Open for the operator: (1) merge the PR; (2) remove the `0 7 * * *` cron from `velo-prime-scoring` in Railway; (3) the GitHub 21:00 schedule in `score-daily.yml` still starts the light job and fails nightly (EOD-TRIGGER-01).
 - Next safe check after merge, on the first morning: `select model_name, count(distinct race_id), min(created_at) from canonical_model_scorecards where run_date = current_date group by 1;` expect 10 lanes created before the first off. That evening: `select races_processed, results_processed, commit_sha from pipeline_runs where service_name='velo-results-sigma' and source_date=current_date order by started_at desc limit 1;` expect non-zero counts and a SHA.
+
+## 2026-11-15 — LANE-ARTIFACTS-01: three shadow lanes have no model file in the cloud image
+
+- Branch `chore/model-lane-artifact-check` (stacked on `fix/morning-timeout-and-duplicate-owner`), PR open, **not merged**. No lane's behaviour is changed.
+- Found: `models/**/*.pkl` and `data/new_build/` are git-ignored, so a model reaches Railway only when force-added. Not in git, so not in the image:
+  - `models/sqpe_v17_midprice_specialist_staging/sqpe_v17_midprice_specialist.pkl`: Step 9.1b exits 1 every morning (`FileNotFoundError`, Railway log 12 and 14 Nov). `velo_model_comparison_ledger.mp_top_pick` filled on 22 of 393 November races.
+  - `data/new_build/models/soft_label_challenger/champion_model.pkl`: Lane C is skipped with no error. `nbc_top_pick` filled on 0 of 393 November races.
+  - `models/radical_sigma_gate_staging/sigma_win_gate.pkl` and `sigma_frame_gate.pkl`: Radical Shadow passes with `WIN_GATE_NOT_LOADED; FRAME_GATE_NOT_LOADED`.
+- Also found, not fixed here:
+  - Champion Intent features read `data/race_shape/form_history_*.json`, a laptop archive. In the cloud on 14 Nov: 59 of 564 runners had any history, `join_failure_rate_pct` 89.54. The lane is scored and persisted on about 10% feature coverage.
+  - `runner_prediction_snapshots`, 4 to 14 Nov, every runner: `postdata_score`, `plot_conviction` and `mark_compression_score` are 0 on all 3,075 rows. These Prime inputs carry no information in the cloud run.
+- Changed: `config/model_lane_artifacts.json` (each lane, its files, SHIPPED or MISSING_FROM_IMAGE with impact and repair), `scripts/ops/check_model_lane_artifacts.py` (read-only report; exit 1 only when a SHIPPED lane has lost a file), `tests/test_model_lane_artifacts.py` (15 tests), `ci.yml` job `release-checks`.
+- Open for the operator: force-add the four files from the laptop (check they load under the production pins first), or retire those lanes. When a file arrives the test fails until its entry is set to SHIPPED.
