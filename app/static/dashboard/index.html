@@ -5017,5 +5017,48 @@ async function loadHorseHistoryShadow() {
 loadHorseHistoryShadow();
 loadLlmBrief();
 </script>
+
+<section id="rc50-panel" style="margin:12px;padding:14px;background:#111;border:1px solid #8c7cff;border-radius:8px;color:#eee">
+ <h3 style="color:#ad9cff;margin:0 0 8px">RICH CONTEXT · 50+ FEATURE AUDIT <small style="font-size:10px;color:#aaa">SHADOW · NO STAKING</small></h3>
+ <p id="rc50-status" style="font-size:12px;color:#aaa">Loading runner-by-runner evidence…</p>
+ <div id="rc50-races" style="display:grid;gap:8px"></div>
+</section>
+<script>
+(async function(){
+ const panel=document.getElementById('rc50-panel'),status=document.getElementById('rc50-status'),body=document.getElementById('rc50-races');
+ const date=new URLSearchParams(location.search).get('date')||new Date().toISOString().slice(0,10);
+ try {
+  const [a,b]=await Promise.all([fetch('/api/rich-context-50?date='+encodeURIComponent(date)),fetch('/api/prime-vs-challenger?date='+encodeURIComponent(date))]);
+  if(!a.ok)throw Error('Feature endpoint HTTP '+a.status);
+  const data=await a.json(),p=b.ok?await b.json():{};
+  if(!data.available){status.textContent='NO FORM FAV FEATURE ARTIFACT — do not trust an empty panel';return;}
+  const candidates=Array.isArray(p.races)?p.races:[];
+  status.textContent=data.feature_count+' distinct FormFav feature keys · '+data.races.length+' races · '+data.races.reduce((n,r)=>n+r.runners.length,0)+' runner records · '+date+' · NOT a trained 50+ feature model';
+  for(const race of data.races){
+   const details=document.createElement('details');details.style.cssText='background:#191919;padding:10px;border-radius:6px';
+   const summary=document.createElement('summary');summary.style.cssText='cursor:pointer;color:#ddd;font-size:13px';
+   summary.textContent=(race.off_time||'Time unknown')+' '+(race.course||'')+' · '+race.runners.length+' runners';details.appendChild(summary);
+   const match=candidates.find(x=>String(x.race_id)===String(race.race_id));
+   const pred=document.createElement('p');pred.style.cssText='font-size:11px;color:#c2b4ff';
+   pred.textContent=match?'Existing challenger comparison available; see PRIME vs CHALLENGER panel for model picks.':'No validated challenger pick available for this race';
+   details.appendChild(pred);
+   for(const horse of race.runners){
+    const h=document.createElement('details');h.style.cssText='margin:6px 0;padding:7px;border:1px solid #333;border-radius:4px';
+    const hs=document.createElement('summary');hs.style.cssText='cursor:pointer;font-size:12px';
+    hs.textContent=(horse.horse||'Unknown horse')+' · '+horse.present+' populated / '+(horse.present+horse.missing)+' keys · '+(horse.quality||'quality unknown');
+    h.appendChild(hs);
+    const table=document.createElement('div');table.style.cssText='display:grid;grid-template-columns:minmax(110px,1fr) minmax(80px,1fr);gap:4px;font-size:10px;overflow-wrap:anywhere;margin-top:8px';
+    for(const [key,value] of Object.entries(horse.features)){
+     const k=document.createElement('span');k.textContent=key;const v=document.createElement('span');v.textContent=value===null?'MISSING':String(value);
+     v.style.color=value===null?'#ffad67':'#a6d6a6';table.append(k,v);
+    }
+    h.appendChild(table);details.appendChild(h);
+   }
+   body.appendChild(details);
+  }
+ }catch(e){status.textContent='FEATURE AUDIT UNAVAILABLE: '+e.message;panel.style.borderColor='#e05050'}
+})();
+</script>
+
 </body>
 </html>
