@@ -44,11 +44,11 @@ def make_packets(champion_rows, formfav_report, *, pre_off_verified=False):
     for row in champion_rows:
         key = (str(row.get("race_id", "")), norm(row.get("horse")))
         candidates = by_race.get(key, [])
-        status = "MATCHED" if len(candidates) == 1 else ("AMBIGUOUS" if candidates else "MISSING")
+        status = "MATCHED" if len(candidates) == 1 and key[0] and key[1] else ("AMBIGUOUS" if candidates else "MISSING")
         ff = candidates[0] if status == "MATCHED" else {}
         # No timestamp provenance is present in the existing daily FormFav artifact.
         # A joined feature row is NOT automatically training-eligible.
-        eligible = bool(pre_off_verified and status == "MATCHED" and ff.get("ff_training_eligible") == 1.0)
+        eligible = bool(pre_off_verified and status == "MATCHED" and ff.get("ff_training_eligible") == 1.0 and ff.get("ff_identity_name_match") == 1.0 and ff.get("ff_draw_conflict") != 1.0)
         values = {name: ff.get(name) if status == "MATCHED" else None for name in FF_FIELDS}
         values.update({name + "_missing": int(values[name] is None) for name in FF_FIELDS})
         packet = {
@@ -59,7 +59,7 @@ def make_packets(champion_rows, formfav_report, *, pre_off_verified=False):
             "identity_status": status,
             "pre_off_verified": bool(pre_off_verified),
             "eligible_for_fit": eligible,
-            "ineligibility_reason": None if eligible else ("PRE_OFF_PROVENANCE_UNVERIFIED" if not pre_off_verified else status),
+            "ineligibility_reason": None if eligible else ("PRE_OFF_PROVENANCE_UNVERIFIED" if not pre_off_verified else "IDENTITY_OR_QUALITY_GATE"),
             "production_influence": False, "stake_authorised": False,
             "promotion_eligible": False, "provider_predictions_consumed": False,
             "feature_values": values,
