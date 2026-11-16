@@ -74,6 +74,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=None)
     ap.add_argument("--countries", default="us,ca,fr,au,hk,jp")
+    ap.add_argument("--race-codes", default="gallops,harness")
     ap.add_argument("--tracks", default="")
     ap.add_argument("--timezone", default="Europe/London")
     ap.add_argument("--no-prices", action="store_true")
@@ -84,6 +85,7 @@ def main() -> int:
 
     date_str = args.date or datetime.now(UTC).date().isoformat()
     countries = {c.strip().lower() for c in args.countries.split(",") if c.strip()}
+    race_codes = tuple(c.strip().lower() for c in args.race_codes.split(",") if c.strip())
     tracks = {t.strip() for t in args.tracks.split(",") if t.strip()}
 
     # Races are stored under their LOCAL racing date (#189). The races that go off on this UTC
@@ -93,7 +95,8 @@ def main() -> int:
     client = CachedFormFavClient(live=None, max_age_hours=36)
     raw_races: list[dict] = []
     fetch_report: dict = {"date": date_str, "racing_dates": {}, "errors": [], "error_detail": [],
-                          "identity_blocked": []}
+                          "identity_blocked": [], "race_codes": list(race_codes),
+                          "expected_races": 0, "races_loaded": 0, "missing_races": 0}
     for racing_date in _racing_dates(date_str):
         try:
             races_d, report_d = fetch_formfav_racecards(
@@ -104,14 +107,20 @@ def main() -> int:
                 tracks=tracks or None,
                 client=client,
                 utc_date=date_str,
+                race_codes=race_codes,
             )
         except Exception as exc:  # noqa: BLE001 - a missing neighbouring date must not stop the run
             fetch_report["errors"].append(f"meetings {racing_date}: {type(exc).__name__}: {exc}")
             continue
         raw_races += races_d
         fetch_report["racing_dates"][racing_date] = {
-            k: report_d.get(k) for k in ("meetings_seen", "meetings_in_scope", "races_loaded", "runners_loaded")
+            k: report_d.get(k) for k in (
+                "meetings_seen", "meetings_in_scope", "meetings_by_code", "expected_races",
+                "races_loaded", "missing_races", "runners_loaded", "coverage_status",
+            )
         }
+        for k in ("expected_races", "races_loaded", "missing_races"):
+            fetch_report[k] += int(report_d.get(k) or 0)
         for k in ("errors", "error_detail", "identity_blocked"):
             fetch_report[k] += report_d.get(k) or []
 
@@ -238,11 +247,18 @@ def main() -> int:
     for stat in by_country.values():
         stat["freeze_states"] = dict(stat["freeze_states"])
 
+    coverage_status = "COMPLETE" if fetch_report["missing_races"] == 0 else "PARTIAL"
+
     payload = {
         "date": date_str,
         "generated_at": generated_at.isoformat(),
         "code_commit": os.getenv("RAILWAY_GIT_COMMIT_SHA") or os.getenv("GIT_COMMIT") or "unknown",
-        "status": "EXPERIMENTAL_CROSS_JURISDICTION_SHADOW_ONLY",
+        "status": (
+            "EXPERIMENTAL_CROSS_JURISDICTION_SHADOW_ONLY"
+            if coverage_status == "COMPLETE" else "PARTIAL_WORLD_COVERAGE"
+        ),
+        "coverage_status": coverage_status,
+        "race_codes": list(race_codes),
         "countries": sorted(countries),
         "tracks": sorted(tracks),
         "source": "FormFav",
@@ -274,6 +290,10 @@ def main() -> int:
         "identity_blocked": len(fetch_report.get("identity_blocked") or []),
         "output": str(out.relative_to(ROOT)),
         "fetch_errors": len(fetch_report.get("errors") or []),
+        "coverage_status": coverage_status,
+        "expected_races": fetch_report["expected_races"],
+        "loaded_races": fetch_report["races_loaded"],
+        "missing_races": fetch_report["missing_races"],
     }, indent=2))
 
     if args.persist_artifact:
@@ -285,6 +305,17 @@ def main() -> int:
         rc = subprocess.run(cmd, cwd=ROOT, check=False).returncode
         if rc != 0:
             print(f"WARNING: artifact persistence exited {rc}", file=sys.stderr)
+    if coverage_status != "COMPLETE":
+        print(
+            f"[WORLD-COVERAGE] PARTIAL expected={fetch_report['expected_races']} "
+            f"loaded={fetch_report['races_loaded']} missing={fetch_report['missing_races']}; "
+            "canonical scorecard persistence blocked",
+            file=sys.stderr,
+            flush=True,
+        )
+        if args.persist_scorecard:
+            persist_run_rows(build_run_rows(payload))
+        return 3
     if args.persist_scorecard:
         rows = build_rows(payload)
         inserted: list[dict] = []

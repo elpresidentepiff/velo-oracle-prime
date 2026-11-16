@@ -63,7 +63,9 @@ class ProviderByLocalDate:
         self.calls.append({"call": "results", **kw})
         return {}
 
-    def meetings(self, date, timezone="UTC"):
+    def meetings(self, date, race_code="gallops", timezone="UTC"):
+        if race_code != "gallops":
+            return {"meetings": []}
         return {"meetings": [MEETING]}
 
 
@@ -262,3 +264,12 @@ def test_formfav_worker_image_ships_the_identity_module_and_zone_data() -> None:
     docker = (Path(__file__).resolve().parents[1] / "Dockerfile.formfav").read_text(encoding="utf-8")
     assert "COPY src/velo/race_identity.py src/velo/race_identity.py" in docker
     assert "tzdata" in docker
+
+
+def test_dashboard_exposes_world_discipline_coverage_truth() -> None:
+    root = Path(__file__).resolve().parents[1]
+    html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+    main = (root / "app" / "main.py").read_text(encoding="utf-8")
+    assert 'id="wd-coverage"' in html
+    assert "declared_race_codes" in html and "captured_race_codes" in html
+    assert "PARTIAL_SCOPE_UNVERIFIED" in main

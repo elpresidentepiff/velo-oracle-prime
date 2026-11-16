@@ -42,6 +42,13 @@ COUNTRIES = {
     for c in os.getenv("FORMFAV_LIVE_COUNTRIES", "gb,ie,us,ca,fr,au,hk,jp").split(",")
     if c.strip()
 }
+RACE_CODES = tuple(dict.fromkeys(
+    c.strip().lower()
+    for c in os.getenv("FORMFAV_LIVE_RACE_CODES", "gallops,harness").split(",")
+    if c.strip()
+))
+if not RACE_CODES or any(c not in {"gallops", "harness"} for c in RACE_CODES):
+    raise RuntimeError("FORMFAV_LIVE_RACE_CODES must contain gallops and/or harness")
 QUERY_TIMEZONE = os.getenv("FORMFAV_LIVE_QUERY_TIMEZONE", "UTC")
 PRICE_LOOKAHEAD_MIN = max(15, int(os.getenv("FORMFAV_PRICE_LOOKAHEAD_MIN", "120")))
 RESULT_LOOKBACK_MIN = max(30, int(os.getenv("FORMFAV_RESULT_LOOKBACK_MIN", "180")))
@@ -172,19 +179,21 @@ def _refresh_meetings(client: FormFavClient, now: datetime) -> None:
     # through the three-date refresh cannot erase the unvisited race days.
     fresh: dict[str, list[dict[str, Any]]] = dict(_meeting_cache)
     for date_str in _meeting_dates(now):
+      for race_code in RACE_CODES:
+        cache_key = f"{date_str}|{race_code}"
         try:
-            payload = client.meetings(date_str, timezone=QUERY_TIMEZONE)
+            payload = client.meetings(date_str, race_code=race_code, timezone=QUERY_TIMEZONE)
             meetings = [
-                m for m in (payload.get("meetings") or [])
+                {**m, "_velo_race_code": race_code} for m in (payload.get("meetings") or [])
                 if isinstance(m, dict)
                 and str(m.get("country") or "").lower() in COUNTRIES
                 and not m.get("abandoned")
             ]
-            fresh[date_str] = meetings
-            print(f"[FORMFAV-LIVE] meetings date={date_str} in_scope={len(meetings)}", flush=True)
+            fresh[cache_key] = meetings
+            print(f"[FORMFAV-LIVE] meetings date={date_str} race_code={race_code} in_scope={len(meetings)}", flush=True)
         except Exception as exc:
-            print(f"[FORMFAV-LIVE] meetings ERROR date={date_str}: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
-            fresh[date_str] = _meeting_cache.get(date_str, [])
+            print(f"[FORMFAV-LIVE] meetings ERROR date={date_str} race_code={race_code}: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
+            fresh[cache_key] = _meeting_cache.get(cache_key, [])
             if _activate_provider_backoff(exc):
                 break
     _meeting_cache = fresh
@@ -331,6 +340,7 @@ def _persist_track_bias(
         condition = form.get("condition") or race_row.get("condition")
         packet = client.track_bias(
             venue=venue, country=country, distance=distance, window=90, condition=condition,
+            race_code=race_row.get("race_code") or "gallops",
         )
         if not isinstance(packet, dict):
             return
@@ -362,6 +372,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
     if race_no is None:
         return
     race_no = int(race_no)
+    race_code = str(mrace.get("raceCode") or meeting.get("_velo_race_code") or "gallops").lower()
     start = _parse_dt(mrace.get("startTime"))
     if start is None:
         return
@@ -390,7 +401,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
         "country": country,
         "track": track,
         "race_number": race_no,
-        "race_code": str(mrace.get("raceCode") or "gallops"),
+        "race_code": race_code,
         "start_time": start.isoformat(),
         "timezone": race_tz,
         "status": "abandoned" if mrace.get("abandoned") else "scheduled",
@@ -410,6 +421,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                 track=slug,
                 race=race_no,
                 country=country,
+                race_code=race_code,
                 timezone=race_tz,
             )
             race_row = dict(base_race)
@@ -451,6 +463,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                         track=slug,
                         race=race_no,
                         country=country,
+                        race_code=race_code,
                         timezone=race_tz,
                     )
                     _persist_predictions(race_key, pred)
@@ -479,6 +492,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                     track=slug,
                     race=race_no,
                     country=country,
+                    race_code=race_code,
                     timezone=race_tz,
                 )
                 n = _persist_prices(race_key, prices)
@@ -509,6 +523,7 @@ def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any],
                     track=slug,
                     race=race_no,
                     country=country,
+                    race_code=race_code,
                     timezone=race_tz,
                 )
                 _persist_result(race_key, result)
@@ -556,6 +571,7 @@ def _maybe_run_global_eod(client: FormFavClient, now: datetime) -> None:
                     track=r.get("meeting_slug") or r["track"],
                     race=int(r["race_number"]),
                     country=r["country"],
+                    race_code=r.get("race_code") or "gallops",
                     timezone=r.get("timezone") or QUERY_TIMEZONE,
                 ),
                 "persist_result": _persist_result,
@@ -588,7 +604,8 @@ def _run_live_cycle(client: FormFavClient, now: datetime) -> int:
 
     _refresh_meetings(client, now)
     processed = 0
-    for date_str, meetings in list(_meeting_cache.items()):
+    for cache_key, meetings in list(_meeting_cache.items()):
+        date_str = cache_key.split("|", 1)[0]
         for meeting in meetings:
             for mrace in meeting.get("races") or []:
                 if not isinstance(mrace, dict) or mrace.get("abandoned"):
@@ -607,7 +624,7 @@ def main() -> int:
         raise SystemExit("[FORMFAV-LIVE] timezone database unavailable; cannot identify races")
     print(
         "[FORMFAV-LIVE] online "
-        f"countries={','.join(sorted(COUNTRIES))} tick={POLL_SECONDS}s "
+        f"countries={','.join(sorted(COUNTRIES))} race_codes={','.join(RACE_CODES)} tick={POLL_SECONDS}s "
         f"price_window={PRICE_LOOKAHEAD_MIN}m results_window={RESULT_LOOKBACK_MIN}m",
         flush=True,
     )
