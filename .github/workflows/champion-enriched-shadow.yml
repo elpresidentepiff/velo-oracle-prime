@@ -1,0 +1,21 @@
+name: Champion Intent enriched shadow safety
+on:
+  pull_request:
+    paths:
+      - 'scripts/ops/build_champion_enriched_packets.py'
+      - 'tests/test_champion_enriched_packets.py'
+      - '.github/workflows/champion-enriched-shadow.yml'
+  workflow_dispatch:
+jobs:
+  shadow-contract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install pytest
+      - run: python -m pytest -q tests/test_champion_enriched_packets.py
+      - run: python -m compileall -q scripts/ops/build_champion_enriched_packets.py
