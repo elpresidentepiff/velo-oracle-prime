@@ -15,6 +15,11 @@ honest multimodel ledger, before any promotion talk.
 PAPER ONLY: no Supabase writes, no Telegram, no live-scoring effect.
 trust_policy=ARCHIVE_CONTEXT_ONLY_NOT_SCORING on every output row.
 
+When the ephemeral local card cache is unavailable, the lane may read the
+already-frozen canonical Racing Post card archive from Supabase.  That is a
+read-only recovery path for this shadow scorer, not a new capture and never
+an input to Prime.
+
 Usage:
     PYTHONPATH=. python scripts/ops/run_midprice_shadow_today.py --date YYYY-MM-DD
 """
@@ -37,11 +42,39 @@ from app.services.sqpe_v17_service import (  # noqa: E402
     build_v17_feature_vector,
 )
 from src.velo.racecard_loader import load_racecards  # noqa: E402
+from src.velo.supabase_racecard_source import (  # noqa: E402
+    SupabaseRacecardError,
+    load_supabase_rp_racecards,
+)
 
 MODEL_DIR = ROOT / "models" / "sqpe_v17_midprice_specialist_staging"
 MODEL_PKL = MODEL_DIR / "sqpe_v17_midprice_specialist.pkl"
 METADATA = MODEL_DIR / "metadata.json"
 OUT_DIR = ROOT / "data" / "reports"
+
+
+def _load_shadow_racecards(date_str: str) -> tuple[list[dict], str]:
+    """Load frozen cards without ever falling back to a live source.
+
+    Local RP capture remains preferred.  Supabase is only the canonical
+    archive fallback, so a late shadow replay remains explicitly labelled as
+    archive context and cannot silently become a Prime-scoring input.
+    """
+    date_tag = date_str.replace("-", "_")
+    try:
+        races, source_label = load_racecards(
+            date_tag=date_tag, date_str=date_str, data_root=ROOT / "data"
+        )
+    except RuntimeError:
+        races, source_label = [], "local_unavailable"
+    if races:
+        return races, source_label
+    try:
+        return load_supabase_rp_racecards(date_str), "supabase_rp_archive"
+    except SupabaseRacecardError as exc:
+        raise RuntimeError(
+            f"No frozen racecards available for {date_str}: local cache unavailable; {exc}"
+        ) from exc
 
 
 def _load_specialist():
@@ -57,9 +90,7 @@ def score_date(date_str: str) -> dict:
     features = meta["specialist_features"]
     band_lo, band_hi = meta.get("mid_price_band", [3.0, 10.0])
 
-    races, source_label = load_racecards(
-        date_tag=date_tag, date_str=date_str, data_root=ROOT / "data"
-    )
+    races, source_label = _load_shadow_racecards(date_str)
     if not races:
         raise SystemExit(f"No racecards found for {date_str} — run capture/parse first.")
 
