@@ -67,10 +67,8 @@
       "artifacts": [
         "models/sqpe_v17_midprice_specialist_staging/sqpe_v17_midprice_specialist.pkl"
       ],
-      "status": "MISSING_FROM_IMAGE",
-      "since": "2026-11-15",
-      "impact": "Step 9.1b exits 1 every morning (FileNotFoundError in the Railway log, 2026-11-12 and 2026-11-14). velo_model_comparison_ledger.mp_top_pick is filled on 22 of 393 November races.",
-      "repair": "Operator: force-add the file from the laptop (as was done for No-RPR in NORPR-SHIP-01), after checking it loads under the production sklearn/lightgbm pins."
+      "status": "SHIPPED",
+      "note": "The existing frozen shadow artifact was force-added on 2026-11-18 after a production-pinned load check. This changes packaging only: no retraining, weights, promotion status, or live Prime path changed."
     },
     {
       "lane": "RADICAL_SHADOW_SIGMA_GATES",
