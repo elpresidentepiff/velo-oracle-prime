@@ -20,6 +20,11 @@ from urllib.parse import urljoin
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from src.velo.supabase_racecard_source import (  # noqa: E402
+    SupabaseRacecardError,
+    load_supabase_rp_racecards,
+)
+
 PARSED_ROOT = ROOT / "data" / "racing_post_account_parsed"
 RAW_ROOT = ROOT / "data" / "racing_post_account_raw"
 QUEUE_DIR = ROOT / "data" / "new_build" / "rp_scrape_queue"
@@ -176,19 +181,25 @@ def add_racecard_injection_candidates(candidates: dict[str, dict]) -> None:
                 )
 
 
-def add_racing_imminent_candidates(candidates: dict[str, dict], *, days_ahead: int = 1) -> dict[str, int]:
+def add_racing_imminent_candidates(
+    candidates: dict[str, dict],
+    *,
+    days_ahead: int = 1,
+    today: object | None = None,
+) -> dict[str, int]:
     """Promote horses declared on today's and tomorrow's cards to the front.
 
-    Reads the merged racecards, which are the same artifact scoring reads, so
-    "who is racing" here means exactly what it means downstream. Returns
-    per-date counts for the report.
+    Reads merged racecards first. When their ephemeral local files are absent,
+    reads the same already-frozen canonical Racing Post archive in Supabase.
+    The fallback supplies runner identity only; it neither captures new data
+    nor authorises any scoring. Returns per-date counts for the report.
     """
     from datetime import date as _date, timedelta
 
     seen: dict[str, int] = {}
-    today = _date.today()
+    base_day = today or _date.today()
     for offset in range(days_ahead + 1):
-        day = (today + timedelta(days=offset)).isoformat()
+        day = (base_day + timedelta(days=offset)).isoformat()
         paths = sorted((ROOT / "data" / "racecard_merged").glob(f"racecard_*_{day}.json"))
         n = 0
         for path in paths:
@@ -220,6 +231,29 @@ def add_racing_imminent_candidates(candidates: dict[str, dict], *, days_ahead: i
                         source_file=path.name,
                         profile_url=None,
                         reason="RACING_WITHIN_48H",
+                    )
+                    n += 1
+        if n == 0:
+            try:
+                archived_races = load_supabase_rp_racecards(day)
+            except SupabaseRacecardError:
+                archived_races = []
+            for race in archived_races:
+                for runner in race.get("runners") or []:
+                    if not isinstance(runner, dict):
+                        continue
+                    uid = str(runner.get("horse_id") or "").strip()
+                    if not uid.isdigit():
+                        continue
+                    _candidate(
+                        candidates,
+                        uid=uid,
+                        name=runner.get("horse") or runner.get("horse_name"),
+                        source="racing_imminent",
+                        source_date=day,
+                        source_file="supabase.public.races.raw",
+                        profile_url=_normalise_profile_url(uid, runner.get("horse_url")),
+                        reason="RACING_WITHIN_48H_CANONICAL_ARCHIVE",
                     )
                     n += 1
         seen[day] = n
