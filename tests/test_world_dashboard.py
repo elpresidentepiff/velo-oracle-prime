@@ -158,12 +158,12 @@ def test_evidence_summary_shows_the_first_batch_against_the_latest() -> None:
     assert summarise_rich_context([])["history_now_pct"] is None
 
 
-def test_panel_is_wired_read_only_and_never_claims_rich_context_ranks() -> None:
+def test_panel_is_wired_read_only_and_labels_rich_context_as_shadow() -> None:
     root = Path(__file__).parents[1]
     html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
     main = (root / "app" / "main.py").read_text(encoding="utf-8")
     assert 'id="rc-panel"' in html and "loadRichContext();" in html
-    assert "NOT FITTED" in html and "PICKS NOTHING" in html
+    assert "SHADOW SCORED" in html and "PRIME IS UNCHANGED" in html
     route = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/llm-brief")')]
     assert "wake_velo_model_picks" in route and "rich_context_vs_prime" in route
     for write in ('method="POST"', ".insert(", ".upsert(", ".delete(", "supabase_write"):
@@ -229,14 +229,34 @@ def test_enriched_suggestions_counts_changes_and_tolerates_json_null() -> None:
     assert enriched_suggestions([])["summary"]["races"] == 0
 
 
-def test_suggestions_are_wired_read_only_and_say_the_pick_is_primes() -> None:
+def test_suggestions_are_wired_read_only_and_distinguish_prime_from_challenger() -> None:
     root = Path(__file__).parents[1]
     html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
     main = (root / "app" / "main.py").read_text(encoding="utf-8")
     assert 'id="rc-suggest"' in html and "TODAY'S SUGGESTIONS" in html
-    assert "does not re-rank anyone" in html
+    assert "Prime remains frozen" in html
+    assert "separately fitted Rich Context shadow challenger" in html
     route = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/llm-brief")')]
     assert "wake_velo_enriched_picks" in route and "enriched_suggestions" in route
+
+
+def test_rich_context_route_reads_the_separate_append_only_score_table() -> None:
+    """A scored challenger must never be reported as awaiting a fit just because packets are immutable."""
+    root = Path(__file__).parents[1]
+    main = (root / "app" / "main.py").read_text(encoding="utf-8")
+    route = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/horse-history-shadow")')]
+    assert "rich_context_challenger_scores?race_date=eq." in route
+    assert 'challenger_status = "SHADOW_SCORED" if scored_count else "NO_SCORES_FOR_DATE"' in route
+    assert '"challenger_picks": challenger_picks' in route
+
+
+def test_dashboard_surfaces_actual_rich_context_shadow_pick_and_lane_c() -> None:
+    root = Path(__file__).parents[1]
+    html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+    assert "RICH CONTEXT SHADOW" in html
+    assert "challengerByRace" in html
+    assert "NEW BUILD · LANE C" in html
+    assert "canonicalLaneC" in html
 
 
 # --- WORLD-PICKS-01: VELO's frozen World pick per race ---------------------------------------------

@@ -2174,13 +2174,14 @@ async def world_velo_picks(date: str = Query(default=None)):
 async def rich_context(date: str = Query(default=None)):
     """Every model's top pick side by side, plus how much Rich Context evidence each race had.
 
-    Rich Context has no fitted model, so it ranks nothing and cannot change a pick. This endpoint
-    only reads: the evidence packets, the governed scorecards and the scoring-run ledger.
+    The Rich Context challenger is a fitted, shadow-only model.  Its immutable packet evidence
+    and its append-only scores are deliberately separate: this route must read both, otherwise
+    the dashboard can falsely say the challenger is not fitted when it has already scored.
+    Nothing returned here changes Prime.
     """
     import datetime as _dt
 
     from app.world_dashboard import (
-        RICH_CONTEXT_STATUS,
         SHADOW_BOUNDARY,
         enriched_suggestions,
         model_scoreboard,
@@ -2208,12 +2209,34 @@ async def rich_context(date: str = Query(default=None)):
         f"&source_date=eq.{d}&order=started_at.asc&limit=20"
         "&select=run_type,status,started_at,finished_at,races_processed,runners_processed,commit_sha"
     )
-    scored = _sb_rest_rows(f"rich_context_challenger_scores?race_date=eq.{d}&select=id&limit=1")
+    scored = _sb_rest_rows(
+        f"rich_context_challenger_scores?race_date=eq.{d}"
+        "&select=race_id,horse_id,model_version,challenger_probability,challenger_rank,scored_at"
+        "&order=challenger_rank.asc,scored_at.desc&limit=2000"
+    )
+    challenger_rows = _sb_rest_rows(
+        f"prime_vs_challenger?race_date=eq.{d}&order=off_minutes.asc.nullslast,race_id.asc&limit=300"
+        "&select=race_id,challenger_horse,challenger_prob,challenger_price,challenger_model"
+    )
+    challenger_picks = {
+        str(row.get("race_id")): {
+            "horse": row.get("challenger_horse"),
+            "probability": row.get("challenger_prob"),
+            "price": row.get("challenger_price"),
+            "model_version": row.get("challenger_model"),
+        }
+        for row in (challenger_rows or [])
+        if row.get("race_id") and row.get("challenger_horse")
+    }
+    scored_count = len(scored or [])
+    challenger_status = "SHADOW_SCORED" if scored_count else "NO_SCORES_FOR_DATE"
     return {
         "date": d,
-        "available": picks is not None or coverage is not None or picks_now is not None,
-        "rich_context_status": RICH_CONTEXT_STATUS,
-        "rich_context_ranks_anything": bool(scored),
+        "available": bool(picks or coverage or picks_now or scored or challenger_rows),
+        "rich_context_status": challenger_status,
+        "rich_context_ranks_anything": bool(scored_count),
+        "rich_context_scored_runners": scored_count,
+        "challenger_picks": challenger_picks,
         "suggestions": enriched_suggestions(picks_now or []),
         "evidence": summarise_rich_context(coverage or []),
         "models": model_scoreboard(picks or []),
