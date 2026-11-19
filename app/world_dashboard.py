@@ -57,8 +57,6 @@ def summarise_velo_vs_formfav(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-RICH_CONTEXT_STATUS = "AWAITING_FROZEN_MODEL_FIT"
-
 PRIME = "MAIN_VELO_PRIME"
 
 # Display order and honest labels. A lane that is not an independent opinion says so.
@@ -69,6 +67,8 @@ MODEL_META: dict[str, tuple[str, str | None]] = {
     "CHAMPION_INTENT_SHADOW": ("CHAMPION INTENT", "Shadow. Writes several lists per race."),
     "NEW_BUILD_LANE_A_MODEL": ("NEW BUILD A", "Shadow lane A."),
     "NEW_BUILD_LANE_B_MODEL": ("NEW BUILD B", "Shadow lane B."),
+    "NEW_BUILD_LANE_C_MODEL": ("NEW BUILD C", "Shadow lane C. LightGBM soft-label challenger."),
+    "MIDPRICE_SPECIALIST_SHADOW": ("MIDPRICE", "Shadow. Separate mid-price specialist."),
     "OLD_VELO_WIN_ROLE": ("OLD VELO WIN", "Identical to Prime by construction. Not an independent opinion."),
     "OLD_VELO_PLACE_ROLE": ("OLD VELO PLACE", "Place-market role."),
     "OLD_VELO_LONGSHOT_ROLE": ("OLD VELO LONGSHOT", "Longshot role."),
@@ -212,7 +212,9 @@ def evidence_grade(row: dict[str, Any]) -> str:
 def enriched_suggestions(rows: list[dict[str, Any]]) -> dict[str, Any]:
     """Prime's picks from the newest run with the evidence held on each pick.
 
-    The pick is Prime's own: Rich Context has no fitted model and re-ranks nothing here.
+    The pick is Prime's own and is accompanied by time-safe evidence.  The separately
+    fitted Rich Context challenger is exposed beside it by the dashboard route; it remains
+    shadow-only and never changes Prime's ranking.
     """
     races = [
         {
