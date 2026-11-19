@@ -199,6 +199,13 @@ def test_london_off_time_is_resolved_to_utc() -> None:
     assert summer == datetime(2026, 7, 7, 9, 30, tzinfo=UTC)
 
 
+def test_naive_structured_world_off_time_fails_closed() -> None:
+    """A provider-local timestamp must not be guessed to be UTC."""
+    assert resolve_race_off_time_utc({
+        "country": "au", "scheduled_off": "2026-11-07T18:30:00",
+    }) is None
+
+
 @pytest.mark.parametrize(
     ("card_time", "expected_utc"),
     [

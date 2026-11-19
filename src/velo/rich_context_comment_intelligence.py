@@ -121,6 +121,13 @@ _FACT_PATTERNS: dict[str, tuple[re.Pattern[str], ...]] = {
 
 
 def _as_utc(value: datetime | str | None) -> datetime | None:
+    """Return an explicitly-zoned instant in UTC, never guessing a timezone.
+
+    A date-time without an offset can mean a provider's local venue time.  It
+    is therefore unusable as a pre-off boundary, especially for World cards.
+    UK/Irish Racing Post clock strings are handled separately by
+    :func:`_london_clock`, where the source convention is known.
+    """
     if value is None:
         return None
     if isinstance(value, datetime):
@@ -134,7 +141,7 @@ def _as_utc(value: datetime | str | None) -> datetime | None:
         except ValueError:
             return None
     if parsed.tzinfo is None:
-        return parsed.replace(tzinfo=UTC)
+        return None
     return parsed.astimezone(UTC)
 
 

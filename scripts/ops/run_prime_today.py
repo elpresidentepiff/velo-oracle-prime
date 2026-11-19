@@ -1930,6 +1930,7 @@ def main():
         rank_scored_packets as _rank_rich_context_packets,
         score_packet as _score_rich_context_packet,
     )
+    from src.velo.rich_context_passport_source import factual_passport_before_cutoff as _passport_before_cutoff
 
     # Loaded once; None when no fitted artifact exists yet (packets are still built either way).
     _rich_context_artifact = _load_rich_context_artifact()
@@ -1944,6 +1945,11 @@ def main():
     # already-eligible manifests and bind them by exact canonical IDs. Missing
     # evidence remains missing; there is no name or cross-date fallback.
     _formfav_manifest_by_key: dict[tuple[str, str], dict] = {}
+    # Existing passport records are a separate, timestamped archive.  Load an
+    # exact-ID, factual allow-list only.  Per-race code below still rejects a
+    # row whose persisted_at is later than that race's off-time; this preload
+    # cannot make a later archive refresh look like pre-off evidence.
+    _passport_by_horse_id: dict[str, dict] = {}
     _history_provider = CanonicalHistoryProvider(SupabaseHistoricalRunRepository(db)) if db else None
     if db:
         try:
@@ -1974,6 +1980,50 @@ def main():
         except Exception as _manifest_err:
             log.warning("Rich Context FormFav manifest preload failed closed: %s", _manifest_err)
             _formfav_manifest_by_key = {}
+        try:
+            # The passport archive's primary key is an RP numeric UID
+            # (BIGINT).  Do not coerce non-RP/world identifiers into that
+            # domain; they remain explicitly uncovered rather than risking a
+            # name or fuzzy bridge.  Log the count so this is not silent.
+            _passport_candidate_ids = sorted(
+                {
+                    str(runner.get("horse_id"))
+                    for race in normalized
+                    for runner in (race.get("runners") or [])
+                    if str(runner.get("horse_id") or "")
+                }
+            )
+            _passport_horse_ids = [
+                horse_id for horse_id in _passport_candidate_ids
+                if re.fullmatch(r"[0-9]+", horse_id)
+            ]
+            _unsupported_passport_ids = len(_passport_candidate_ids) - len(_passport_horse_ids)
+            if _unsupported_passport_ids:
+                log.info(
+                    "Rich Context passport source supports RP numeric UIDs only; "
+                    "%d non-RP identifiers remain uncovered",
+                    _unsupported_passport_ids,
+                )
+            if _passport_horse_ids:
+                _passport_rows = (
+                    db.table("new_build_horse_passports")
+                    .select(
+                        "horse_rp_uid,career_runs,wins,win_rate,last_run_date,"
+                        "source_sha256,persisted_at"
+                    )
+                    .in_("horse_rp_uid", _passport_horse_ids)
+                    .order("persisted_at", desc=True)
+                    .execute()
+                    .data
+                    or []
+                )
+                for _row in _passport_rows:
+                    _horse_key = str(_row.get("horse_rp_uid") or "")
+                    if _horse_key and _horse_key not in _passport_by_horse_id:
+                        _passport_by_horse_id[_horse_key] = _row
+        except Exception as _passport_err:
+            log.warning("Rich Context passport preload failed closed: %s", _passport_err)
+            _passport_by_horse_id = {}
 
     # Initialize Spotlight Engine
     from src.velo.rich_context_comment_intelligence import (
@@ -2161,6 +2211,10 @@ def main():
                             "features": {},
                             "ineligibility_reasons": ["HISTORY_PROVIDER_UNAVAILABLE"],
                         }
+                    _passport_facts = _passport_before_cutoff(
+                        _passport_by_horse_id.get(_horse_id),
+                        as_of_cutoff=_history_cutoff,
+                    )
                     _packet = _build_rich_context_packet(
                         race_id=str(race.get("race_id") or ""),
                         horse_id=_horse_id,
@@ -2171,6 +2225,7 @@ def main():
                         ),
                         history_packet=_history,
                         comment_packet=_pred.get("rich_context_comment_shadow"),
+                        connections_passport=_passport_facts,
                         market_facts={
                             "sp_dec": _pred.get("sp_dec"),
                             "is_fav": _pred.get("is_fav"),

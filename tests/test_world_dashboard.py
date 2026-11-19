@@ -164,14 +164,44 @@ def test_panel_is_wired_read_only_and_labels_rich_context_as_shadow() -> None:
     main = (root / "app" / "main.py").read_text(encoding="utf-8")
     assert 'id="rc-panel"' in html and "loadRichContext();" in html
     assert "SHADOW SCORED" in html and "PRIME IS UNCHANGED" in html
+    assert 'id="rc-family-coverage"' in html
+    assert "CAPTURED_NOT_CONSUMED" in html
+    assert "NOT_CAPTURED" in html and "PARTIALLY_CAPTURED_NOT_CONSUMED" in html
     route = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/llm-brief")')]
     assert "wake_velo_model_picks" in route and "rich_context_vs_prime" in route
+    assert "rich_context_shadow_packets?race_date=eq." in route
+    assert "rich_context_family_coverage" in route
     for write in ('method="POST"', ".insert(", ".upsert(", ".delete(", "supabase_write"):
         assert write not in route
 
 
 # --- WAKE-VELO-DASH-02: today's enriched suggestions ----------------------------------------------
-from app.world_dashboard import enriched_suggestions, evidence_grade  # noqa: E402
+from app.world_dashboard import (  # noqa: E402
+    enriched_suggestions,
+    evidence_grade,
+    rich_context_family_coverage,  # noqa: E402
+)
+
+
+def test_rich_context_family_coverage_keeps_missing_families_in_full_denominator() -> None:
+    packets = [
+        {"family_coverage": {"prime_baseline_snapshot": True, "market_facts": True}},
+        {"family_coverage": {"prime_baseline_snapshot": True, "canonical_history": True}},
+    ]
+    by_key = {row["key"]: row for row in rich_context_family_coverage(
+        packets,
+        consumed_families={"prime_baseline_snapshot", "market_facts"},
+        artifact_available=True,
+    )}
+    assert by_key["prime_baseline_snapshot"]["capture_status"] == "CAPTURED"
+    assert by_key["prime_baseline_snapshot"]["model_use_status"] == "CONSUMED_BY_ACTIVE_SHADOW"
+    assert by_key["canonical_history"]["covered_runners"] == 1
+    assert by_key["canonical_history"]["total_runners"] == 2
+    assert by_key["canonical_history"]["capture_status"] == "PARTIAL"
+    assert by_key["connections_passports"]["covered_runners"] == 0
+    assert by_key["connections_passports"]["total_runners"] == 2
+    assert by_key["connections_passports"]["capture_status"] == "MISSING_FOR_DATE"
+    assert by_key["connections_passports"]["model_use_status"] == "NOT_CAPTURED"
 
 
 def _sug(race, pick="A", **kw):

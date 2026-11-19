@@ -59,6 +59,21 @@ def summarise_velo_vs_formfav(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 PRIME = "MAIN_VELO_PRIME"
 
+# The contract is deliberately exhaustive.  A missing key in an immutable packet
+# means "not captured", not "not part of the denominator".  Keeping this list in
+# presentation code stops the dashboard silently hiding an unavailable family.
+RICH_CONTEXT_FAMILY_LABELS: tuple[tuple[str, str], ...] = (
+    ("prime_baseline_snapshot", "PRIME SNAPSHOT"),
+    ("market_facts", "MARKET FACTS"),
+    ("canonical_history", "HISTORICAL FORM"),
+    ("rp_spotlight_facts", "RP SPOTLIGHT FACTS"),
+    ("formfav_raw_facts", "FORMFAV FACTS"),
+    ("formfav_pace_context", "FORMFAV PACE"),
+    ("formfav_class_context", "FORMFAV CLASS"),
+    ("formfav_track_bias_context", "FORMFAV TRACK BIAS"),
+    ("connections_passports", "CONNECTIONS / PASSPORTS"),
+)
+
 # Display order and honest labels. A lane that is not an independent opinion says so.
 MODEL_META: dict[str, tuple[str, str | None]] = {
     "MAIN_VELO_PRIME": ("PRIME (MAIN)", "The production selection."),
@@ -119,6 +134,60 @@ def summarise_rich_context(rows: list[dict[str, Any]]) -> dict[str, Any]:
     out["packet_batches"] = max((_int(r.get("packet_batches")) or 0 for r in rows), default=0)
     out["latest_packet_at"] = max((r["latest_packet_at"] for r in rows if r.get("latest_packet_at")), default=None)
     return out
+
+
+def rich_context_family_coverage(
+    packets: list[dict[str, Any]],
+    *,
+    consumed_families: set[str] | None = None,
+    artifact_available: bool = False,
+) -> list[dict[str, Any]]:
+    """Return an exhaustive capture-vs-consumption ledger for immutable packets.
+
+    Packets intentionally omit unavailable optional keys.  That must not shrink a
+    family's denominator: each declared family is assessed against every packet
+    from the date.  ``consumed`` is read from the fitted shadow artifact metadata;
+    capture alone is never described as model use.
+    """
+    total = len(packets)
+    used = consumed_families or set()
+    result: list[dict[str, Any]] = []
+    for key, label in RICH_CONTEXT_FAMILY_LABELS:
+        covered = sum(
+            1
+            for packet in packets
+            if isinstance(packet.get("family_coverage"), dict) and packet["family_coverage"].get(key) is True
+        )
+        if not total:
+            capture_status = "NO_PACKETS_FOR_DATE"
+        elif covered == total:
+            capture_status = "CAPTURED"
+        elif covered:
+            capture_status = "PARTIAL"
+        else:
+            capture_status = "MISSING_FOR_DATE"
+        if not artifact_available:
+            use_status = "MODEL_METADATA_UNAVAILABLE"
+        elif key in used:
+            use_status = "CONSUMED_BY_ACTIVE_SHADOW"
+        elif not covered:
+            use_status = "NOT_CAPTURED"
+        elif covered < total:
+            use_status = "PARTIALLY_CAPTURED_NOT_CONSUMED"
+        else:
+            use_status = "CAPTURED_NOT_CONSUMED"
+        result.append(
+            {
+                "key": key,
+                "label": label,
+                "covered_runners": covered,
+                "total_runners": total,
+                "coverage_pct": round(100.0 * covered / total, 1) if total else None,
+                "capture_status": capture_status,
+                "model_use_status": use_status,
+            }
+        )
+    return result
 
 
 def _model_order(name: str) -> tuple[int, str]:

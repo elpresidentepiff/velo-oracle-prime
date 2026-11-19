@@ -18,6 +18,7 @@ import uuid
 from collections import OrderedDict
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
+from typing import Any
 
 from fastapi import Depends, FastAPI, File, Header, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -2186,6 +2187,7 @@ async def rich_context(date: str = Query(default=None)):
         enriched_suggestions,
         model_scoreboard,
         race_grid,
+        rich_context_family_coverage,
         summarise_rich_context,
         valid_date,
     )
@@ -2214,6 +2216,26 @@ async def rich_context(date: str = Query(default=None)):
         "&select=race_id,horse_id,model_version,challenger_probability,challenger_rank,scored_at"
         "&order=challenger_rank.asc,scored_at.desc&limit=2000"
     )
+    packets = _sb_rest_rows(
+        f"rich_context_shadow_packets?race_date=eq.{d}&select=race_id,horse_id,family_coverage,created_at&limit=2000"
+    )
+    # The active artifact declares which factual families its probabilities
+    # actually consume.  If it cannot be read, report that uncertainty rather
+    # than treating captured fields as model inputs.
+    artifact_metadata: dict[str, Any] = {}
+    try:
+        from src.velo.rich_context_challenger_scorer import load_artifact as _load_rich_context_artifact
+
+        artifact = _load_rich_context_artifact()
+        artifact_metadata = dict((artifact or {}).get("metadata") or {})
+    except Exception:
+        artifact_metadata = {}
+    consumed_families = set(artifact_metadata.get("feature_families_used") or [])
+    family_coverage = rich_context_family_coverage(
+        packets or [],
+        consumed_families=consumed_families,
+        artifact_available=bool(artifact_metadata),
+    )
     challenger_rows = _sb_rest_rows(
         f"prime_vs_challenger?race_date=eq.{d}&order=off_minutes.asc.nullslast,race_id.asc&limit=300"
         "&select=race_id,challenger_horse,challenger_prob,challenger_price,challenger_model"
@@ -2232,11 +2254,14 @@ async def rich_context(date: str = Query(default=None)):
     challenger_status = "SHADOW_SCORED" if scored_count else "NO_SCORES_FOR_DATE"
     return {
         "date": d,
-        "available": bool(picks or coverage or picks_now or scored or challenger_rows),
+        "available": bool(picks or coverage or picks_now or scored or challenger_rows or packets),
         "rich_context_status": challenger_status,
         "rich_context_ranks_anything": bool(scored_count),
         "rich_context_scored_runners": scored_count,
         "challenger_picks": challenger_picks,
+        "family_coverage": family_coverage,
+        "active_challenger_model": artifact_metadata.get("model_version"),
+        "active_challenger_feature_families": sorted(consumed_families),
         "suggestions": enriched_suggestions(picks_now or []),
         "evidence": summarise_rich_context(coverage or []),
         "models": model_scoreboard(picks or []),
