@@ -845,6 +845,8 @@ td:last-child  { padding-right: 20px; }
   <div id="rc-suggest" style="max-height:460px;overflow:auto;margin-bottom:12px;"></div>
   <div style="font-size:10px;color:#777;margin-bottom:4px;">EVIDENCE VELO NOW HOLDS PER RUNNER (first packet of the day &rarr; latest)</div>
   <div id="rc-evidence" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  <div style="font-size:10px;color:#777;margin:10px 0 4px;">FACTUAL FAMILY CONTRACT &middot; CAPTURE IS NOT THE SAME AS MODEL USE</div>
+  <div id="rc-family-coverage" style="overflow:auto;"></div>
   <div id="rc-runs" style="font-size:10px;color:#777;margin-top:6px;"></div>
   <div style="font-size:10px;color:#777;margin:10px 0 4px;">EVERY MODEL, ON ITS OWN CLEAN RACES (tied or multi-list picks are not counted as a read)</div>
   <div id="rc-models" style="overflow:auto;"></div>
@@ -4771,6 +4773,15 @@ async function loadRichContext() {
       _wdChip('PACKET BATCHES', ev.packet_batches || 0),
       _wdChip('RICH CONTEXT MODEL', data.rich_context_ranks_anything ? `SHADOW SCORED · ${data.rich_context_scored_runners || 0} RUNNERS` : 'NO SCORES FOR DATE', data.rich_context_ranks_anything ? '#ffa726' : '#888'),
     ].join('');
+    const families = data.family_coverage || [];
+    const familyColour = (status) => ({ CAPTURED: '#66bb6a', PARTIAL: '#ffb74d', MISSING_FOR_DATE: '#ef5350', NO_PACKETS_FOR_DATE: '#777' }[status] || '#777');
+    const useColour = (status) => status === 'CONSUMED_BY_ACTIVE_SHADOW' ? '#ab47bc' : '#888';
+    document.getElementById('rc-family-coverage').innerHTML = families.length
+      ? '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap;">'
+        + '<tr style="color:#777;text-align:left"><th>FACTUAL FAMILY</th><th>CAPTURED</th><th>STATUS</th><th>ACTIVE SHADOW USE</th></tr>'
+        + families.map(f => `<tr style="border-top:1px solid #222"><td style="padding:2px 12px 2px 0;color:#ccc">${esc(f.label || f.key || '')}</td><td style="padding-right:12px">${esc(String(f.covered_runners ?? 0))}/${esc(String(f.total_runners ?? 0))}${f.coverage_pct === null || f.coverage_pct === undefined ? '' : ` (${esc(String(f.coverage_pct))}%)`}</td><td style="padding-right:12px;color:${familyColour(f.capture_status)}">${esc(String(f.capture_status || ''))}</td><td style="color:${useColour(f.model_use_status)}">${esc(String(f.model_use_status || ''))}</td></tr>`).join('')
+        + '</table><div style="font-size:10px;color:#666;margin-top:4px;">MISSING_FOR_DATE / NOT_CAPTURED means the field was absent from every immutable pre-off packet; it does not invent a provider failure. PARTIALLY_CAPTURED_NOT_CONSUMED and CAPTURED_NOT_CONSUMED are stored evidence, not a claim that the current fitted challenger used it.</div>'
+      : '<div style="font-size:10px;color:#777">No immutable Rich Context packets for this date.</div>';
     const runs = data.scoring_runs || [];
     document.getElementById('rc-runs').innerHTML = runs.length
       ? 'Scoring runs today: ' + runs.map(r => `${esc(r.run_type || '')} ${esc(r.status || '')} ${esc(String(r.started_at || '').slice(11, 16))}Z (${esc(String(r.runners_processed ?? ''))} runners)`).join(' &middot; ')

@@ -1,4 +1,5 @@
 from copy import deepcopy
+from pathlib import Path
 
 import pytest
 
@@ -49,6 +50,32 @@ def test_packet_combines_only_separate_eligible_families_without_scoring():
     assert packet["provider_predictions_consumed"] is False
     assert packet["family_coverage"]["canonical_history"] is True
     assert packet["families"]["formfav_pace_context"] == {"speedMap": {"style": "leader"}}
+
+
+def test_passport_is_shadow_evidence_not_production_influence():
+    packet = build_runner_shadow_packet(
+        **_inputs(),
+        connections_passport={
+            "source": "new_build_horse_passports",
+            "horse_rp_uid": 456,
+            "career_runs": 18,
+            "wins": 4,
+            "persisted_at": "2026-11-01T09:00:00+00:00",
+        },
+    )
+    assert packet["family_coverage"]["connections_passports"] is True
+    assert packet["families"]["connections_passports"]["wins"] == 4
+    assert packet["production_prime_consumed_rich_context"] is False
+    assert packet["production_influence"] is False
+
+
+def test_daily_runner_uses_exact_id_and_pre_off_passport_gate() -> None:
+    runner = (Path(__file__).parents[1] / "scripts" / "ops" / "run_prime_today.py").read_text(
+        encoding="utf-8"
+    )
+    assert 'db.table("new_build_horse_passports")' in runner
+    assert '_passport_before_cutoff(' in runner
+    assert 'connections_passport=_passport_facts' in runner
 
 
 def test_provider_prediction_leakage_fails_closed():
