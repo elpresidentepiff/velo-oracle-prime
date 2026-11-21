@@ -21,6 +21,50 @@ METADATA_PATH = ARTIFACT_DIR / "metadata.json"
 
 _cache: dict[str, Any] = {}
 
+# This is deliberately a capability boundary, not a feature toggle.  The fitted
+# v1 estimator has only ever been trained on these three factual families.  A
+# metadata edit must never make the dashboard claim that an untrained FormFav,
+# Spotlight, or passport family was consumed by the same estimator.
+V1_CONSUMED_FAMILIES = frozenset(
+    {"prime_baseline_snapshot", "canonical_history", "market_facts"}
+)
+
+
+def feature_consumption_manifest(
+    packet: Mapping[str, Any], metadata: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Return an auditable capture-versus-consumption contract for one score.
+
+    The immutable packet tells us what was captured before off; metadata tells
+    us what the fitted artifact was trained to consume.  They must agree.  A
+    missing required family is a fail-closed no-score condition rather than a
+    silent imputation or a dashboard "enriched" label.
+    """
+    families = packet.get("families") or {}
+    declared = frozenset(metadata.get("feature_families_used") or ())
+    model_version = str(metadata.get("model_version") or "")
+    # The shipped v1 artifact's input width is fixed.  It cannot honestly
+    # consume more feature families without a newly fitted, independently
+    # validated artifact and a new vector schema.
+    if model_version.startswith("rich_context_challenger_v1") and declared != V1_CONSUMED_FAMILIES:
+        raise ValueError("v1 artifact feature-family contract does not match its frozen vector schema")
+    coverage = {name: bool(families.get(name)) for name in declared}
+    missing = sorted(name for name, present in coverage.items() if not present)
+    captured_not_consumed = sorted(
+        name for name, value in families.items() if value and name not in declared
+    )
+    return {
+        "model_version": metadata.get("model_version"),
+        "consumed_families": sorted(declared),
+        "family_present": coverage,
+        "missing_required_families": missing,
+        "captured_not_consumed_families": captured_not_consumed,
+        "fully_enriched_for_this_artifact": not missing,
+        "production_influence": False,
+        "paper_sim_only": True,
+        "provider_predictions_consumed": False,
+    }
+
 
 def load_artifact(*, model_path: Path = MODEL_PATH, metadata_path: Path = METADATA_PATH) -> dict[str, Any] | None:
     """Load once and cache. Returns None (never raises) when no fitted artifact exists yet."""
@@ -50,18 +94,22 @@ def score_packet(packet: dict[str, Any], *, artifact: dict[str, Any] | None = No
     resolved = load_artifact() if artifact is None else artifact
     if not resolved or "model" not in resolved:
         return None
+    metadata = resolved.get("metadata") or {}
+    manifest = feature_consumption_manifest(packet, metadata)
+    if manifest["missing_required_families"]:
+        return None
     vector = vector_from_packet_families(packet.get("families") or {})
     if vector is None:
         return None
     model = resolved["model"]
     probability = float(model.predict_proba([vector])[0][1])
-    metadata = resolved["metadata"]
     return {
         "challenger_probability": probability,
         "model_version": metadata.get("model_version"),
         "scorer_feature_coverage": {
             "has_history": bool(vector[3]),
         },
+        "feature_consumption_manifest": manifest,
     }
 
 
