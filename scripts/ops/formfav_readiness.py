@@ -52,8 +52,12 @@ def _rest_get(path: str) -> list[dict[str, Any]]:
 def collect(date: str, countries: set[str], fetch: Callable[[str], list[dict[str, Any]]] = _rest_get) -> dict[str, Any]:
     in_c = "in.(" + ",".join(sorted(countries)) + ")"
     races = fetch("formfav_races?" + urllib.parse.urlencode({
-        "race_date": f"eq.{date}", "country": in_c, "select": "provider_race_key", "limit": "5000"}))
+        "race_date": f"eq.{date}", "country": in_c, "select": "provider_race_key,updated_at", "limit": "5000"}))
     keys = [r["provider_race_key"] for r in races]
+    # The live worker rewrites every in-window race row on each tick, so the newest of these is
+    # its heartbeat: it says the worker is running, independently of how often form is re-read.
+    heartbeats = [ts for ts in (_parse(r.get("updated_at")) for r in races) if ts]
+    worker_heartbeat = max(heartbeats) if heartbeats else None
     with_form: set[str] = set()
     with_pred: set[str] = set()
     prediction_errors: list[str] = []
@@ -88,14 +92,36 @@ def collect(date: str, countries: set[str], fetch: Callable[[str], list[dict[str
         "runners": runners, "scratched": scratched,
         "runners_with_stats": with_stats, "runners_with_speedmap": with_speed, "runners_with_class": with_class,
         "newest_form_update": newest.isoformat() if newest else None,
+        "worker_heartbeat": worker_heartbeat.isoformat() if worker_heartbeat else None,
         "prediction_benchmark_errors": prediction_errors,
     }
 
 
+# The worker re-reads a race's form every FORMFAV_FORM_REFRESH_SECONDS. In production that is six
+# hours (formfav_factual_captures, 10-14 Nov 2026: 260 of the gaps between captures of a GB race
+# are 6.0-6.1 h). The gate used to reject form older than three hours, so it passed only when the
+# worker's six-hour cycle happened to land between 04:00 and 07:00 UTC. On 2026-11-15 a deploy at
+# 01:00 moved the cycle to 01:05 / 07:09 and the 07:00 run was refused nine minutes before the
+# refresh: no UK race was scored by the schedule that day.
+#
+# Two separate questions are now asked. Is the worker alive (its heartbeat is recent)? Is the
+# stored form within one refresh cycle plus a margin?
+DEFAULT_MAX_FORM_AGE = timedelta(hours=7)
+DEFAULT_MAX_HEARTBEAT_AGE = timedelta(minutes=30)
+
+
+def _hours_from_env(name: str, default: timedelta) -> timedelta:
+    try:
+        hours = float((os.getenv(name) or "").strip())
+    except ValueError:
+        return default
+    return timedelta(hours=hours) if hours > 0 else default
+
+
 def evaluate(
     stats: dict[str, Any], *, now: datetime, min_races: int = 1, min_form: float = 1.0,
-    min_predictions: float = 1.0, min_stats: float = 0.8, max_age: timedelta = timedelta(hours=3),
-    require_predictions: bool = True,
+    min_predictions: float = 1.0, min_stats: float = 0.8, max_age: timedelta = DEFAULT_MAX_FORM_AGE,
+    require_predictions: bool = True, max_heartbeat_age: timedelta = DEFAULT_MAX_HEARTBEAT_AGE,
 ) -> list[str]:
     """Return failures; every provider-published race must have form and predictions.
 
@@ -118,7 +144,18 @@ def evaluate(
         fails.append(f"runner stats on {stats['runners_with_stats']}/{live} runners (< {min_stats:.0%})")
     newest = _parse(stats.get("newest_form_update"))
     if newest is None or now - newest > max_age:
-        fails.append(f"newest form update is {stats.get('newest_form_update')} (older than {max_age}); worker may be down")
+        fails.append(
+            f"newest form update is {stats.get('newest_form_update')} (older than {max_age}): "
+            f"more than one worker refresh cycle has been missed"
+        )
+    # Rows collected before the heartbeat existed carry no key: only a present-but-stale or
+    # explicitly absent heartbeat fails.
+    if "worker_heartbeat" in stats:
+        heartbeat = _parse(stats.get("worker_heartbeat"))
+        if heartbeat is None or now - heartbeat > max_heartbeat_age:
+            fails.append(
+                f"worker heartbeat is {stats.get('worker_heartbeat')} (older than {max_heartbeat_age}); worker may be down"
+            )
     return fails
 
 
@@ -140,6 +177,7 @@ def main() -> int:
         now=datetime.now(UTC),
         min_races=args.min_races,
         require_predictions=False,
+        max_age=_hours_from_env("FORMFAV_READY_MAX_FORM_AGE_HOURS", DEFAULT_MAX_FORM_AGE),
     )
     benchmark_ready = bool(stats["races"]) and stats["races_with_predictions"] / stats["races"] >= 1.0
     print(json.dumps({
