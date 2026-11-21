@@ -2231,6 +2231,7 @@ async def rich_context(date: str = Query(default=None)):
     except Exception:
         artifact_metadata = {}
     consumed_families = set(artifact_metadata.get("feature_families_used") or [])
+    excluded_families = list(artifact_metadata.get("feature_families_excluded") or [])
     family_coverage = rich_context_family_coverage(
         packets or [],
         consumed_families=consumed_families,
@@ -2262,6 +2263,20 @@ async def rich_context(date: str = Query(default=None)):
         "family_coverage": family_coverage,
         "active_challenger_model": artifact_metadata.get("model_version"),
         "active_challenger_feature_families": sorted(consumed_families),
+        "active_challenger_excluded_families": excluded_families,
+        "fully_enriched_velo_status": (
+            "SHADOW_SCORED_WITH_DECLARED_FAMILIES"
+            if scored_count and not excluded_families
+            else "NOT_FITTED_FOR_ALL_CAPTURED_FACTUAL_FAMILIES"
+        ),
+        "feature_consumption_contract": {
+            "consumed_families": sorted(consumed_families),
+            "excluded_families": excluded_families,
+            "excluded_reason": artifact_metadata.get("feature_families_excluded_reason"),
+            "production_influence": False,
+            "paper_sim_only": True,
+            "provider_predictions_consumed": False,
+        },
         "suggestions": enriched_suggestions(picks_now or []),
         "evidence": summarise_rich_context(coverage or []),
         "models": model_scoreboard(picks or []),

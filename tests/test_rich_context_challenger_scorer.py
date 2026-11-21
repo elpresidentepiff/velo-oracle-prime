@@ -8,6 +8,7 @@ from src.velo.rich_context_challenger_features import (
     vector_from_packet_families,
 )
 from src.velo.rich_context_challenger_scorer import (
+    feature_consumption_manifest,
     load_artifact,
     rank_scored_packets,
     score_packet,
@@ -119,6 +120,35 @@ def test_score_packet_scores_an_eligible_packet_and_never_mutates_it() -> None:
     assert packet["families"] == before  # the scorer never writes into the packet itself
 
 
+def test_consumption_manifest_distinguishes_attached_from_consumed_facts() -> None:
+    packet = _packet(
+        prime_baseline_snapshot={"velo_prime_prob": 0.3, "sp_dec": 3.0},
+        canonical_history={"win_rate": 0.2},
+        market_facts={"sp_dec": 3.0},
+        formfav_raw_facts={"form": "factual"},
+        rp_spotlight_facts={"family_counts": {"spotlight": 1}},
+    )
+    contract = feature_consumption_manifest(
+        packet,
+        {"model_version": "test_v0", "feature_families_used": ["prime_baseline_snapshot", "canonical_history", "market_facts"]},
+    )
+    assert contract["fully_enriched_for_this_artifact"] is True
+    assert contract["missing_required_families"] == []
+    assert contract["captured_not_consumed_families"] == ["formfav_raw_facts", "rp_spotlight_facts"]
+    assert contract["provider_predictions_consumed"] is False
+
+
+def test_v1_cannot_claim_untrained_formfav_consumption() -> None:
+    packet = _packet(prime_baseline_snapshot={"velo_prime_prob": 0.3, "sp_dec": 3.0})
+    import pytest
+
+    with pytest.raises(ValueError, match="frozen vector schema"):
+        feature_consumption_manifest(
+            packet,
+            {"model_version": "rich_context_challenger_v1_fit_test", "feature_families_used": ["formfav_raw_facts"]},
+        )
+
+
 def test_rank_scored_packets_ranks_only_what_was_scored() -> None:
     scored_high = {"challenger_probability": 0.8}
     scored_low = {"challenger_probability": 0.2}
@@ -158,6 +188,7 @@ def test_the_real_fitted_artifact_loads_and_scores_a_real_shaped_packet() -> Non
     packet = _packet(
         prime_baseline_snapshot={"velo_prime_prob": 0.22, "sp_dec": 6.0},
         canonical_history={"win_rate": 0.15, "place_rate": 0.4, "average_position": 3.5, "runs_90d": 2},
+        market_facts={"sp_dec": 6.0},
     )
     result = score_packet(packet, artifact=artifact)
     assert result is not None and 0.0 <= result["challenger_probability"] <= 1.0
