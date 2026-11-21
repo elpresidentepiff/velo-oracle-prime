@@ -3908,3 +3908,34 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run("app.main:app", host="0.0.0.0", port=int(os.getenv("PORT", 8000)), reload=ENV != "production")
+
+
+@app.get("/api/rich-context-50")
+async def rich_context_50(date: str = Query(default=None)):
+    """Read-only per-runner FormFav feature matrix, never a fabricated prediction."""
+    import datetime as _dt
+    d = date or _dt.date.today().isoformat()
+    if not _DATE_RE.fullmatch(d):
+        return JSONResponse({"error": "invalid date"}, status_code=400)
+    path = pathlib.Path(__file__).parent.parent / "data" / "reports" / f"formfav_uk_shadow_features_{d.replace('-', '_')}.json"
+    packet, source = _report_artifact("formfav_uk_shadow_features", d, path)
+    if not packet:
+        return {"date": d, "available": False, "races": [], "feature_count": 0, "shadow_only": True}
+    races = []
+    feature_names = set()
+    for race in packet.get("races") or []:
+        horses = []
+        for runner in race.get("runners") or []:
+            features = {k: v for k, v in runner.items() if k.startswith("ff_") and not k.endswith("_raw_attached")}
+            feature_names.update(features)
+            present = sum(v is not None for v in features.values())
+            horses.append({"horse": runner.get("horse_name"), "features": features,
+                           "present": present, "missing": len(features)-present,
+                           "quality": runner.get("ff_quality_tier")})
+        races.append({"race_id": race.get("race_id"), "course": race.get("course"),
+                      "off_time": race.get("off_time"), "runners": horses})
+    return {"date": d, "available": True, "source": source, "feature_count": len(feature_names),
+            "feature_names": sorted(feature_names), "races": races,
+            "shadow_only": True, "production_influence": False,
+            "trained_50_feature_model": False,
+            "note": "Feature inspection, not a trained 50+ feature prediction. Existing challenger predictions are separate."}
