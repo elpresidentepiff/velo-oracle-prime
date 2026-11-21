@@ -2103,6 +2103,21 @@ async def world_day(date: str = Query(default=None)):
     status = _sb_rest_rows(f"world_day_status?day=eq.{d}&limit=1")
     daily = _sb_rest_rows(f"formfav_sigma_daily?race_date=eq.{d}&order=country.asc,basis.asc")
     picks = _sb_rest_rows(f"formfav_race_picks?race_date=eq.{d}&order=start_time.asc&limit=1000")
+    race_rows = _sb_rest_rows(f"formfav_races?race_date=eq.{d}&select=race_code&limit=5000")
+    run_rows = _sb_rest_rows(
+        f"world_pipeline_runs?race_date=eq.{d}&select=status,generated_at,details&order=generated_at.desc&limit=100"
+    )
+    captured_codes = sorted({str(r.get("race_code") or "unknown").lower() for r in (race_rows or [])})
+    latest_at = (run_rows or [{}])[0].get("generated_at") if run_rows else None
+    latest = [r for r in (run_rows or []) if r.get("generated_at") == latest_at]
+    latest_details = (latest[0].get("details") or {}) if latest else {}
+    declared_codes = latest_details.get("race_codes") or []
+    if not declared_codes:
+        coverage_status = "PARTIAL_SCOPE_UNVERIFIED"
+    elif any(r.get("status") != "PASS" for r in latest):
+        coverage_status = "PARTIAL"
+    else:
+        coverage_status = latest_details.get("coverage_status") or "UNKNOWN"
     certified = certify_formfav_picks(picks or [], _race_identities(d))
     return {
         "date": d,
@@ -2112,6 +2127,20 @@ async def world_day(date: str = Query(default=None)):
         "by_country": daily or [],
         "formfav_picks": certified,
         "formfav_picks_blocked": sum(1 for p in certified if p.get("selection_label")),
+        "coverage": {
+            "status": coverage_status,
+            "declared_race_codes": declared_codes,
+            "captured_race_codes": captured_codes,
+            "missing_races": latest_details.get("missing_races"),
+            "expected_races": latest_details.get("expected_races"),
+            "loaded_races": latest_details.get("loaded_races"),
+            "latest_run_at": latest_at,
+            "truth_note": (
+                "Legacy run did not declare discipline coverage; it must not be called World complete."
+                if not declared_codes
+                else "Complete means every provider-declared gallops and harness race loaded."
+            ),
+        },
         "picks_label": "FormFav's own model. Not a VELO selection.",
         **SHADOW_BOUNDARY,
     }

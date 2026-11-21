@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.velo.world_scorecard_store import build_rows
+from src.velo.world_scorecard_store import build_rows, build_run_rows
 
 
 def test_build_rows_is_world_only_data_only_and_pre_off() -> None:
@@ -51,3 +51,17 @@ def test_build_rows_rejects_post_off_scoring() -> None:
         }],
     }
     assert build_rows(payload) == []
+
+
+def test_run_ledger_cannot_pass_when_provider_declared_races_are_missing() -> None:
+    payload = {
+        "date": "2026-11-16", "generated_at": "2026-11-16T07:00:00+00:00",
+        "scoring_engine": "existing_velo_prime_stack", "coverage_status": "PARTIAL",
+        "race_codes": ["gallops", "harness"],
+        "fetch_report": {"expected_races": 20, "races_loaded": 18, "missing_races": 2},
+        "by_country": {"au": {"seen": 18, "scored": 18, "freeze_states": {}}},
+    }
+    row = build_run_rows(payload)[0]
+    assert row["status"] == "PARTIAL"
+    assert row["details"]["race_codes"] == ["gallops", "harness"]
+    assert row["details"]["missing_races"] == 2

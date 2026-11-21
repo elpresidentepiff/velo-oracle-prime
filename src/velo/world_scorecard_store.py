@@ -190,7 +190,10 @@ def build_run_rows(
             "race_date": payload["date"],
             "country": cc,
             "model_name": model,
-            "status": "PASS" if not errs and not st.get("deferred") and not st.get("identity_blocked") else "PARTIAL",
+            "status": "PASS" if (
+                payload.get("coverage_status") == "COMPLETE"
+                and not errs and not st.get("deferred") and not st.get("identity_blocked")
+            ) else "PARTIAL",
             "races_seen": st.get("seen", 0),
             "races_scored": st.get("scored", 0),
             "races_skipped_post_off": st.get("skipped_post_off", 0),
@@ -199,6 +202,11 @@ def build_run_rows(
             "generated_at": generated_at,
             "details": {
                 "code_commit": payload.get("code_commit"),
+                "coverage_status": payload.get("coverage_status") or "UNKNOWN",
+                "race_codes": payload.get("race_codes") or [],
+                "expected_races": (payload.get("fetch_report") or {}).get("expected_races"),
+                "loaded_races": (payload.get("fetch_report") or {}).get("races_loaded"),
+                "missing_races": (payload.get("fetch_report") or {}).get("missing_races"),
                 "freeze_states": st.get("freeze_states", {}),
                 "deferred": st.get("deferred", 0),
                 # Races refused because their clock, card and field are not one race (#189).

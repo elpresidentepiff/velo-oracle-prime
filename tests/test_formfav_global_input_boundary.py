@@ -4,7 +4,9 @@ from src.velo.formfav_card_adapter import PROVIDER_OPINION_FIELDS, fetch_formfav
 
 
 class DataOnlyClient:
-    def meetings(self, date, timezone="UTC"):
+    def meetings(self, date, race_code="gallops", timezone="UTC"):
+        if race_code != "gallops":
+            return {"meetings": []}
         return {"meetings": [{
             "country": "us", "track": "Test Park", "slug": "test-park",
             "races": [{"raceNumber": 1, "startTime": f"{date}T18:00:00Z", "timezone": "America/New_York"}],
@@ -32,3 +34,31 @@ def test_global_adapter_never_exposes_formfav_prediction_opinion() -> None:
     assert race["_formfav"]["data_only"] is True
     assert race["_formfav"]["provider_predictions_consumed"] is False
     assert not PROVIDER_OPINION_FIELDS.intersection(race["runners"][0]["_formfav"])
+
+
+class HarnessClient(DataOnlyClient):
+    def meetings(self, date, race_code="gallops", timezone="UTC"):
+        if race_code != "harness":
+            return {"meetings": []}
+        return {"meetings": [{
+            "country": "au", "track": "Pinjarra", "slug": "pinjarra",
+            "races": [{"raceNumber": 7, "startTime": f"{date}T08:40:00Z", "timezone": "Australia/Perth"}],
+        }]}
+
+    def race_form(self, **kwargs):
+        assert kwargs["race_code"] == "harness"
+        return {
+            "track": "Pinjarra", "startTime": "2026-11-16T08:40:00Z", "timezone": "Australia/Perth",
+            "runners": [{"number": 1, "name": "Harness Evidence", "stats": {}}],
+        }
+
+
+def test_global_adapter_loads_harness_and_reports_complete_provider_universe() -> None:
+    races, report = fetch_formfav_racecards(
+        date_str="2026-11-16", countries={"au"}, include_prices=False, client=HarnessClient(),
+    )
+    assert len(races) == 1
+    assert races[0]["_formfav"]["race_code"] == "harness"
+    assert report["race_codes"] == ["gallops", "harness"]
+    assert report["expected_races"] == report["races_loaded"] == 1
+    assert report["missing_races"] == 0 and report["coverage_status"] == "COMPLETE"

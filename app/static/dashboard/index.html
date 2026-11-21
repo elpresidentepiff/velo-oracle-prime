@@ -805,6 +805,7 @@ td:last-child  { padding-right: 20px; }
     <span style="float:right;font-size:10px;color:#666;font-weight:400">UK/IRE = RACING POST (VELO SCORES) · REST OF WORLD = FORMFAV, SHADOW ONLY · NO STAKING</span>
   </div>
   <div id="wd-summary" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  <div id="wd-coverage" style="font-size:11px;margin-top:6px;color:#ffb74d;"></div>
   <div id="wd-countries" style="margin-top:8px;overflow:auto;"></div>
   <details style="margin-top:8px;color:#aaa;">
     <summary style="cursor:pointer;font-size:11px;color:#66bb6a;">FormFav's own picks by race, whole world <span style="color:#777">(FormFav model, not VELO selections)</span></summary>
@@ -4553,6 +4554,7 @@ async function loadWorldDay() {
     document.getElementById('wd-date').textContent = `(${data.date})`;
     const missing = Number(st.uk_sigma_missing || 0);
     const noRes = Number(st.world_no_result || 0);
+    const cov = data.coverage || {};
     document.getElementById('wd-summary').innerHTML = [
       _wdChip('WORLD RACES', st.world_races || 0),
       _wdChip('FORMFAV PREDICTED', `${st.world_predicted || 0}/${st.world_races || 0}`),
@@ -4564,6 +4566,12 @@ async function loadWorldDay() {
       _wdChip('LEARNING GATE', st.learning_gate_status || '—'),
       _wdChip('COUNCIL', st.council_verdict || '—'),
     ].join('');
+    const complete = cov.status === 'COMPLETE';
+    document.getElementById('wd-coverage').style.color = complete ? '#66bb6a' : '#ffb74d';
+    document.getElementById('wd-coverage').textContent =
+      `COVERAGE ${cov.status || 'UNKNOWN'} · declared: ${(cov.declared_race_codes || []).join(', ') || 'not recorded'} · `
+      + `captured: ${(cov.captured_race_codes || []).join(', ') || 'none'} · `
+      + `${cov.loaded_races ?? '—'}/${cov.expected_races ?? '—'} provider-declared races · ${cov.truth_note || ''}`;
     const by = {};
     (data.by_country || []).forEach(r => { (by[r.country] = by[r.country] || {})[r.basis] = r; });
     const cc = Object.keys(by).sort();

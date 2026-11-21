@@ -1,0 +1,72 @@
+{
+  "task_id": "OPS-WORLD-HARNESS-01",
+  "title": "Capture FormFav harness cards and fail closed on incomplete World coverage",
+  "classification": "OPERATIONS_RELIABILITY",
+  "allowed_paths": [
+    "scripts/ops/formfav_live_worker.py",
+    "scripts/ops/run_formfav_global_shadow.py",
+    "src/velo/formfav_card_adapter.py",
+    "src/velo/world_scorecard_store.py",
+    "app/main.py",
+    "app/static/dashboard/index.html",
+    "tests/test_formfav_global_input_boundary.py",
+    "tests/test_racecard_integrity_pipeline.py",
+    "tests/test_world_scorecard_store.py",
+    "ops/task_contracts/OPS-WORLD-HARNESS-01.json"
+  ],
+  "forbidden_paths": [
+    "src/intelligence/velo_prime_ensemble.py",
+    "models/",
+    "src/velo/execution_bridge.py",
+    "data/sentient_state.json",
+    "scripts/ops/run_results_sigma.py"
+  ],
+  "allowed_actions": [
+    "read_repo",
+    "read_supabase",
+    "read_railway",
+    "update_world_source_intake",
+    "update_coverage_truth",
+    "update_dashboard",
+    "add_regression_tests",
+    "run_tests"
+  ],
+  "forbidden_actions": [
+    "live_weight_change",
+    "historical_packet_fabrication",
+    "provider_prediction_consumption",
+    "supabase_schema_change",
+    "telegram_send",
+    "model_promotion",
+    "credential_change",
+    "uk_gate_bypass"
+  ],
+  "forbidden_keywords": [
+    "promote_model",
+    "bot.send_message",
+    "provider_predictions_consumed\": true"
+  ],
+  "required_outputs": [
+    "scripts/ops/formfav_live_worker.py",
+    "scripts/ops/run_formfav_global_shadow.py",
+    "src/velo/formfav_card_adapter.py",
+    "src/velo/world_scorecard_store.py",
+    "app/main.py",
+    "app/static/dashboard/index.html",
+    "tests/test_formfav_global_input_boundary.py",
+    "tests/test_racecard_integrity_pipeline.py",
+    "tests/test_world_scorecard_store.py"
+  ],
+  "classification_required": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_SCHEMA_CHANGE",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ],
+  "final_classifications": [
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_SUPABASE_SCHEMA_CHANGE",
+    "NO_TELEGRAM_SEND",
+    "NO_MODEL_PROMOTION"
+  ]
+}

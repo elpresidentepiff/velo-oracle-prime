@@ -68,6 +68,7 @@ def fetch_formfav_racecards(
     tracks: set[str] | None = None,
     client: Any | None = None,
     utc_date: str | None = None,
+    race_codes: tuple[str, ...] = ("gallops", "harness"),
 ) -> tuple[list[dict[str,Any]], dict[str,Any]]:
     """Load one meetings date's cards. Every race is identified by its LOCAL racing date and
     must pass ``verify_race_identity`` (meeting clock == racecard clock == key date) or it is
@@ -79,13 +80,25 @@ def fetch_formfav_racecards(
     client=client or FormFavClient()
     countries={c.lower() for c in countries}
     track_filter={_norm(t) for t in (tracks or set())}
-    meetings_payload=client.meetings(date_str,timezone=timezone)
+    race_codes=tuple(dict.fromkeys(str(c).strip().lower() for c in race_codes if str(c).strip()))
+    if not race_codes or any(c not in {"gallops", "harness"} for c in race_codes):
+        raise ValueError("race_codes must contain gallops and/or harness")
+    meetings:list[tuple[str,dict[str,Any]]]=[]
+    meetings_by_code:dict[str,int]={}
+    for race_code in race_codes:
+        payload=client.meetings(date_str,race_code=race_code,timezone=timezone)
+        code_meetings=[m for m in (payload.get("meetings") or []) if isinstance(m,dict)]
+        meetings_by_code[race_code]=len(code_meetings)
+        meetings.extend((race_code,m) for m in code_meetings)
     races:list[dict[str,Any]]=[]
     report={
         "date":date_str,
         "countries":sorted(countries),
-        "meetings_seen":len(meetings_payload.get("meetings") or []),
+        "race_codes":list(race_codes),
+        "meetings_by_code":meetings_by_code,
+        "meetings_seen":len(meetings),
         "meetings_in_scope":0,
+        "expected_races":0,
         "races_loaded":0,
         "runners_loaded":0,
         "price_calls_ok":0,
@@ -103,7 +116,7 @@ def fetch_formfav_racecards(
             "kind": kind, "country": country, "track": track, "race": race_no, "message": message,
         })
 
-    for meeting in meetings_payload.get("meetings") or []:
+    for race_code,meeting in meetings:
         if not isinstance(meeting,dict) or meeting.get("abandoned"):
             continue
         country=str(meeting.get("country") or "").lower()
@@ -123,6 +136,7 @@ def fetch_formfav_racecards(
             meeting_off=parse_utc(mrace.get("startTime"))
             if utc_date and (meeting_off is None or meeting_off.date().isoformat()!=utc_date):
                 continue
+            report["expected_races"]+=1
             race_tz=mrace.get("timezone") or meeting.get("timezone")
             racing_date=local_race_date(meeting_off, race_tz)
             if racing_date is None:
@@ -134,7 +148,7 @@ def fetch_formfav_racecards(
             try:
                 form=client.race_form(
                     date=racing_date,track=slug,race=int(race_no),country=country,
-                    timezone=race_tz,
+                    race_code=race_code,timezone=race_tz,
                 )
             except Exception as exc:
                 _fail("form", track, race_no, country, f"{type(exc).__name__}: {exc}")
@@ -162,7 +176,7 @@ def fetch_formfav_racecards(
                 try:
                     prices=client.prices(
                         date=racing_date,track=slug,race=int(race_no),country=country,
-                        timezone=race_tz,
+                        race_code=race_code,timezone=race_tz,
                     )
                     report["price_calls_ok"]+=1
                 except FormFavError as exc:
@@ -245,6 +259,7 @@ def fetch_formfav_racecards(
                     "source":"formfav",
                     "data_only":True,
                     "provider_predictions_consumed":False,
+                    "race_code":race_code,
                     "provider_race_key":race_key,
                     "race_date":racing_date,
                     "race_identity":{
@@ -268,4 +283,6 @@ def fetch_formfav_racecards(
             })
             report["races_loaded"]+=1
             report["runners_loaded"]+=len(raw_runners)
+    report["missing_races"]=max(0,report["expected_races"]-report["races_loaded"])
+    report["coverage_status"]="COMPLETE" if report["missing_races"]==0 else "PARTIAL"
     return races,report
