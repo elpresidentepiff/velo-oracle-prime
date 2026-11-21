@@ -744,7 +744,7 @@ def main() -> int:
         [PY, "scripts/ops/build_intent_shadow_scorecard.py", "--date", date, "--execute"], critical=True, results=results):
         return 1
 
-    # ── New Build Policy V1 (paper scorer + decision policy) ──────────────
+    # Separate enriched Champion Intent factual packets. No model fit, no staking, no Prime influence.\n    # Fail closed within the builder; never block original Champion Intent on experimental enrichment.\n    run("Champion Intent: Enriched Factual Packets (shadow only)",\n        [PY, "scripts/ops/build_champion_enriched_packets.py", "--date", date],\n        critical=False, results=results)\n\n    # ── New Build Policy V1 (paper scorer + decision policy) ──────────────
     # Was entirely manual before 2026-07-26: paper_scorer.py called
     # model.predict_proba() on a raw lightgbm.basic.Booster (no such method,
     # crashed every time) and never wrote the per-date file
