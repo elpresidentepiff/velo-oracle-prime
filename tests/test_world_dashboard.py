@@ -175,6 +175,21 @@ def test_panel_is_wired_read_only_and_labels_rich_context_as_shadow() -> None:
         assert write not in route
 
 
+def test_prime_market_blind_panel_is_visible_and_never_fabricates_a_missing_shadow_pick() -> None:
+    root = Path(__file__).parents[1]
+    html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+    main = (root / "app" / "main.py").read_text(encoding="utf-8")
+    assert 'id="pmb-panel"' in html
+    assert "loadPrimeMarketBlind();" in html
+    assert "NOT WRITTEN" in html and "MARKET BLIND = SHADOW ONLY" in html
+    route = main[main.index('@app.get("/api/prime-market-blind")') : main.index('@app.get("/api/model-performance")')]
+    assert "canonical_model_scorecards?rank=eq.1" in route
+    assert "MARKET_BLIND_CORE_SHADOW_V1" in route
+    assert "NOT_WRITTEN_FOR_DATE" in route
+    for write in (".insert(", ".upsert(", ".delete("):
+        assert write not in route
+
+
 # --- WAKE-VELO-DASH-02: today's enriched suggestions ----------------------------------------------
 from app.world_dashboard import (  # noqa: E402
     enriched_suggestions,

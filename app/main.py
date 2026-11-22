@@ -1699,6 +1699,81 @@ async def canonical_scorecard_proxy(date: str = Query(default=None)):
     )
 
 
+@app.get("/api/prime-market-blind")
+async def prime_market_blind_proxy(date: str = Query(default=None)):
+    """The canonical, frozen picks for Prime and Market Blind Core only.
+
+    This is a visibility route, not a scorer.  A missing Market Blind row must
+    stay visibly missing; it is never substituted with Prime or fabricated from
+    a later result.
+    """
+    import datetime as _dt
+
+    target = date or _dt.date.today().isoformat()
+    try:
+        _dt.date.fromisoformat(target)
+    except ValueError:
+        return JSONResponse({"error": "date must be YYYY-MM-DD"}, status_code=400)
+    models = "MAIN_VELO_PRIME,MARKET_BLIND_CORE_SHADOW_V1"
+    rows = _sb_rest_rows(
+        "canonical_model_scorecards?rank=eq.1"
+        f"&run_date=eq.{target}&model_name=in.({models})"
+        "&select=race_id,course,off_time,model_name,lane_name,horse,score,"
+        "captured_odds_dec,price_source,created_at,tie_status,settlement_status"
+        "&order=off_time.asc,model_name.asc&limit=1000"
+    )
+    if rows is None:
+        return JSONResponse(
+            {
+                "status": "UNAVAILABLE",
+                "date": target,
+                "message": "Canonical pick read failed; no partial suggestions are displayed.",
+                "stake_authorised": False,
+                "promotion_eligible": False,
+            },
+            status_code=503,
+        )
+    by_race: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        race = by_race.setdefault(
+            str(row.get("race_id")),
+            {
+                "race_id": row.get("race_id"),
+                "course": row.get("course"),
+                "off_time": row.get("off_time"),
+                "prime": None,
+                "market_blind": None,
+            },
+        )
+        name = row.get("model_name")
+        if name == "MAIN_VELO_PRIME":
+            race["prime"] = row
+        elif name == "MARKET_BLIND_CORE_SHADOW_V1":
+            race["market_blind"] = row
+    prime_count = sum(1 for race in by_race.values() if race["prime"])
+    market_blind_count = sum(1 for race in by_race.values() if race["market_blind"])
+    return JSONResponse(
+        {
+            "status": "OK",
+            "date": target,
+            "source_table": "public.canonical_model_scorecards",
+            "races": list(by_race.values()),
+            "prime_frozen_picks": prime_count,
+            "market_blind_frozen_picks": market_blind_count,
+            "market_blind_status": ("SHADOW_FROZEN" if market_blind_count else "NOT_WRITTEN_FOR_DATE"),
+            "market_blind_note": (
+                "Market Blind Core is a forward shadow. It has no frozen canonical packet for this date."
+                if not market_blind_count
+                else "Forward shadow only; it does not affect Prime."
+            ),
+            "stake_authorised": False,
+            "promotion_eligible": False,
+            "no_supabase_write": True,
+        },
+        headers=_NO_STORE_HEADERS,
+    )
+
+
 @app.get("/api/model-performance")
 async def model_performance_proxy(days: int = Query(default=365, ge=1, le=365)):
     """Rolling canonical top-pick results for every persisted model/lane.
