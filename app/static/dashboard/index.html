@@ -2964,9 +2964,9 @@ table.mdl-table tr:hover { background: var(--bg-hover); }
   <div id="mdl-header" onclick="toggleMDL()">
     <span class="mdl-title">▸ Model Suggestions — All Lanes Side-by-Side</span>
     <span class="mdl-tag">CURRENT_DAY_RUNTIME_SUGGESTION · NOT RESULT TRUTH</span>
-    <span class="mdl-toggle" id="mdl-toggle-btn">[ EXPAND ]</span>
+    <span class="mdl-toggle" id="mdl-toggle-btn">[ COLLAPSE ]</span>
   </div>
-  <div id="mdl-body">
+  <div id="mdl-body" class="open">
     <div class="mdl-meta" id="mdl-meta">Loading model suggestions…</div>
     <div class="mdl-chips" id="mdl-chips"></div>
     <div class="mdl-table-wrap">
@@ -4211,6 +4211,34 @@ function renderRaceCards(rows, toMin, ovVerdicts, threeOptData) {
       html += '<div class="tl-lane-empty">No Lane C capture for this race</div>';
     }
     html += '</div>'; // end NB Lane C
+
+    // ── PRIME and Market Blind Core lanes ──────────────────────────
+    // These are shown explicitly instead of making the operator infer Prime
+    // from the legacy OLD VELO role.  A missing Market Blind packet is a real
+    // operational state, not a reason to copy Prime into its lane.
+    const canonicalPrime = canonicalRows.find(r => r.model_label === 'MAIN_VELO_PRIME' && Number(r.rank) === 1);
+    const canonicalMarketBlind = canonicalRows.find(r => r.model_label === 'MARKET_BLIND_CORE_SHADOW_V1' && Number(r.rank) === 1);
+    html += '<div class="tl-lane">';
+    html += '<div class="tl-lane-header"><span class="tl-lane-label-ov">PRIME</span><span class="rc-full-field-note">FROZEN CANONICAL BASELINE</span></div>';
+    if (canonicalPrime && canonicalPrime.horse) {
+      const primeScore = parseFloat(canonicalPrime.score || 0);
+      html += `<div class="tl-horse">${esc(canonicalPrime.horse)}</div>`;
+      html += `<div class="tl-stat-row"><span class="tl-prob">${(primeScore * 100).toFixed(1)}%</span><span class="tl-mds">CANONICAL</span></div>`;
+    } else {
+      html += '<div class="tl-lane-empty">No frozen Prime capture for this race</div>';
+    }
+    html += '</div>';
+
+    html += '<div class="tl-lane">';
+    html += '<div class="tl-lane-header"><span class="tl-lane-label-sh">MARKET BLIND CORE</span><span class="rc-full-field-note">FORWARD SHADOW · PAPER ONLY</span></div>';
+    if (canonicalMarketBlind && canonicalMarketBlind.horse) {
+      const marketBlindScore = parseFloat(canonicalMarketBlind.score || 0);
+      html += `<div class="tl-horse">${esc(canonicalMarketBlind.horse)}</div>`;
+      html += `<div class="tl-stat-row"><span class="tl-prob" style="color:var(--purple)">${(marketBlindScore * 100).toFixed(1)}%</span><span class="mdl-shadow-badge">SHADOW</span></div>`;
+    } else {
+      html += '<div class="tl-lane-empty">No frozen Market Blind packet for this race</div>';
+    }
+    html += '</div>';
 
     // ── OLD VELO lane ──────────────────────────────────────────────
     html += '<div class="tl-lane">';
