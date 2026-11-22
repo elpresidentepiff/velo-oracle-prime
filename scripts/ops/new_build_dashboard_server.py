@@ -1346,6 +1346,112 @@ async def radical_shadow(date: str = Query(default=None)):
     })
 
 
+@app.get("/api/arrival-snapshot-coverage")
+async def arrival_snapshot_coverage(date: str = Query(default=None)):
+    """Horse Arrival Snapshot Intelligence — coverage and consumption states.
+
+    For each runner on --date, reports whether RP Spotlight evidence was:
+      CAPTURED       — Spotlight text was present in racecard_merged
+      ELIGIBLE       — Passed identity + pre-off timing checks
+      CAPTURED_NOT_CONSUMED — Evidence exists but no active model uses it yet
+      MISSING        — No Spotlight text present
+      PARTIAL        — Some fact families present, below full eligibility
+
+    Reads from local data/spotlight_parsed/arrival_snapshot_{date}.json.
+    Falls back to Supabase rp_arrival_snapshot_facts if the local file is absent.
+    Never modifies Prime or any scoring path.
+    """
+    target = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    local_path = ROOT / "data" / "spotlight_parsed" / f"arrival_snapshot_{target}.json"
+    ledger = _load_json(local_path)
+
+    if ledger:
+        packets = ledger.get("packets", [])
+        summary = {
+            "date": target,
+            "source": "local_ledger",
+            "total_runners": ledger.get("total_runners", len(packets)),
+            "runners_with_spotlight_text": ledger.get("runners_with_spotlight_text", 0),
+            "training_eligible": ledger.get("training_eligible", 0),
+            "active_model_consumes_snapshot": False,
+            "consumption_state": "CAPTURED_NOT_CONSUMED",
+            "note": "Arrival Snapshot packets exist. No fitted model currently declares rp_spotlight_facts_v1 as a consumed family.",
+        }
+        runners = []
+        for p in packets:
+            has_text = p.get("has_spotlight_text", False)
+            eligible = p.get("training_eligible", False)
+            reasons = p.get("ineligibility_reasons") or []
+            if isinstance(reasons, str):
+                try:
+                    reasons = json.loads(reasons)
+                except Exception:
+                    reasons = []
+            if not has_text:
+                state = "MISSING"
+            elif eligible:
+                state = "CAPTURED_NOT_CONSUMED"
+            else:
+                state = "PARTIAL"
+            runners.append({
+                "race_id": p.get("race_id"),
+                "horse_id": p.get("horse_id"),
+                "horse_name": p.get("horse_name"),
+                "state": state,
+                "has_spotlight_text": has_text,
+                "training_eligible": eligible,
+                "eligible_family_count": p.get("eligible_family_count", 0),
+                "ineligibility_reasons": reasons,
+                "captured_before_off": p.get("captured_before_off"),
+                "production_prime_consumed": False,
+            })
+        summary["runners"] = runners
+        return JSONResponse(summary)
+
+    # ── Fallback: query Supabase ─────────────────────────────────────────
+    try:
+        from src.data.supabase_client import get_supabase_client
+        sb = get_supabase_client()
+        rows = (
+            sb.table("rp_arrival_snapshot_facts")
+            .select("race_id,horse_id,horse_name,training_eligible,has_spotlight_text,eligible_family_count,ineligibility_reasons,captured_before_off")
+            .eq("race_date", target)
+            .execute()
+            .data
+        )
+    except Exception as exc:
+        return JSONResponse({
+            "date": target,
+            "source": "none",
+            "total_runners": 0,
+            "training_eligible": 0,
+            "active_model_consumes_snapshot": False,
+            "consumption_state": "NO_DATA",
+            "note": f"Local ledger absent and Supabase query failed: {exc}",
+            "runners": [],
+        })
+
+    eligible = sum(1 for r in rows if r.get("training_eligible"))
+    with_text = sum(1 for r in rows if r.get("has_spotlight_text"))
+    runners = []
+    for r in rows:
+        has_text = r.get("has_spotlight_text", False)
+        el = r.get("training_eligible", False)
+        state = "MISSING" if not has_text else ("CAPTURED_NOT_CONSUMED" if el else "PARTIAL")
+        runners.append({**r, "state": state, "production_prime_consumed": False})
+    return JSONResponse({
+        "date": target,
+        "source": "supabase",
+        "total_runners": len(rows),
+        "runners_with_spotlight_text": with_text,
+        "training_eligible": eligible,
+        "active_model_consumes_snapshot": False,
+        "consumption_state": "CAPTURED_NOT_CONSUMED" if eligible > 0 else "NO_DATA",
+        "note": "Arrival Snapshot packets exist. No fitted model currently declares rp_spotlight_facts_v1 as a consumed family.",
+        "runners": runners,
+    })
+
+
 @app.get("/api/health")
 async def health():
     return JSONResponse({

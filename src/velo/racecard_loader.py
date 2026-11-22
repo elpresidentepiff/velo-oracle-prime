@@ -245,7 +245,8 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                     "rp_rpr_velo_allowed": True,
                     "ts": ts_val,
                     "ts_master": h.get("ts_master"),
-                    "form": None,
+                    "form": h.get("form_figures") or None,
+                    "days_since_last_run": h.get("days_since_last_run") or None,
                     "last_run": None,
                     # Odds: set so normalizer converts to best_odds_decimal
                     "odds": odds_dec if odds_dec > 0 else None,
