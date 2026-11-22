@@ -1733,14 +1733,23 @@ async def prime_market_blind_proxy(date: str = Query(default=None)):
             },
             status_code=503,
         )
+    # Canonical scorecards are the pick authority. Some legacy scorecard rows
+    # intentionally carry no display metadata, so use the same frozen daily
+    # pick index only to fill course/clock fields where it has an exact race id.
+    # It never supplies a horse, score, or substitute Market Blind selection.
+    display_rows = _sb_rest_rows(
+        f"wake_velo_model_picks?race_date=eq.{target}&select=race_id,course,off_time&limit=2000"
+    )
+    display_by_race = {str(row.get("race_id")): row for row in (display_rows or []) if row.get("race_id") is not None}
     by_race: dict[str, dict[str, Any]] = {}
     for row in rows:
+        display = display_by_race.get(str(row.get("race_id")), {})
         race = by_race.setdefault(
             str(row.get("race_id")),
             {
                 "race_id": row.get("race_id"),
-                "course": row.get("course"),
-                "off_time": row.get("off_time"),
+                "course": row.get("course") or display.get("course"),
+                "off_time": row.get("off_time") or display.get("off_time"),
                 "prime": None,
                 "market_blind": None,
             },
