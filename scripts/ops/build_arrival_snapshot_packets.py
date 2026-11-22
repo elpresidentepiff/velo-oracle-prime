@@ -59,9 +59,22 @@ def _resolve_off_utc(race: dict) -> datetime | None:
     return resolve_race_off_time_utc(race)
 
 
-def _captured_at_from_file(path: Path) -> datetime:
-    """Use file mtime as captured_at — the most conservative honest timestamp."""
-    return datetime.fromtimestamp(path.stat().st_mtime, tz=UTC)
+def _captured_at_from_race(race_info: dict) -> datetime | None:
+    """Return only durable RP source time; never substitute a file mtime.
+
+    A merged-file modification time can describe a post-off rerun rather than
+    the authenticated pre-off page capture.  An absent/invalid source time is
+    deliberately passed through as missing so the factual parser marks the
+    packet ineligible instead of inventing historical pre-off evidence.
+    """
+    value = race_info.get("source_parsed_at") if isinstance(race_info, dict) else None
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo else None
 
 
 def build_packets_for_date(date_str: str, *, dry_run: bool = False) -> dict:
@@ -83,7 +96,6 @@ def build_packets_for_date(date_str: str, *, dry_run: bool = False) -> dict:
             print(f"  [WARN] Could not read {rp_path.name}: {exc}", file=sys.stderr)
             continue
 
-        captured_at = _captured_at_from_file(rp_path)
         venue_name: str = rp.get("venue", rp_path.stem.split("_")[1])
 
         for race_time, race_data in rp.get("races", {}).items():
@@ -92,6 +104,7 @@ def build_packets_for_date(date_str: str, *, dry_run: bool = False) -> dict:
                 continue
 
             race_info = race_data.get("race_info", {})
+            captured_at = _captured_at_from_race(race_info)
             race_id = str(
                 race_data.get("race_id")
                 or f"rp_{rp_path.stem.split('_')[1].lower()}_{date_str.replace('-', '')}_{race_time.replace(':', '_')}"
@@ -115,6 +128,7 @@ def build_packets_for_date(date_str: str, *, dry_run: bool = False) -> dict:
                 horse_id = str(h.get("horse_id") or "")
                 horse_name = str(h.get("horse_name") or h.get("horse") or "")
                 spotlight = str(h.get("spotlight_comment") or "").strip()
+                diomed = str(h.get("diomed_comment") or "").strip()
 
                 if not spotlight:
                     skipped_no_text += 1
@@ -127,6 +141,38 @@ def build_packets_for_date(date_str: str, *, dry_run: bool = False) -> dict:
                     captured_at=captured_at,
                     off_time_utc=off_utc,
                 )
+                # Diomed is kept as separate evidence.  It must never be
+                # silently concatenated with Spotlight: source attribution is
+                # necessary for later factual-family ablations.
+                diomed_packet = build_runner_comment_shadow(
+                    raw_text=diomed,
+                    race_id=race_id,
+                    horse_id=horse_id,
+                    horse_name=horse_name,
+                    captured_at=captured_at,
+                    off_time_utc=off_utc,
+                )
+                factual_spans = [
+                    {**span, "source_kind": "RP_SPOTLIGHT"}
+                    for span in packet["factual_spans"]
+                ] + [
+                    {**span, "source_kind": "RP_DIOMED"}
+                    for span in diomed_packet["factual_spans"]
+                ]
+                rejected_spans = [
+                    {**span, "source_kind": "RP_SPOTLIGHT"}
+                    for span in packet["rejected_spans"]
+                ] + [
+                    {**span, "source_kind": "RP_DIOMED"}
+                    for span in diomed_packet["rejected_spans"]
+                ]
+                family_counts: dict[str, int] = {}
+                for source_packet in (packet, diomed_packet):
+                    for family, count in source_packet["family_counts"].items():
+                        family_counts[family] = family_counts.get(family, 0) + int(count)
+                family_names = sorted(family_counts)
+                training_eligible = bool(packet["training_eligible"] or diomed_packet["training_eligible"])
+                ineligibility_reasons = sorted(set(packet["ineligibility_reasons"]) & set(diomed_packet["ineligibility_reasons"]))
 
                 row = {
                     "race_date": date_str,
@@ -137,23 +183,27 @@ def build_packets_for_date(date_str: str, *, dry_run: bool = False) -> dict:
                     "parser_version": packet["parser_version"],
                     "captured_at": packet["captured_at"],
                     "off_time_utc": packet["off_time_utc"],
-                    "captured_before_off": packet["captured_before_off"],
-                    "identity_eligible": packet["identity_eligible"],
+                    "captured_before_off": bool(packet["captured_before_off"] or diomed_packet["captured_before_off"]),
+                    "identity_eligible": bool(packet["identity_eligible"] and diomed_packet["identity_eligible"]),
                     "raw_text_sha256": packet["raw_text_sha256"],
                     "normalized_text_sha256": packet["normalized_text_sha256"],
                     "has_spotlight_text": bool(spotlight),
-                    "factual_spans": json.dumps(packet["factual_spans"]),
-                    "rejected_spans": json.dumps(packet["rejected_spans"]),
-                    "feature_families": json.dumps(packet["feature_families"]),
-                    "family_counts": json.dumps(packet["family_counts"]),
-                    "eligible_family_count": len(packet["feature_families"]),
-                    "training_eligible": packet["training_eligible"],
-                    "ineligibility_reasons": json.dumps(packet["ineligibility_reasons"]),
+                    "has_diomed_text": bool(diomed),
+                    "source_capture_provenance": "RP_PARSED_AT",
+                    "source_url": race_info.get("source_url") if isinstance(race_info, dict) else None,
+                    "source_html_sha256": race_info.get("source_html_sha256") if isinstance(race_info, dict) else None,
+                    "factual_spans": factual_spans,
+                    "rejected_spans": rejected_spans,
+                    "feature_families": family_names,
+                    "family_counts": family_counts,
+                    "eligible_family_count": len(family_names),
+                    "training_eligible": training_eligible,
+                    "ineligibility_reasons": ineligibility_reasons,
                     "production_prime_consumed": False,
                     "provider_prediction_consumed": False,
                 }
                 all_packets.append(row)
-                if packet["training_eligible"]:
+                if training_eligible:
                     eligible += 1
                 captured_ok += 1
 

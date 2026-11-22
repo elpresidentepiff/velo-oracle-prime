@@ -856,6 +856,18 @@ td:last-child  { padding-right: 20px; }
     <div id="rc-races" style="max-height:420px;overflow:auto;margin-top:6px;"></div>
   </details>
 </div>
+<div id="arrival-panel" style="display:none;background:#111;border:1px solid #26a69a;border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:#26a69a;letter-spacing:0.05em;margin-bottom:6px;">
+    HORSE ARRIVAL SNAPSHOT <span id="arrival-count" style="color:#888;font-weight:400"></span>
+    <span style="float:right;font-size:10px;color:#666;font-weight:400">RP FACTUAL EVIDENCE · PRE-OFF ONLY · SHADOW COLLECTION · PRIME UNCHANGED</span>
+  </div>
+  <div id="arrival-summary" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;"></div>
+  <div id="arrival-note" style="font-size:10px;color:#999;margin-bottom:6px;"></div>
+  <details open style="margin-top:8px;color:#aaa;">
+    <summary style="cursor:pointer;font-size:11px;color:#26a69a;">Per runner: what VÉLØ saw before the race</summary>
+    <div id="arrival-runners" style="max-height:420px;overflow:auto;margin-top:6px;"></div>
+  </details>
+</div>
 <div id="pmb-panel" style="display:none;background:#111;border:1px solid #26c6da;border-radius:6px;margin:8px 12px;padding:10px 14px;">
   <div style="font-weight:600;color:#26c6da;letter-spacing:0.05em;margin-bottom:6px;">
     PRIME &middot; MARKET BLIND CORE — FROZEN CANONICAL SUGGESTIONS
@@ -4983,6 +4995,43 @@ async function loadRichContext() {
   } catch (_rcErr) { panel.style.display = 'none'; }
 }
 
+async function loadArrivalSnapshot() {
+  const params = new URLSearchParams(window.location.search);
+  const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
+  const panel = document.getElementById('arrival-panel');
+  if (!panel) return;
+  try {
+    const res = await fetch(`/api/arrival-snapshot?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`arrival-snapshot ${res.status}`);
+    const data = await res.json();
+    const s = data.summary || {};
+    if (!data.available || !s.runners) { panel.style.display = 'none'; return; }
+    document.getElementById('arrival-count').textContent = `(${s.runners} runners · ${data.date})`;
+    document.getElementById('arrival-summary').innerHTML = [
+      _wdChip('SOURCE TEXT', `${s.with_source_text || 0}/${s.runners || 0}`, '#66bb6a'),
+      _wdChip('TIME-SAFE / EXACT-ID', `${s.training_eligible || 0}/${s.runners || 0}`, s.training_eligible ? '#26a69a' : '#ffb74d'),
+      _wdChip('ACTIVE MODEL USE', 'CAPTURED, NOT CONSUMED', '#ffb74d'),
+      _wdChip('PRIME INFLUENCE', 'NONE', '#888'),
+    ].join('');
+    document.getElementById('arrival-note').textContent = data.note || '';
+    const stateColour = { CAPTURED_NOT_CONSUMED: '#ffb74d', PARTIAL: '#ffb74d', MISSING: '#ef5350' };
+    const runners = data.runners || [];
+    document.getElementById('arrival-runners').innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:10px;white-space:normal;">'
+      + '<tr style="color:#777;text-align:left"><th>HORSE</th><th>STATE</th><th>FACTUAL ARRIVAL EVIDENCE</th><th>TIME / SOURCE</th><th>WHY PARTIAL</th></tr>'
+      + runners.map(r => {
+        const spans = (r.factual_spans || []).map(x => `${x.source_kind === 'RP_DIOMED' ? 'D:' : 'S:'} ${x.family || ''} — ${x.evidence_text || ''}`).join('<br>');
+        const time = r.captured_at && r.off_time_utc ? `${String(r.captured_at).replace('T', ' ').slice(0, 16)}Z → off ${String(r.off_time_utc).replace('T', ' ').slice(0, 16)}Z` : 'unproven source time';
+        return '<tr style="border-top:1px solid #222">'
+          + `<td style="padding:4px 12px 4px 0;color:#ddd;font-weight:600">${esc(r.horse_name || '')}</td>`
+          + `<td style="padding-right:12px;color:${stateColour[r.state] || '#777'}">${esc(r.state || '')}</td>`
+          + `<td style="padding-right:12px;color:#bbb;line-height:1.35">${spans || '<span style="color:#666">no allowlisted factual spans</span>'}</td>`
+          + `<td style="padding-right:12px;color:#888">${esc(time)}<br>${esc(r.source_capture_provenance || '')}</td>`
+          + `<td style="color:#888">${esc((r.ineligibility_reasons || []).join(', ') || '—')}</td></tr>`;
+      }).join('') + '</table>';
+    panel.style.display = 'block';
+  } catch (_arrivalErr) { panel.style.display = 'none'; }
+}
+
 async function loadPrimeMarketBlind() {
   const params = new URLSearchParams(window.location.search);
   const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
@@ -5159,6 +5208,7 @@ loadWorldPicks();
 if (typeof setInterval === 'function') setInterval(loadWorldPicks, 300000);
 loadVeloVsFormfav();
 loadRichContext();
+loadArrivalSnapshot();
 loadPrimeMarketBlind();
 loadPrimeVsChallenger();
 
