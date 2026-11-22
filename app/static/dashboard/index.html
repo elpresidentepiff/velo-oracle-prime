@@ -856,6 +856,14 @@ td:last-child  { padding-right: 20px; }
     <div id="rc-races" style="max-height:420px;overflow:auto;margin-top:6px;"></div>
   </details>
 </div>
+<div id="pmb-panel" style="display:none;background:#111;border:1px solid #26c6da;border-radius:6px;margin:8px 12px;padding:10px 14px;">
+  <div style="font-weight:600;color:#26c6da;letter-spacing:0.05em;margin-bottom:6px;">
+    PRIME &middot; MARKET BLIND CORE — FROZEN CANONICAL SUGGESTIONS
+    <span style="float:right;font-size:10px;color:#666;font-weight:400">PRIME = FROZEN BASELINE &middot; MARKET BLIND = SHADOW ONLY &middot; NOT A TIP &middot; NO STAKING</span>
+  </div>
+  <div id="pmb-meta" style="font-family:var(--font-mono);font-size:10px;color:#777;margin-bottom:6px;"></div>
+  <div id="pmb-body" style="overflow:auto;max-height:440px;"></div>
+</div>
 <div id="vvf-panel" style="display:none;background:#111;border:1px solid #ffa726;border-radius:6px;margin:8px 12px;padding:10px 14px;">
   <div style="font-weight:600;color:#ffa726;letter-spacing:0.05em;margin-bottom:6px;">
     VELO vs FORMFAV <span id="vvf-count" style="color:#888;font-weight:400"></span>
@@ -4947,6 +4955,40 @@ async function loadRichContext() {
   } catch (_rcErr) { panel.style.display = 'none'; }
 }
 
+async function loadPrimeMarketBlind() {
+  const params = new URLSearchParams(window.location.search);
+  const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
+  const panel = document.getElementById('pmb-panel');
+  const meta = document.getElementById('pmb-meta');
+  const body = document.getElementById('pmb-body');
+  if (!panel || !body) return;
+  try {
+    const res = await fetch(`/api/prime-market-blind?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`prime-market-blind ${res.status}`);
+    const data = await res.json();
+    const marketStatus = String(data.market_blind_status || 'NOT_WRITTEN_FOR_DATE').replaceAll('_', ' ');
+    meta.innerHTML = `DATE ${esc(data.date || dateParam)} · PRIME FROZEN PICKS: <b style="color:#ffa726">${data.prime_frozen_picks || 0}</b> · MARKET BLIND FROZEN PICKS: <b style="color:#26c6da">${data.market_blind_frozen_picks || 0}</b> · <span style="color:#ffb74d">${esc(marketStatus)}</span>`;
+    const pick = (row, colour) => {
+      if (!row) return '<span style="color:#777">NOT WRITTEN</span>';
+      const score = row.score === null || row.score === undefined ? '—' : Number(row.score).toFixed(3);
+      const price = row.captured_odds_dec === null || row.captured_odds_dec === undefined ? '—' : esc(String(row.captured_odds_dec));
+      return `<span style="color:${colour};font-weight:600">${esc(row.horse || '—')}</span> <span style="color:#888">score ${score} · price ${price}</span>`;
+    };
+    const races = data.races || [];
+    body.innerHTML = races.length
+      ? '<table style="width:100%;border-collapse:collapse;font-size:11px;white-space:nowrap;">'
+        + '<tr style="color:#777;text-align:left"><th style="padding-right:10px">TIME</th><th style="padding-right:10px">COURSE</th><th style="padding-right:16px">PRIME</th><th>MARKET BLIND CORE</th></tr>'
+        + races.map(r => `<tr style="border-top:1px solid #222"><td style="padding:3px 10px 3px 0">${esc(r.off_time || '—')}</td><td style="padding-right:10px;color:#ccc">${esc(r.course || '—')}</td><td style="padding-right:16px">${pick(r.prime, '#ffa726')}</td><td>${pick(r.market_blind, '#26c6da')}</td></tr>`).join('')
+        + '</table><div style="font-size:10px;color:#777;margin-top:6px;">' + esc(data.market_blind_note || '') + '</div>'
+      : `<div style="font-size:11px;color:#777">No Prime or Market Blind frozen canonical picks were written for this date. ${esc(data.market_blind_note || '')}</div>`;
+    panel.style.display = 'block';
+  } catch (err) {
+    panel.style.display = 'block';
+    if (meta) meta.textContent = 'PRIME / MARKET BLIND CANONICAL READ UNAVAILABLE';
+    body.innerHTML = `<div style="font-size:11px;color:#ffb74d">No suggestions shown: ${esc(String(err))}</div>`;
+  }
+}
+
 async function loadLlmBrief() {
   const params = new URLSearchParams(window.location.search);
   const dateParam = params.get('date') || new Date().toISOString().slice(0, 10);
@@ -5089,6 +5131,7 @@ loadWorldPicks();
 if (typeof setInterval === 'function') setInterval(loadWorldPicks, 300000);
 loadVeloVsFormfav();
 loadRichContext();
+loadPrimeMarketBlind();
 loadPrimeVsChallenger();
 
 async function loadHorseHistoryShadow() {
