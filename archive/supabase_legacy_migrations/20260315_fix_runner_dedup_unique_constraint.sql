@@ -1,3 +1,4 @@
+-- ARCHIVED ALREADY-LIVE HOTFIX — NOT REPLAYABLE AGAINST THE CANONICAL SPINE
 -- ============================================================
 -- VÉLØ Fix: Runner deduplication + unique constraint
 -- Date: 2026-03-15

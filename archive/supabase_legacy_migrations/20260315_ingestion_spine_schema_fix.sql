@@ -1,3 +1,4 @@
+-- ARCHIVED ALREADY-LIVE HOTFIX — NOT REPLAYABLE AGAINST THE CANONICAL SPINE
 -- ============================================================
 -- VÉLØ Ingestion Spine Schema Fix
 -- Date: 2026-03-15

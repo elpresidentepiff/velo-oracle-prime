@@ -1,4 +1,4 @@
--- PR #22: Add Hard Validation Gates
+-- Migration: 20260109000000_add_pr22_validation_gates
 -- Add rejected_bad_output status and validation fields
 -- Date: 2026-01-09
 
@@ -66,6 +66,11 @@ COMMENT ON COLUMN runners.days_since_run IS 'Days since last run (separate from 
 -- ============================================================================
 -- 6. Update batch_status_overview view to include validation_errors
 -- ============================================================================
+
+-- PostgreSQL cannot use CREATE OR REPLACE VIEW when an inserted column changes
+-- the names/positions of existing columns. This is a derived operational view,
+-- so recreate it explicitly after the additive table changes above.
+DROP VIEW IF EXISTS batch_status_overview;
 
 CREATE OR REPLACE VIEW batch_status_overview AS
 SELECT 

@@ -1,5 +1,5 @@
 -- VÉLØ Deterministic Feature Mart Migration
--- Migration: 005_deterministic_feature_mart
+-- Migration: 20260109120000_deterministic_feature_mart
 -- Created: 2026-01-09
 -- Purpose: Replace NOW()-based materialized views with deterministic as_of_date tables
 --
