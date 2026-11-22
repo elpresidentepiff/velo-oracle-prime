@@ -1712,12 +1712,10 @@ async def model_performance_proxy(days: int = Query(default=365, ge=1, le=365)):
 
     start = (_dt.date.today() - _dt.timedelta(days=days - 1)).isoformat()
     fields = (
-        "model_name,lane_name,run_date,race_id,result_position,win,frame,"
-        "official_evaluation_eligible,stake_authorised"
+        "model_name,lane_name,run_date,race_id,result_position,win,frame,official_evaluation_eligible,stake_authorised"
     )
     rows = _sb_rest_all(
-        "canonical_model_scorecards?rank=eq.1"
-        f"&run_date=gte.{start}&select={fields}&order=run_date.asc,model_name.asc",
+        f"canonical_model_scorecards?rank=eq.1&run_date=gte.{start}&select={fields}&order=run_date.asc,model_name.asc",
         page=1000,
         max_pages=60,
     )

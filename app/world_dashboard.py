@@ -135,7 +135,10 @@ def model_performance_summary(rows: list[dict[str, Any]], requested_days: int) -
                 value["wins"] += 1
             if row.get("frame") is True or str(row.get("frame")).lower() == "true":
                 value["frames"] += 1
-        if row.get("official_evaluation_eligible") is True or str(row.get("official_evaluation_eligible")).lower() == "true":
+        if (
+            row.get("official_evaluation_eligible") is True
+            or str(row.get("official_evaluation_eligible")).lower() == "true"
+        ):
             value["official_eligible"] += 1
         if row.get("stake_authorised") is True or str(row.get("stake_authorised")).lower() == "true":
             value["historical_stake_flag_seen"] = True
