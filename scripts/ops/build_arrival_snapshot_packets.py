@@ -82,7 +82,13 @@ def build_packets_for_date(date_str: str, *, dry_run: bool = False) -> dict:
     rp_files = sorted(MERGED_DIR.glob(f"racecard_*_{date_str}.json"))
     if not rp_files:
         print(f"  [SKIP] No racecard_merged files found for {date_str}.")
-        return {"date": date_str, "total_runners": 0, "eligible": 0, "files": 0}
+        return {
+            "date": date_str,
+            "total_runners": 0,
+            "runners_with_spotlight": 0,
+            "training_eligible": 0,
+            "files": 0,
+        }
 
     sb = _load_supabase_client()
     all_packets: list[dict] = []

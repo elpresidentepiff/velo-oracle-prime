@@ -24,3 +24,15 @@ def test_accepts_only_timezone_aware_rp_source_timestamp() -> None:
     assert MODULE._captured_at_from_race({"source_parsed_at": "2026-11-22T09:00:00Z"}) == datetime(
         2026, 11, 22, 9, 0, tzinfo=UTC
     )
+
+
+def test_no_merged_cards_returns_complete_zero_coverage_shape(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(MODULE, "MERGED_DIR", tmp_path)
+
+    assert MODULE.build_packets_for_date("2026-11-22", dry_run=True) == {
+        "date": "2026-11-22",
+        "total_runners": 0,
+        "runners_with_spotlight": 0,
+        "training_eligible": 0,
+        "files": 0,
+    }
