@@ -407,6 +407,12 @@ def main() -> None:
             "country": race.get("country"),
             "race_class": race.get("race_class"),
             "rating_band": race.get("rating_band"),
+            # Preserve the timestamp of the authenticated RP parse.  Downstream
+            # pre-off evidence must prove *when the source was seen*; the time
+            # that this merged convenience file was rebuilt is not equivalent.
+            "source_parsed_at": race.get("parsed_at"),
+            "source_url": race.get("source_url"),
+            "source_html_sha256": race.get("html_sha256"),
         }
 
         by_venue[code][off_key] = {

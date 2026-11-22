@@ -22,6 +22,27 @@ import os
 from pathlib import Path
 from typing import Any
 
+# RP headgear code → readable text for the evidence builder (run_prime_today:1243
+# checks for "visor", "cheek", "tongue", "hood", "blinkers" substrings).
+_RP_HEADGEAR_TEXT: dict[str, str] = {
+    "B": "blinkers", "b": "blinkers",
+    "V": "visor", "v": "visor",
+    "C": "cheekpieces", "c": "cheekpieces",
+    "H": "hood", "h": "hood",
+    "T": "tongue-tie", "t": "tongue-tie",
+    "E": "eye shield", "e": "eye shield",
+    "P": "cheekpieces", "p": "cheekpieces",
+    "W": "hood", "w": "hood",
+    "BV": "blinkers visor", "VB": "blinkers visor",
+}
+
+
+def _headgear_text(code: str | None) -> str:
+    if not code:
+        return ""
+    return _RP_HEADGEAR_TEXT.get(str(code).strip(), str(code).lower())
+
+
 # Known Irish venue codes — everything else is treated as GB
 _IRE_VENUE_CODES = frozenset({
     "GOW", "LEO", "NAV", "CUR", "TIP", "GAL", "KIL", "KLN", "BAL", "BEL",
@@ -245,8 +266,23 @@ def load_rp_merged_as_racecards(date_str: str, data_root: Path) -> list[dict[str
                     "rp_rpr_velo_allowed": True,
                     "ts": ts_val,
                     "ts_master": h.get("ts_master"),
-                    "form": None,
+                    "form": h.get("form_figures") or None,
+                    "days_since_last_run": h.get("days_since_last_run") or None,
                     "last_run": None,
+                    # Headgear — raw RP code (feeds RPDC rules) + text expansion
+                    # (feeds run_prime_today evidence builder at gear_additions check)
+                    "headgear": h.get("headgear") or None,
+                    "gear": _headgear_text(h.get("headgear")),
+                    # 1 = first time wearing this headgear today (feeds rpdc_rules.py)
+                    "headgear_run": 1 if h.get("headgear_first_time") else 0,
+                    # Physical procedure — feeds tie_v3_gate first_run_since_wind_surgery
+                    "wind_surgery": bool(h.get("wind_surgery")) or None,
+                    "gelding_first_time": bool(h.get("gelding_first_time")) or None,
+                    # Jockey/trainer identity — needed for JTC-D profile lookups
+                    "jockey_id": h.get("jockey_id") or None,
+                    "trainer_id": h.get("trainer_id") or None,
+                    # First-time jockey signal (new partnership flag)
+                    "jockey_first_time": bool(h.get("jockey_first_time")) or None,
                     # Odds: set so normalizer converts to best_odds_decimal
                     "odds": odds_dec if odds_dec > 0 else None,
                     # RP passthrough fields

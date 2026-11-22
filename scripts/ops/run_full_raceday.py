@@ -448,6 +448,19 @@ def main() -> int:
     ):
         return 1
 
+    # ── Step 5.55: Horse Arrival Snapshot packets ────────────────────────
+    # Reads the racecard_merged files built in Step 5.5 and processes each
+    # runner's RP Spotlight comment through the factual-evidence parser
+    # (rich_context_comment_intelligence). Results go to Supabase
+    # rp_arrival_snapshot_facts (append-only) and a local ledger file.
+    # Non-critical: a failure here thins snapshot coverage but does not block
+    # scoring. Prime probabilities are NEVER read from this table.
+    run(
+        "Step 5.55: Horse Arrival Snapshot packets",
+        [PY, "scripts/ops/build_arrival_snapshot_packets.py", "--date", date],
+        critical=False, results=results,
+    )
+
     # ── Step 5.6: FormFav UK enhanced shadow feature card ────────────────
     # Uses the SAME RP merged racecards that Step 9 will score. This is
     # deliberately shadow-only: it builds pace/form/class/track-bias features

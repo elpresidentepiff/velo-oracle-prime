@@ -217,6 +217,36 @@ def test_rp_runners_have_horse_name(tmp_path):
     assert "Gamma Ray" in names
 
 
+def test_rp_merged_preserves_arrival_snapshot_fields(tmp_path):
+    content = json.loads(json.dumps(_RP_MERGED_SAMPLE))
+    horse = content["races"]["14:00"]["horses"][0]
+    horse.update({
+        "form_figures": "321",
+        "days_since_last_run": 18,
+        "headgear": "V",
+        "headgear_first_time": True,
+        "wind_surgery": True,
+        "gelding_first_time": True,
+        "jockey_id": "j-1",
+        "trainer_id": "t-1",
+        "jockey_first_time": True,
+    })
+    _make_rp_file(tmp_path, content=content)
+
+    runner = load_rp_merged_as_racecards(_DATE_STR, tmp_path)[0]["runners"][0]
+
+    assert runner["form"] == "321"
+    assert runner["days_since_last_run"] == 18
+    assert runner["headgear"] == "V"
+    assert runner["gear"] == "visor"
+    assert runner["headgear_run"] == 1
+    assert runner["wind_surgery"] is True
+    assert runner["gelding_first_time"] is True
+    assert runner["jockey_id"] == "j-1"
+    assert runner["trainer_id"] == "t-1"
+    assert runner["jockey_first_time"] is True
+
+
 # ── VELO_DISABLE_RACING_API ───────────────────────────────────────────────────
 
 

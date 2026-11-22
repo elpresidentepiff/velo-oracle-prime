@@ -2414,6 +2414,74 @@ async def rich_context(date: str = Query(default=None)):
     }
 
 
+@app.get("/api/arrival-snapshot")
+async def arrival_snapshot(date: str = Query(default=None)):
+    """Read-only Horse Arrival Snapshot evidence for the production dashboard.
+
+    Capture, temporal eligibility and model consumption are deliberately
+    separate facts. This route only reads append-only factual evidence and
+    cannot influence Prime production scoring.
+    """
+    import datetime as _dt
+
+    d = date or _dt.date.today().isoformat()
+    try:
+        _dt.date.fromisoformat(d)
+    except ValueError:
+        return JSONResponse({"error": "date must be YYYY-MM-DD"}, status_code=400)
+
+    rows = _sb_rest_rows(
+        f"rp_arrival_snapshot_facts?race_date=eq.{d}"
+        "&select=race_id,horse_id,horse_name,captured_at,off_time_utc,captured_before_off,"
+        "identity_eligible,has_spotlight_text,has_diomed_text,feature_families,family_counts,"
+        "factual_spans,rejected_spans,training_eligible,ineligibility_reasons,"
+        "source_capture_provenance,source_url,source_html_sha256"
+        "&order=race_id.asc,horse_name.asc&limit=3000"
+    )
+    if rows is None:
+        return {"date": d, "available": False, "state": "UNAVAILABLE", "runners": []}
+
+    def _json(value: Any, fallback: Any) -> Any:
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except (TypeError, ValueError):
+                return fallback
+        return value if value is not None else fallback
+
+    shaped: list[dict[str, Any]] = []
+    for row in rows:
+        factual_spans = _json(row.get("factual_spans"), [])
+        rejected_spans = _json(row.get("rejected_spans"), [])
+        families = _json(row.get("feature_families"), [])
+        reasons = _json(row.get("ineligibility_reasons"), [])
+        eligible = bool(row.get("training_eligible"))
+        has_text = bool(row.get("has_spotlight_text") or row.get("has_diomed_text"))
+        state = "CAPTURED_NOT_CONSUMED" if eligible else ("PARTIAL" if has_text else "MISSING")
+        shaped.append({
+            **row,
+            "factual_spans": factual_spans,
+            "rejected_spans": rejected_spans,
+            "feature_families": families,
+            "ineligibility_reasons": reasons,
+            "state": state,
+            "active_model_consumes_snapshot": False,
+            "production_prime_consumed": False,
+        })
+
+    total = len(shaped)
+    eligible = sum(1 for row in shaped if row["state"] == "CAPTURED_NOT_CONSUMED")
+    with_text = sum(1 for row in shaped if row.get("has_spotlight_text") or row.get("has_diomed_text"))
+    return {
+        "date": d,
+        "available": True,
+        "state": "CAPTURED_NOT_CONSUMED" if eligible else ("NO_ELIGIBLE_FACTS" if total else "NO_DATA"),
+        "summary": {"runners": total, "with_source_text": with_text, "training_eligible": eligible, "active_model_consumes_snapshot": False},
+        "note": "Factual RP arrival evidence is stored separately. No active fitted model declares this family consumed; Prime remains unchanged.",
+        "runners": shaped,
+    }
+
+
 @app.get("/api/horse-history-shadow")
 async def horse_history_shadow_route(date: str = Query(default=None)):
     """Horse-history candidate SHADOW for one day. Read-only. Nothing here is a tip or a live pick.
