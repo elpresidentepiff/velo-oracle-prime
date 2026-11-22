@@ -1699,6 +1699,52 @@ async def canonical_scorecard_proxy(date: str = Query(default=None)):
     )
 
 
+@app.get("/api/model-performance")
+async def model_performance_proxy(days: int = Query(default=365, ge=1, le=365)):
+    """Rolling canonical top-pick results for every persisted model/lane.
+
+    The endpoint is read-only and deliberately reports the captured date span.
+    It never turns historical strike rate into a promotion or a staking signal.
+    """
+    import datetime as _dt
+
+    from app.world_dashboard import model_performance_summary
+
+    start = (_dt.date.today() - _dt.timedelta(days=days - 1)).isoformat()
+    fields = (
+        "model_name,lane_name,run_date,race_id,result_position,win,frame,"
+        "official_evaluation_eligible,stake_authorised"
+    )
+    rows = _sb_rest_all(
+        "canonical_model_scorecards?rank=eq.1"
+        f"&run_date=gte.{start}&select={fields}&order=run_date.asc,model_name.asc",
+        page=1000,
+        max_pages=60,
+    )
+    if rows is None:
+        return JSONResponse(
+            {
+                "status": "UNAVAILABLE",
+                "message": "Canonical performance read was incomplete; no partial leaderboard is shown.",
+                "requested_days": days,
+                "stake_authorised": False,
+                "promotion_eligible": False,
+            },
+            status_code=503,
+        )
+    return JSONResponse(
+        {
+            "status": "OK",
+            "as_of": _dt.datetime.now(_dt.UTC).isoformat(timespec="seconds"),
+            **model_performance_summary(rows, days),
+            "stake_authorised": False,
+            "promotion_eligible": False,
+            "no_supabase_write": True,
+        },
+        headers=_NO_STORE_HEADERS,
+    )
+
+
 @app.get("/api/canonical-learning-events")
 async def canonical_learning_events_proxy(date: str = Query(default=None)):
     """Ported from new_build_dashboard_server.py 2026-07-08 (dashboard consolidation)."""

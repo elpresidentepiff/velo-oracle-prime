@@ -91,6 +91,96 @@ MODEL_META: dict[str, tuple[str, str | None]] = {
 }
 
 
+def model_performance_summary(rows: list[dict[str, Any]], requested_days: int) -> dict[str, Any]:
+    """Summarise durable canonical top-pick outcomes for the dashboard.
+
+    This intentionally does *not* infer a promotion from strike rate.  The
+    scorecard is an evidence ledger, not a model registry or authorisation
+    mechanism.  A row is settled only when its selected runner has an actual
+    result position; today's pre-off rows stay out of every rate denominator.
+    """
+    groups: dict[tuple[str, str], dict[str, Any]] = {}
+    dates: set[str] = set()
+    for row in rows:
+        model = str(row.get("model_name") or "UNKNOWN")
+        lane = str(row.get("lane_name") or "")
+        key = (model, lane)
+        value = groups.setdefault(
+            key,
+            {
+                "model_name": model,
+                "lane_name": lane,
+                "top_picks": 0,
+                "settled_top_picks": 0,
+                "wins": 0,
+                "frames": 0,
+                "official_eligible": 0,
+                "first_date": None,
+                "last_date": None,
+                "dates": set(),
+                "historical_stake_flag_seen": False,
+            },
+        )
+        date = str(row.get("run_date") or "")
+        if date:
+            dates.add(date)
+            value["dates"].add(date)
+            value["first_date"] = min(value["first_date"], date) if value["first_date"] else date
+            value["last_date"] = max(value["last_date"], date) if value["last_date"] else date
+        value["top_picks"] += 1
+        settled = row.get("result_position") not in (None, "")
+        if settled:
+            value["settled_top_picks"] += 1
+            if row.get("win") is True or str(row.get("win")).lower() == "true":
+                value["wins"] += 1
+            if row.get("frame") is True or str(row.get("frame")).lower() == "true":
+                value["frames"] += 1
+        if row.get("official_evaluation_eligible") is True or str(row.get("official_evaluation_eligible")).lower() == "true":
+            value["official_eligible"] += 1
+        if row.get("stake_authorised") is True or str(row.get("stake_authorised")).lower() == "true":
+            value["historical_stake_flag_seen"] = True
+
+    output: list[dict[str, Any]] = []
+    for value in groups.values():
+        settled = value["settled_top_picks"]
+        model = value["model_name"]
+        # There is no automatic promotion path: the Prime model is the frozen
+        # incumbent; every challenger needs its own documented gate and an
+        # explicit operator decision even if a historical rate looks good.
+        if model == "MAIN_VELO_PRIME":
+            promotion_status = "FROZEN_PRODUCTION_BASELINE"
+        elif model == "NEW_BUILD_LANE_C_MODEL":
+            promotion_status = "SHADOW_ONLY_LANE_C_GATE_REVIEW_REQUIRED"
+        elif model == "MIDPRICE_SPECIALIST_SHADOW":
+            promotion_status = "SHADOW_ONLY_MIDPRICE_GATE_REVIEW_REQUIRED"
+        else:
+            promotion_status = "SHADOW_ONLY_NOT_PROMOTED"
+        value["win_sr_pct"] = round(100 * value["wins"] / settled, 1) if settled else None
+        value["frame_sr_pct"] = round(100 * value["frames"] / settled, 1) if settled else None
+        value["captured_dates"] = len(value.pop("dates"))
+        value["promotion_status"] = promotion_status
+        value["stake_authorised"] = False  # dashboard contract: PAPER/SIM only
+        output.append(value)
+
+    return {
+        "requested_days": requested_days,
+        "source_table": "public.canonical_model_scorecards",
+        "scope": "UK/IRE canonical scorecard only; World is separately shadow-scoped.",
+        "result_denominator": "rank=1 rows with a recorded result_position",
+        "coverage": {
+            "captured_scoring_dates": len(dates),
+            "first_date": min(dates) if dates else None,
+            "last_date": max(dates) if dates else None,
+        },
+        "promotion_policy": (
+            "No automatic promotion. Dashboard performance is evidence only; "
+            "challengers remain PAPER/SIM shadow until their model-specific gates "
+            "and an explicit operator decision are both satisfied."
+        ),
+        "models": sorted(output, key=lambda r: (r["model_name"], r["lane_name"])),
+    }
+
+
 def _int(value: Any) -> int | None:
     try:
         return None if value is None else int(value)

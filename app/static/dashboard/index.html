@@ -3130,10 +3130,22 @@ table.mdl-table tr:hover { background: var(--bg-hover); }
   <button class="filter-btn" data-filter="exec" data-val="false">BLOCKED</button>
 </div>
 
-<!-- Canonical Model Performance (added 2026-07-16 -- reads public.canonical_model_scorecards,
-     the same source Multi-Model Sigma joins through. Top-pick rank=1 win/frame per model,
-     for the selected date only. Not a cumulative leaderboard -- see model_comparison_ledger.csv
-     for multi-day history. -->
+<!-- Canonical Model Performance. The selected-day snapshot is retained below; the rolling
+     panel makes the actual captured evidence window and non-promotion status visible. -->
+<div id="cmp-rolling-wrap" style="margin:8px 12px;border:1px solid var(--border);border-radius:6px;background:#111;">
+  <div id="cmp-rolling-header" style="padding:8px 14px;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:0.05em;color:var(--fg-secondary);display:flex;justify-content:space-between;align-items:center;"
+       onclick="document.getElementById('cmp-rolling-body').classList.toggle('open')">
+    <span>ALL MODELS — ROLLING CANONICAL RESULTS &amp; PROMOTION STATUS</span>
+    <span class="sib-toggle">[ EXPAND ]</span>
+  </div>
+  <div id="cmp-rolling-body" style="padding:6px 14px 12px;">
+    <div id="cmp-rolling-meta" style="font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);margin-bottom:8px;"></div>
+    <div id="cmp-rolling-table" style="font-family:var(--font-mono);font-size:11px;color:var(--fg-secondary);"></div>
+  </div>
+</div>
+<style>#cmp-rolling-body { display: none; } #cmp-rolling-body.open { display: block; }</style>
+
+<!-- Canonical Model Performance (selected date only). -->
 <div id="cmp-wrap" style="margin:8px 12px;border:1px solid var(--border);border-radius:6px;background:#111;">
   <div id="cmp-header" style="padding:8px 14px;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:0.05em;color:var(--fg-secondary);display:flex;justify-content:space-between;align-items:center;"
        onclick="document.getElementById('cmp-body').classList.toggle('open')">
@@ -3609,7 +3621,47 @@ async function loadCard() {
     badge.className = 'live-badge cache';
   }
   loadCanonicalPerformance(dateParam);
+  loadRollingModelPerformance();
   loadRpdcGateCard(dateParam);
+}
+
+// Rolling, all-model evidence ledger. Rates use settled rank-1 picks only;
+// promotion is explicitly a separate, governed decision.
+async function loadRollingModelPerformance() {
+  const metaEl = document.getElementById('cmp-rolling-meta');
+  const tableEl = document.getElementById('cmp-rolling-table');
+  if (!tableEl) return;
+  try {
+    const res = await fetch('/api/model-performance?days=365');
+    if (!res.ok) throw new Error(`model-performance ${res.status}`);
+    const data = await res.json();
+    const coverage = data.coverage || {};
+    if (metaEl) {
+      metaEl.textContent = `REQUESTED 365D · CAPTURED ${coverage.captured_scoring_dates || 0} SCORING DATES · ${coverage.first_date || '—'} → ${coverage.last_date || '—'} · rates use settled rank-1 picks only · PAPER/SIM`;
+    }
+    const rows = data.models || [];
+    if (!rows.length) {
+      tableEl.innerHTML = '<div style="color:var(--fg-muted)">No canonical model history in the requested window.</div>';
+      return;
+    }
+    let html = '<table style="width:100%;border-collapse:collapse;min-width:880px;">';
+    html += '<tr style="color:var(--fg-muted);text-align:left;"><th style="padding:2px 8px 2px 0;">MODEL / LANE</th><th style="padding:2px 8px;">DATES</th><th style="padding:2px 8px;">SETTLED / PICKS</th><th style="padding:2px 8px;">WINS</th><th style="padding:2px 8px;">WIN SR</th><th style="padding:2px 8px;">FRAME SR</th><th style="padding:2px 8px;">STATUS</th></tr>';
+    rows.forEach(r => {
+      const name = `${r.model_name || 'UNKNOWN'}${r.lane_name ? ` / ${r.lane_name}` : ''}`;
+      const status = String(r.promotion_status || 'SHADOW_ONLY_NOT_PROMOTED').replaceAll('_', ' ');
+      const statusColour = status.startsWith('FROZEN') ? 'var(--gold)' : 'var(--cyan)';
+      const dates = `${r.first_date || '—'} → ${r.last_date || '—'} (${r.captured_dates || 0})`;
+      const settled = `${r.settled_top_picks || 0} / ${r.top_picks || 0}`;
+      const winSR = r.win_sr_pct == null ? '—' : `${r.win_sr_pct.toFixed(1)}%`;
+      const frameSR = r.frame_sr_pct == null ? '—' : `${r.frame_sr_pct.toFixed(1)}%`;
+      html += `<tr><td style="padding:3px 8px 3px 0;color:var(--fg-primary);">${esc(name)}</td><td style="padding:3px 8px;white-space:nowrap;">${esc(dates)}</td><td style="padding:3px 8px;">${esc(settled)}</td><td style="padding:3px 8px;">${r.wins || 0}</td><td style="padding:3px 8px;color:var(--gold);">${winSR}</td><td style="padding:3px 8px;color:#5599ff;">${frameSR}</td><td style="padding:3px 8px;color:${statusColour};font-size:10px;">${esc(status)}</td></tr>`;
+    });
+    html += '</table><div style="margin-top:8px;color:var(--fg-muted);font-size:10px;">No automatic promotion: model-specific gates and an explicit operator decision are required. World evidence is separately scoped and is not mixed into this UK/IRE canonical ledger.</div>';
+    tableEl.innerHTML = html;
+  } catch (e) {
+    if (metaEl) metaEl.textContent = 'ROLLING CANONICAL PERFORMANCE UNAVAILABLE';
+    tableEl.innerHTML = `<div style="color:var(--fg-muted)">Rolling performance unavailable: ${esc(String(e))}</div>`;
+  }
 }
 
 // Canonical model performance -- added 2026-07-16. Reads public.canonical_model_scorecards
