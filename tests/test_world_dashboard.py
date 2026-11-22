@@ -190,6 +190,16 @@ def test_prime_market_blind_panel_is_visible_and_never_fabricates_a_missing_shad
         assert write not in route
 
 
+def test_race_cards_show_prime_and_market_blind_lanes_and_keep_missing_packets_visible() -> None:
+    root = Path(__file__).parents[1]
+    html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+    assert "FROZEN CANONICAL BASELINE" in html
+    assert "MARKET BLIND CORE" in html
+    assert "No frozen Market Blind packet for this race" in html
+    assert "canonicalMarketBlind" in html
+    assert 'id="mdl-body" class="open"' in html
+
+
 # --- WAKE-VELO-DASH-02: today's enriched suggestions ----------------------------------------------
 from app.world_dashboard import (  # noqa: E402
     enriched_suggestions,
