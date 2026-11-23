@@ -352,7 +352,11 @@ def _persist_track_bias(
             "distance": None if distance is None else str(distance),
             "condition": None if condition is None else str(condition),
             "window_days": 90,
-            "bias_strength": packet.get("biasStrength"),
+            # FormFav returns a categorical strength (none/mild/moderate/strong)
+            # while the durable compatibility column is numeric.  Preserve the
+            # original categorical value in ``payload`` and store the same
+            # documented ordinal used by the factual feature builder here.
+            "bias_strength": _track_bias_strength_numeric(packet.get("biasStrength")),
             "barrier_stats": packet.get("barrierStats"),
             "payload": packet,
         }])
@@ -393,6 +397,24 @@ def _track_bias_distance_metres(value: Any) -> int | None:
         metres = round((float(miles.group(1)) if miles else 0.0) * 1609.344 + (float(furlongs.group(1)) if furlongs else 0.0) * 201.168)
         return metres if 200 <= metres <= 5000 else None
     return None
+
+
+def _track_bias_strength_numeric(value: Any) -> float | None:
+    """Adapt FormFav's categorical strength to the legacy numeric column.
+
+    The raw categorical field remains in the append-only ``payload``.  This
+    numeric projection is deliberately an evidence encoding, not a model score.
+    """
+    if isinstance(value, bool) or value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    return {
+        "none": 0.0,
+        "mild": 0.33,
+        "moderate": 0.66,
+        "strong": 1.0,
+    }.get(str(value).strip().lower())
 
 
 def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any], mrace: dict[str, Any], now: datetime) -> None:

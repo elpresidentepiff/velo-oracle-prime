@@ -66,6 +66,20 @@ def test_track_bias_distance_parser_accepts_card_formats_and_rejects_invalid_val
     assert fw._track_bias_distance_metres("12000m") is None
 
 
+def test_track_bias_strength_preserves_provider_meaning_in_numeric_column(monkeypatch):
+    fw = _worker()
+    rows = []
+    monkeypatch.setattr(fw, "_insert", lambda table, r: rows.append((table, r)))
+    fw._persist_track_bias(
+        _Client({"biasStrength": "moderate", "barrierStats": []}),
+        "k", {"track": "Ascot", "meeting_slug": "ascot"}, {"distance": "1600m"}, "GB", datetime.now(UTC),
+    )
+    assert rows[0][1][0]["bias_strength"] == 0.66
+    assert rows[0][1][0]["payload"]["biasStrength"] == "moderate"
+    assert fw._track_bias_strength_numeric("none") == 0.0
+    assert fw._track_bias_strength_numeric("unknown") is None
+
+
 def test_bias_failure_has_safe_diagnostic(monkeypatch, capsys):
     fw = _worker()
     monkeypatch.setenv("FORMFAV_API_KEY", "secret-key")
