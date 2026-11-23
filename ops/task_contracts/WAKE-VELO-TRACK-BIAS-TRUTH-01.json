@@ -1,0 +1,43 @@
+{
+  "task_id": "WAKE-VELO-TRACK-BIAS-TRUTH-01",
+  "title": "Persist truthful FormFav factual track-bias evidence for the shadow-only challenger",
+  "classification": "AUTHORIZED_SHADOW_EVIDENCE_HARDENING",
+  "allowed_paths": [
+    "ops/task_contracts/WAKE-VELO-TRACK-BIAS-TRUTH-01.json",
+    "scripts/ops/formfav_live_worker.py",
+    "tests/test_formfav_track_bias_ingest.py"
+  ],
+  "forbidden_paths": [
+    ".env",
+    "src/intelligence/velo_prime_ensemble.py",
+    "app/services/velo_prime_service.py",
+    "models/"
+  ],
+  "allowed_actions": [
+    "capture_preoff_factual_evidence",
+    "persist_append_only_shadow_evidence",
+    "run_tests",
+    "improve_nonsecret_observability"
+  ],
+  "forbidden_actions": [
+    "provider_prediction_consumption",
+    "production_model_change",
+    "model_weight_change",
+    "gate_bypass",
+    "live_betting",
+    "telegram_send",
+    "model_promotion"
+  ],
+  "forbidden_keywords": [
+    "provider_predictions_consumed\": true",
+    "production_influence\": true"
+  ],
+  "classification_required": [
+    "SHADOW_ONLY",
+    "NO_LIVE_SCORING_CHANGE",
+    "NO_PROVIDER_PREDICTION_CONSUMPTION",
+    "NO_MODEL_WEIGHT_CHANGE",
+    "NO_MODEL_PROMOTION",
+    "PAPER_SIM_ONLY"
+  ]
+}

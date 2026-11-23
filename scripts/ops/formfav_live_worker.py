@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -324,10 +325,19 @@ def _persist_track_bias(
     Fail-soft: a bias error is logged and never stops the racecard capture.
     """
     try:
-        venue = str(race_row.get("track") or form.get("track") or "").strip()
+        # The FormFav endpoint accepts the meeting *slug*, not a display name.
+        # Passing labels such as ``Newcastle AW`` or ``Bangor-on-Dee`` caused
+        # every request to be rejected and left the table permanently empty.
+        venue = str(
+            race_row.get("meeting_slug")
+            or race_row.get("slug")
+            or race_row.get("track")
+            or form.get("track")
+            or ""
+        ).strip()
         if not venue:
             return
-        distance = form.get("distance") or race_row.get("distance")
+        distance = _track_bias_distance_metres(form.get("distance") or race_row.get("distance"))
         condition = form.get("condition") or race_row.get("condition")
         packet = client.track_bias(
             venue=venue, country=country, distance=distance, window=90, condition=condition,
@@ -347,8 +357,42 @@ def _persist_track_bias(
             "payload": packet,
         }])
     except Exception as exc:  # never stop the racecard capture
-        print(f"[FORMFAV-LIVE] TRACK_BIAS_FAILED {race_key}: {type(exc).__name__}",
+        # This evidence is optional, but failure must be diagnosable.  The
+        # client never includes a key in its exception text; redact defensively
+        # anyway so a provider response cannot leak the runtime credential.
+        detail = str(exc)
+        api_key = os.getenv("FORMFAV_API_KEY") or ""
+        if api_key:
+            detail = detail.replace(api_key, "[REDACTED]")
+        print(f"[FORMFAV-LIVE] TRACK_BIAS_FAILED {race_key}: {type(exc).__name__}: {detail[:300]}",
               file=sys.stderr, flush=True)
+
+
+def _track_bias_distance_metres(value: Any) -> int | None:
+    """Return a valid FormFav metres value, never a human race-distance label.
+
+    FormFav accepts numeric metres (200–5000).  Cards may instead say
+    ``3365m``, ``1m 4f`` or ``1m2f``.  An invalid distance makes the entire
+    endpoint request fail with HTTP 422, so omit it when it cannot be parsed
+    safely rather than turning a usable whole-track bias into a failed call.
+    """
+    if isinstance(value, bool) or value is None:
+        return None
+    if isinstance(value, (int, float)):
+        metres = round(value)
+        return metres if 200 <= metres <= 5000 else None
+    text = str(value).strip().lower()
+    metres_match = re.fullmatch(r"(\d+(?:\.\d+)?)\s*m(?:et(?:re|er)s?)?", text)
+    if metres_match:
+        metres = round(float(metres_match.group(1)))
+        if 200 <= metres <= 5000:
+            return metres
+    miles = re.search(r"(\d+(?:\.\d+)?)\s*(?:mi|miles?|m)(?=\s*(?:\d*\s*f)?\s*$)", text)
+    furlongs = re.search(r"(\d+(?:\.\d+)?)\s*f(?:urlongs?)?", text)
+    if miles or furlongs:
+        metres = round((float(miles.group(1)) if miles else 0.0) * 1609.344 + (float(furlongs.group(1)) if furlongs else 0.0) * 201.168)
+        return metres if 200 <= metres <= 5000 else None
+    return None
 
 
 def _process_race(client: FormFavClient, date_str: str, meeting: dict[str, Any], mrace: dict[str, Any], now: datetime) -> None:

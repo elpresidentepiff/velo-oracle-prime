@@ -31,9 +31,10 @@ def test_bias_snapshot_is_inserted(monkeypatch):
     packet = {"biasStrength": 0.42, "barrierStats": [{"barrierNumber": 1, "totalStarts": 40}]}
     client = _Client(packet)
     now = datetime(2026, 11, 14, 12, 0, tzinfo=UTC)
-    fw._persist_track_bias(client, "uk:ascot:2026-11-14:1", {"track": "Ascot"},
+    fw._persist_track_bias(client, "uk:ascot:2026-11-14:1", {"track": "Ascot", "meeting_slug": "ascot"},
                            {"distance": "1m", "condition": "Good"}, "GB", now)
-    assert client.calls[0]["venue"] == "Ascot" and client.calls[0]["window"] == 90
+    assert client.calls[0]["venue"] == "ascot" and client.calls[0]["distance"] == 1609
+    assert client.calls[0]["window"] == 90
     table, data = rows[0]
     assert table == "formfav_track_bias"
     assert data[0]["bias_strength"] == 0.42
@@ -54,3 +55,22 @@ def test_no_venue_means_no_call(monkeypatch):
     client = _Client({"biasStrength": 0.1})
     fw._persist_track_bias(client, "k", {}, {}, "GB", datetime.now(UTC))
     assert client.calls == []
+
+
+def test_track_bias_distance_parser_accepts_card_formats_and_rejects_invalid_values():
+    fw = _worker()
+    assert fw._track_bias_distance_metres("3365m") == 3365
+    assert fw._track_bias_distance_metres("1m 4f") == 2414
+    assert fw._track_bias_distance_metres("1m2f") == 2012
+    assert fw._track_bias_distance_metres("six furlongs") is None
+    assert fw._track_bias_distance_metres("12000m") is None
+
+
+def test_bias_failure_has_safe_diagnostic(monkeypatch, capsys):
+    fw = _worker()
+    monkeypatch.setenv("FORMFAV_API_KEY", "secret-key")
+    client = _Client(raise_exc=RuntimeError("HTTP 422 secret-key invalid distance"))
+    fw._persist_track_bias(client, "k", {"track": "Ascot", "meeting_slug": "ascot"}, {}, "GB", datetime.now(UTC))
+    output = capsys.readouterr().err
+    assert "HTTP 422" in output
+    assert "secret-key" not in output
