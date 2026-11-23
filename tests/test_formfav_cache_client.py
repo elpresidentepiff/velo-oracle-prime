@@ -39,6 +39,14 @@ def _fetch_factory(updated=FRESH):
                 {"runner_number": 1, "captured_at": STALE,
                  "market_payload": {"number": 1, "name": "A", "bestWin": 5.0}},
             ]
+        if path.startswith("formfav_track_bias"):
+            return [{
+                "captured_at": FRESH,
+                "payload": {
+                    "biasStrength": "moderate",
+                    "barrierStats": [{"barrierNumber": 4, "totalStarts": 40}],
+                },
+            }]
         raise AssertionError(path)
     return fetch
 
@@ -169,6 +177,71 @@ def test_predictions_and_latest_prices_are_served_from_cache() -> None:
     assert live.calls == []
     assert prices["_source"] == "formfav_market_cache"
     assert prices["runners"][0]["bestWin"] == 4.0
+
+
+def test_track_bias_requires_an_immutable_preoff_snapshot_and_never_live_falls_back() -> None:
+    live = _Live()
+    c = cc.CachedFormFavClient(live, fetch=_fetch_factory(), now=lambda: NOW)
+    packet = c.track_bias(
+        venue="kempton-park", country="gb", distance="1600", window=90,
+        _provider_race_key="formfav:gb:2026-10-14:kempton_park:r1",
+        _off_time_utc=NOW.isoformat(),
+    )
+    assert packet["biasStrength"] == "moderate"
+    assert packet["_provenance"]["source_is_immutable"] is True
+    assert live.calls == []
+
+
+def test_track_bias_rejects_postoff_cache_rows_without_live_fallback() -> None:
+    live = _Live()
+
+    def fetch(path: str):
+        if path.startswith("formfav_track_bias"):
+            return [{"captured_at": NOW.isoformat(), "payload": {"biasStrength": "strong"}}]
+        raise AssertionError(path)
+
+    c = cc.CachedFormFavClient(live, fetch=fetch, now=lambda: NOW)
+    with pytest.raises(FormFavError, match="no immutable pre-off snapshot"):
+        c.track_bias(
+            venue="kempton", country="gb", distance="1600", window=90,
+            _provider_race_key="formfav:gb:2026-10-14:kempton:r1",
+            _off_time_utc=NOW.isoformat(),
+        )
+    assert live.calls == []
+
+
+def test_enrichment_passes_exact_race_identity_and_off_time_to_track_bias_cache() -> None:
+    from src.velo.formfav_enrichment import enrich_existing_racecards
+
+    class CacheAwareClient:
+        def __init__(self):
+            self.track_bias_kwargs = None
+
+        def meetings(self, date, timezone):
+            return {"meetings": [{
+                "country": "gb", "track": "Kempton Park", "slug": "kempton-park",
+                "races": [{"raceNumber": 1, "startTime": "2026-10-14T21:00:00Z"}],
+            }]}
+
+        def race_form(self, **kwargs):
+            return {"track": "Kempton Park", "distance": "1600m", "startTime": "2026-10-14T21:00:00Z",
+                    "runners": [{"number": 1, "name": "Horse One"}]}
+
+        def track_bias(self, **kwargs):
+            self.track_bias_kwargs = kwargs
+            return {"biasStrength": "mild", "barrierStats": [{"barrierNumber": 1, "totalStarts": 40}]}
+
+    client = CacheAwareClient()
+    enriched, report = enrich_existing_racecards(
+        date_str="2026-10-14",
+        races=[{"race_id": "r1", "course": "Kempton", "off_time": "9.00", "country": "GB",
+                "runners": [{"horse": "Horse One", "start_number": 1, "draw": 1}]}],
+        countries={"gb"}, include_prices=False, include_track_bias=True, client=client,
+    )
+    assert report["track_bias_calls_ok"] == 1
+    assert client.track_bias_kwargs["_provider_race_key"] == "formfav:gb:2026-10-14:kempton_park:r1"
+    assert client.track_bias_kwargs["_off_time_utc"] == "2026-10-14T21:00:00Z"
+    assert enriched[0]["_formfav"]["trackBias"]["biasStrength"] == "mild"
 
 
 def test_build_client_respects_switch_and_missing_env(monkeypatch) -> None:

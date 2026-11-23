@@ -7,8 +7,9 @@ API again for the same data; with one shared, rate-limited key it hit HTTP 429
 on /meetings and failed closed with zero enrichment (2026-10-13 and 10-14).
 
 This shim has the same read interface as ``FormFavClient`` for the calls the
-enrichment uses. Cache first, live API only on a miss or stale row. Prices and
-track bias are not cached and go to the live client when one is available.
+enrichment uses. Cache first, live API only on a miss or stale row. Prices are
+cached. Track bias is read only from the worker's append-only, pre-off
+snapshots when a caller supplies an exact race identity and off time.
 Read-only: it never writes to Supabase.
 """
 from __future__ import annotations
@@ -274,7 +275,49 @@ class CachedFormFavClient:
         )
 
     def track_bias(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
+        """Return an immutable track-bias snapshot only when it predates off.
+
+        The enrichment lane supplies the private ``_provider_race_key`` and
+        ``_off_time_utc`` keys. Their presence makes this a strict as-of read:
+        missing or post-off evidence is unavailable, never a permission to call
+        the live provider after the decision cutoff. Legacy callers without an
+        identity retain the old live-fallback behaviour.
+        """
+        provider_race_key = kwargs.pop("_provider_race_key", None)
+        off_time_utc = kwargs.pop("_off_time_utc", None)
+        if provider_race_key is not None or off_time_utc is not None:
+            if not provider_race_key:
+                raise FormFavError("track-bias snapshot requires provider race identity")
+            off_time = _parse(off_time_utc)
+            if off_time is None:
+                raise FormFavError("track-bias snapshot requires a parseable off time")
+            enc = urllib.parse.quote(str(provider_race_key), safe="")
+            rows = self._fetch(
+                "formfav_track_bias?"
+                f"provider_race_key=eq.{enc}&select=payload,captured_at"
+                "&order=captured_at.desc&limit=100"
+            )
+            for row in rows:
+                captured_at = _parse(row.get("captured_at"))
+                payload = row.get("payload")
+                if captured_at is None or captured_at >= off_time or not isinstance(payload, dict):
+                    continue
+                self.stats["cache_hits"] += 1
+                return {
+                    **payload,
+                    "_provenance": {
+                        "source_table": "formfav_track_bias",
+                        "provider_race_key": str(provider_race_key),
+                        "captured_at": captured_at.isoformat(),
+                        "off_time_utc": off_time.isoformat(),
+                        "source_is_immutable": True,
+                        "evaluation_eligible": True,
+                    },
+                }
+            self.stats["misses"] += 1
+            raise FormFavError("track-bias cache miss: no immutable pre-off snapshot")
         if self.live is None:
+            self.stats["misses"] += 1
             raise FormFavError("track bias is not cached and no live client is configured")
         self.stats["live_fallbacks"] += 1
         return self.live.track_bias(*args, **kwargs)

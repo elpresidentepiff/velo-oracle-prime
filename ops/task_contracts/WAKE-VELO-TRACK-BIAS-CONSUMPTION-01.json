@@ -1,0 +1,11 @@
+{
+  "task_id": "WAKE-VELO-TRACK-BIAS-CONSUMPTION-01",
+  "title": "Consume only immutable pre-off FormFav track-bias snapshots in the shadow enrichment lane",
+  "classification": "AUTHORIZED_SHADOW_EVIDENCE_INTEGRATION",
+  "allowed_paths": ["ops/task_contracts/WAKE-VELO-TRACK-BIAS-CONSUMPTION-01.json", "src/velo/formfav_cache_client.py", "src/velo/formfav_enrichment.py", "tests/test_formfav_cache_client.py", "tests/test_formfav_shadow_integration.py"],
+  "forbidden_paths": [".env", "src/intelligence/velo_prime_ensemble.py", "app/services/velo_prime_service.py", "models/"],
+  "allowed_actions": ["read_immutable_preoff_factual_evidence", "persist_shadow_only_artifact", "run_tests", "audit_provenance"],
+  "forbidden_actions": ["provider_prediction_consumption", "production_model_change", "model_weight_change", "gate_bypass", "live_betting", "telegram_send", "model_promotion"],
+  "forbidden_keywords": ["provider_predictions_consumed\": true", "production_influence\": true"],
+  "classification_required": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_PROVIDER_PREDICTION_CONSUMPTION", "NO_MODEL_WEIGHT_CHANGE", "NO_MODEL_PROMOTION", "PAPER_SIM_ONLY"]
+}
