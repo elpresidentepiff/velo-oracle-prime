@@ -350,6 +350,12 @@ def main() -> None:
     print(f"Promotion-eligible events: {audit['promotion_eligible_count']} (must be 0)")
 
     if execute:
+        unmapped = audit.get("unmapped_learning_classes", {})
+        if unmapped:
+            raise SystemExit(
+                f"BLOCKED: {sum(unmapped.values())} rows would write as UNCLASSIFIED. "
+                f"Add to EVENT_TYPE_MAP first: {sorted(str(k) for k in unmapped)}"
+            )
         written, error, collapsed = _persist_events(events)
         audit["duplicate_conflict_keys_collapsed"] = collapsed
         audit["rows_written"] = written
@@ -359,6 +365,8 @@ def main() -> None:
         else:
             print(f"WROTE {written} rows to public.canonical_learning_events")
     else:
+        if audit.get("unmapped_learning_classes"):
+            print(f"WARNING (dry-run): these learning_class values are not in EVENT_TYPE_MAP and would block --execute: {list(audit['unmapped_learning_classes'])}")
         print("DRY RUN — no Supabase write performed. Pass --execute to write.")
 
     audit_path.write_text(json.dumps(audit, indent=2), encoding="utf-8")
