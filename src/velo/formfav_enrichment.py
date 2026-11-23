@@ -21,6 +21,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from src.velo.formfav_client import FormFavClient, FormFavError, best_live_prices
+from src.velo.formfav_cache_client import race_key as formfav_provider_race_key
 
 
 def _norm(value: Any) -> str:
@@ -363,6 +364,10 @@ def enrich_existing_racecards(
                             country=country,
                             distance=distance_m,
                             window=90,
+                            _provider_race_key=formfav_provider_race_key(
+                                date_str, country, slug, int(race_no)
+                            ),
+                            _off_time_utc=form.get("startTime") or mrace.get("startTime"),
                         )
                         report["track_bias_calls_ok"] += 1
                         _rows = (track_bias_cache[bias_key] or {}).get("barrierStats") or []
