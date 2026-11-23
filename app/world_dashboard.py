@@ -128,7 +128,7 @@ def model_performance_summary(rows: list[dict[str, Any]], requested_days: int) -
             value["first_date"] = min(value["first_date"], date) if value["first_date"] else date
             value["last_date"] = max(value["last_date"], date) if value["last_date"] else date
         value["top_picks"] += 1
-        settled = row.get("result_position") not in (None, "")
+        settled = str(row.get("settlement_status") or "").upper() == "SETTLED"
         if settled:
             value["settled_top_picks"] += 1
             if row.get("win") is True or str(row.get("win")).lower() == "true":
@@ -169,7 +169,7 @@ def model_performance_summary(rows: list[dict[str, Any]], requested_days: int) -
         "requested_days": requested_days,
         "source_table": "public.canonical_model_scorecards",
         "scope": "UK/IRE canonical scorecard only; World is separately shadow-scoped.",
-        "result_denominator": "rank=1 rows with a recorded result_position",
+        "result_denominator": "rank=1 rows with settlement_status=SETTLED (VOID/UNSETTLED excluded)",
         "coverage": {
             "captured_scoring_dates": len(dates),
             "first_date": min(dates) if dates else None,
