@@ -313,12 +313,14 @@ LIVE_MISSING_HISTORY_VALUE = 0.0
 
 def build_v17_feature_vector(runner: dict, race: dict) -> dict[str, float]:
     """Build feature dictionary from raw runner+race dicts."""
-    sp_dec = _resolve_decimal_odds(runner)
+    sp_dec_real = _resolve_decimal_odds_or_none(runner)
+    sp_dec = sp_dec_real if sp_dec_real is not None else 10.0
     dist_f = _parse_dist(race.get("dist") or race.get("distance_f") or race.get("distance"))
     going_code, is_aw = _parse_going(race.get("going"))
 
     feats = {
         "sp_dec": sp_dec,
+        "sp_dec_placeholder": sp_dec_real is None,
         "log_sp": math.log(max(sp_dec, 1.01)),
         "implied_prob": 1.0 / max(sp_dec, 1.01),
         "dist_f": dist_f,
