@@ -101,8 +101,11 @@ class NightlyEODRunner:
         
         prob = float(top_pick.get("velo_prime_prob") or 0)
         fav_won = result.get("favourite_won", False)
-        
-        if prob > 0.55: return "CALIBRATION_ERROR"  # raised from 0.35 — VP>0.35 caught normal picks; VP>0.55 = genuinely overconfident
+
+        if prob > 0.55:
+            if top_pick.get("sp_dec_placeholder") or top_pick.get("sp_dec") is None:
+                return "PRICE_UNAVAILABLE"
+            return "CALIBRATION_ERROR"  # raised from 0.35 — VP>0.35 caught normal picks; VP>0.55 = genuinely overconfident
         if fav_won and prob < 0.2: return "MARKET_LIED"
         return "WRONG_HORSE"
 
