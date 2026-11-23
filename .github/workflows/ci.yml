@@ -129,3 +129,13 @@ jobs:
           assert result.blocked is True
           print("RACING_API_BLOCKED OK")
           PY
+
+      - name: No direct Racing API client imports
+        run: |
+          if grep -rn "TheRacingAPIClient\|RacingAPIClient" scripts/ app/ workers/ --include="*.py" \
+             | grep -v "app/data/racing_api_client.py" \
+             | grep -v "test_"; then
+            echo "FAIL: direct Racing API client import found outside its definition file — use source_truth_enforcer"
+            exit 1
+          fi
+          echo "Racing API client import scan: OK"
