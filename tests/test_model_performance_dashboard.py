@@ -36,3 +36,19 @@ def test_void_and_non_runner_rows_excluded_from_denominator():
     assert prime["top_picks"] == 2
     assert prime["settled_top_picks"] == 1
     assert prime["win_sr_pct"] == 100.0
+
+
+def test_pre_governance_rows_without_settlement_status_still_counted():
+    """Rows written before settlement_status existed (null) fall back to result_position, excluding NR."""
+    result = model_performance_summary(
+        [
+            {"model_name": "MAIN_VELO_PRIME", "lane_name": "main", "run_date": "2026-06-01", "result_position": 1, "settlement_status": None, "win": True, "frame": True},
+            {"model_name": "MAIN_VELO_PRIME", "lane_name": "main", "run_date": "2026-06-01", "result_position": "NR", "settlement_status": None, "win": False, "frame": False},
+            {"model_name": "MAIN_VELO_PRIME", "lane_name": "main", "run_date": "2026-06-01", "result_position": None, "settlement_status": None, "win": False, "frame": False},
+        ],
+        365,
+    )
+    (prime,) = result["models"]
+    assert prime["top_picks"] == 3
+    assert prime["settled_top_picks"] == 1  # only result_position=1; NR and None excluded
+    assert prime["win_sr_pct"] == 100.0
