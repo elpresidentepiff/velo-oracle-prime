@@ -1,0 +1,11 @@
+{
+  "task_id": "HANDICAP-RELEASE-SHADOW-01",
+  "title": "Evidence-first handicap release shadow evaluator",
+  "classification": "SHADOW_RESEARCH_ONLY",
+  "allowed_paths": ["ops/task_contracts/HANDICAP-RELEASE-SHADOW-01.json", "src/velo/handicap_release_shadow.py", "tests/test_handicap_release_shadow.py"],
+  "forbidden_paths": [".env", "models/", "src/intelligence/velo_prime_ensemble.py", "app/agents/betfair_execution_agent.py", "data/sentient_state.json"],
+  "allowed_actions": ["offline_factual_evidence_evaluation", "paper_shadow_output", "run_tests"],
+  "forbidden_actions": ["provider_prediction_consumption", "model_weight_change", "live_betting", "telegram_send", "model_promotion", "gate_bypass", "supabase_write"],
+  "forbidden_keywords": ["production_influence\": true", "stake_authorised\": true"],
+  "classification_required": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_PROVIDER_PREDICTION_CONSUMPTION", "NO_MODEL_WEIGHT_CHANGE", "NO_MODEL_PROMOTION", "PAPER_SIM_ONLY", "NO_SUPABASE_WRITES"]
+}
