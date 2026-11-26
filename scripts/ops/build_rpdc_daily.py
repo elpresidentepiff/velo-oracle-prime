@@ -2,7 +2,12 @@
 build_rpdc_daily.py
 --------------------
 Computes RPDC release candidate tags for each horse in today's racecards
-and writes to runner_release_candidates.
+and writes a single source of truth to both:
+
+* ``runner_release_candidates`` — the full per-runner RPDC context consumed
+  by the pre-race scorer; and
+* ``today_rpdc_tags`` — one immutable, queryable row per fired tag, used by
+  the EOD tag-versus-matched-control research layer.
 
 Run BEFORE run_prime_today.py so RPDC data is available at scoring time.
 Depends on racing_horse_runs being current (run ingest_results_to_horse_runs.py
@@ -58,6 +63,58 @@ TAG_WEIGHTS = {
 }
 
 CASH_WINDOW_THRESHOLD = 3.0   # release_score >= this → cash_window=True
+
+
+def build_tag_rows(candidates: list[dict]) -> list[dict]:
+    """Project persisted candidate facts into one row per fired RPDC tag.
+
+    ``today_rpdc_tags`` is not a second tag engine.  Recomputing tags here
+    would risk two different answers for the same runner and race.  This
+    projection therefore uses only the already-computed candidate fields and
+    records enough factual context to audit the tag later.  ``tag_strength``
+    is a normalised *configured RPDC tag weight*, not a probability or a
+    provider prediction.
+    """
+    rows: list[dict] = []
+    for candidate in candidates:
+        run_date = str(candidate.get("run_date") or "").strip()
+        race_id = str(candidate.get("race_id") or "").strip()
+        horse_id = str(candidate.get("horse_id") or "").strip()
+        if not (run_date and race_id and horse_id):
+            raise ValueError("RPDC_TAG_IDENTITY_MISSING: candidate requires run_date, race_id and horse_id")
+
+        evidence = json.dumps(
+            {
+                "source": "runner_release_candidates",
+                "release_score": candidate.get("rpdc_release_score"),
+                "suppression_score": candidate.get("rpdc_suppression_score"),
+                "cash_window": bool(candidate.get("rpdc_cash_window_flag")),
+                "trap": bool(candidate.get("rpdc_trap_flag")),
+                "or_delta_to_win": candidate.get("or_delta_to_win"),
+                "days_since_run": candidate.get("days_since_run"),
+                "campaign_run_no": candidate.get("campaign_run_no"),
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        for tag in candidate.get("rpdc_tags") or []:
+            tag_name = str(tag or "").strip()
+            if not tag_name:
+                continue
+            weight = float(TAG_WEIGHTS.get(tag_name, 0.5))
+            rows.append(
+                {
+                    "run_date": run_date,
+                    "race_id": race_id,
+                    "horse_id": horse_id,
+                    "horse": candidate.get("horse") or None,
+                    "tag": tag_name,
+                    "tag_value": str(weight),
+                    "tag_strength": round(min(1.0, abs(weight) / 3.0), 2),
+                    "evidence": evidence,
+                }
+            )
+    return rows
 
 
 def _to_float(v) -> float | None:
@@ -286,6 +343,32 @@ def _sb_upsert(path: str, rows: list[dict], conflict: str) -> int:
         return 0
     except Exception as e:
         log.warning("sb_upsert failed (%d rows): %s", len(rows), e)
+        return 0
+
+
+def _sb_insert(path: str, rows: list[dict]) -> int:
+    """Insert rows without inventing an upsert key for a legacy table.
+
+    ``today_rpdc_tags`` has no uniqueness constraint in the deployed schema.
+    The caller replaces one date explicitly, then verifies the exact row
+    count.  That is safer than claiming an ``on_conflict`` contract which the
+    database does not actually enforce.
+    """
+    if not rows or not SB_URL or not SB_KEY:
+        return 0
+    url = f"{SB_URL}/rest/v1{path}"
+    body = json.dumps(rows).encode()
+    headers = {**SB_HEADERS, "Prefer": "return=minimal"}
+    req = urllib.request.Request(url, data=body, headers=headers)
+    try:
+        urllib.request.urlopen(req, timeout=30)
+        return len(rows)
+    except urllib.error.HTTPError as e:
+        err_body = e.read().decode(errors="replace")[:500]
+        log.warning("sb_insert failed (%d rows): HTTP %s — %s", len(rows), e.code, err_body)
+        return 0
+    except Exception as e:
+        log.warning("sb_insert failed (%d rows): %s", len(rows), e)
         return 0
 
 
@@ -826,6 +909,36 @@ def build_rpdc_for_date(date_str: str, injection_path: str | Path | None = None)
             sorted(missing_race_ids),
         )
         return False
+
+    # ``today_rpdc_tags`` is a read model of the candidates above, not a
+    # parallel tag calculation.  Replacing it each day makes the EOD
+    # tag-versus-matched-control evaluation possible while ensuring a repeat
+    # pre-race run cannot leave stale tag rows behind.
+    tag_rows = build_tag_rows(candidates)
+    if not _sb_delete(f"/today_rpdc_tags?run_date=eq.{date_str}"):
+        log.error("RPDC_TAG_REPLACE_FAILED: could not clear tag rows for %s", date_str)
+        return False
+    tag_written = 0
+    for i in range(0, len(tag_rows), 100):
+        tag_written += _sb_insert("/today_rpdc_tags", tag_rows[i:i + 100])
+    if tag_written != len(tag_rows):
+        log.error(
+            "RPDC_TAG_WRITE_INCOMPLETE: wrote %d/%d tag rows; downstream tag learning blocked",
+            tag_written,
+            len(tag_rows),
+        )
+        return False
+    persisted_tags = _sb_get_all(
+        f"/today_rpdc_tags?run_date=eq.{date_str}&select=race_id,horse_id,tag"
+    )
+    if len(persisted_tags) != len(tag_rows):
+        log.error(
+            "RPDC_TAG_COUNT_MISMATCH: persisted %d/%d tag rows; downstream tag learning blocked",
+            len(persisted_tags),
+            len(tag_rows),
+        )
+        return False
+    print(f"  today_rpdc_tags: {tag_written} rows written")
 
     # Summary of tags fired
     all_tags: list[str] = []
