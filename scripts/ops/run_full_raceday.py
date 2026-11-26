@@ -753,6 +753,12 @@ def main() -> int:
     run("Champion Intent: Features",
         [PY, "scripts/ops/build_current_card_intent_features.py",
          "--standard-cache", str(standard_cache), "--date", date, "--execute"], critical=False, results=results)
+    # Evidence-first handicap review: a non-critical, shadow-only output.  It
+    # never contributes a probability or modifies Prime/learning; thin history
+    # is emitted as INSUFFICIENT_EVIDENCE rather than guessed.
+    run("Handicap Release Shadow: Evidence Cards",
+        [PY, "scripts/ops/run_handicap_release_shadow.py",
+         "--standard-cache", str(standard_cache), "--date", date, "--execute"], critical=False, results=results)
     if not run("Champion Intent: Shadow Scorecard",
         [PY, "scripts/ops/build_intent_shadow_scorecard.py", "--date", date, "--execute"], critical=True, results=results):
         return 1
