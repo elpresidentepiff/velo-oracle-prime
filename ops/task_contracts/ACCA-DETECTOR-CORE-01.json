@@ -1,0 +1,11 @@
+{
+  "task_id": "ACCA-DETECTOR-CORE-01",
+  "title": "Paper-only time-safe accumulator candidate core",
+  "classification": "SHADOW_RESEARCH_ONLY",
+  "allowed_paths": ["ops/task_contracts/ACCA-DETECTOR-CORE-01.json", "src/velo/acca_detector.py", "tests/test_acca_detector.py"],
+  "forbidden_paths": [".env", "models/", "src/intelligence/velo_prime_ensemble.py", "app/agents/betfair_execution_agent.py"],
+  "allowed_actions": ["offline_candidate_validation", "paper_combination_enumeration", "run_tests"],
+  "forbidden_actions": ["provider_prediction_consumption", "model_weight_change", "live_betting", "telegram_send", "model_promotion", "gate_bypass"],
+  "forbidden_keywords": ["production_influence\": true", "stake_authorised\": true"],
+  "classification_required": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_PROVIDER_PREDICTION_CONSUMPTION", "NO_MODEL_WEIGHT_CHANGE", "NO_MODEL_PROMOTION", "PAPER_SIM_ONLY"]
+}

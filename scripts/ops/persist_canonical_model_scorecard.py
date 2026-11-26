@@ -112,7 +112,9 @@ def _row_to_payload(row: dict, date: str, commit_sha: str) -> dict:
         "off_time": row.get("off_time") or None,
         "model_name": row["model_name"],
         "lane_name": row.get("lane_name") or None,
-        "source_path": row["source_path"],
+        # This field participates in the conflict key: Windows and Linux must
+        # generate the same key or a manual EOD inserts duplicate scorecards.
+        "source_path": row["source_path"].replace("\\", "/"),
         "source_field": row.get("source_field") or None,
         "sort_direction": row.get("sort_direction") or None,
         "rank": _to_int(row.get("rank")),

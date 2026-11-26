@@ -1,0 +1,34 @@
+{
+  "protocol_version": "RICH_CONTEXT_FACTUAL_V3",
+  "status": "FORWARD_COLLECTION_ONLY",
+  "model_version": null,
+  "production_influence": false,
+  "paper_sim_only": true,
+  "provider_predictions_consumed": false,
+  "jurisdictions": ["uk", "ire"],
+  "feature_schema_version": "RICH_CONTEXT_FACTUAL_V3",
+  "required_families": [
+    "prime_baseline_snapshot",
+    "canonical_history",
+    "market_facts",
+    "formfav_raw_facts",
+    "formfav_pace_context",
+    "formfav_class_context",
+    "formfav_track_bias_context",
+    "rp_spotlight_facts",
+    "connections_passports"
+  ],
+  "pre_off_evidence_required": true,
+  "exact_canonical_identity_required": true,
+  "provider_prediction_features_forbidden": true,
+  "historical_reconstruction_as_prospective_evidence_forbidden": true,
+  "fit_authorisation": {
+    "minimum_forward_races": 500,
+    "minimum_identity_coverage": 0.8,
+    "same_race_universe_required": true,
+    "chronological_train_validation_holdout_required": true,
+    "calibration_must_not_degrade": true,
+    "bootstrap_confidence_required": true,
+    "human_tribunal_required": true
+  }
+}

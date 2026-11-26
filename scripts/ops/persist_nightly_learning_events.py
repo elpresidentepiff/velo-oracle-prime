@@ -17,7 +17,7 @@ Mapping (the table's existing conventions):
   prediction         <- prediction_snapshot
   result             <- result_snapshot + prediction_result + loss_type + confidence_error + market_snapshot
   sidecars           <- learning_mode / permission / hfs flags / sources / source_file
-  consumed_shadow    <- the runner's status file for that date reports engine updates applied
+  consumed_shadow    <- event key explicitly present in the shadow adapter's applied_keys audit
 
 Records without an event_type or event_date are partial writes and are skipped.
 A date that already has rows in velo_learning_events is skipped unless --force,
@@ -93,13 +93,16 @@ def _target_name(raw: str | None) -> str:
     return base.rsplit(".", 1)[0] or "unknown_target"
 
 
-def _applied(date_tag: str) -> bool:
-    p = ROOT / "data" / f"nightly_eod_learning_status_{date_tag}.json"
+def _applied_keys(date_tag: str) -> tuple[set[str], str]:
+    p = ROOT / "data" / f"playbook_g_nightly_audit_{date_tag}.json"
     try:
         s = json.loads(p.read_text())
-        return int(s.get("engine_updates_applied_first_run") or 0) > 0
-    except Exception:
-        return False
+        keys = s.get("applied_keys")
+        if not isinstance(keys, list):
+            return set(), "UNPROVEN_LEGACY_AUDIT"
+        return {key for key in keys if isinstance(key, str) and key}, "PER_EVENT_AUDIT"
+    except (OSError, ValueError, TypeError):
+        return set(), "UNPROVEN_MISSING_OR_INVALID_AUDIT"
 
 
 def build_rows(date: str) -> tuple[list[dict], dict]:
@@ -109,7 +112,8 @@ def build_rows(date: str) -> tuple[list[dict], dict]:
     if not path.exists():
         audit["status"] = "NO_SOURCE_FILE"
         return [], audit
-    applied = _applied(tag)
+    applied_keys, evidence_status = _applied_keys(tag)
+    audit["applied_key_evidence"] = evidence_status
     rows: dict[str, dict] = {}
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip():
@@ -148,10 +152,11 @@ def build_rows(date: str) -> tuple[list[dict], dict]:
                 "source_result": e.get("source_result"),
                 "source_file": audit["source"],
                 "persisted_by": "persist_nightly_learning_events.py",
+                "shadow_consumption_evidence": evidence_status,
             },
             "learning_allowed": bool(e.get("learning_allowed")),
             "missing_hfs_context": not bool(e.get("hfs_features_used")),
-            "consumed_shadow": applied,
+            "consumed_shadow": e.get("learning_allowed") is True and event_id in applied_keys,
             "consumed_live": False,
         }
     audit["rows"] = len(rows)

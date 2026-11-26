@@ -92,6 +92,15 @@ def test_row_to_payload_preserves_little_lady_rock_facts():
     assert payload["learning_class"] == "MODEL_HIT_POLICY_BLOCKED"
 
 
+def test_source_path_has_same_conflict_key_on_windows_and_linux():
+    linux = mod._row_to_payload(_base_row(source_path="data/reports/a.csv"), "2026-07-05", "x")
+    windows = mod._row_to_payload(_base_row(source_path=r"data\reports\a.csv"), "2026-07-05", "x")
+    assert windows["source_path"] == linux["source_path"]
+    assert tuple(windows[c] for c in mod.conflict_key_columns()) == tuple(
+        linux[c] for c in mod.conflict_key_columns()
+    )
+
+
 def test_sb_upsert_only_targets_canonical_model_scorecards_table():
     assert mod.TABLE_PATH == "/canonical_model_scorecards"
     # Guard against accidental table-name drift toward existing VELO tables.

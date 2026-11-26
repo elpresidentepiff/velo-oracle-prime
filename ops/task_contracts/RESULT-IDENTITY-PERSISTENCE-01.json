@@ -1,0 +1,11 @@
+{
+  "task_id": "RESULT-IDENTITY-PERSISTENCE-01",
+  "title": "Keep absent result subjects unresolved and canonicalize scorecard source paths",
+  "classification": "RESULT_TRUTH_HARDENING",
+  "allowed_paths": ["ops/task_contracts/RESULT-IDENTITY-PERSISTENCE-01.json", "scripts/ops/run_results_sigma.py", "scripts/ops/persist_canonical_model_scorecard.py", "scripts/ops/nightly_eod_learning_runner.py", "scripts/ops/persist_nightly_learning_events.py", "scripts/playbook_g_shadow_adapter.py", "tests/test_sigma_reconciliation.py", "tests/test_persist_canonical_model_scorecard.py", "tests/test_nightly_learning_identity.py", "tests/test_mds_heavy_shadow_and_learning_persist.py"],
+  "forbidden_paths": [".env", "models/", "src/intelligence/velo_prime_ensemble.py"],
+  "allowed_actions": ["repair_identity_classification", "normalize_source_path", "run_tests"],
+  "forbidden_actions": ["rewrite_existing_records", "bypass_gates", "model_weight_change", "live_betting", "telegram_send", "model_promotion"],
+  "forbidden_keywords": [],
+  "classification_required": ["NO_LIVE_SCORING_CHANGE", "NO_SUPABASE_WRITES", "NO_MODEL_PROMOTION", "PAPER_SIM_ONLY"]
+}

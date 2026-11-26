@@ -1,46 +1,44 @@
 {
-  "date": "2026-07-26",
-  "generated_at": "2026-07-27T21:45:54.907274+00:00",
+  "date": "2026-11-22",
+  "generated_at": "2026-11-22T22:11:28.819711+00:00",
   "source_truth": "RP_MERGED_CLEAN",
   "run_ids_seen": [
-    "87b99355"
+    "98747d13"
   ],
   "flatline_count": 0,
   "fully_uniform_count": 0,
   "fully_uniform_races": [],
   "majority_tied_count": 0,
   "identity_failure_count": 0,
-  "runners_snapshotted": 209,
+  "runners_snapshotted": 342,
   "council_verdict": "WATCH_ONLY",
-  "learning_gate_status": "BLOCKED",
+  "learning_gate_status": "OPEN",
   "promotion_gate_status": "BLOCKED",
   "gate_reasons": [
     "GATE_COUNCIL_WATCH_ONLY",
-    "GATE_PIPELINE_TRUTH_MANUAL_RECOVERY_ONLY"
+    "LEARNING_ALLOWED_DEGRADED_PERFORMANCE"
   ],
   "sigma_artifact": {
     "status": "PRESENT",
-    "path": "data/sigma_results/sigma_results_2026_07_26.json",
-    "sr": 0.1176,
-    "wins": 2,
-    "evaluated_count": 17,
+    "path": "data\\sigma_results\\sigma_results_2026_11_22.json",
+    "sr": 0.1562,
+    "wins": 5,
+    "evaluated_count": 32,
     "sigma_status": "PASS",
     "completeness_gate": null,
     "learning_blocked": null,
-    "expected_predictions": 17,
+    "expected_predictions": 32,
     "result_races_available": null,
     "matched": null,
     "coverage_ratio": null,
     "no_result_count": 0
   },
   "run_truth": {
-    "status": "MANUAL_RECOVERY_ONLY",
-    "path": "data/velo_daily_run_truth_2026_07_26.json",
-    "alert_required": true,
-    "issues": [
-      "MANUAL_RUN_ONLY"
-    ],
-    "cron_truth_status": "FAIL_OR_UNPROVEN",
+    "status": "AUTOMATED_RUN_OK",
+    "path": "data\\velo_daily_run_truth_2026_11_22.json",
+    "alert_required": false,
+    "issues": [],
+    "cron_truth_status": "PASS",
     "deploy_truth_status": "UNKNOWN_UNLESS_RAILWAY_COMMIT_EXPOSED",
     "pipeline_run_count": 1
   },
@@ -54,31 +52,20 @@
   "decision_policy_gate_status": "NEEDS_MORE_DAYS",
   "decision_policy_gate_top_picks": 87,
   "learning_admission": {
-    "eligibility_status": "OUTCOME_ONLY_EOD_REPLAY_PASS",
-    "eligible_rows": 17,
+    "eligibility_status": "NOT_RUN",
+    "eligible_rows": 0,
     "excluded_rows": 0,
     "consumed_shadow_before": 0,
     "consumed_live_before": 0,
     "live_state_hash": "UNKNOWN",
-    "build_events_result": {
-      "phase": "OUTCOME_ONLY_EOD_REPLAY",
-      "events_built": 17,
-      "events_written": 17,
-      "status": "PASS",
-      "sentient_state_touched": false,
-      "shadow_state_touched": true,
-      "duplicates_skipped_second_run": 17,
-      "consumed_live": false
-    },
+    "build_events_result": {},
     "admission_packet": "PRESENT",
-    "recommendation": "OUTCOME_ONLY_EOD_REPLAY_COMPLETE"
+    "recommendation": "PENDING"
   },
   "race_shape_v1": {
     "race_shape_model_v1": "DESIGN_PENDING",
     "features_built": {
-      "status": "FEATURES_BUILT",
-      "date": "2026-05-22",
-      "race_count": 36
+      "status": "NOT_RUN"
     },
     "midprice_overlap": {
       "status": "OVERLAP_RUN",
@@ -199,5 +186,5 @@
     "promotion eligibility: BLOCKED if flatline_count > 0 OR identity_failure_count > 0 OR source_truth == RP_MERGED_CONTAMINATED",
     "shadow consume: BLOCKED if council_verdict not PASS_TO_LEARNING"
   ],
-  "next_safe_command": "Manual recovery learning is recorded; keep promotion blocked until an automated run proves pipeline truth."
+  "next_safe_command": "Promotion blocked \u2014 resolve identity failures before promotion discussion."
 }

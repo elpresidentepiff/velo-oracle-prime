@@ -1,43 +1,35 @@
 {
-  "total_records": 3775,
-  "retrieval_eligible_records": 3688,
+  "total_records": 5932,
+  "retrieval_eligible_records": 5845,
   "outcome_counts": {
-    "FRAME": 1078,
-    "MISS": 1805,
-    "WIN": 892
+    "FRAME": 1738,
+    "MISS": 2779,
+    "WIN": 1415
   },
   "regime_confidence_counts": {
-    "HIGH": 1505,
-    "LOW_REGIME_INFERRED": 2270
+    "HIGH": 1032,
+    "LOW_REGIME_INFERRED": 4900
   },
   "retrieval_blocker_counts": {
-    "NONE": 3688,
+    "NONE": 5845,
     "OUTCOME_OR_DATE_MISSING": 87
   },
-  "regime_count": 40,
+  "regime_count": 36,
   "top_regimes": [
     [
       "e895f31903a5",
-      976
-    ],
-    [
-      "cfea4e2dd1c9",
-      554
+      4299
     ],
     [
       "87024d85a8e7",
-      522
+      383
     ],
     [
-      "01b69fb1ac6d",
-      189
+      "3067c2690ce7",
+      111
     ],
     [
-      "e5623e386fd8",
-      132
-    ],
-    [
-      "99eaf1ff8596",
+      "d059f1c5ad26",
       109
     ],
     [
@@ -45,7 +37,7 @@
       82
     ],
     [
-      "780e9f708338",
+      "e25f00527870",
       65
     ],
     [
@@ -53,24 +45,32 @@
       59
     ],
     [
-      "eb59aea1ef60",
-      56
+      "64f98f38b10a",
+      54
+    ],
+    [
+      "4aceca7db0d7",
+      54
+    ],
+    [
+      "6f8cb4bb4b3e",
+      52
     ]
   ],
   "date_min": "2026-01-09",
-  "date_max": "2026-07-27",
-  "date_count": 120,
+  "date_max": "2026-11-22",
+  "date_count": 182,
   "rpr_violations": 0,
   "forbidden_model_field_violations": 0,
   "classification": "SIGMA_RETRIEVAL_CORPUS_READY_SHADOW_ONLY",
-  "generated_at": "2026-07-27T21:45:52.589012+00:00",
+  "generated_at": "2026-11-22T22:11:24.200551+00:00",
   "schema_version": "sigma_retrieval_corpus_v1",
-  "input_sigma_dump": "data/sigma_audits_dump.json",
-  "output_jsonl": "data/sigma_memory/sigma_retrieval_corpus_v1.jsonl",
+  "input_sigma_dump": "data\\sigma_audits_dump.json",
+  "output_jsonl": "data\\sigma_memory\\sigma_retrieval_corpus_v1.jsonl",
   "shadow_only": true,
   "live_velo_impact": false,
-  "sp_enrichment_applied": 2039,
-  "sp_enrichment_source": "data/velo_innovation_protocol_1k_deduped.csv",
-  "required_through_date": "2026-07-26",
+  "sp_enrichment_applied": 0,
+  "sp_enrichment_source": "data\\velo_innovation_protocol_1k_deduped.csv",
+  "required_through_date": "2026-11-22",
   "freshness_gate_passed": true
 }

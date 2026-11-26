@@ -81,6 +81,8 @@ def test_learning_event_mapping(tmp_path):
         "\n".join(json.dumps(e) for e in events), encoding="utf-8")
     (tmp_path / "data" / "nightly_eod_learning_status_2026_06_10.json").write_text(
         json.dumps({"engine_updates_applied_first_run": 37}), encoding="utf-8")
+    (tmp_path / "data" / "playbook_g_nightly_audit_2026_06_10.json").write_text(
+        json.dumps({"applied_keys": ["919917:2026-06-10"]}), encoding="utf-8")
     with patch.object(nle, "ROOT", tmp_path):
         rows, audit = nle.build_rows("2026-06-10")
     assert audit["skipped_partial"] == 1 and len(rows) == 1
@@ -90,3 +92,22 @@ def test_learning_event_mapping(tmp_path):
     assert r["horse_id"] == "123" and r["missing_hfs_context"] is True
     assert r["consumed_shadow"] is True and r["consumed_live"] is False
     assert r["result"]["prediction_result"] == "WIN"
+
+
+def test_consumption_requires_per_event_applied_evidence(tmp_path):
+    (tmp_path / "data").mkdir()
+    def event(rid, allowed):
+        return {"event_type": "result_confirmed", "event_date": "2026-06-10", "race_id": rid,
+                "idempotency_key": rid, "sentient_state_target": "sentient_state_shadow.json",
+                "learning_allowed": allowed, "prediction_snapshot": {}}
+    (tmp_path / "data/nightly_eod_learning_events_2026_06_10.jsonl").write_text(
+        "\n".join(json.dumps(e) for e in [event("applied", True), event("failed", True), event("denied", False)]), encoding="utf-8")
+    audit_path = tmp_path / "data/playbook_g_nightly_audit_2026_06_10.json"
+    audit_path.write_text(json.dumps({"processed_keys": ["applied", "denied"], "applied_keys": ["applied", "denied"]}))
+    with patch.object(nle, "ROOT", tmp_path):
+        rows, _ = nle.build_rows("2026-06-10")
+    assert {r["event_id"]: r["consumed_shadow"] for r in rows} == {"applied": True, "failed": False, "denied": False}
+    audit_path.write_text(json.dumps({"processed_keys": ["applied", "denied"]}))
+    with patch.object(nle, "ROOT", tmp_path):
+        rows, _ = nle.build_rows("2026-06-10")
+    assert not any(r["consumed_shadow"] for r in rows)

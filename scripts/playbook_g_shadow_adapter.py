@@ -30,10 +30,12 @@ class PlaybookGShadowAdapter:
         
         # Load previous audit to recover processed keys for cross-run idempotency
         self.processed_keys = set()
+        self.applied_keys = set()
         if self.audit_path.exists():
             try:
                 prev_audit = json.loads(self.audit_path.read_text())
                 self.processed_keys = set(prev_audit.get("processed_keys", []))
+                self.applied_keys = set(prev_audit.get("applied_keys", []))
                 logger.info(f"Recovered {len(self.processed_keys)} processed keys from previous audit")
             except Exception:
                 logger.warning("Could not parse previous audit, starting fresh")
@@ -96,6 +98,12 @@ class PlaybookGShadowAdapter:
 
     def run(self):
         logger.info(f"Starting Shadow Adapter Audit: {self.events_path}")
+
+        # The inherited live adapter has its own initializer.  This ledger is
+        # descriptive only; never infer applied keys from old processed keys,
+        # which also contain denied events.
+        if not hasattr(self, "applied_keys"):
+            self.applied_keys = set()
         
         # Reset counters for this specific run
         self.audit.update({
@@ -158,6 +166,8 @@ class PlaybookGShadowAdapter:
                     self.audit["engine_updates_applied"] += 1
                     self.audit["shadow_state_touched"] = True
                     self.processed_keys.add(key)
+                    if isinstance(key, str) and key:
+                        self.applied_keys.add(key)
                 except Exception as e:
                     logger.error(f"Engine update failed for {event.get('race_id')}: {e}")
 
@@ -178,6 +188,7 @@ class PlaybookGShadowAdapter:
         # Check for live state pollution
         self.audit["live_state_touched"] = False 
         self.audit["processed_keys"] = list(self.processed_keys)
+        self.audit["applied_keys"] = sorted(self.applied_keys)
         
         # Save audit report
         self.audit_path.write_text(json.dumps(self.audit, indent=2))

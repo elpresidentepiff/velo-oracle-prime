@@ -2345,7 +2345,8 @@ async def rich_context(date: str = Query(default=None)):
         "&order=challenger_rank.asc,scored_at.desc&limit=2000"
     )
     packets = _sb_rest_rows(
-        f"rich_context_shadow_packets?race_date=eq.{d}&select=race_id,horse_id,family_coverage,created_at&limit=2000"
+        f"rich_context_shadow_packets?race_date=eq.{d}&select=race_id,horse_id,family_coverage,"
+        "eligible_for_future_fit,ineligibility_reasons,created_at&limit=2000"
     )
     # The active artifact declares which factual families its probabilities
     # actually consume.  If it cannot be read, report that uncertainty rather
@@ -2381,12 +2382,42 @@ async def rich_context(date: str = Query(default=None)):
     }
     scored_count = len(scored or [])
     challenger_status = "SHADOW_SCORED" if scored_count else "NO_SCORES_FOR_DATE"
+    eligible_for_future_fit = sum(
+        1 for packet in (packets or []) if packet.get("eligible_for_future_fit") is True
+    )
+    packet_count = len(packets or [])
+    from src.velo.rich_context_challenger_features_v3 import REQUIRED_FAMILIES as _V3_REQUIRED_FAMILIES
+
+    v3_complete_packets = sum(
+        1
+        for packet in (packets or [])
+        if isinstance(packet.get("family_coverage"), dict)
+        and all(packet["family_coverage"].get(family) is True for family in _V3_REQUIRED_FAMILIES)
+    )
     return {
         "date": d,
         "available": bool(picks or coverage or picks_now or scored or challenger_rows or packets),
         "rich_context_status": challenger_status,
         "rich_context_ranks_anything": bool(scored_count),
         "rich_context_scored_runners": scored_count,
+        "shadow_model_state": (
+            "FITTED_SHADOW_ONLY" if artifact_metadata else "MODEL_ARTIFACT_UNAVAILABLE"
+        ),
+        "packet_eligibility": {
+            "captured_runners": packet_count,
+            "eligible_for_future_fit": eligible_for_future_fit,
+            "excluded_from_future_fit": packet_count - eligible_for_future_fit,
+            "v3_full_context_complete": v3_complete_packets,
+            "v3_required_family_count": len(_V3_REQUIRED_FAMILIES),
+            "note": (
+                "Eligibility means the immutable packet is safe for a future, separately "
+                "validated fit. It does not mean the active challenger consumed every family."
+            ),
+            "v3_note": (
+                "V3 needs every declared factual family. Until enough complete, forward packets "
+                "exist, it remains collection-only and emits no enriched score."
+            ),
+        },
         "challenger_picks": challenger_picks,
         "family_coverage": family_coverage,
         "active_challenger_model": artifact_metadata.get("model_version"),

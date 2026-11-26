@@ -147,6 +147,21 @@ def test_terminal_outcomes_are_misses_not_non_runners():
     assert all(row["outcome"] == "MISS" for row in matches)
 
 
+def test_production_absent_subject_is_unresolved_not_an_invented_loss():
+    import ast
+    source = (ROOT / "scripts/ops/run_results_sigma.py").read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    branches = [n for n in ast.walk(tree) if isinstance(n, ast.If)
+                and isinstance(n.test, ast.UnaryOp) and isinstance(n.test.op, ast.Not)
+                and isinstance(n.test.operand, ast.Name) and n.test.operand.id == "horse_result"]
+    # The result-classification branch must send unresolved identities to the
+    # existing coverage gate, never to misses or the settled audit list.
+    branch = next(n for n in branches if "[UNRESOLVED]" in ast.get_source_segment(source, n))
+    code = ast.get_source_segment(source, branch)
+    assert "no_result.append(race_id)" in code
+    assert "misses.append" not in code and "all_matched.append" not in code
+
+
 def test_duplicate_alias_is_excluded_only_with_numeric_canonical_race():
     backup = {
         "rp_NBY_20260611_2.20": {"course": "NBY", "off_time": "2.20"},

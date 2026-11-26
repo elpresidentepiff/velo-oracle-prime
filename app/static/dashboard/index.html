@@ -4873,7 +4873,8 @@ async function loadRichContext() {
       _wdChip('FORMFAV FACTS', pc(ev.formfav_now_pct)),
       _wdChip('PACKET BATCHES', ev.packet_batches || 0),
       _wdChip('ENRICHED VELO SHADOW', data.rich_context_ranks_anything ? `SHADOW SCORED · ${data.rich_context_scored_runners || 0} RUNNERS` : 'NO SCORES FOR DATE', data.rich_context_ranks_anything ? '#ffa726' : '#888'),
-      _wdChip('FULL FACTUAL CONSUMPTION', data.fully_enriched_velo_status === 'SHADOW_SCORED_WITH_DECLARED_FAMILIES' ? 'DECLARED CONTRACT MET' : 'NOT FITTED FOR ALL CAPTURED FAMILIES', data.fully_enriched_velo_status === 'SHADOW_SCORED_WITH_DECLARED_FAMILIES' ? '#66bb6a' : '#ffb74d'),
+      _wdChip('SHADOW MODEL STATE', String(data.shadow_model_state || 'UNKNOWN').replace(/_/g, ' '), data.shadow_model_state === 'FITTED_SHADOW_ONLY' ? '#ab47bc' : '#ffb74d'),
+      _wdChip('DECLARED INPUT CONTRACT', data.fully_enriched_velo_status === 'SHADOW_SCORED_WITH_DECLARED_FAMILIES' ? 'ALL DECLARED FAMILIES USED' : 'NEW FACTUAL FAMILIES NOT YET FITTED', data.fully_enriched_velo_status === 'SHADOW_SCORED_WITH_DECLARED_FAMILIES' ? '#66bb6a' : '#ffb74d'),
     ].join('');
     const families = data.family_coverage || [];
     const familyColour = (status) => ({ CAPTURED: '#66bb6a', PARTIAL: '#ffb74d', MISSING_FOR_DATE: '#ef5350', NO_PACKETS_FOR_DATE: '#777' }[status] || '#777');
@@ -4885,12 +4886,19 @@ async function loadRichContext() {
         + '</table><div style="font-size:10px;color:#666;margin-top:4px;">MISSING_FOR_DATE / NOT_CAPTURED means the field was absent from every immutable pre-off packet; it does not invent a provider failure. PARTIALLY_CAPTURED_NOT_CONSUMED and CAPTURED_NOT_CONSUMED are stored evidence, not a claim that the current fitted challenger used it.</div>'
       : '<div style="font-size:10px;color:#777">No immutable Rich Context packets for this date.</div>';
     const contract = data.feature_consumption_contract || {};
+    const eligibility = data.packet_eligibility || {};
     const consume = contract.consumed_families || [];
     const excluded = contract.excluded_families || [];
     document.getElementById('rc-contract').innerHTML = '<div style="font-size:10px;color:#aaa">'
       + '<b>ACTIVE SHADOW CONTRACT:</b> consumes ' + esc(consume.join(', ') || 'none declared')
       + (excluded.length ? '; captured but excluded until separately fitted/validated: ' + esc(excluded.join(', ')) : '')
-      + '. Prime remains the unchanged baseline/control.</div>';
+      + '. Prime remains the unchanged baseline/control.<br/>'
+      + '<b>FUTURE-FIT PACKETS:</b> ' + esc(String(eligibility.eligible_for_future_fit ?? 0)) + '/' + esc(String(eligibility.captured_runners ?? 0))
+      + ' eligible; ' + esc(String(eligibility.excluded_from_future_fit ?? 0)) + ' excluded. '
+      + esc(String(eligibility.note || '')) + '<br/>'
+      + '<b>V3 FULL FACTUAL PACKETS:</b> ' + esc(String(eligibility.v3_full_context_complete ?? 0)) + '/' + esc(String(eligibility.captured_runners ?? 0))
+      + ' contain all ' + esc(String(eligibility.v3_required_family_count ?? 0)) + ' required factual families. '
+      + esc(String(eligibility.v3_note || '')) + '</div>';
     const runs = data.scoring_runs || [];
     document.getElementById('rc-runs').innerHTML = runs.length
       ? 'Scoring runs today: ' + runs.map(r => `${esc(r.run_type || '')} ${esc(r.status || '')} ${esc(String(r.started_at || '').slice(11, 16))}Z (${esc(String(r.runners_processed ?? ''))} runners)`).join(' &middot; ')
@@ -4952,7 +4960,7 @@ async function loadRichContext() {
             + `<td style="padding-right:10px;color:${gradeColour[r.evidence_grade] || '#777'}">${esc(r.evidence_grade || '')}</td>`
             + `<td>${field}</td></tr>`;
         }).join('')
-        + '</table><div style="font-size:10px;color:#666;margin-top:4px;">Prime remains frozen. The purple selection is the separately fitted Rich Context shadow challenger; it changes nothing Prime reads. EVIDENCE = what Velo holds on Prime\'s pick beyond the FormFav baseline (FULL = history + Spotlight). (−n) = withdrawn since the first run.</div>'
+        + '</table><div style="font-size:10px;color:#666;margin-top:4px;">Prime remains frozen. The purple selection is the separately fitted Rich Context shadow challenger; it changes nothing Prime reads. EVIDENCE AVAILABILITY = what Velo holds on Prime\'s pick beyond the FormFav baseline; it is not a confidence or model-use grade. (−n) = withdrawn since the first run.</div>'
       : '<div style="font-size:11px;color:#777;">No run recorded for this date yet.</div>';
     const models = data.models || [];
     const boardRow = (m) => {

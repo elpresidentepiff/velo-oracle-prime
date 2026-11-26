@@ -974,30 +974,11 @@ def main():
                     break
         
         if not horse_result:
-            result_winner = result.get("winner_horse") or ""
-            if result_winner:
-                # Horse absent from result but race resolved → MISS (NR or data error)
-                winner_sp = float(result.get("winner_sp") or 0)
-                if winner_sp > 0 and winner_sp <= 3.0: mc = "short_fav_won"
-                elif winner_sp > 10.0: mc = "outsider_won"
-                else: mc = "mid_priced_won"
-                misses.append(race_id)
-                _ap_absent = pred.get("assigned_product") or predictions.get(race_id, {}).get("assigned_product") or "UNKNOWN"
-                all_matched.append({
-                    "race_id": race_id, "course": result.get("course",""), "off": result.get("off",""),
-                    "predicted": info.get("horse","?"), "predicted_id": predicted_horse_id,
-                    "reconciliation_provenance": provenance + "_HORSE_ABSENT",
-                    "actual_winner": result.get("winner_id","?"), "actual_name": result_winner,
-                    "winner_sp": winner_sp, "velo_prime_prob": vpp,
-                    "predicted_position": None, "predicted_sp": 0,
-                    "outcome": "MISS", "miss_class": mc, "top3": result.get("top3_names",[]),
-                    "assigned_product": _ap_absent,
-                    "ew_outcome": "EW_MISS" if _ap_absent == "EW_CANDIDATE" else None,
-                })
-                print(f"  MISS({mc})             {result.get('course',''):<22} {result.get('off','')}  pred={info.get('horse','?'):<30} [HORSE_ABSENT->MISS]")
-            else:
-                print(f"  [WARN] {race_id}: race matched ({provenance}) but horse {predicted_horse_id}/{info.get('horse')} not found")
-                no_result.append(race_id)
+            # An absent horse may be a non-runner, identity mismatch, or an
+            # incomplete result. None of those proves a losing starter.
+            print(f"  [UNRESOLVED] {race_id}: race matched ({provenance}) but horse "
+                  f"{predicted_horse_id}/{info.get('horse')} is absent from the result")
+            no_result.append(race_id)
             continue
 
         # ── Step 3.4: Non-runner check ────────────────────────────────────────

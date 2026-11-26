@@ -29,6 +29,34 @@ from scripts.playbook_g_shadow_adapter import PlaybookGShadowAdapter
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("nightly_runner")
 
+
+def _selected_outcome(top_pick: dict, result: dict) -> tuple[str, str, str]:
+    """Admit only a uniquely identified starter with a known outcome and winner."""
+    runners = result.get("runners") or result.get("full_runners") or []
+    winners = [r for r in runners if str(r.get("position", "")).strip() == "1"]
+    if len(winners) != 1:
+        return "UNKNOWN", "WINNER_MISSING_OR_AMBIGUOUS", ""
+    winner_id = str(winners[0].get("horse_id") or "").strip()
+    pick_id = str(top_pick.get("horse_id") or "").strip()
+    pick_name = str(top_pick.get("horse") or top_pick.get("horse_name") or "").strip().casefold()
+    matches = [r for r in runners if pick_id and str(r.get("horse_id") or "").strip() == pick_id]
+    if not matches and pick_name:
+        # A different nonempty ID is a conflict, not a safe name fallback.
+        matches = [r for r in runners if str(r.get("horse") or r.get("horse_name") or "").strip().casefold() == pick_name
+                   and (not pick_id or not str(r.get("horse_id") or "").strip())]
+    if len(matches) != 1:
+        return "UNKNOWN", "SUBJECT_MISSING_OR_AMBIGUOUS", winner_id
+    subject = matches[0]
+    pos = str(subject.get("position") or "").strip().upper()
+    if subject.get("non_runner") is True or pos in {"NR", "WD"}:
+        return "VOID", "NON_RUNNER", winner_id
+    if pos == "1":
+        return "WIN", "VERIFIED_STARTER", winner_id
+    if (pos.isdigit() and int(pos) > 1) or pos in {"PU", "P", "F", "BD", "UR", "SU", "RO", "REF", "DSQ"}:
+        return "LOSS", "VERIFIED_STARTER", winner_id
+    return "UNKNOWN", "SUBJECT_OUTCOME_UNKNOWN", winner_id
+
+
 class NightlyEODRunner:
     def __init__(
         self,
@@ -81,6 +109,10 @@ class NightlyEODRunner:
         if not prediction or not result: return "DATA_ERROR"
         top_pick = prediction.get("top", {})
         if not top_pick: return "DATA_ERROR"
+
+        verified_outcome, _, _ = _selected_outcome(top_pick, result)
+        if verified_outcome == "WIN": return "NONE"
+        if verified_outcome != "LOSS": return "DATA_ERROR"
 
         top_horse_id = (top_pick.get("horse_id") or "")
         top_horse_name = (top_pick.get("horse") or top_pick.get("horse_name") or "").strip().lower()
@@ -293,11 +325,10 @@ class NightlyEODRunner:
                 winner_id = sorted_runners[0].get("horse_id") or ""
                 winner_name = (sorted_runners[0].get("horse") or "").strip().lower()
 
-            outcome = "UNKNOWN"
-            if top_pick and (winner_id or winner_name):
-                id_match = bool(top_horse_id and winner_id and top_horse_id == winner_id)
-                name_match = bool(top_horse_name and winner_name and top_horse_name == winner_name)
-                outcome = "WIN" if (id_match or name_match) else "LOSS"
+            outcome, identity_reason, winner_id = _selected_outcome(top_pick, r_race)
+            if outcome == "UNKNOWN":
+                self.stats["data_error_count"] += 1
+                self.failures.append({"type": "UNRESOLVED_SUBJECT", "race_id": rid, "reason": identity_reason})
             
             loss_type = self._classify_loss(p_race, r_race)
             
@@ -305,8 +336,8 @@ class NightlyEODRunner:
             event = {
                 "event_type": "result_confirmed",
                 "learning_mode": "OUTCOME_ONLY_EOD_REPLAY",
-                "learning_allowed": True,
-                "learning_permission_reason": "OUTCOME_ONLY_NO_HFS_FEATURES",
+                "learning_allowed": outcome in ("WIN", "LOSS"),
+                "learning_permission_reason": "OUTCOME_ONLY_NO_HFS_FEATURES" if outcome in ("WIN", "LOSS") else identity_reason,
                 "hfs_training_safe": False,
                 "hfs_features_used": False,
                 "sentient_state_target": str(self.state_path),
@@ -321,7 +352,7 @@ class NightlyEODRunner:
                 "market_snapshot": {},
                 "prediction_result": outcome,
                 "loss_type": loss_type,
-                "confidence_error": abs(float(top_pick.get("velo_prime_prob") or 0.0) - (1.0 if outcome == "WIN" else 0.0)),
+                "confidence_error": abs(float(top_pick.get("velo_prime_prob") or 0.0) - (1.0 if outcome == "WIN" else 0.0)) if outcome in ("WIN", "LOSS") else None,
                 "source_prediction": str(self.pred_file),
                 "source_result": str(self.res_file)
             }
