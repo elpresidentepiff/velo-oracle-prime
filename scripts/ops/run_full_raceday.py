@@ -710,6 +710,14 @@ def main() -> int:
     if not ensure_durable_runner_snapshot(date, results):
         return 1
 
+    # Evidence-only factual lanes.  This reads immutable packets after the
+    # canonical run and writes a date-scoped readiness report; it never scores
+    # a FormFav provider prediction or changes Prime.  The report is persisted
+    # with the rest of the dashboard artifacts at the end of this command.
+    run("Step 9 factual FormFav ablation evidence",
+        [PY, "scripts/ops/build_formfav_factual_ablation.py", "--date", date],
+        critical=False, results=results)
+
     # ── Steps 9.1-9.6: paper intelligence overlays ───────────────────────
     # The four core models (Old VELO, New Build, No-RPR/SQPE Shadow, Champion
     # Intent Shadow) are critical=True: they must score every day without
