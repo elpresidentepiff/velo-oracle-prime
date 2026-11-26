@@ -418,7 +418,14 @@ def main() -> int:
     # laptop until the operator-approved backfill. Idempotent (consumption_id).
     run(
         "Step 20F: Persist nightly learning events (velo_learning_events)",
-        [PY, "scripts/ops/persist_nightly_learning_events.py", "--date", date, "--execute"],
+        [
+            PY,
+            "scripts/ops/persist_nightly_learning_events.py",
+            "--date",
+            date,
+            "--execute",
+            "--require-runner-handoff",
+        ],
         critical=False, results=results,
     )
 
