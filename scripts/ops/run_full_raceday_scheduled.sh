@@ -7,9 +7,28 @@
 set -u
 cd /mnt/c/Users/puror/velo-oracle-prime || exit 1
 DATE=$(date +%Y-%m-%d)
+LOG=data/reports/run_full_raceday_cron.log
 {
   echo ""
   echo "===== VELO_Raceday_0700 fired $(date -Is) for ${DATE} ====="
-} >> data/reports/run_full_raceday_cron.log
+} >> "${LOG}"
+
+TMPLOG=$(mktemp)
 PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday.py \
-  --date "${DATE}" --execute >> data/reports/run_full_raceday_cron.log 2>&1
+  --date "${DATE}" --execute >> "${TMPLOG}" 2>&1
+RC=$?
+cat "${TMPLOG}" >> "${LOG}"
+
+# A FormFav coverage failure is a hard gate.  Never silently convert it into a
+# partial-enrichment scoring run: an operator must review the dated report and
+# invoke the explicit, auditable override only where policy allows it.
+if [ "${RC}" -ne 0 ]; then
+  {
+    echo ""
+    echo "===== RACEDAY FAILED $(date -Is): exit=${RC}; no partial-enrichment retry performed ====="
+  } >> "${LOG}"
+  rm -f "${TMPLOG}"
+  exit "${RC}"
+fi
+rm -f "${TMPLOG}"
+exit 0
