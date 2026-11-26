@@ -19,13 +19,16 @@ PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday.py \
 RC=$?
 cat "${TMPLOG}" >> "${LOG}"
 
-# If the only failure was FormFav coverage gate, retry automatically with partial enrichment.
-if [ "${RC}" -ne 0 ] && grep -q "FAIL_CLOSED" "${TMPLOG}"; then
+# A FormFav coverage failure is a hard gate.  Never silently convert it into a
+# partial-enrichment scoring run: an operator must review the dated report and
+# invoke the explicit, auditable override only where policy allows it.
+if [ "${RC}" -ne 0 ]; then
   {
     echo ""
-    echo "===== AUTO-RETRY $(date -Is): FormFav coverage gate fired — retrying with --allow-partial-formfav ====="
+    echo "===== RACEDAY FAILED $(date -Is): exit=${RC}; no partial-enrichment retry performed ====="
   } >> "${LOG}"
-  PYTHONPATH=. venv/bin/python scripts/ops/run_full_raceday.py \
-    --date "${DATE}" --execute --skip-capture --allow-partial-formfav >> "${LOG}" 2>&1
+  rm -f "${TMPLOG}"
+  exit "${RC}"
 fi
 rm -f "${TMPLOG}"
+exit 0
