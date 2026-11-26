@@ -90,3 +90,27 @@ def test_learning_event_mapping(tmp_path):
     assert r["horse_id"] == "123" and r["missing_hfs_context"] is True
     assert r["consumed_shadow"] is True and r["consumed_live"] is False
     assert r["result"]["prediction_result"] == "WIN"
+
+
+def test_runner_event_expectation_distinguishes_pass_from_blocked(tmp_path):
+    (tmp_path / "data").mkdir()
+    tag = "2026_06_10"
+    status = tmp_path / "data" / f"nightly_eod_learning_status_{tag}.json"
+    status.write_text(json.dumps({"verdict": "PASS", "events_created": 12}), encoding="utf-8")
+    with patch.object(nle, "ROOT", tmp_path):
+        passed = nle.runner_event_expectation("2026-06-10")
+        status.write_text(json.dumps({"verdict": "FAIL_GATE_BLOCKED", "events_created": 0}), encoding="utf-8")
+        blocked = nle.runner_event_expectation("2026-06-10")
+    assert Path(passed["status_path"]).name == f"nightly_eod_learning_status_{tag}.json"
+    assert passed["runner_status"] == "PASS"
+    assert passed["expected_events"] == 12
+    assert blocked["runner_status"] == "FAIL_GATE_BLOCKED"
+    assert blocked["expected_events"] == 0
+
+
+def test_persistence_runner_handoff_contract_is_wired_into_eod():
+    source = (ROOT / "scripts" / "ops" / "run_full_raceday_eod.py").read_text(encoding="utf-8")
+    persist_source = (ROOT / "scripts" / "ops" / "persist_nightly_learning_events.py").read_text(encoding="utf-8")
+    assert "--require-runner-handoff" in source
+    assert "EXPECTED_SOURCE_MISSING" in persist_source
+    assert "SOURCE_MISSING_ALREADY_PERSISTED" in persist_source

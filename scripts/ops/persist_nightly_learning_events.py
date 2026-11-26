@@ -102,6 +102,32 @@ def _applied(date_tag: str) -> bool:
         return False
 
 
+def runner_event_expectation(date: str) -> dict:
+    """Read the runner's own durable status before judging a missing jsonl.
+
+    A runner blocked by an integrity gate rightly creates no events.  A runner
+    that reported PASS and N events, followed by a missing source file, is a
+    different class of incident: the pipeline lost its hand-off.  Keep those
+    cases distinguishable so EOD never labels the latter a benign skip.
+    """
+    tag = date.replace("-", "_")
+    path = ROOT / "data" / f"nightly_eod_learning_status_{tag}.json"
+    facts = {"status_path": str(path.relative_to(ROOT)), "runner_status": "MISSING", "expected_events": 0}
+    if not path.exists():
+        return facts
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        facts["runner_status"] = f"UNREADABLE:{exc.__class__.__name__}"
+        return facts
+    facts["runner_status"] = str(data.get("verdict") or "UNKNOWN")
+    try:
+        facts["expected_events"] = max(0, int(data.get("events_created") or 0))
+    except (TypeError, ValueError):
+        facts["expected_events"] = 0
+    return facts
+
+
 def build_rows(date: str) -> tuple[list[dict], dict]:
     tag = date.replace("-", "_")
     path = ROOT / "data" / f"nightly_eod_learning_events_{tag}.jsonl"
@@ -166,6 +192,11 @@ def main() -> None:
     g.add_argument("--all-missing", action="store_true", help="every local jsonl date with 0 rows in the table")
     ap.add_argument("--force", action="store_true", help="write even if the date already has rows")
     ap.add_argument("--execute", action="store_true")
+    ap.add_argument(
+        "--require-runner-handoff",
+        action="store_true",
+        help="fail only when a PASS runner reported events but its source jsonl is absent or incomplete",
+    )
     args = ap.parse_args()
 
     if args.all_missing:
@@ -181,10 +212,21 @@ def main() -> None:
         rows, audit = build_rows(d)
         existing = _count_for_date(d)
         audit["existing_rows"] = existing
+        expectation = runner_event_expectation(d)
+        audit["runner"] = expectation
         if audit.get("status") == "NO_SOURCE_FILE":
-            pass
+            expected = expectation["expected_events"]
+            if existing >= expected and expected > 0:
+                audit["status"] = "SOURCE_MISSING_ALREADY_PERSISTED"
+            elif args.require_runner_handoff and expectation["runner_status"] == "PASS" and expected > 0:
+                audit["status"] = "EXPECTED_SOURCE_MISSING"
+            else:
+                audit["status"] = "NO_SOURCE_FILE_NO_EVENTS_EXPECTED"
         elif existing and not args.force:
-            audit["status"] = "SKIPPED_DATE_ALREADY_PRESENT"
+            if existing < len(rows):
+                audit["status"] = "EXISTING_COUNT_BELOW_SOURCE"
+            else:
+                audit["status"] = "SKIPPED_DATE_ALREADY_PRESENT"
         elif not rows:
             audit["status"] = "NO_ROWS"
         elif not args.execute:
@@ -195,7 +237,8 @@ def main() -> None:
             audit["status"] = "OK" if audit["rows_after"] >= len(rows) else "COUNT_MISMATCH"
         summary.append(audit)
         print(json.dumps(audit))
-    bad = [a for a in summary if a["status"] in ("COUNT_MISMATCH",)]
+    bad_statuses = {"COUNT_MISMATCH", "EXPECTED_SOURCE_MISSING", "EXISTING_COUNT_BELOW_SOURCE"}
+    bad = [a for a in summary if a["status"] in bad_statuses]
     sys.exit(1 if bad else 0)
 
 
