@@ -288,7 +288,7 @@ def test_suggestions_are_wired_read_only_and_distinguish_prime_from_challenger()
     root = Path(__file__).parents[1]
     html = (root / "app" / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
     main = (root / "app" / "main.py").read_text(encoding="utf-8")
-    assert 'id="rc-suggest"' in html and "TODAY'S SUGGESTIONS" in html
+    assert 'id="rc-suggest"' in html and "REQUESTED-DATE SUGGESTIONS" in html
     assert "Prime remains frozen" in html
     assert "separately fitted Rich Context shadow challenger" in html
     route = main[main.index('@app.get("/api/rich-context")') : main.index('@app.get("/api/llm-brief")')]
@@ -303,6 +303,10 @@ def test_rich_context_route_reads_the_separate_append_only_score_table() -> None
     assert "rich_context_challenger_scores?race_date=eq." in route
     assert 'challenger_status = "SHADOW_SCORED" if scored_count else "NO_SCORES_FOR_DATE"' in route
     assert '"challenger_picks": challenger_picks' in route
+    assert "eligible_for_future_fit,ineligibility_reasons" in route
+    assert '"date_truth"' in route
+    assert '"stale_fallback_used": False' in route
+    assert '"formfav_factual_ablation"' in route
 
 
 def test_dashboard_surfaces_actual_rich_context_shadow_pick_and_lane_c() -> None:
@@ -312,6 +316,8 @@ def test_dashboard_surfaces_actual_rich_context_shadow_pick_and_lane_c() -> None
     assert "challengerByRace" in html
     assert "NEW BUILD · LANE C" in html
     assert "canonicalLaneC" in html
+    assert "REQUESTED DATE DATA NOT AVAILABLE" in html
+    assert "DATE / PACKET TRUTH" in html
 
 
 # --- WORLD-PICKS-01: VELO's frozen World pick per race ---------------------------------------------

@@ -1,0 +1,20 @@
+{
+  "task_id": "FORMFAV-FACTUAL-ABLATION-01",
+  "title": "Daily factual FormFav lane readiness and forward-evidence report",
+  "classification": "SHADOW_RESEARCH_ONLY",
+  "allowed_paths": [
+    "ops/task_contracts/FORMFAV-FACTUAL-ABLATION-01.json",
+    "src/velo/formfav_factual_ablation.py",
+    "scripts/ops/build_formfav_factual_ablation.py",
+    "scripts/ops/run_full_raceday.py",
+    "scripts/ops/persist_daily_artifacts.py",
+    "app/main.py",
+    "app/static/dashboard/index.html",
+    "tests/test_formfav_factual_ablation.py",
+    "tests/test_world_dashboard.py"
+  ],
+  "forbidden_paths": [".env", "models/", "src/intelligence/velo_prime_ensemble.py", "data/sentient_state.json"],
+  "allowed_actions": ["read_immutable_packets", "build_forward_evidence_report", "dashboard_truth_display", "run_tests"],
+  "forbidden_actions": ["provider_prediction_consumption", "model_weight_change", "model_fit", "model_promotion", "prime_change", "gate_bypass", "live_betting", "telegram_send", "supabase_write"],
+  "classification_required": ["SHADOW_ONLY", "NO_LIVE_SCORING_CHANGE", "NO_PROVIDER_PREDICTION_CONSUMPTION", "NO_MODEL_WEIGHT_CHANGE", "NO_MODEL_PROMOTION", "PAPER_SIM_ONLY", "FORWARD_EVIDENCE_ONLY"]
+}

@@ -840,7 +840,7 @@ td:last-child  { padding-right: 20px; }
     WAKE VELO &middot; ALL MODELS <span id="rc-count" style="color:#888;font-weight:400"></span>
     <span style="float:right;font-size:10px;color:#666;font-weight:400">GB/IE &middot; SHADOW ONLY &middot; RICH CONTEXT IS FITTED AND SCORED SEPARATELY &middot; PRIME IS UNCHANGED</span>
   </div>
-  <div style="font-size:10px;color:#777;margin-bottom:4px;">TODAY'S SUGGESTIONS &middot; PRIME'S PICK FROM THE NEWEST RUN, WITH EVERYTHING VELO NOW HOLDS ON THAT HORSE <span id="rc-suggest-run" style="color:#999"></span></div>
+  <div style="font-size:10px;color:#777;margin-bottom:4px;">REQUESTED-DATE SUGGESTIONS &middot; PRIME'S PICK FROM THE DATE-SPECIFIC RUN, WITH EVERYTHING VELO HOLDS ON THAT HORSE <span id="rc-suggest-run" style="color:#999"></span></div>
   <div id="rc-suggest-summary" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;"></div>
   <div id="rc-suggest" style="max-height:460px;overflow:auto;margin-bottom:12px;"></div>
   <div style="font-size:10px;color:#777;margin-bottom:4px;">EVIDENCE VELO NOW HOLDS PER RUNNER (first packet of the day &rarr; latest)</div>
@@ -4864,6 +4864,24 @@ async function loadRichContext() {
     if (!res.ok) throw new Error(`rich-context ${res.status}`);
     const data = await res.json();
     const ev = data.evidence || {};
+    const truth = data.date_truth || {};
+    if (truth.requested_date_state === 'REQUESTED_DATE_DATA_NOT_AVAILABLE') {
+      const latest = truth.latest_persisted_packet || {};
+      document.getElementById('rc-count').textContent = `(requested ${data.date})`;
+      document.getElementById('rc-evidence').innerHTML = _wdChip('DATE STATE', 'REQUESTED DATE DATA NOT AVAILABLE', '#ef5350');
+      document.getElementById('rc-family-coverage').innerHTML = '<div style="font-size:11px;color:#ffb74d">No immutable packet was persisted for this requested date. The dashboard refused a stale fallback.</div>';
+      document.getElementById('rc-contract').innerHTML = '<div style="font-size:10px;color:#aaa"><b>REQUESTED:</b> ' + esc(String(truth.requested_date || data.date))
+        + ' &middot; <b>LATEST PERSISTED PACKET:</b> ' + esc(String(latest.race_date || 'none'))
+        + (latest.created_at ? ' at ' + esc(String(latest.created_at)) : '')
+        + '<br/>' + esc(String(truth.note || '')) + '</div>';
+      document.getElementById('rc-runs').textContent = 'No completed canonical Rich Context packet batch exists for this requested date.';
+      document.getElementById('rc-suggest').innerHTML = '<div style="font-size:11px;color:#ffb74d">No date-specific suggestions can be shown truthfully.</div>';
+      document.getElementById('rc-suggest-summary').innerHTML = '';
+      document.getElementById('rc-models').innerHTML = '';
+      document.getElementById('rc-races').innerHTML = '';
+      panel.style.display = 'block';
+      return;
+    }
     if (!data.available || !ev.races) { panel.style.display = 'none'; return; }
     const pc = (v) => v === null || v === undefined ? '—' : `${v}%`;
     document.getElementById('rc-count').textContent = `(${ev.races} races · ${ev.runners} runners · ${data.date})`;
@@ -4888,6 +4906,10 @@ async function loadRichContext() {
     const consume = contract.consumed_families || [];
     const excluded = contract.excluded_families || [];
     document.getElementById('rc-contract').innerHTML = '<div style="font-size:10px;color:#aaa">'
+      + '<b>DATE / PACKET TRUTH:</b> requested ' + esc(String(truth.requested_date || data.date))
+      + '; immutable packet ' + esc(String(truth.requested_packet_first_at || 'unknown'))
+      + ' → ' + esc(String(truth.requested_packet_latest_at || 'unknown'))
+      + '; ' + esc(String(truth.persisted_score_count ?? 0)) + ' persisted score row(s).<br/>'
       + '<b>ACTIVE SHADOW CONTRACT:</b> consumes ' + esc(consume.join(', ') || 'none declared')
       + (excluded.length ? '; captured but excluded until separately fitted/validated: ' + esc(excluded.join(', ')) : '')
       + '. Prime remains the unchanged baseline/control.</div>';
