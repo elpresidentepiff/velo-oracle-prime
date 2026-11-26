@@ -216,11 +216,21 @@ def _build_eod_integrity(sigma: dict, sigma_rows: list[dict], day_rows: list[dic
 
     expected_predictions = sigma.get("expected_predictions")
     evaluated_count = sigma.get("evaluated_count")
+    # Sigma deliberately excludes confirmed non-runners from settled rows.
+    # They remain part of the morning prediction universe, so requiring
+    # expected_predictions == len(rows) incorrectly blocks a truthful report
+    # whenever one is recorded.  Count the exclusion explicitly; do not erase
+    # it or turn it into a settled outcome.
+    try:
+        true_non_runners = max(0, int(sigma.get("true_non_runners") or 0))
+    except (TypeError, ValueError):
+        true_non_runners = 0
+    accounted_predictions = len(sigma_rows) + true_non_runners
     sigma_ew_count = (sigma.get("ew_tracking") or {}).get("ew_candidate_n")
     blocking_reasons: list[str] = []
     if sigma.get("sigma_status") != "PASS":
         blocking_reasons.append(f"SIGMA_STATUS_{sigma.get('sigma_status') or 'MISSING'}")
-    if expected_predictions != len(sigma_rows):
+    if expected_predictions != accounted_predictions:
         blocking_reasons.append("SIGMA_EXPECTED_COUNT_MISMATCH")
     if evaluated_count != len(sigma_rows):
         blocking_reasons.append("SIGMA_EVALUATED_COUNT_MISMATCH")
@@ -242,6 +252,8 @@ def _build_eod_integrity(sigma: dict, sigma_rows: list[dict], day_rows: list[dic
         "expected_predictions": expected_predictions,
         "evaluated_count": evaluated_count,
         "sigma_row_count": len(sigma_rows),
+        "true_non_runners": true_non_runners,
+        "accounted_prediction_count": accounted_predictions,
         "ledger_row_count": len(day_rows),
         "sigma_unique_race_count": len(sigma_id_set),
         "ledger_unique_race_count": len(ledger_id_set),
@@ -276,6 +288,7 @@ def _render_verified_eod(payload: dict) -> str:
             "## Canonical Counts",
             f"- Sigma status: `{integrity['sigma_status']}`.",
             f"- Expected/evaluated/Sigma rows: {integrity['expected_predictions']}/{integrity['evaluated_count']}/{integrity['sigma_row_count']}.",
+            f"- Confirmed non-runners excluded from settlement: {integrity['true_non_runners']} (accounted prediction universe: {integrity['accounted_prediction_count']}).",
             f"- Ledger rows/unique races: {integrity['ledger_row_count']}/{integrity['ledger_unique_race_count']}.",
             f"- Old VELO outcomes: WIN {outcomes['WIN']}, PLACE {outcomes['PLACE']}, MISS {outcomes['MISS']}.",
             "",

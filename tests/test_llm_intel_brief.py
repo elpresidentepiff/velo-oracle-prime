@@ -96,6 +96,29 @@ def test_eod_integrity_blocks_missing_pick_and_race_count_drift():
     assert "VELO_TOP_PICK_IDENTITY_MISSING" in integrity["blocking_reasons"]
 
 
+def test_eod_integrity_accounts_for_confirmed_non_runner_without_hiding_it():
+    sigma = _sigma_payload()
+    sigma["expected_predictions"] = 3
+    sigma["true_non_runners"] = 1
+
+    integrity = brief._build_eod_integrity(sigma, _sigma_rows(), _ledger_rows())
+
+    assert integrity["status"] == "PASS"
+    assert integrity["true_non_runners"] == 1
+    assert integrity["accounted_prediction_count"] == 3
+
+
+def test_eod_integrity_still_blocks_unaccounted_prediction_gap():
+    sigma = _sigma_payload()
+    sigma["expected_predictions"] = 4
+    sigma["true_non_runners"] = 1
+
+    integrity = brief._build_eod_integrity(sigma, _sigma_rows(), _ledger_rows())
+
+    assert integrity["status"] == "BLOCKED"
+    assert "SIGMA_EXPECTED_COUNT_MISMATCH" in integrity["blocking_reasons"]
+
+
 def test_gather_eod_reads_canonical_sigma_rows_and_exact_ew_set(tmp_path, monkeypatch):
     data = tmp_path / "data"
     (data / "sigma_results").mkdir(parents=True)
@@ -129,6 +152,7 @@ def test_verified_eod_renderer_uses_deterministic_counts():
     text = brief._render_verified_eod({"artifact_integrity": integrity})
 
     assert "Expected/evaluated/Sigma rows: 2/2/2" in text
+    assert "Confirmed non-runners excluded from settlement: 0" in text
     assert "EW candidates: 1" in text
     assert "Race IDs: 100" in text
     assert "WIN 1, PLACE 1, MISS 0" in text
