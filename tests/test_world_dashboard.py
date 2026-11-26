@@ -306,6 +306,9 @@ def test_rich_context_route_reads_the_separate_append_only_score_table() -> None
     assert "eligible_for_future_fit,ineligibility_reasons" in route
     assert '"packet_eligibility"' in route
     assert '"v3_full_context_complete"' in route
+    assert '"date_truth"' in route
+    assert '"stale_fallback_used": False' in route
+    assert '"formfav_factual_ablation"' in route
 
 
 def test_dashboard_surfaces_actual_rich_context_shadow_pick_and_lane_c() -> None:
@@ -318,6 +321,8 @@ def test_dashboard_surfaces_actual_rich_context_shadow_pick_and_lane_c() -> None
     assert "SHADOW MODEL STATE" in html
     assert "FUTURE-FIT PACKETS" in html
     assert "V3 FULL FACTUAL PACKETS" in html
+    assert "REQUESTED DATE DATA NOT AVAILABLE" in html
+    assert "DATE / PACKET TRUTH" in html
 
 
 # --- WORLD-PICKS-01: VELO's frozen World pick per race ---------------------------------------------

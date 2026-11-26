@@ -2348,6 +2348,22 @@ async def rich_context(date: str = Query(default=None)):
         f"rich_context_shadow_packets?race_date=eq.{d}&select=race_id,horse_id,family_coverage,"
         "eligible_for_future_fit,ineligibility_reasons,created_at&limit=2000"
     )
+    # Do not turn a prior day's batch into an implied current-day result.  The
+    # dashboard receives both the requested-date facts and the most-recent
+    # persisted packet identity so an operator can see exactly why a date has
+    # no card instead of being handed a stale fallback.
+    latest_packets = _sb_rest_rows(
+        "rich_context_shadow_packets?order=race_date.desc,created_at.desc&limit=1"
+        "&select=race_date,created_at,race_id,horse_id"
+    )
+    latest_scores = _sb_rest_rows(
+        "rich_context_challenger_scores?order=race_date.desc,scored_at.desc&limit=1"
+        "&select=race_date,scored_at,model_version,race_id,horse_id"
+    )
+    factual_ablation, factual_ablation_source = _report_artifact(
+        "formfav_factual_ablation", d,
+        ROOT / "data" / "reports" / f"formfav_factual_ablation_{d.replace('-', '_')}.json",
+    )
     # The active artifact declares which factual families its probabilities
     # actually consume.  If it cannot be read, report that uncertainty rather
     # than treating captured fields as model inputs.
@@ -2386,6 +2402,7 @@ async def rich_context(date: str = Query(default=None)):
         1 for packet in (packets or []) if packet.get("eligible_for_future_fit") is True
     )
     packet_count = len(packets or [])
+    requested_date_state = "PERSISTED_FOR_REQUESTED_DATE" if packet_count else "REQUESTED_DATE_DATA_NOT_AVAILABLE"
     from src.velo.rich_context_challenger_features_v3 import REQUIRED_FAMILIES as _V3_REQUIRED_FAMILIES
 
     v3_complete_packets = sum(
@@ -2396,6 +2413,22 @@ async def rich_context(date: str = Query(default=None)):
     )
     return {
         "date": d,
+        "date_truth": {
+            "requested_date": d,
+            "requested_date_state": requested_date_state,
+            "persisted_packet_count": packet_count,
+            "persisted_score_count": scored_count,
+            "requested_packet_first_at": min((str(p.get("created_at")) for p in (packets or []) if p.get("created_at")), default=None),
+            "requested_packet_latest_at": max((str(p.get("created_at")) for p in (packets or []) if p.get("created_at")), default=None),
+            "latest_persisted_packet": (latest_packets or [None])[0],
+            "latest_persisted_score": (latest_scores or [None])[0],
+            "stale_fallback_used": False,
+            "note": (
+                "No prior-day packet or score is substituted for the requested date."
+                if not packet_count else
+                "Packet and score timestamps are independent facts; a packet is not a fitted score."
+            ),
+        },
         "available": bool(picks or coverage or picks_now or scored or challenger_rows or packets),
         "rich_context_status": challenger_status,
         "rich_context_ranks_anything": bool(scored_count),
@@ -2436,6 +2469,8 @@ async def rich_context(date: str = Query(default=None)):
             "paper_sim_only": True,
             "provider_predictions_consumed": False,
         },
+        "formfav_factual_ablation": factual_ablation,
+        "formfav_factual_ablation_source": factual_ablation_source,
         "suggestions": enriched_suggestions(picks_now or []),
         "evidence": summarise_rich_context(coverage or []),
         "models": model_scoreboard(picks or []),
