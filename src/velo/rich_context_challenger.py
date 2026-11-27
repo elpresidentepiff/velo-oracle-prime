@@ -69,6 +69,7 @@ def build_runner_shadow_packet(
     comment_packet: Mapping[str, Any] | None,
     connections_passport: Mapping[str, Any] | None = None,
     market_facts: Mapping[str, Any] | None = None,
+    horse_journey_packet: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Assemble one immutable-in-shape shadow packet using exact identities."""
     identity_ok = bool(str(race_id).strip() and str(horse_id).strip())
@@ -95,6 +96,19 @@ def build_runner_shadow_packet(
         families["connections_passports"] = dict(connections_passport)
     if market_facts:
         families["market_facts"] = dict(market_facts)
+    if horse_journey_packet:
+        # A factual, separately versioned packet. It is stored as evidence but
+        # deliberately excluded from active challenger feature contracts until
+        # it has its own forward validation.
+        families["horse_journey_facts"] = {
+            "schema_version": horse_journey_packet.get("schema_version"),
+            "source_contract": horse_journey_packet.get("source_contract"),
+            "source_captured_at": horse_journey_packet.get("source_captured_at"),
+            "history_rows_used": horse_journey_packet.get("history_rows_used"),
+            "factual_tags": list(horse_journey_packet.get("factual_tags") or []),
+            "training_eligible": horse_journey_packet.get("training_eligible") is True,
+            "ineligibility_reasons": list(horse_journey_packet.get("ineligibility_reasons") or []),
+        }
 
     family_coverage = {name: bool(payload) for name, payload in families.items()}
     required = ("prime_baseline_snapshot", "canonical_history")

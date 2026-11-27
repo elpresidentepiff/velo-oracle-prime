@@ -274,6 +274,10 @@ class CanonicalHistoryProvider:
             "eligible": False,
             "ineligibility_reasons": [],
             "source_row_ids": [],
+            # Exact pre-cutoff source rows for independent shadow evidence
+            # builders.  They remain separate from ``features`` so existing
+            # fitted feature vectors do not silently gain raw history fields.
+            "journey_history_rows": [],
             "history_depth": 0,
             "coverage": {},
             "conflicts": [],
@@ -345,6 +349,15 @@ class CanonicalHistoryProvider:
 
         valid_rows.sort(key=lambda row: (row["_run_date"], int(row["id"])), reverse=True)
         base["source_row_ids"] = [str(row["id"]) for row in valid_rows]
+        base["journey_history_rows"] = [
+            {
+                "id": row["id"], "run_date": row["run_date"],
+                "course": row.get("course"), "course_id": row.get("course_id"),
+                "distance_f": row.get("distance_f"), "position_int": row.get("position_int"),
+                "official_rating": row.get("official_rating"), "jockey_id": row.get("jockey_id"),
+            }
+            for row in valid_rows
+        ]
         base["history_depth"] = len(valid_rows)
         base["conflicts"] = conflicts
         if conflicts:
