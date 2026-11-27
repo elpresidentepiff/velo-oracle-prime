@@ -1,0 +1,62 @@
+from src.velo.horse_journey_shadow import build_horse_journey_shadow
+
+
+def _run(day, *, position=2, official_rating=70, course="York", course_id="york", distance_f=8, jockey_id="j1"):
+    return {"run_date": day, "position_int": position, "official_rating": official_rating,
+            "course": course, "course_id": course_id, "distance_f": distance_f, "jockey_id": jockey_id}
+
+
+def _runner(**overrides):
+    row = {"current_or": 70, "course": "York", "course_id": "york", "distance_f": 8,
+           "jockey_id": "j2", "stable_heat": 16.0}
+    row.update(overrides)
+    return row
+
+
+def test_emits_factual_handicap_release_pattern_only_with_mark_and_corroboration():
+    packet = build_horse_journey_shadow(
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at="2026-11-27T08:00:00+00:00",
+        runner=_runner(), historical_runs=[_run("2026-11-10"), _run("2026-10-01", position=1, official_rating=70)],
+    )
+
+    assert packet["training_eligible"] is True
+    assert "JOURNEY_MARK_AT_OR_BELOW_LAST_WIN" in packet["factual_tags"]
+    assert "JOURNEY_RETURN_TO_WINNING_COURSE" in packet["factual_tags"]
+    assert "JOURNEY_RETURN_TO_WINNING_DISTANCE" in packet["factual_tags"]
+    assert "JOURNEY_HANDICAP_RELEASE_PATTERN" in packet["factual_tags"]
+    assert packet["ranking_effect"] == "NONE"
+
+
+def test_does_not_invent_handicap_release_from_mark_alone():
+    packet = build_horse_journey_shadow(
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at="2026-11-27T08:00:00+00:00",
+        runner=_runner(course="Ascot", course_id="ascot", distance_f=12, jockey_id="j1", stable_heat=0),
+        historical_runs=[_run("2026-11-26", position=1, official_rating=70, course="York", course_id="york", distance_f=8, jockey_id="j1")],
+    )
+
+    assert "JOURNEY_MARK_AT_OR_BELOW_LAST_WIN" in packet["factual_tags"]
+    assert "JOURNEY_HANDICAP_RELEASE_PATTERN" not in packet["factual_tags"]
+
+
+def test_rejects_same_day_or_future_history_to_prevent_outcome_leakage():
+    packet = build_horse_journey_shadow(
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at="2026-11-27T08:00:00+00:00",
+        runner=_runner(), historical_runs=[_run("2026-11-27", position=1), _run("2026-11-28", position=1)],
+    )
+
+    assert packet["history_rows_used"] == 0
+    assert packet["history_rows_rejected"] == 2
+    assert "POST_CUTOFF_OR_INVALID_HISTORY_REJECTED" in packet["ineligibility_reasons"]
+    assert "NO_TIME_SAFE_HISTORY" in packet["ineligibility_reasons"]
+    assert packet["training_eligible"] is False
+
+
+def test_requires_identity_and_capture_time_before_any_training_use():
+    packet = build_horse_journey_shadow(
+        race_id="", horse_id="", race_date="2026-11-27", source_captured_at=None,
+        runner=_runner(), historical_runs=[_run("2026-11-20")],
+    )
+
+    assert packet["training_eligible"] is False
+    assert "UNPROVEN_CANONICAL_IDENTITY" in packet["ineligibility_reasons"]
+    assert "MISSING_SOURCE_CAPTURE_TIME" in packet["ineligibility_reasons"]
