@@ -79,3 +79,34 @@ def test_cumulative_rpdc_evidence_missing_date_remains_explicit(monkeypatch):
 
     assert response.status_code == 200
     assert response.json()["status"] == "NOT_AVAILABLE_FOR_REQUESTED_DATE"
+
+
+def test_horse_journey_evidence_endpoint_reads_exact_dated_artifact(monkeypatch):
+    packet = {
+        "date": "2026-11-27", "status": "OK", "tag_scorecards": [],
+        "journey_packet_coverage": {"packets_read": 10, "journey_eligible_packets": 8},
+    }
+    requested: list[tuple[str, str | None]] = []
+
+    def artifact(artifact_type, date, local_path):
+        requested.append((artifact_type, date))
+        return packet, "supabase_report_artifacts"
+
+    monkeypatch.setattr(main, "_report_artifact", artifact)
+    response = client.get("/horse_journey_matched_control.json?date=2026-11-27")
+
+    assert response.status_code == 200
+    assert requested == [("horse_journey_matched_control", "2026-11-27")]
+    assert response.json()["source"] == "supabase_report_artifacts"
+
+
+def test_horse_journey_evidence_missing_date_is_explicit_and_dashboard_has_card(monkeypatch):
+    monkeypatch.setattr(main, "_report_artifact", lambda *args: (None, None))
+    response = client.get("/horse_journey_matched_control.json?date=2026-11-27")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "NOT_AVAILABLE_FOR_REQUESTED_DATE"
+    html = (main.pathlib.Path(main.__file__).parent / "static" / "dashboard" / "index.html").read_text(encoding="utf-8")
+    assert "HORSE JOURNEY EVIDENCE" in html
+    assert "/horse_journey_matched_control.json" in html
+    assert "immutable pre-off packets" in html

@@ -1664,6 +1664,48 @@ async def rpdc_tag_matched_control_cumulative(date: str = Query(default=None)):
     return JSONResponse(response, headers=_NO_STORE_HEADERS)
 
 
+@app.get("/horse_journey_matched_control.json", include_in_schema=False)
+async def horse_journey_matched_control(date: str = Query(default=None)):
+    """Serve the dated, post-settlement Horse Journey evidence report.
+
+    It is generated from append-only pre-off packets and exact-identity results
+    only.  The endpoint deliberately returns an explicit unavailable status
+    instead of substituting a different day's evidence.
+    """
+    if not date:
+        raise HTTPException(status_code=400, detail="date is required for Horse Journey matched-control evidence")
+    try:
+        datetime.fromisoformat(date)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="date must be YYYY-MM-DD") from None
+    reports_dir = pathlib.Path(__file__).parent.parent / "data" / "reports"
+    payload, source = _report_artifact(
+        "horse_journey_matched_control",
+        date,
+        reports_dir / f"horse_journey_matched_control_{date.replace('-', '_')}.json",
+    )
+    if payload is None:
+        return JSONResponse(
+            {
+                "date": date,
+                "status": "NOT_AVAILABLE_FOR_REQUESTED_DATE",
+                "tag_scorecards": [],
+                "source": None,
+                "guardrails": {
+                    "source": "append_only_rich_context_packets_pre_off_only",
+                    "same_race_controls_only": True,
+                    "scoring_effect": "NONE",
+                    "promotion_effect": "NONE",
+                    "execution_effect": "NONE",
+                },
+            },
+            headers=_NO_STORE_HEADERS,
+        )
+    response = dict(payload)
+    response["source"] = source
+    return JSONResponse(response, headers=_NO_STORE_HEADERS)
+
+
 @app.get("/old_velo_three_option_card_latest.json", include_in_schema=False)
 async def old_velo_three_option_card(date: str = Query(default=None)):
     """Serve the Old VELO WIN/PLACE/LONGSHOT operator card for the dashboard.
