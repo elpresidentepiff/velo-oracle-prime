@@ -60,3 +60,22 @@ def test_requires_identity_and_capture_time_before_any_training_use():
     assert packet["training_eligible"] is False
     assert "UNPROVEN_CANONICAL_IDENTITY" in packet["ineligibility_reasons"]
     assert "MISSING_SOURCE_CAPTURE_TIME" in packet["ineligibility_reasons"]
+
+
+def test_journey_facts_are_captured_in_rich_context_but_not_active_model_input():
+    from src.velo.rich_context_challenger import build_runner_shadow_packet
+
+    journey = build_horse_journey_shadow(
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at="2026-11-27T08:00:00+00:00",
+        runner=_runner(), historical_runs=[_run("2026-11-20", position=1)],
+    )
+    packet = build_runner_shadow_packet(
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27",
+        prime_snapshot={"velo_prime_prob": 0.2}, formfav_manifest=None,
+        history_packet={"eligible": True, "source_row_ids": ["1"], "features": {"win_rate": 0.1}},
+        comment_packet=None, horse_journey_packet=journey,
+    )
+
+    assert packet["families"]["horse_journey_facts"]["factual_tags"] == journey["factual_tags"]
+    assert packet["production_influence"] is False
+    assert packet["challenger_probability"] is None

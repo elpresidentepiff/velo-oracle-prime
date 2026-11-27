@@ -1925,6 +1925,7 @@ def main():
         assert_prime_invariant as _assert_rich_context_prime_invariant,
         build_runner_shadow_packet as _build_rich_context_packet,
     )
+    from src.velo.horse_journey_shadow import build_horse_journey_shadow as _build_horse_journey_shadow
     from src.velo.rich_context_challenger_scorer import (
         load_artifact as _load_rich_context_artifact,
         rank_scored_packets as _rank_rich_context_packets,
@@ -2215,6 +2216,18 @@ def main():
                         _passport_by_horse_id.get(_horse_id),
                         as_of_cutoff=_history_cutoff,
                     )
+                    # Horse Journey is a separate factual shadow packet. It
+                    # receives only canonical pre-cutoff rows supplied by the
+                    # history provider and the race's original capture time;
+                    # it cannot affect the Prime result above.
+                    _journey_packet = _build_horse_journey_shadow(
+                        race_id=str(race.get("race_id") or ""),
+                        horse_id=_horse_id,
+                        race_date=date_str,
+                        runner=_raw,
+                        historical_runs=_history.get("journey_history_rows") or [],
+                        source_captured_at=_comment_shadow_packet.get("captured_at"),
+                    )
                     _packet = _build_rich_context_packet(
                         race_id=str(race.get("race_id") or ""),
                         horse_id=_horse_id,
@@ -2230,6 +2243,7 @@ def main():
                             "sp_dec": _pred.get("sp_dec"),
                             "is_fav": _pred.get("is_fav"),
                         },
+                        horse_journey_packet=_journey_packet,
                     )
                     _pred["rich_context_shadow"] = _packet
                     _rich_context_packets.append(_packet)

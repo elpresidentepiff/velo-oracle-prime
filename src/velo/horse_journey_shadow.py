@@ -100,7 +100,9 @@ def build_horse_journey_shadow(
         reasons.append("NO_TIME_SAFE_HISTORY")
 
     facts: list[dict[str, Any]] = []
-    current_or = _int(runner.get("current_or") or runner.get("or") or runner.get("official_rating"))
+    current_or = _int(
+        runner.get("current_or") or runner.get("or") or runner.get("official_rating") or runner.get("ofr")
+    )
     winning_runs = [run for run in valid_history if _int(run.get("position_int")) == 1]
     last_win = winning_runs[0] if winning_runs else None
     last_win_or = _int(last_win.get("official_rating")) if last_win else None
