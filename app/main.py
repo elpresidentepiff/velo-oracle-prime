@@ -2471,7 +2471,7 @@ async def rich_context(date: str = Query(default=None)):
     )
     factual_ablation, factual_ablation_source = _report_artifact(
         "formfav_factual_ablation", d,
-        ROOT / "data" / "reports" / f"formfav_factual_ablation_{d.replace('-', '_')}.json",
+        pathlib.Path(__file__).parent.parent / "data" / "reports" / f"formfav_factual_ablation_{d.replace('-', '_')}.json",
     )
     # The active artifact declares which factual families its probabilities
     # actually consume.  If it cannot be read, report that uncertainty rather
@@ -2507,19 +2507,8 @@ async def rich_context(date: str = Query(default=None)):
     }
     scored_count = len(scored or [])
     challenger_status = "SHADOW_SCORED" if scored_count else "NO_SCORES_FOR_DATE"
-    eligible_for_future_fit = sum(
-        1 for packet in (packets or []) if packet.get("eligible_for_future_fit") is True
-    )
     packet_count = len(packets or [])
     requested_date_state = "PERSISTED_FOR_REQUESTED_DATE" if packet_count else "REQUESTED_DATE_DATA_NOT_AVAILABLE"
-    from src.velo.rich_context_challenger_features_v3 import REQUIRED_FAMILIES as _V3_REQUIRED_FAMILIES
-
-    v3_complete_packets = sum(
-        1
-        for packet in (packets or [])
-        if isinstance(packet.get("family_coverage"), dict)
-        and all(packet["family_coverage"].get(family) is True for family in _V3_REQUIRED_FAMILIES)
-    )
     return {
         "date": d,
         "date_truth": {
