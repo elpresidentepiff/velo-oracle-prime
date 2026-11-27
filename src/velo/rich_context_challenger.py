@@ -104,6 +104,8 @@ def build_runner_shadow_packet(
             "schema_version": horse_journey_packet.get("schema_version"),
             "source_contract": horse_journey_packet.get("source_contract"),
             "source_captured_at": horse_journey_packet.get("source_captured_at"),
+            "race_off_time_utc": horse_journey_packet.get("race_off_time_utc"),
+            "captured_before_off": horse_journey_packet.get("captured_before_off") is True,
             "history_rows_used": horse_journey_packet.get("history_rows_used"),
             "factual_tags": list(horse_journey_packet.get("factual_tags") or []),
             "training_eligible": horse_journey_packet.get("training_eligible") is True,
