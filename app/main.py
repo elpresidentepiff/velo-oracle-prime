@@ -2470,8 +2470,12 @@ async def rich_context(date: str = Query(default=None)):
         "&select=race_date,scored_at,model_version,race_id,horse_id"
     )
     factual_ablation, factual_ablation_source = _report_artifact(
-        "formfav_factual_ablation", d,
-        ROOT / "data" / "reports" / f"formfav_factual_ablation_{d.replace('-', '_')}.json",
+        "formfav_factual_ablation",
+        d,
+        pathlib.Path(__file__).parent.parent
+        / "data"
+        / "reports"
+        / f"formfav_factual_ablation_{d.replace('-', '_')}.json",
     )
     # The active artifact declares which factual families its probabilities
     # actually consume.  If it cannot be read, report that uncertainty rather
@@ -2507,19 +2511,8 @@ async def rich_context(date: str = Query(default=None)):
     }
     scored_count = len(scored or [])
     challenger_status = "SHADOW_SCORED" if scored_count else "NO_SCORES_FOR_DATE"
-    eligible_for_future_fit = sum(
-        1 for packet in (packets or []) if packet.get("eligible_for_future_fit") is True
-    )
     packet_count = len(packets or [])
     requested_date_state = "PERSISTED_FOR_REQUESTED_DATE" if packet_count else "REQUESTED_DATE_DATA_NOT_AVAILABLE"
-    from src.velo.rich_context_challenger_features_v3 import REQUIRED_FAMILIES as _V3_REQUIRED_FAMILIES
-
-    v3_complete_packets = sum(
-        1
-        for packet in (packets or [])
-        if isinstance(packet.get("family_coverage"), dict)
-        and all(packet["family_coverage"].get(family) is True for family in _V3_REQUIRED_FAMILIES)
-    )
     return {
         "date": d,
         "date_truth": {
@@ -2527,15 +2520,19 @@ async def rich_context(date: str = Query(default=None)):
             "requested_date_state": requested_date_state,
             "persisted_packet_count": packet_count,
             "persisted_score_count": scored_count,
-            "requested_packet_first_at": min((str(p.get("created_at")) for p in (packets or []) if p.get("created_at")), default=None),
-            "requested_packet_latest_at": max((str(p.get("created_at")) for p in (packets or []) if p.get("created_at")), default=None),
+            "requested_packet_first_at": min(
+                (str(p.get("created_at")) for p in (packets or []) if p.get("created_at")), default=None
+            ),
+            "requested_packet_latest_at": max(
+                (str(p.get("created_at")) for p in (packets or []) if p.get("created_at")), default=None
+            ),
             "latest_persisted_packet": (latest_packets or [None])[0],
             "latest_persisted_score": (latest_scores or [None])[0],
             "stale_fallback_used": False,
             "note": (
                 "No prior-day packet or score is substituted for the requested date."
-                if not packet_count else
-                "Packet and score timestamps are independent facts; a packet is not a fitted score."
+                if not packet_count
+                else "Packet and score timestamps are independent facts; a packet is not a fitted score."
             ),
         },
         "available": bool(picks or coverage or picks_now or scored or challenger_rows or packets),
@@ -2615,16 +2612,18 @@ async def arrival_snapshot(date: str = Query(default=None)):
         eligible = bool(row.get("training_eligible"))
         has_text = bool(row.get("has_spotlight_text") or row.get("has_diomed_text"))
         state = "CAPTURED_NOT_CONSUMED" if eligible else ("PARTIAL" if has_text else "MISSING")
-        shaped.append({
-            **row,
-            "factual_spans": factual_spans,
-            "rejected_spans": rejected_spans,
-            "feature_families": families,
-            "ineligibility_reasons": reasons,
-            "state": state,
-            "active_model_consumes_snapshot": False,
-            "production_prime_consumed": False,
-        })
+        shaped.append(
+            {
+                **row,
+                "factual_spans": factual_spans,
+                "rejected_spans": rejected_spans,
+                "feature_families": families,
+                "ineligibility_reasons": reasons,
+                "state": state,
+                "active_model_consumes_snapshot": False,
+                "production_prime_consumed": False,
+            }
+        )
 
     total = len(shaped)
     eligible = sum(1 for row in shaped if row["state"] == "CAPTURED_NOT_CONSUMED")
@@ -2633,7 +2632,12 @@ async def arrival_snapshot(date: str = Query(default=None)):
         "date": d,
         "available": True,
         "state": "CAPTURED_NOT_CONSUMED" if eligible else ("NO_ELIGIBLE_FACTS" if total else "NO_DATA"),
-        "summary": {"runners": total, "with_source_text": with_text, "training_eligible": eligible, "active_model_consumes_snapshot": False},
+        "summary": {
+            "runners": total,
+            "with_source_text": with_text,
+            "training_eligible": eligible,
+            "active_model_consumes_snapshot": False,
+        },
         "note": "Factual RP arrival evidence is stored separately. No active fitted model declares this family consumed; Prime remains unchanged.",
         "runners": shaped,
     }

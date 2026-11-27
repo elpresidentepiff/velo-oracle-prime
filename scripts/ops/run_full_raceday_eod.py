@@ -308,6 +308,12 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    run(
+        "Step 13E: Horse Journey cumulative matched-control shadow",
+        [PY, "scripts/ops/build_horse_journey_cumulative_scorecard.py", "--date", date],
+        critical=False, results=results,
+    )
+
     # ── Step 14: rebuild sigma retrieval corpus ───────────────────────────
     # dump_sigma_audits.py refreshes data/sigma_audits_dump.json from
     # Supabase first -- build_sigma_retrieval_corpus.py's freshness gate

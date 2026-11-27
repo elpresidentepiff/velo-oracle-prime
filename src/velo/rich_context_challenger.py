@@ -108,6 +108,7 @@ def build_runner_shadow_packet(
             "captured_before_off": horse_journey_packet.get("captured_before_off") is True,
             "history_rows_used": horse_journey_packet.get("history_rows_used"),
             "factual_tags": list(horse_journey_packet.get("factual_tags") or []),
+            "handicap_release_assessment": dict(horse_journey_packet.get("handicap_release_assessment") or {}),
             "training_eligible": horse_journey_packet.get("training_eligible") is True,
             "ineligibility_reasons": list(horse_journey_packet.get("ineligibility_reasons") or []),
         }
