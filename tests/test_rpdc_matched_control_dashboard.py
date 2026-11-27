@@ -59,3 +59,23 @@ def test_dashboard_has_visible_read_only_rpdc_tag_evidence_card():
     assert "RPDC TAG EVIDENCE" in html
     assert "/rpdc_tag_matched_control.json" in html
     assert "no scoring, promotion, or staking effect" in html
+
+
+def test_cumulative_rpdc_evidence_endpoint_is_date_bound(monkeypatch):
+    packet = {"as_of_date": "2026-11-27", "status": "OK", "tag_scorecards": [], "days_with_usable_evidence": 1}
+    monkeypatch.setattr(main, "_report_artifact", lambda *args: (packet, "supabase_report_artifacts"))
+
+    response = client.get("/rpdc_tag_matched_control_cumulative.json?date=2026-11-27")
+
+    assert response.status_code == 200
+    assert response.json()["as_of_date"] == "2026-11-27"
+    assert response.json()["source"] == "supabase_report_artifacts"
+
+
+def test_cumulative_rpdc_evidence_missing_date_remains_explicit(monkeypatch):
+    monkeypatch.setattr(main, "_report_artifact", lambda *args: (None, None))
+
+    response = client.get("/rpdc_tag_matched_control_cumulative.json?date=2026-11-27")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "NOT_AVAILABLE_FOR_REQUESTED_DATE"

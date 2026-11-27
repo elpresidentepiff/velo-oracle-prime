@@ -3810,7 +3810,14 @@ async function loadRpdcMatchedControl(dateParam) {
     if (summaryEl) summaryEl.textContent = data.status === 'OK'
       ? `${cards.length} TAGS · SETTLED SAME-RACE CONTROLS`
       : 'NO SETTLED EVIDENCE YET';
-    if (noteEl) noteEl.textContent = 'Outcome-only shadow research · immutable pre-race tags · exact race/horse identity · no scoring, promotion, or staking effect.';
+    const cumulativeRes = await fetch(`/rpdc_tag_matched_control_cumulative.json?date=${encodeURIComponent(dateParam)}`);
+    const cumulative = cumulativeRes.ok ? await cumulativeRes.json() : null;
+    if (noteEl) {
+      const cumulativeSummary = cumulative && cumulative.status === 'OK'
+        ? ` Cumulative: ${cumulative.days_with_usable_evidence} settled day(s), ${((cumulative.tag_scorecards || []).length)} tag(s).`
+        : ' Cumulative evidence is not available for this date.';
+      noteEl.textContent = 'Outcome-only shadow research · immutable pre-race tags · exact race/horse identity · no scoring, promotion, or staking effect.' + cumulativeSummary;
+    }
     if (!cards.length) {
       tableEl.innerHTML = `<div style="color:var(--fg-muted)">${esc(data.status || 'NOT_AVAILABLE_FOR_REQUESTED_DATE')} — no prior-day fallback is used.</div>`;
       return;

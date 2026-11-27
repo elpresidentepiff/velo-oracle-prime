@@ -1639,6 +1639,31 @@ async def rpdc_tag_matched_control(date: str = Query(default=None)):
     return JSONResponse(response, headers=_NO_STORE_HEADERS)
 
 
+@app.get("/rpdc_tag_matched_control_cumulative.json", include_in_schema=False)
+async def rpdc_tag_matched_control_cumulative(date: str = Query(default=None)):
+    """Serve the dated cumulative RPDC matched-control research scorecard."""
+    if not date:
+        raise HTTPException(status_code=400, detail="date is required for cumulative RPDC evidence")
+    try:
+        datetime.fromisoformat(date)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="date must be YYYY-MM-DD") from None
+    reports_dir = pathlib.Path(__file__).parent.parent / "data" / "reports"
+    payload, source = _report_artifact(
+        "rpdc_tag_matched_control_cumulative",
+        date,
+        reports_dir / f"rpdc_tag_matched_control_cumulative_{date.replace('-', '_')}.json",
+    )
+    if payload is None:
+        return JSONResponse(
+            {"as_of_date": date, "status": "NOT_AVAILABLE_FOR_REQUESTED_DATE", "tag_scorecards": [], "source": None},
+            headers=_NO_STORE_HEADERS,
+        )
+    response = dict(payload)
+    response["source"] = source
+    return JSONResponse(response, headers=_NO_STORE_HEADERS)
+
+
 @app.get("/old_velo_three_option_card_latest.json", include_in_schema=False)
 async def old_velo_three_option_card(date: str = Query(default=None)):
     """Serve the Old VELO WIN/PLACE/LONGSHOT operator card for the dashboard.

@@ -287,6 +287,16 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 13C: cumulative RPDC tag scorecard (shadow only) ─────────────
+    # Adds the new daily report once to previously persisted reports, never
+    # retags historical runners. This runs before Step 22 so the current
+    # report is included rather than waiting until tomorrow.
+    run(
+        "Step 13C: RPDC tag cumulative matched-control shadow",
+        [PY, "scripts/ops/build_rpdc_tag_cumulative_scorecard.py", "--date", date],
+        critical=False, results=results,
+    )
+
     # ── Step 14: rebuild sigma retrieval corpus ───────────────────────────
     # dump_sigma_audits.py refreshes data/sigma_audits_dump.json from
     # Supabase first -- build_sigma_retrieval_corpus.py's freshness gate
