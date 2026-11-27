@@ -14,7 +14,7 @@ from datetime import UTC, date, datetime
 from typing import Any, Iterable, Mapping
 
 
-SCHEMA_VERSION = "horse_journey_shadow_v1"
+SCHEMA_VERSION = "horse_journey_shadow_v2"
 SOURCE_CONTRACT = "rp_capture_plus_racing_horse_runs_before_race_date"
 
 
@@ -68,6 +68,60 @@ def _same_distance(run: Mapping[str, Any], runner: Mapping[str, Any]) -> bool:
 
 def _signal(code: str, **evidence: Any) -> dict[str, Any]:
     return {"code": code, "evidence": {key: value for key, value in evidence.items() if value is not None}}
+
+
+def _handicap_release_assessment(
+    *, current_or: int | None, history: list[Mapping[str, Any]], factual_codes: set[str]
+) -> dict[str, Any]:
+    """Classify the evidence, never trainer intent or a betting recommendation."""
+    mark_rows = [(_int(row.get("official_rating")), row) for row in history]
+    mark_rows = [(mark, row) for mark, row in mark_rows if mark is not None]
+    recent = history[:3]
+    recent_competitive = [row for row in recent if (_int(row.get("position_int")) or 999) <= 3]
+    rpr_values = [_int(row.get("rpr")) for row in history]
+    rpr_values = [value for value in rpr_values if value is not None]
+    recent_rpr = [_int(row.get("rpr")) for row in recent]
+    recent_rpr = [value for value in recent_rpr if value is not None]
+    ts_values = [_int(row.get("tsr")) for row in history]
+    ts_values = [value for value in ts_values if value is not None]
+    recent_tsr = [_int(row.get("tsr")) for row in recent]
+    recent_tsr = [value for value in recent_tsr if value is not None]
+    evidence: list[dict[str, Any]] = []
+    missing: list[str] = []
+    contradictions: list[str] = []
+
+    if current_or is None or not mark_rows:
+        missing.append("INSUFFICIENT_MARK_HISTORY")
+    else:
+        peak_or = max(mark for mark, _row in mark_rows)
+        if current_or <= peak_or - 5:
+            evidence.append(_signal("HRI_MARK_DROP_FROM_RECENT_PEAK", current_or=current_or, historical_peak_or=peak_or, drop=peak_or-current_or))
+    if recent_competitive:
+        evidence.append(_signal("HRI_RECENT_COMPETITIVE_FINISH", recent_top_3_runs=len(recent_competitive), window_runs=len(recent)))
+    if rpr_values and recent_rpr and max(recent_rpr) >= max(rpr_values) - 5:
+        evidence.append(_signal("HRI_RECENT_RPR_HELD", recent_best_rpr=max(recent_rpr), historical_best_rpr=max(rpr_values)))
+    if ts_values and recent_tsr and max(recent_tsr) >= max(ts_values) - 5:
+        evidence.append(_signal("HRI_RECENT_TSR_HELD", recent_best_tsr=max(recent_tsr), historical_best_tsr=max(ts_values)))
+    if not recent_competitive and len(recent) >= 3 and not recent_rpr and not recent_tsr:
+        contradictions.append("NO_RECENT_COMPETITIVE_OR_RATING_EVIDENCE")
+
+    codes = {item["code"] for item in evidence} | factual_codes
+    mark_ok = bool(codes & {"JOURNEY_MARK_AT_OR_BELOW_LAST_WIN", "JOURNEY_MARK_NEAR_LAST_WIN", "HRI_MARK_DROP_FROM_RECENT_PEAK"})
+    ability_ok = bool(codes & {"HRI_RECENT_COMPETITIVE_FINISH", "HRI_RECENT_RPR_HELD", "HRI_RECENT_TSR_HELD"})
+    context_ok = bool(codes & {"JOURNEY_RETURN_TO_WINNING_COURSE", "JOURNEY_RETURN_TO_WINNING_DISTANCE", "JOURNEY_STANDARD_RETURN_WINDOW"})
+    if missing:
+        verdict = "INSUFFICIENT_EVIDENCE"
+    elif mark_ok and ability_ok and context_ok and not contradictions:
+        verdict = "STRONG_CANDIDATE" if len(codes & {"HRI_RECENT_COMPETITIVE_FINISH", "HRI_RECENT_RPR_HELD", "HRI_RECENT_TSR_HELD"}) >= 2 else "CANDIDATE"
+    elif mark_ok and ability_ok:
+        verdict = "WATCH"
+    elif mark_ok:
+        verdict = "MARK_ONLY"
+    elif ability_ok:
+        verdict = "ABILITY_ONLY"
+    else:
+        verdict = "NO_CASE"
+    return {"verdict": verdict, "evidence": evidence, "missing_evidence": missing, "contradictions": contradictions, "shadow_only": True, "intent_claim": "NOT_MADE", "betting_recommendation": "NOT_MADE"}
 
 
 def build_horse_journey_shadow(
@@ -165,6 +219,8 @@ def build_horse_journey_shadow(
     ):
         facts.append(_signal("JOURNEY_HANDICAP_RELEASE_PATTERN", corroborating_facts=sorted(factual_codes & corroborators)))
 
+    assessment = _handicap_release_assessment(current_or=current_or, history=valid_history, factual_codes={fact["code"] for fact in facts})
+
     return {
         "schema_version": SCHEMA_VERSION,
         "source_contract": SOURCE_CONTRACT,
@@ -178,6 +234,7 @@ def build_horse_journey_shadow(
         "history_rows_rejected": rejected_history_rows,
         "factual_signals": facts,
         "factual_tags": [fact["code"] for fact in facts],
+        "handicap_release_assessment": assessment,
         "training_eligible": not reasons,
         "ineligibility_reasons": reasons,
         "shadow_only": True,

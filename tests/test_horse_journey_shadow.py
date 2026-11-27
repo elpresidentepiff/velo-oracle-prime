@@ -40,6 +40,24 @@ def test_does_not_invent_handicap_release_from_mark_alone():
 
     assert "JOURNEY_MARK_AT_OR_BELOW_LAST_WIN" in packet["factual_tags"]
     assert "JOURNEY_HANDICAP_RELEASE_PATTERN" not in packet["factual_tags"]
+    # The prior win is retained-ability evidence, but without a current-race
+    # context match it remains a WATCH rather than a release candidate.
+    assert packet["handicap_release_assessment"]["verdict"] == "WATCH"
+
+
+def test_handicap_release_requires_mark_ability_and_context_and_never_claims_intent():
+    packet = build_horse_journey_shadow(
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at=CAPTURED, race_off_time_utc=OFF_TIME,
+        runner=_runner(current_or=70), historical_runs=[
+            {**_run("2026-11-20", position=2, official_rating=80), "rpr": 100, "tsr": 90},
+            {**_run("2026-11-01", position=1, official_rating=75), "rpr": 102, "tsr": 91},
+        ],
+    )
+    assessment = packet["handicap_release_assessment"]
+    assert assessment["verdict"] == "STRONG_CANDIDATE"
+    assert "HRI_MARK_DROP_FROM_RECENT_PEAK" in {item["code"] for item in assessment["evidence"]}
+    assert assessment["intent_claim"] == "NOT_MADE"
+    assert assessment["betting_recommendation"] == "NOT_MADE"
 
 
 def test_rejects_same_day_or_future_history_to_prevent_outcome_leakage():
