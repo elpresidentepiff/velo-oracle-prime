@@ -1597,6 +1597,48 @@ async def rpdc_gate_card(date: str = Query(default=None)):
     return JSONResponse(payload, headers=_NO_STORE_HEADERS)
 
 
+@app.get("/rpdc_tag_matched_control.json", include_in_schema=False)
+async def rpdc_tag_matched_control(date: str = Query(default=None)):
+    """Serve the dated RPDC same-race matched-control research report.
+
+    The report is created only after results ingestion from the immutable
+    pre-race tag ledger.  This route is display-only: it cannot calculate new
+    tags, alter a score, or turn descriptive results into a promotion or
+    betting instruction.
+    """
+    if not date:
+        raise HTTPException(status_code=400, detail="date is required for RPDC matched-control evidence")
+    try:
+        datetime.fromisoformat(date)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="date must be YYYY-MM-DD") from None
+    reports_dir = pathlib.Path(__file__).parent.parent / "data" / "reports"
+    payload, source = _report_artifact(
+        "rpdc_tag_matched_control",
+        date,
+        reports_dir / f"rpdc_tag_matched_control_{date.replace('-', '_')}.json",
+    )
+    if payload is None:
+        return JSONResponse(
+            {
+                "date": date,
+                "status": "NOT_AVAILABLE_FOR_REQUESTED_DATE",
+                "tag_scorecards": [],
+                "source": None,
+                "guardrails": {
+                    "outcome_only": True,
+                    "same_race_controls_only": True,
+                    "scoring_effect": "NONE",
+                    "promotion_effect": "NONE",
+                },
+            },
+            headers=_NO_STORE_HEADERS,
+        )
+    response = dict(payload)
+    response["source"] = source
+    return JSONResponse(response, headers=_NO_STORE_HEADERS)
+
+
 @app.get("/old_velo_three_option_card_latest.json", include_in_schema=False)
 async def old_velo_three_option_card(date: str = Query(default=None)):
     """Serve the Old VELO WIN/PLACE/LONGSHOT operator card for the dashboard.

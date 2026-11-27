@@ -3196,6 +3196,22 @@ table.mdl-table tr:hover { background: var(--bg-hover); }
 </div>
 <style>#rpdc-body { display: none; } #rpdc-body.open { display: block; }</style>
 
+<!-- RPDC tag evidence is evaluated only after EOD from immutable pre-race
+     tags and matched same-race controls. It is intentionally separate from
+     the pre-race RS advisory gate: descriptive research, never a selection. -->
+<div id="rpdc-matched-wrap" style="margin:8px 12px;border:1px solid var(--border);border-radius:6px;background:#111;">
+  <div id="rpdc-matched-header" style="padding:8px 14px;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:0.05em;color:var(--fg-secondary);display:flex;justify-content:space-between;align-items:center;"
+       onclick="document.getElementById('rpdc-matched-body').classList.toggle('open')">
+    <span>RPDC TAG EVIDENCE — <span id="rpdc-matched-summary">loading…</span></span>
+    <span class="sib-toggle">[ EXPAND ]</span>
+  </div>
+  <div id="rpdc-matched-body" style="padding:6px 14px 12px;">
+    <div id="rpdc-matched-note" style="font-family:var(--font-mono);font-size:10px;color:var(--fg-muted);margin-bottom:8px;"></div>
+    <div id="rpdc-matched-table" style="font-family:var(--font-mono);font-size:11px;color:var(--fg-secondary);"></div>
+  </div>
+</div>
+<style>#rpdc-matched-body { display: none; } #rpdc-matched-body.open { display: block; }</style>
+
 <!-- Race Cards -->
 <div id="race-table-wrap">
   <div id="loading">LOADING GOVERNED CARD</div>
@@ -3643,6 +3659,7 @@ async function loadCard() {
   loadCanonicalPerformance(dateParam);
   loadRollingModelPerformance();
   loadRpdcGateCard(dateParam);
+  loadRpdcMatchedControl(dateParam);
 }
 
 // Rolling, all-model evidence ledger. Rates use settled rank-1 picks only;
@@ -3773,6 +3790,49 @@ async function loadRpdcGateCard(dateParam) {
   } catch (e) {
     if (summaryEl) summaryEl.textContent = 'unavailable';
     tableEl.innerHTML = `<div style="color:var(--fg-muted)">RPDC gate card unavailable: ${esc(String(e))}</div>`;
+  }
+}
+
+// Outcome-only RPDC tag evidence. Every comparison uses non-tagged runners
+// from the exact same settled races; it is never a scoring, promotion, or
+// betting signal. Missing data remains visible instead of falling back to a
+// different day's report.
+async function loadRpdcMatchedControl(dateParam) {
+  const summaryEl = document.getElementById('rpdc-matched-summary');
+  const noteEl = document.getElementById('rpdc-matched-note');
+  const tableEl = document.getElementById('rpdc-matched-table');
+  if (!tableEl) return;
+  try {
+    const res = await fetch(`/rpdc_tag_matched_control.json?date=${encodeURIComponent(dateParam)}`);
+    if (!res.ok) throw new Error(`rpdc_tag_matched_control ${res.status}`);
+    const data = await res.json();
+    const cards = data.tag_scorecards || [];
+    if (summaryEl) summaryEl.textContent = data.status === 'OK'
+      ? `${cards.length} TAGS · SETTLED SAME-RACE CONTROLS`
+      : 'NO SETTLED EVIDENCE YET';
+    if (noteEl) noteEl.textContent = 'Outcome-only shadow research · immutable pre-race tags · exact race/horse identity · no scoring, promotion, or staking effect.';
+    if (!cards.length) {
+      tableEl.innerHTML = `<div style="color:var(--fg-muted)">${esc(data.status || 'NOT_AVAILABLE_FOR_REQUESTED_DATE')} — no prior-day fallback is used.</div>`;
+      return;
+    }
+    let html = '<table style="width:100%;border-collapse:collapse;">';
+    html += '<tr style="color:var(--fg-muted);text-align:left;"><th style="padding:2px 8px 2px 0;">TAG</th><th style="padding:2px 8px;">TAG N</th><th style="padding:2px 8px;">CTRL N</th><th style="padding:2px 8px;">WIN Δ</th><th style="padding:2px 8px;">TOP-3 Δ</th><th style="padding:2px 8px;">SP COVERAGE</th></tr>';
+    cards.forEach(card => {
+      const tx = card.treatment || {};
+      const ctrl = card.same_race_control || {};
+      const winDelta = card.delta_win_rate_pp == null ? '—' : `${card.delta_win_rate_pp >= 0 ? '+' : ''}${card.delta_win_rate_pp}pp`;
+      const topDelta = card.delta_top_3_rate_pp == null ? '—' : `${card.delta_top_3_rate_pp >= 0 ? '+' : ''}${card.delta_top_3_rate_pp}pp`;
+      const coverage = tx.sp_decimal_coverage_pct == null ? '—' : `${tx.sp_decimal_coverage_pct}%`;
+      html += `<tr><td style="padding:2px 8px 2px 0;color:var(--fg-primary);">${esc(card.tag || '')}</td>`
+        + `<td style="padding:2px 8px;">${tx.n ?? 0}</td><td style="padding:2px 8px;">${ctrl.n ?? 0}</td>`
+        + `<td style="padding:2px 8px;color:var(--gold);">${esc(winDelta)}</td><td style="padding:2px 8px;color:#5599ff;">${esc(topDelta)}</td>`
+        + `<td style="padding:2px 8px;">${esc(coverage)}</td></tr>`;
+    });
+    html += '</table>';
+    tableEl.innerHTML = html;
+  } catch (e) {
+    if (summaryEl) summaryEl.textContent = 'unavailable';
+    tableEl.innerHTML = `<div style="color:var(--fg-muted)">RPDC matched-control evidence unavailable: ${esc(String(e))}</div>`;
   }
 }
 
