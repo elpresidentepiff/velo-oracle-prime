@@ -277,6 +277,16 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 13B: RPDC tag evidence settlement (shadow only) ──────────────
+    # Reads the pre-race tag ledger and compares each tag only with settled
+    # non-tag runners from the same races.  This is a descriptive research
+    # report; it has no Prime, promotion, routing, or execution authority.
+    run(
+        "Step 13B: RPDC tag matched-control shadow",
+        [PY, "scripts/ops/evaluate_rpdc_tag_matched_controls.py", "--date", date],
+        critical=False, results=results,
+    )
+
     # ── Step 14: rebuild sigma retrieval corpus ───────────────────────────
     # dump_sigma_audits.py refreshes data/sigma_audits_dump.json from
     # Supabase first -- build_sigma_retrieval_corpus.py's freshness gate
