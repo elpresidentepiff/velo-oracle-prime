@@ -10,6 +10,7 @@ def test_governed_prime_runner_builds_journey_from_canonical_history_and_capture
     assert "build_horse_journey_shadow" in source
     assert "historical_runs=_history.get(\"journey_history_rows\") or []" in source
     assert "source_captured_at=_comment_shadow_packet.get(\"captured_at\")" in source
+    assert "race_off_time_utc=_comment_shadow_packet.get(\"off_time_utc\")" in source
     assert "horse_journey_packet=_journey_packet" in source
 
 

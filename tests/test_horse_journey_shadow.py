@@ -13,9 +13,13 @@ def _runner(**overrides):
     return row
 
 
+CAPTURED = "2026-11-27T08:00:00+00:00"
+OFF_TIME = "2026-11-27T12:00:00+00:00"
+
+
 def test_emits_factual_handicap_release_pattern_only_with_mark_and_corroboration():
     packet = build_horse_journey_shadow(
-        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at="2026-11-27T08:00:00+00:00",
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at=CAPTURED, race_off_time_utc=OFF_TIME,
         runner=_runner(), historical_runs=[_run("2026-11-10"), _run("2026-10-01", position=1, official_rating=70)],
     )
 
@@ -29,7 +33,7 @@ def test_emits_factual_handicap_release_pattern_only_with_mark_and_corroboration
 
 def test_does_not_invent_handicap_release_from_mark_alone():
     packet = build_horse_journey_shadow(
-        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at="2026-11-27T08:00:00+00:00",
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at=CAPTURED, race_off_time_utc=OFF_TIME,
         runner=_runner(course="Ascot", course_id="ascot", distance_f=12, jockey_id="j1", stable_heat=0),
         historical_runs=[_run("2026-11-26", position=1, official_rating=70, course="York", course_id="york", distance_f=8, jockey_id="j1")],
     )
@@ -40,7 +44,7 @@ def test_does_not_invent_handicap_release_from_mark_alone():
 
 def test_rejects_same_day_or_future_history_to_prevent_outcome_leakage():
     packet = build_horse_journey_shadow(
-        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at="2026-11-27T08:00:00+00:00",
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at=CAPTURED, race_off_time_utc=OFF_TIME,
         runner=_runner(), historical_runs=[_run("2026-11-27", position=1), _run("2026-11-28", position=1)],
     )
 
@@ -53,7 +57,7 @@ def test_rejects_same_day_or_future_history_to_prevent_outcome_leakage():
 
 def test_requires_identity_and_capture_time_before_any_training_use():
     packet = build_horse_journey_shadow(
-        race_id="", horse_id="", race_date="2026-11-27", source_captured_at=None,
+        race_id="", horse_id="", race_date="2026-11-27", source_captured_at=None, race_off_time_utc=None,
         runner=_runner(), historical_runs=[_run("2026-11-20")],
     )
 
@@ -66,7 +70,7 @@ def test_journey_facts_are_captured_in_rich_context_but_not_active_model_input()
     from src.velo.rich_context_challenger import build_runner_shadow_packet
 
     journey = build_horse_journey_shadow(
-        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at="2026-11-27T08:00:00+00:00",
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27", source_captured_at=CAPTURED, race_off_time_utc=OFF_TIME,
         runner=_runner(), historical_runs=[_run("2026-11-20", position=1)],
     )
     packet = build_runner_shadow_packet(
@@ -79,3 +83,15 @@ def test_journey_facts_are_captured_in_rich_context_but_not_active_model_input()
     assert packet["families"]["horse_journey_facts"]["factual_tags"] == journey["factual_tags"]
     assert packet["production_influence"] is False
     assert packet["challenger_probability"] is None
+
+
+def test_capture_at_or_after_off_is_explicitly_ineligible():
+    packet = build_horse_journey_shadow(
+        race_id="race-1", horse_id="horse-1", race_date="2026-11-27",
+        source_captured_at="2026-11-27T12:00:00+00:00", race_off_time_utc=OFF_TIME,
+        runner=_runner(), historical_runs=[_run("2026-11-20", position=1)],
+    )
+
+    assert packet["captured_before_off"] is False
+    assert packet["training_eligible"] is False
+    assert "NOT_CAPTURED_PRE_OFF" in packet["ineligibility_reasons"]

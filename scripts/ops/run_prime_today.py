@@ -2227,6 +2227,7 @@ def main():
                         runner=_raw,
                         historical_runs=_history.get("journey_history_rows") or [],
                         source_captured_at=_comment_shadow_packet.get("captured_at"),
+                        race_off_time_utc=_comment_shadow_packet.get("off_time_utc"),
                     )
                     _packet = _build_rich_context_packet(
                         race_id=str(race.get("race_id") or ""),

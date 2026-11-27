@@ -10,7 +10,7 @@ a potentially leaked journey narrative.
 """
 from __future__ import annotations
 
-from datetime import date
+from datetime import UTC, date, datetime
 from typing import Any, Iterable, Mapping
 
 
@@ -30,6 +30,16 @@ def _date(value: Any) -> date | None:
         return date.fromisoformat(str(value)[:10])
     except (TypeError, ValueError):
         return None
+
+
+def _utc(value: Any) -> datetime | None:
+    if value in (None, ""):
+        return None
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed.astimezone(UTC) if parsed.tzinfo else None
 
 
 def _norm(value: Any) -> str:
@@ -68,6 +78,7 @@ def build_horse_journey_shadow(
     runner: Mapping[str, Any],
     historical_runs: Iterable[Mapping[str, Any]],
     source_captured_at: str | None,
+    race_off_time_utc: str | None,
 ) -> dict[str, Any]:
     """Build an evidence-only journey packet for one intended runner.
 
@@ -82,8 +93,14 @@ def build_horse_journey_shadow(
         reasons.append("INVALID_RACE_DATE")
     if not identity_ok:
         reasons.append("UNPROVEN_CANONICAL_IDENTITY")
-    if not source_captured_at:
+    captured_at = _utc(source_captured_at)
+    off_time = _utc(race_off_time_utc)
+    if captured_at is None:
         reasons.append("MISSING_SOURCE_CAPTURE_TIME")
+    if off_time is None:
+        reasons.append("MISSING_RACE_OFF_TIME")
+    elif captured_at is not None and captured_at >= off_time:
+        reasons.append("NOT_CAPTURED_PRE_OFF")
 
     valid_history: list[Mapping[str, Any]] = []
     rejected_history_rows = 0
@@ -154,7 +171,9 @@ def build_horse_journey_shadow(
         "race_id": str(race_id),
         "horse_id": str(horse_id),
         "race_date": str(race_date),
-        "source_captured_at": source_captured_at,
+        "source_captured_at": captured_at.isoformat() if captured_at else None,
+        "race_off_time_utc": off_time.isoformat() if off_time else None,
+        "captured_before_off": bool(captured_at and off_time and captured_at < off_time),
         "history_rows_used": len(valid_history),
         "history_rows_rejected": rejected_history_rows,
         "factual_signals": facts,
