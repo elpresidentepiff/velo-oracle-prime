@@ -297,6 +297,17 @@ def main() -> int:
         critical=False, results=results,
     )
 
+    # ── Step 13D: Horse Journey evidence settlement (shadow only) ─────────
+    # Reads append-only Journey facts, but admits a packet only when its
+    # capture timestamp is strictly before the recorded race off time. It
+    # compares tags only with eligible same-race peers and cannot change
+    # Prime, learning, promotion, routing, execution, or staking.
+    run(
+        "Step 13D: Horse Journey matched-control shadow",
+        [PY, "scripts/ops/evaluate_horse_journey_matched_controls.py", "--date", date],
+        critical=False, results=results,
+    )
+
     # ── Step 14: rebuild sigma retrieval corpus ───────────────────────────
     # dump_sigma_audits.py refreshes data/sigma_audits_dump.json from
     # Supabase first -- build_sigma_retrieval_corpus.py's freshness gate
